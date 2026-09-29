@@ -1,0 +1,263 @@
+"use client";
+
+import React, { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import {
+  LayoutDashboard,
+  CheckSquare,
+  Users,
+  Store,
+  Package,
+  Archive,
+  ShoppingBag,
+  CreditCard,
+  Wallet,
+  BookOpen,
+  BarChart3,
+  Calendar,
+  FileText,
+  Settings,
+  HelpCircle,
+  Building2,
+  Truck,
+  Activity,
+  ClipboardList,
+  Scale,
+  Inbox,
+  Search,
+  X,
+  LucideIcon,
+} from "lucide-react";
+import { NAVIGATION_GROUPS, APP_CONFIG } from "@/lib/constants";
+import { Badge } from "@/components/ui/Badge";
+import { getActiveNavigationHref, PRODUCTION_READY_ROUTES } from "@/lib/navigation";
+import { isSupabaseConfigured } from "@/lib/supabase/client";
+import { useOrganizationProfile } from "@/lib/OrganizationContext";
+import { businessStatusLabel } from "@/lib/organization-status";
+import { cn } from "@/lib/utils";
+
+const ICON_MAP: Record<string, LucideIcon> = {
+  LayoutDashboard,
+  CheckSquare,
+  Users,
+  Store,
+  Package,
+  Archive,
+  ShoppingBag,
+  CreditCard,
+  Wallet,
+  BookOpen,
+  BarChart3,
+  Calendar,
+  FileText,
+  Settings,
+  HelpCircle,
+  Truck,
+  Activity,
+  ClipboardList,
+  Scale,
+  Inbox,
+};
+
+export interface SidebarProps {
+  onItemClick?: () => void;
+  onClose?: () => void;
+  className?: string;
+  compact?: boolean;
+}
+
+export const Sidebar: React.FC<SidebarProps> = ({ onItemClick, onClose, className, compact = false }) => {
+  const [menuQuery, setMenuQuery] = useState("");
+  const pathname = usePathname();
+  const activeHref = getActiveNavigationHref(pathname);
+  const productionMode = isSupabaseConfigured();
+  const { profile } = useOrganizationProfile();
+
+  const orgName = profile.display_name || APP_CONFIG.shortName;
+  const statusLabel = businessStatusLabel(profile.business_status);
+  const managerName = profile.manager_name || "Abdul Halim";
+  const managerTitle = profile.manager_title || "Manajer Koperasi";
+  const initials = managerName
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0].toUpperCase())
+    .join("") || "AH";
+
+  const visibleGroups = NAVIGATION_GROUPS.map((group) => ({
+    ...group,
+    items: productionMode ? group.items.filter((item) => PRODUCTION_READY_ROUTES.has(item.href)) : group.items,
+  })).filter((group) => group.items.length > 0);
+  const baseDisplayedGroups = compact
+    ? [
+        visibleGroups[0],
+        visibleGroups[1],
+        {
+          groupName: "Manajemen Koperasi",
+          items: visibleGroups.slice(2).flatMap((group) => group.items),
+        },
+      ].filter((group): group is (typeof visibleGroups)[number] => Boolean(group?.items.length))
+    : visibleGroups;
+  const normalizedQuery = menuQuery.trim().toLowerCase();
+  const displayedGroups = normalizedQuery
+    ? baseDisplayedGroups
+        .map((group) => ({
+          ...group,
+          items: group.items.filter((item) => {
+            const originalGroup = visibleGroups.find((sourceGroup) =>
+              sourceGroup.items.some((sourceItem) => sourceItem.href === item.href)
+            );
+            return `${item.title} ${originalGroup?.groupName ?? ""} ${item.href}`
+              .toLowerCase()
+              .includes(normalizedQuery);
+          }),
+        }))
+        .filter((group) => group.items.length > 0)
+    : baseDisplayedGroups;
+
+  return (
+    <div
+      className={cn(
+        "flex h-full w-64 xl:w-72 flex-col border-r border-slate-200/80 bg-white/95 dark:border-slate-700/70 dark:bg-[#222C3C] select-none shrink-0 transition-colors",
+        className
+      )}
+    >
+      {/* Brand Header */}
+      <div className="flex items-center justify-between gap-3 px-4 py-3.5 border-b border-slate-100 dark:border-slate-800 shrink-0">
+        <div className="flex items-center gap-3 min-w-0 flex-1">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-container text-white shadow-md shadow-rose-900/20 shrink-0">
+            <Building2 className="h-5 w-5" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <h1 className="line-clamp-2 break-words text-sm font-bold leading-snug text-slate-900 dark:text-slate-100" title={orgName}>
+              {orgName}
+            </h1>
+            <p className="text-xs font-bold text-primary-container dark:text-rose-400 uppercase tracking-wider mt-0.5">
+              {statusLabel}
+            </p>
+          </div>
+        </div>
+        {onClose && (
+          <button
+            onClick={onClose}
+            aria-label="Tutup navigasi"
+            className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200 transition-colors shrink-0"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        )}
+      </div>
+
+      {compact && (
+        <div className="shrink-0 border-b border-slate-100 px-3 py-2.5 dark:border-slate-800">
+          <label htmlFor="mobile-menu-search" className="sr-only">Cari menu</label>
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <input
+              id="mobile-menu-search"
+              type="search"
+              value={menuQuery}
+              onChange={(event) => setMenuQuery(event.target.value)}
+              placeholder="Cari menu…"
+              className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 pl-9 pr-3 text-sm text-slate-900 outline-none transition focus:border-primary-container focus:bg-white focus:ring-4 focus:ring-rose-100/70 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:focus:border-rose-400 dark:focus:bg-slate-900 dark:focus:ring-rose-950/50"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Navigation Groups - dengan pb-5 agar item paling bawah (Pengaturan) selalu terangkat naik dan terlihat jelas */}
+      <div className={cn("flex-1 min-h-0 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-gutter-stable", compact ? "space-y-3 px-3 py-3" : "space-y-5 pb-5 pl-3.5 pr-2.5 pt-4")}>
+        {displayedGroups.map((group) => (
+          <div key={group.groupName} className={cn("space-y-1", compact && "space-y-1.5")}>
+            <h2 className="px-3 text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+              {group.groupName}
+            </h2>
+            <nav aria-label={group.groupName} className={cn("space-y-1", compact && "grid grid-cols-2 gap-1.5 space-y-0")}>
+              {group.items.map((item) => {
+                const IconComponent = ICON_MAP[item.iconName] || LayoutDashboard;
+                const isActive =
+                  activeHref === item.href;
+
+                const badgeVariantMap = {
+                  crimson: "crimson" as const,
+                  amber: "warning" as const,
+                  info: "info" as const,
+                  neutral: "neutral" as const,
+                };
+
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    aria-current={isActive ? "page" : undefined}
+                    onClick={onItemClick}
+                    className={cn(
+                      "flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors min-h-[48px]",
+                      compact && "min-h-[52px] flex-col items-start justify-center gap-1 px-3 py-2 text-xs",
+                      isActive
+                        ? "bg-rose-50 dark:bg-rose-400/10 text-primary dark:text-rose-200 font-bold ring-1 ring-rose-100 dark:ring-rose-300/10"
+                        : "text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-slate-100"
+                    )}
+                  >
+                    <div className={cn("flex items-center gap-3 truncate min-w-0 flex-1", compact && "w-full gap-2")}>
+                      <IconComponent
+                        className={cn(
+                          "h-5 w-5 shrink-0 transition-colors",
+                          isActive ? "text-primary-container dark:text-rose-400" : "text-slate-400 dark:text-slate-500"
+                        )}
+                      />
+                      <span className={cn("truncate", compact && "whitespace-normal leading-tight")}>{item.title}</span>
+                    </div>
+                    {item.badge && (
+                      <div className="shrink-0 ml-2">
+                        <Badge
+                          variant={item.badgeType ? badgeVariantMap[item.badgeType] : "neutral"}
+                          size="default"
+                        >
+                          {item.badge}
+                        </Badge>
+                      </div>
+                    )}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+        ))}
+        {displayedGroups.length === 0 && (
+          <div className="rounded-2xl border border-dashed border-slate-200 px-4 py-8 text-center dark:border-slate-700">
+            <Search className="mx-auto h-6 w-6 text-slate-400" />
+            <p className="mt-2 text-sm font-semibold text-slate-700 dark:text-slate-200">Menu tidak ditemukan</p>
+            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Coba kata seperti gerai, tugas, laporan, atau pengaturan.</p>
+          </div>
+        )}
+        {productionMode && !compact && (
+          <p className="mx-2 px-2 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
+            Gunakan Meja Kerja untuk melihat hal yang perlu ditindaklanjuti hari ini.
+          </p>
+        )}
+      </div>
+
+      {/* Manager Profile Footer — Aplikasi Pribadi */}
+      <div className={cn("px-4 py-3.5 border-t border-slate-100 dark:border-slate-700/70 bg-slate-50/60 dark:bg-[#252F40] shrink-0", compact && "hidden")}>
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl font-bold text-sm bg-primary-container text-white shadow-sm">
+            {initials}
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">{managerName}</p>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
+              {managerTitle}
+            </p>
+          </div>
+          <div className="shrink-0">
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 border border-rose-200/60 dark:border-rose-900/60">
+              Pribadi
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

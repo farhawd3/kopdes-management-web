@@ -1,0 +1,239 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    --background: #F7F8FC;
+    --surface-card: #FFFFFF;
+    --primary: #9B4564;
+    --primary-container: #A64768;
+    --crimson-hover: #8D3A58;
+    --crimson-light: #FFE4E6;
+    --text-main: #252F40;
+    --text-muted: #637189;
+    --border-subtle: #F1F5F9;
+    --border-muted: #E2E8F0;
+    --surface-soft: #F2F5FA;
+    --card-shadow: 0 2px 5px rgb(40 52 73 / 3%);
+  }
+
+  .dark {
+    color-scheme: dark;
+    --background: #1D2533; /* Slate 950 elegan */
+    --surface-card: #252F40; /* Slate 900 */
+    --primary: #E9ACC0; /* Rose 600 kontras */
+    --primary-container: #A64768; /* Crimson */
+    --crimson-hover: #8D3A58;
+    --crimson-light: #881337;
+    --text-main: #F7F8FC; /* Slate 50 */
+    --text-muted: #AAB7CB; /* Slate 400 */
+    --border-subtle: #303C50; /* Slate 800 */
+    --border-muted: #3B4960; /* Slate 700 */
+    --surface-soft: #222D3D;
+    --card-shadow: 0 2px 5px rgb(0 0 0 / 9%);
+  }
+
+  * {
+    border-color: #E2E8F0;
+    box-sizing: border-box;
+  }
+
+  .dark * {
+    border-color: #303C50;
+  }
+
+  html {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    background-color: var(--background);
+    color: var(--text-main);
+  }
+
+  body {
+    min-height: 100vh;
+    font-size: 0.9375rem; /* 15px - terbaca sangat nyaman pada desktop & tablet */
+    line-height: 1.6;
+    background-color: var(--background);
+    color: var(--text-main);
+    overflow-x: hidden;
+  }
+
+  .app-canvas {
+    background:
+      radial-gradient(ellipse 50% 28% at 90% 0%, rgb(247 215 227 / 34%), transparent),
+      radial-gradient(ellipse 35% 26% at 10% 55%, rgb(220 235 248 / 30%), transparent),
+      var(--background);
+  }
+
+  .dark .app-canvas {
+    background:
+      radial-gradient(ellipse 50% 28% at 90% 0%, rgb(166 71 104 / 9%), transparent),
+      radial-gradient(ellipse 35% 26% at 10% 55%, rgb(80 119 150 / 8%), transparent),
+      var(--background);
+  }
+}
+
+@layer utilities {
+  /* Utilitas tabular numerals untuk angka mata uang dan ID */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Touch target minimal 44px untuk aksesibilitas tablet/ponsel */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Safe area scroll container untuk modal */
+  .safe-viewport-modal {
+    max-height: calc(100dvh - 2rem);
+  }
+
+  /* Stabilisasi gutter scrollbar agar tidak memotong isi menu */
+  .scrollbar-gutter-stable {
+    scrollbar-gutter: stable;
+  }
+
+  /* Scrollbar ramping khusus navigasi */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #CBD5E1 transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #CBD5E1;
+    border-radius: 9999px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: #AAB7CB;
+  }
+
+  .dark .scrollbar-thin {
+    scrollbar-color: #3B4960 transparent;
+  }
+
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #3B4960;
+  }
+
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+  }
+}
+
+/* Kustomisasi scrollbar halus global */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #AAB7CB;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #3B4960;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+@layer base {
+  :focus-visible { outline: 2px solid #A64768; outline-offset: 3px; }
+  .dark :focus-visible { outline-color: #E9ACC0; }
+  ::selection { background: #F3D7E2; color: #54263C; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@layer utilities {
+  .dark .text-primary, .dark .text-primary-container { color: #E9ACC0; }
+}
+
+/* Seluruh select tetap native agar formulir, keyboard, dan pembaca layar berfungsi. */
+select:not([multiple]) { min-height: 44px; cursor: pointer; text-align: left; text-align-last: left; }
+select:not([multiple]):disabled { cursor: not-allowed; }
+select:not([multiple]) option,
+select:not([multiple]) optgroup { background-color: var(--surface-card); color: var(--text-main); text-align: left; }
+.kopdes-select:not([multiple]) { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: left; text-align-last: left; }
+.kopdes-select option { text-align: left; }
+.kopdes-select:focus-visible { outline-offset: 3px; }
+@supports (appearance: base-select) {
+  select:not([multiple]),
+  select:not([multiple])::picker(select) { appearance: base-select; }
+  .kopdes-select::picker-icon { display: none; }
+  select:not([multiple])::picker(select) {
+    margin-block: 6px;
+    padding: 7px;
+    border: 1px solid var(--border-muted);
+    border-radius: 16px;
+    background: var(--surface-card);
+    color: var(--text-main);
+    box-shadow: 0 18px 44px rgb(15 23 42 / 17%);
+    max-height: min(380px, 55dvh);
+    overflow-y: auto;
+  }
+  select:not([multiple]) option {
+    min-height: 44px;
+    padding: 11px 14px;
+    border-radius: 10px;
+    background: var(--surface-card);
+    color: var(--text-main);
+    white-space: normal;
+    text-align: left;
+  }
+  select:not([multiple]) option:hover,
+  select:not([multiple]) option:focus-visible { background: var(--surface-soft); }
+  select:not([multiple]) option:checked {
+    background: #fff1f2;
+    color: #8d3a58;
+    font-weight: 600;
+  }
+  .dark select:not([multiple]) option:checked { background: #3c2b3c; color: #f0bed0; }
+  select:not([multiple]) option:disabled { opacity: 0.5; }
+  .kopdes-select:not([multiple]) option { text-align: left; }
+  .kopdes-select:not([multiple]) option::checkmark { margin-right: 8px; }
+}
+
+@keyframes kopdes-shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+.animate-shake {
+  animation: kopdes-shake 0.4s ease-in-out;
+}
+

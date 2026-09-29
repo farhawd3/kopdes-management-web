@@ -1,0 +1,59 @@
+# Dependencies
+node_modules/
+/.pnp
+.pnp.js
+
+# Testing
+/coverage
+/test-results/
+/playwright-report/
+
+# Next.js build output
+/.next/
+/out/
+
+# Production
+/build
+
+# Vercel & Turborepo
+.vercel/
+.turbo/
+
+# TypeScript build cache
+*.tsbuildinfo
+next-env.d.ts.bak
+
+# Environment variables
+.env*
+!.env.example
+
+# Cadangan dan artefak lokal
+.local-backup/
+backups/
+*.bundle
+*.key
+*.p12
+*.pfx
+supabase/.temp/
+supabase/.branches/
+artifacts/
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+*.log
+
+# System Files
+.DS_Store
+Thumbs.db
+*.pem
+
+# IDE & Editor files
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.sublime-workspace
+

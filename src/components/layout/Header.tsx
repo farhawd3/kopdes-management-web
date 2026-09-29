@@ -1,0 +1,344 @@
+"use client";
+
+import { ButtonLink } from "@/components/ui/Button";
+import React, { useState, useEffect, useRef } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import {
+  Bell,
+  HelpCircle,
+  Search,
+  CheckCircle2,
+  ArrowUpRight,
+  ClipboardList,
+  Store,
+  Users,
+  Wallet,
+  X,
+  ExternalLink,
+  BookOpen,
+  Sun,
+  Moon,
+  Shield,
+  Lock,
+} from "lucide-react";
+import { PRODUCTION_READY_ROUTES, SEARCH_MODULES } from "@/lib/navigation";
+import { formatTanggal } from "@/lib/utils";
+import { Dialog } from "@/components/ui/Dialog";
+import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
+import { useTheme } from "@/lib/ThemeContext";
+import { isSupabaseConfigured } from "@/lib/supabase/client";
+import { useOrganizationProfile } from "@/lib/OrganizationContext";
+import { businessStatusLabel } from "@/lib/organization-status";
+
+interface NotificationItem {
+  id: string;
+  title: string;
+  description: string;
+  sourceUrl: string;
+  sourceLabel: string;
+  time: string;
+  type: "warning" | "info" | "success";
+}
+
+const PREPARATION_NOTIFICATIONS: NotificationItem[] = [];
+
+export const Header: React.FC = () => {
+  const router = useRouter();
+  const [currentDateStr, setCurrentDateStr] = useState("");
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const { theme, toggleTheme } = useTheme();
+  const { profile } = useOrganizationProfile();
+
+  const notifRef = useRef<HTMLDivElement>(null);
+
+  const handleLockApp = async () => {
+    try {
+      await fetch("/api/auth/pin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "lock" }),
+      });
+      router.push("/pin");
+    } catch {
+      router.push("/pin");
+    }
+  };
+
+  useEffect(() => {
+    setCurrentDateStr(formatTanggal(new Date()));
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsNotifOpen(false);
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setIsSearchOpen(true);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  // Menutup popover notifikasi saat klik di luar
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
+        setIsNotifOpen(false);
+      }
+    };
+    if (isNotifOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isNotifOpen]);
+
+  const filteredModules = SEARCH_MODULES.filter(
+    (m) =>
+      (!isSupabaseConfigured() || PRODUCTION_READY_ROUTES.has(m.href)) &&
+      (m.title.toLowerCase().includes(searchQuery.trim().toLowerCase()) ||
+      m.desc.toLowerCase().includes(searchQuery.trim().toLowerCase()))
+  );
+
+  return (
+    <header className="sticky top-0 z-30 h-14 w-full border-b border-slate-200/80 bg-white/90 backdrop-blur-xl transition-colors dark:border-slate-700/70 dark:bg-[#222C3C]/95 sm:h-16">
+      <div className="flex h-full w-full items-center justify-between gap-2 px-3.5 sm:px-5 md:px-6 lg:px-8">
+        {/* Kiri: Toggle Menu (Mobile & Tablet) + Status Tanggal */}
+        <div className="min-w-0 shrink flex items-center gap-3">
+          <div className="min-w-0 shrink">
+            <p className="hidden text-[11px] font-semibold text-slate-500 dark:text-slate-400 sm:block">Asia/Jakarta</p>
+            <p className="truncate text-xs font-bold text-slate-800 dark:text-slate-200 sm:text-sm">{currentDateStr || "Memuat tanggal..."}</p>
+          </div>
+        </div>
+
+        {/* Tengah: Quick Search Finder */}
+        <div className="hidden xl:flex min-w-0 flex-1 items-center relative max-w-xs w-full">
+          <Search className="absolute left-3.5 h-4 w-4 text-slate-400 pointer-events-none" />
+          <button
+            onClick={() => {
+              setSearchQuery("");
+              setIsSearchOpen(true);
+            }}
+            className="h-11 w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/60 pl-10 pr-3 text-left text-xs text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition-colors flex items-center justify-between shadow-sm"
+          >
+            <span>Cari menu...</span>
+            <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-semibold text-slate-400 dark:text-slate-500 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded font-mono">
+              Ctrl+K
+            </kbd>
+          </button>
+        </div>
+
+        {/* Kanan: Toggle Mode Gelap, Bantuan, Notifikasi, Status Mode */}
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+          <button
+            aria-label="Cari menu"
+            onClick={() => {
+              setSearchQuery("");
+              setIsSearchOpen(true);
+            }}
+            className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:border-slate-800 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white sm:h-11 sm:w-11 xl:hidden"
+          >
+            <Search className="h-5 w-5" />
+          </button>
+          <button
+            onClick={toggleTheme}
+            aria-label={theme === "dark" ? "Ganti ke Mode Terang" : "Ganti ke Mode Gelap"}
+            title={theme === "dark" ? "Mode Terang" : "Mode Gelap"}
+            className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 text-slate-600 shadow-sm transition-colors hover:bg-slate-100 hover:text-slate-900 dark:border-slate-800 dark:text-amber-400 dark:hover:bg-slate-800 dark:hover:text-amber-300 sm:h-11 sm:w-11"
+          >
+            {theme === "dark" ? (
+              <Sun className="h-5 w-5 transition-transform hover:rotate-45" />
+            ) : (
+              <Moon className="h-5 w-5 text-slate-600 transition-transform hover:-rotate-12" />
+            )}
+          </button>
+
+          <button
+            onClick={handleLockApp}
+            aria-label="Kunci Aplikasi"
+            title="Kunci Layar (Kembali ke Input PIN)"
+            className="hidden h-11 w-11 items-center justify-center rounded-xl border border-slate-200 text-slate-600 shadow-sm transition-colors hover:bg-rose-50 hover:text-rose-700 dark:border-slate-800 dark:text-slate-300 dark:hover:bg-rose-950/40 dark:hover:text-rose-300 md:flex"
+          >
+            <Lock className="h-5 w-5" />
+          </button>
+
+          <button
+            aria-label="Pusat Bantuan & Panduan"
+            title="Buka Panduan Operasional"
+            className="hidden h-11 w-11 items-center justify-center rounded-xl border border-slate-200 text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:border-slate-800 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white md:flex"
+            onClick={() => setIsHelpOpen(true)}
+          >
+            <HelpCircle className="h-5 w-5" />
+          </button>
+
+          {/* Popover Notifikasi Nyata */}
+          <div className="relative hidden sm:block" ref={notifRef}>
+            <button
+              aria-label="Notifikasi Persiapan"
+              aria-expanded={isNotifOpen}
+              title="Notifikasi Tugas Persiapan"
+              className="relative flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
+              onClick={() => setIsNotifOpen(!isNotifOpen)}
+            >
+              <Bell className="h-5 w-5" />
+              {PREPARATION_NOTIFICATIONS.length > 0 && <span className="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-primary-container" />}
+            </button>
+
+            {isNotifOpen && (
+              <div className="fixed left-4 right-4 mt-2 sm:absolute sm:left-auto sm:right-0 sm:w-96 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-xl z-50 animate-in fade-in zoom-in-95 duration-150">
+                <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                  <div className="flex items-center gap-2">
+                    <Bell className="h-4 w-4 text-primary dark:text-rose-400" />
+                    <h4 className="text-xs font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider">
+                      Pemberitahuan Persiapan
+                    </h4>
+                  </div>
+                  <Badge variant="crimson" size="sm">
+                    {PREPARATION_NOTIFICATIONS.length} Baru
+                  </Badge>
+                </div>
+
+                <div className="mt-3 space-y-2.5 max-h-80 overflow-y-auto">
+                  {PREPARATION_NOTIFICATIONS.length === 0 && <p className="py-6 text-center text-sm text-slate-600 dark:text-slate-300">Belum ada pemberitahuan. Notifikasi otomatis tersedia setelah integrasi database.</p>}
+                  {PREPARATION_NOTIFICATIONS.map((n) => (
+                    <div
+                      key={n.id}
+                      className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/70 p-3 text-xs space-y-1 hover:bg-slate-100/70 dark:hover:bg-slate-800 transition-colors"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <strong className="text-slate-900 dark:text-slate-100 leading-snug">{n.title}</strong>
+                        <span className="text-[10px] text-slate-400 dark:text-slate-500 shrink-0 font-medium">{n.time}</span>
+                      </div>
+                      <p className="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">{n.description}</p>
+                      <div className="pt-1.5 flex justify-end">
+                        <Link
+                          href={n.sourceUrl}
+                          onClick={() => setIsNotifOpen(false)}
+                          className="text-xs font-bold text-primary dark:text-rose-400 hover:underline flex items-center gap-1"
+                        >
+                          {n.sourceLabel} <ExternalLink className="h-3 w-3" />
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Indikator Mode Aplikasi Pribadi */}
+          <div className="hidden lg:flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-slate-800">
+            <div className="flex items-center gap-1.5 rounded-xl bg-rose-50/80 dark:bg-rose-950/30 border border-rose-200/60 dark:border-rose-900/60 px-3 py-1.5">
+              <Shield className="h-3.5 w-3.5 text-rose-600 dark:text-rose-400" />
+              <span className="text-[11px] font-bold text-rose-700 dark:text-rose-300">Aplikasi Pribadi</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Modal 1: Pusat Bantuan Operasional */}
+      <Dialog
+        isOpen={isHelpOpen}
+        onClose={() => setIsHelpOpen(false)}
+        title="Panduan cepat manajer"
+        description="Pilih pekerjaan yang ingin Bapak lanjutkan. Setiap pintasan membuka data sebenarnya."
+        icon={<BookOpen className="h-5 w-5" />}
+        maxWidth="xl"
+        footer={
+          <div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <ButtonLink href="/bantuan" onClick={() => setIsHelpOpen(false)} variant="outline" className="w-full gap-2 sm:w-auto">
+                <BookOpen className="h-4 w-4 text-primary-container dark:text-rose-400" />
+                Buka Panduan Lengkap
+              </ButtonLink>
+            <Button variant="primary" onClick={() => setIsHelpOpen(false)} className="w-full sm:w-auto">
+              Tutup
+            </Button>
+          </div>
+        }
+      >
+        <div className="space-y-3 text-sm leading-relaxed">
+          <div className="rounded-2xl border border-emerald-200/80 bg-emerald-50/70 p-3.5 dark:border-emerald-900/60 dark:bg-emerald-950/20">
+            <h3 className="flex items-center gap-2 text-sm font-bold text-emerald-900 dark:text-emerald-200">
+              <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+              Status organisasi: {businessStatusLabel(profile.business_status)}
+            </h3>
+            <p className="mt-1 text-xs text-emerald-800 dark:text-emerald-200/85">
+              {isSupabaseConfigured()
+                ? "Status berasal dari profil koperasi. Ini bukan penilaian otomatis bahwa seluruh gerai sudah siap."
+                : "Supabase belum dikonfigurasi. Jangan menganggap data tersimpan permanen sebelum koneksi server tersedia."}
+            </p>
+          </div>
+          <div>
+            <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Langkah kerja sehari-hari</h3>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {[
+                { href: "/monitoring", title: "Pantau laporan gerai", detail: "Rekap & gerai belum lapor", icon: Store },
+                { href: "/pekerjaan", title: "Atur tugas & agenda", detail: "PIC, prioritas & tenggat", icon: ClipboardList },
+                { href: "/anggota", title: "Periksa anggota", detail: "Daftar & status anggota", icon: Users },
+                { href: "/keuangan", title: "Tinjau keuangan", detail: "Angka operasional tercatat", icon: Wallet },
+              ].map((item) => <Link key={item.href} href={item.href} onClick={() => setIsHelpOpen(false)} className="group flex min-h-[78px] items-start gap-2.5 rounded-2xl border border-slate-200 bg-white p-3 transition-colors hover:border-rose-200 hover:bg-rose-50/50 focus-visible:outline-2 focus-visible:outline-primary-container dark:border-slate-700 dark:bg-slate-800/40 dark:hover:border-rose-800 dark:hover:bg-rose-950/20">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-rose-50 text-primary-container dark:bg-rose-950/50 dark:text-rose-300"><item.icon className="h-4 w-4" /></span>
+                <span className="min-w-0 flex-1"><strong className="block text-sm text-slate-900 dark:text-slate-100">{item.title}</strong><span className="mt-0.5 block text-xs text-slate-500 dark:text-slate-300">{item.detail}</span></span>
+                <ArrowUpRight className="h-4 w-4 shrink-0 text-slate-400 group-hover:text-primary-container" />
+              </Link>)}
+            </div>
+          </div>
+          <p className="rounded-xl bg-slate-50 px-3 py-2 text-xs text-slate-600 dark:bg-slate-800/60 dark:text-slate-300">Rekap gerai belum sama dengan saldo bank, buku besar, Neraca, atau SHU resmi.</p>
+        </div>
+      </Dialog>
+
+      {/* Modal 2: Quick Search Finder */}
+      <Dialog
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        title="Navigasi Cepat Modul Koperasi"
+        description="Cari nama menu untuk membuka halaman yang Anda perlukan."
+        position="top"
+        maxWidth="md"
+      >
+        <div className="space-y-3">
+          <div className="relative flex items-center">
+            <Search className="absolute left-3.5 h-4 w-4 text-slate-400 dark:text-slate-500 pointer-events-none" />
+            <input
+              type="text"
+              aria-label="Cari menu"
+              data-autofocus
+              placeholder="Ketik kata kunci (misal: Gerai, Tugas, Anggota, Laporan)..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="h-11 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 pl-10 pr-3 text-sm text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-rose-500"
+            />
+          </div>
+
+          <div className="space-y-1.5 max-h-64 overflow-y-auto pr-1">
+            {filteredModules.length === 0 ? (
+              <div className="py-6 text-center text-xs text-slate-400 dark:text-slate-500">
+                Tidak ada modul yang cocok dengan kata kunci &quot;{searchQuery}&quot;.
+              </div>
+            ) : (
+              filteredModules.map((m) => (
+                <Link
+                  key={m.href}
+                  href={m.href}
+                  onClick={() => setIsSearchOpen(false)}
+                  className="flex items-center justify-between rounded-xl border border-slate-100 dark:border-slate-800 p-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/60 hover:border-slate-200 dark:hover:border-slate-700 transition-colors"
+                >
+                  <div>
+                    <strong className="text-xs text-slate-900 dark:text-slate-100 block">{m.title}</strong>
+                    <span className="text-xs text-slate-500 dark:text-slate-400">{m.desc}</span>
+                  </div>
+                  <ExternalLink className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
+                </Link>
+              ))
+            )}
+          </div>
+        </div>
+      </Dialog>
+    </header>
+  );
+};
