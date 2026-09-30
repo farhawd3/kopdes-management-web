@@ -1,98 +1,199 @@
-"use client";
-
-import React, { useState } from "react";
-import { usePathname } from "next/navigation";
-import { DemoBanner } from "./DemoBanner";
-import { Sidebar } from "./Sidebar";
-import { Header } from "./Header";
-import { MobileNavigation } from "./MobileNavigation";
-import { Drawer } from "@/components/ui/Drawer";
-import { ToastProvider } from "@/components/ui/Toast";
-
-export interface AppShellProps {
-  children: React.ReactNode;
-}
-
-export const AppShell: React.FC<AppShellProps> = ({ children }) => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const pathname = usePathname();
-
-  // Halaman autentikasi ditampilkan mandiri tanpa shell (sidebar/header/banner)
-  const isAuthPage =
-    pathname.startsWith("/pin") ||
-    pathname.startsWith("/login") ||
-    pathname.startsWith("/lupa-password") ||
-    pathname.startsWith("/reset-password");
-
-  if (isAuthPage) {
-    return (
-      <ToastProvider>
-        <div className="flex h-dvh max-h-dvh flex-col overflow-hidden bg-[radial-gradient(circle_at_top_left,_rgba(255,228,230,0.55),_transparent_34%),#F7F8FC] font-sans text-on-surface antialiased dark:bg-[radial-gradient(circle_at_top_left,_rgba(166,71,104,0.12),_transparent_32%),#1D2533] dark:text-slate-100">
-          <div className="flex-1 overflow-y-auto">
-            <main id="main-content" tabIndex={-1}>
-              {children}
-            </main>
-          </div>
-        </div>
-      </ToastProvider>
-    );
-  }
-
+'use client';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { navigation } from '@/features/catalog';
+import { ThemeProvider, useTheme } from '@/lib/ThemeContext';
+import { api, resetAuthNavigation } from '@/lib/client';
+import { usePreference } from '@/lib/usePreference';
+import {
+  LayoutDashboard,
+  Sun,
+  CheckCheck,
+  FolderKanban,
+  Route,
+  ClipboardCheck,
+  Store,
+  Users,
+  MessagesSquare,
+  Files,
+  ShieldAlert,
+  Contact,
+  ChartNoAxesCombined,
+  NotebookPen,
+  Settings,
+  CircleHelp,
+  Plus,
+  LockKeyhole,
+  PanelLeft,
+  Sparkles,
+  Menu,
+} from 'lucide-react';
+const icons = [
+  LayoutDashboard,
+  Sun,
+  CheckCheck,
+  FolderKanban,
+  Route,
+  ClipboardCheck,
+  Store,
+  Users,
+  MessagesSquare,
+  Files,
+  ShieldAlert,
+  Contact,
+  ChartNoAxesCombined,
+  NotebookPen,
+  Settings,
+  CircleHelp,
+];
+function Frame({ children }: { children: React.ReactNode }) {
+  const path = usePathname(),
+    { preference, setTheme } = useTheme();
+  const [menu, setMenu] = useState(false),
+    [error, setError] = useState('');
+  const [density, setDensity] = usePreference('hub-density', 'comfortable');
+  const compact = density === 'compact';
+  const setCompact = (value: boolean) => setDensity(value ? 'compact' : 'comfortable');
+  useEffect(() => {
+    document.documentElement.dataset.density = compact ? 'compact' : 'comfortable';
+  }, [compact]);
   return (
-    <ToastProvider>
-      <a
-        href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:rounded-xl focus:bg-white focus:p-3 focus:text-slate-900"
-      >
-        Lewati ke konten utama
+    <div className="shell">
+      <a className="skip" href="#main">
+        Lewati navigasi
       </a>
-      <div className="app-canvas flex h-dvh max-h-dvh flex-col overflow-hidden font-sans text-on-surface antialiased dark:text-slate-100">
-        {/* Banner status organisasi dari profil tersimpan */}
-        <div className="shrink-0 z-40">
-          <DemoBanner />
+      <aside className={menu ? 'sidebar open' : 'sidebar'} aria-label="Navigasi utama">
+        <Link href="/beranda" className="brand">
+          <span className="brand-icon">K</span>
+          <span>
+            Kopdes<span className="brand-sub">MANAGER WORKSPACE</span>
+          </span>
+        </Link>
+        <Link href="/tugas?baru=1" className="sidebar-create">
+          <Plus size={17} />
+          <span>Buat tugas baru</span>
+        </Link>
+        <nav>
+          {navigation.map(([href, label], index) => {
+            const Icon = icons[index];
+            return (
+              <div key={href}>
+                {[0, 5, 14].includes(index) && (
+                  <div className="nav-label">
+                    {index === 0 ? 'WORKSPACE' : index === 5 ? 'OPERASIONAL' : 'PREFERENSI'}
+                  </div>
+                )}
+                <Link
+                  key={href}
+                  onClick={() => setMenu(false)}
+                  href={href}
+                  aria-current={path === href ? 'page' : undefined}
+                  title={label}
+                >
+                  <span aria-hidden>
+                    <Icon size={18} strokeWidth={1.7} />
+                  </span>
+                  <span>{label}</span>
+                </Link>
+              </div>
+            );
+          })}
+        </nav>
+        <div className="sidebar-foot">
+          <Sparkles size={18} />
+          <span>
+            Ruang untuk tumbuh.
+            <br />
+            <strong>Satu langkah setiap hari.</strong>
+          </span>
         </div>
-
-        {/* Kontainer Utama Dua Kolom: Sidebar Sticky Kiri + Kolom Kanan */}
-        <div className="flex flex-1 overflow-hidden min-h-0 relative">
-          {/* Sidebar desktop; perangkat di bawah 1280px memakai navigasi bawah. */}
-          <aside className="hidden xl:flex flex-col h-full w-72 shrink-0 z-20">
-            <Sidebar />
-          </aside>
-
-          {/* Menu lengkap ponsel dan tablet. */}
-          <Drawer
-            isOpen={isMobileMenuOpen}
-            onClose={() => setIsMobileMenuOpen(false)}
-            hideHeader
-            noPadding
-          >
-            <Sidebar
-              onItemClick={() => setIsMobileMenuOpen(false)}
-              onClose={() => setIsMobileMenuOpen(false)}
-              compact
-              className="w-full border-r-0 h-full"
-            />
-          </Drawer>
-
-          {/* Kolom Kanan: Header + Area Konten Scrollable */}
-          <div className="flex flex-1 flex-col min-w-0 h-full overflow-hidden">
-            {/* Header di LUAR div scroll */}
-            <div className="shrink-0">
-              <Header />
-            </div>
-            {/* Area Konten yang Bisa Digulir */}
-            <div
-              className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-gutter-stable"
-              style={{ scrollbarGutter: "stable" }}
+      </aside>
+      {menu && (
+        <button className="menu-shade" aria-label="Tutup menu" onClick={() => setMenu(false)} />
+      )}
+      <div className="workspace">
+        <header className="topbar">
+          <span className="breadcrumb">
+            <PanelLeft size={16} /> Ruang kerja <span>/</span>
+            <strong>{navigation.find(([href]) => href === path)?.[1] || 'Beranda'}</strong>
+          </span>
+          <div className="actions">
+            <label className="sr-only" htmlFor="theme">
+              Tema
+            </label>
+            <select
+              id="theme"
+              value={preference}
+              onChange={(e) => setTheme(e.target.value as 'system' | 'light' | 'dark')}
             >
-              <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-7xl px-3.5 pb-28 pt-4 sm:px-5 md:px-6 md:pt-5 xl:px-8 xl:pb-12 xl:pt-6">
-                {children}
-              </main>
-            </div>
+              <option value="system">Tema sistem</option>
+              <option value="light">Terang</option>
+              <option value="dark">Gelap</option>
+            </select>
+            <button
+              aria-pressed={compact}
+              onClick={() => {
+                setCompact(!compact);
+              }}
+            >
+              Ringkas
+            </button>
+            <button
+              onClick={async () => {
+                try {
+                  await api('auth/pin', { action: 'logout' });
+                  resetAuthNavigation('/pin');
+                } catch (e) {
+                  setError((e as Error).message);
+                }
+              }}
+            >
+              <LockKeyhole size={15} />
+              <span>Kunci</span>
+            </button>
+            <Link className="primary quick-add" href="/tugas?baru=1">
+              <Plus size={16} /> Tugas
+            </Link>
           </div>
-        </div>
-        <MobileNavigation onOpenMenu={() => setIsMobileMenuOpen(true)} />
+        </header>
+        {error && (
+          <p role="alert" className="notice">
+            {error}
+          </p>
+        )}
+        <main id="main" tabIndex={-1}>
+          {children}
+        </main>
       </div>
-    </ToastProvider>
+      <nav className="bottom-nav" aria-label="Navigasi ponsel">
+        <Link href="/beranda" aria-current={path === '/beranda' ? 'page' : undefined}>
+          <LayoutDashboard size={20} />
+          <span>Beranda</span>
+        </Link>
+        <Link href="/proyek" aria-current={path === '/proyek' ? 'page' : undefined}>
+          <FolderKanban size={20} />
+          <span>Proyek</span>
+        </Link>
+        <Link className="add" href="/tugas?baru=1" aria-label="Tambah tugas">
+          <Plus size={24} />
+        </Link>
+        <Link href="/tugas" aria-current={path === '/tugas' ? 'page' : undefined}>
+          <CheckCheck size={20} />
+          <span>Tugas</span>
+        </Link>
+        <button aria-expanded={menu} onClick={() => setMenu(!menu)}>
+          <Menu size={20} />
+          <span>Menu</span>
+        </button>
+      </nav>
+    </div>
   );
-};
+}
+export function AppShell({ children }: { children: React.ReactNode }) {
+  return (
+    <ThemeProvider>
+      <Frame>{children}</Frame>
+    </ThemeProvider>
+  );
+}

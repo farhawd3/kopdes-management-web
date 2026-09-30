@@ -8,6 +8,8 @@
 | [Checklist](CHECKLIST.md) | Backlog dan template 90 hari |
 | [Workflow](WORKFLOW.md) | Alur kerja dan status |
 | [Pemetaan file](PEMETAAN-FILE.md) | Rujukan transformasi kode lama |
+| [Arsitektur](ARSITEKTUR.md) | Struktur runtime, domain data, keamanan dan batasan |
+| [Supabase](SUPABASE.md) | Panduan pengaturan, migrasi cloud dan PIN |
 | [Panduan AI](../AGENTS.md) | Aturan implementasi |
 | [Changelog](../CHANGELOG.md) | Perubahan aktual |
 

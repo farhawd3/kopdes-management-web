@@ -1,121 +1,37 @@
-> Pembaruan pemilik: baca [KEPUTUSAN.md](KEPUTUSAN.md). Dokumen ini adalah rancangan; progres aktual ada di [STATUS.md](STATUS.md).
+# Checklist Kopdes Management Web
 
-# Checklist — Puntukrejo Manager Hub
+## Bagian A — Implementasi dan penerimaan
 
-Dua bagian:
-- **Bagian A** — checklist pengembangan/redesign aplikasi.
-- **Bagian B** — checklist 90 hari kerja manajer (juga menjadi *template seed* aplikasi).
+### Fondasi
+- [x] Repo privat baru, push awal, riwayat Git lama diarsipkan lokal.
+- [x] Dokumen terbaru menjadi `docs`, panduan AI tunggal dan gitignore dirapikan.
+- [x] Modul lama di luar lingkup dihapus dari runtime; arsip lokal dipertahankan.
+- [x] Supabase baru dan migrasi enam tabel disetujui; tabel cloud dapat diakses.
+- [x] PIN, sesi, batas percobaan, validasi server, RLS, relasi, dan transaksi database.
 
-Tanda: `[ ]` belum · `[x]` selesai · **(W)** wajib · **(O)** opsional.
-Rujukan: [PRD](PRD.md) · [Workflow](WORKFLOW.md) · [Pemetaan File](PEMETAAN-FILE.md)
+### Implementasi tersedia
+- [x] Beranda, Hari Ini, daftar/papan/kalender tugas, subtugas, prasyarat, tugas berulang.
+- [x] Halaman proyek: tujuan, PIC, catatan, progres, milestone, tugas terhubung.
+- [x] Pencarian, filter status/proyek/prioritas, pengurutan tugas.
+- [x] Roadmap awal, checklist kesiapan, gerai, batang/radar progres.
+- [x] Kontak/interaksi, rapat/notulen/keputusan, dokumen, risiko/isu, tim/pelatihan, jurnal.
+- [x] Snapshot laporan, cetak A4/PDF, salin teks WhatsApp.
+- [x] Profil, template 43 tugas, tema, kepadatan, ekspor/pemulihan JSON.
+- [x] Tampilan baru: sidebar berkelompok, ikon, latar hangat, aksen rose, navigasi ponsel.
 
----
+### Penerimaan dan pekerjaan lanjutan
+- [ ] UAT manajer minimal tiga hari dengan data nyata.
+- [ ] Uji perangkat fisik Android/iOS, aksesibilitas menyeluruh, Lighthouse.
+- [ ] Pemulihan cadangan data nyata di lingkungan uji.
+- [ ] Gantt lanjutan: baseline, jalur kritis, drag tanggal, zoom.
+- [ ] Burnup berbasis riwayat perubahan cakupan lengkap.
+- [ ] PWA/offline, palet perintah, CSV, unggah berkas, tautan laporan publik.
+- [ ] Editor blok bebas dan kolaborasi real-time (di luar implementasi awal).
+- [ ] Anggaran, jika diputuskan dibutuhkan.
 
-# BAGIAN A — Checklist Pengembangan
-
-## Fase 0 — Fondasi (1–4 Okt)
-
-### 0.1 Persetujuan & masukan
-- [x] Analisis kode lama (`src.zip`, 130 file) **(W)**
-- [x] PRD, Checklist, Workflow, Pemetaan File dibuat **(W)**
-- [ ] Pemilik produk menyetujui PRD **(W)**
-- [ ] Jawaban Q1–Q7 dari PRD diterima **(W)**
-- [ ] `package.json`, `tailwind.config`, `next.config`, `.env.example`, skema SQL diterima **(W)**
-
-### 0.2 Pembersihan repositori
-- [ ] Buat cabang `redesign/manager-hub` dan tag `v0-legacy` pada kode lama **(W)**
-- [ ] Ekspor cadangan JSON `members`, `unit_daily_reports`, `products`, `tasks`, `business_units` **(W)**
-- [ ] Hapus modul di luar lingkup (daftar di Pemetaan File §1) **(W)**
-- [ ] Hapus rute stub: `login`, `lupa-password`, `reset-password`, `auth/preview`, `DemoBanner` **(W)**
-- [ ] Hapus API kunci: `integrations/openai-key`, `integrations/unit-key`, komponen & `lib/server/*key-store` **(W)**
-- [ ] Hapus tipe mati (PO, GR, POS, kas, jurnal) dari `types/index.ts` **(W)**
-- [ ] Hapus nomor WhatsApp, "Abdul Halim", "Ladang Laweh", "Banuhampu" dari seluruh kode **(W)**
-- [ ] `grep -ri "anggota\|omzet\|omset\|revenue\|shu\|stok"` tidak menemukan sisa yang tak disengaja **(W)**
-- [ ] Jalankan `tsc --noEmit` dan `eslint` bersih setelah penghapusan **(W)**
-
-### 0.3 Restrukturisasi
-- [ ] Buat struktur `features/`, `components/charts/`, `lib/date`, `lib/progress.ts` **(W)**
-- [ ] Pecah `lib/repository/index.ts` (2.152 baris) menjadi layanan per domain **(W)**
-- [ ] Pindahkan repositori *in-memory* ke `tests/` atau hapus **(W)**
-- [ ] Ganti nama rute sesuai IA baru + alihan sementara dari rute lama **(O)**
-- [ ] Tambahkan `README.md`, `docs/`, `CHANGELOG.md` **(W)**
-
-### 0.4 Sistem desain
-- [ ] Token warna, tipografi, radius, bayangan di `globals.css` + `tailwind.config` **(W)**
-- [ ] Mode gelap dan kepadatan (nyaman/ringkas) **(W)**
-- [ ] Restyle komponen `ui/`: Button, Card, Badge, Input, Select, Dialog, Drawer, Toast, DataTable, EmptyState **(W)**
-- [ ] Komponen baru: `BottomSheet`, `Tabs`, `ProgressRing`, `StatusPill`, `Tooltip`, `Skeleton` **(W)**
-- [ ] Verifikasi kontras teks/latar ≥ 4,5:1 **(W)**
-
-### 0.5 Kerangka aplikasi
-- [ ] `AppShell` baru: sidebar penuh / rel ikon / bilah bawah **(W)**
-- [ ] Tombol tambah cepat (+) global **(W)**
-- [ ] Halaman PIN baru: ≥ 6 digit, batas percobaan, jeda eksponensial **(W)**
-- [ ] Wizard pengaturan awal (profil koperasi, nama manajer, tanggal mulai) **(W)**
-
-## Fase 1 — Rilis 1 / MVP (5–18 Okt)
-
-### 1.1 Data
-- [ ] Migrasi: `workstreams`, `milestones`, `work_items` (+kolom), `checklist_items` (+kolom), `units` **(W)**
-- [ ] Seed workstream & template 90 hari (Bagian B) **(W)**
-- [ ] Seed tujuh gerai standar dengan status "rencana" **(W)**
-- [ ] Arsipkan tabel `members`, `unit_daily_reports`, `products` **(W)**
-
-### 1.2 Fitur
-- [ ] **M1 Beranda:** cincin progres, kartu KPI, burnup, distribusi status, "Perlu perhatian" **(W)**
-- [ ] **M2 Hari Ini:** Terlambat/Hari ini/Menyusul, aksi cepat, tambah cepat **(W)**
-- [ ] **M3 Tugas:** daftar, papan seret-lepas, kalender, filter, pencarian, subtugas **(W)**
-- [ ] **M4 Roadmap (milestone):** timeline milestone per workstream **(W)**
-- [ ] **M5 Kesiapan:** checklist per workstream & gerai, bukti, persen otomatis **(W)**
-- [ ] **M6 Gerai:** daftar, detail, batang & radar kesiapan **(W)**
-- [ ] **M7 Pengaturan:** profil, PIN, tema, cadangan/pulihkan **(W)**
-- [ ] Tugas berulang **(O)**
-
-### 1.3 Kualitas Rilis 1
-- [ ] Uji di 360 px, 768 px, 1024 px, 1440 px **(W)**
-- [ ] Uji Chrome Android, Safari iOS, Chrome desktop **(W)**
-- [ ] Lighthouse Perf & A11y ≥ 90 **(W)**
-- [ ] Navigasi keyboard penuh di form dan papan **(W)**
-- [ ] Keadaan kosong, memuat, dan galat di setiap halaman **(W)**
-- [ ] Manajer memakai ≥ 3 hari; catat umpan balik **(W)**
-
-## Fase 2 — Rilis 2 (19 Okt–8 Nov)
-- [ ] **Gantt:** bar, dependensi FS, penanda hari ini, zoom, baseline, jalur kritis **(W)**
-- [ ] Tampilan Gantt ponsel (timeline vertikal) **(W)**
-- [ ] **Pemangku kepentingan:** daftar, interaksi, peta pengaruh–minat, pengingat kontak **(W)**
-- [ ] **Rapat & notulen:** agenda, notulen, keputusan, aksi → tugas **(W)**
-- [ ] **Dokumen & legalitas:** registri, masa berlaku, pengingat 30/14/7 hari **(W)**
-- [ ] **Risiko & isu:** matriks 5×5, mitigasi, isu → tugas **(W)**
-- [ ] **Laporan mingguan/bulanan:** tampilan cetak A4, teks WhatsApp, snapshot **(W)**
-- [ ] Log keputusan dapat dicari **(O)**
-
-## Fase 3 — Rilis 3 (9–22 Nov)
-- [ ] Tim & pelatihan **(O)**
-- [ ] Jurnal kerja **(O)**
-- [ ] Anggaran proyek (jika Q3 = ya) **(O)**
-- [ ] Palet perintah `Ctrl/⌘+K` **(O)**
-- [ ] PWA: manifest, ikon, cache dasar **(O)**
-- [ ] Impor/ekspor CSV **(O)**
-- [ ] Pengingat dalam aplikasi **(O)**
-
-## Fase 4 — UAT & Hardening (23–30 Nov)
-- [ ] Audit aksesibilitas (pembaca layar, kontras, fokus) **(W)**
-- [ ] Uji keamanan: PIN brute-force, sesi, header keamanan, validasi input **(W)**
-- [ ] Uji cadangan → pulihkan pada data nyata **(W)**
-- [ ] Hapus permanen arsip `members`/`daily_reports`/`products` (setelah 30 hari, atas persetujuan) **(W)**
-- [ ] Perbarui seluruh dokumentasi; tandai `v1.0.0` **(W)**
-
-## Definition of Done (setiap fitur)
-- [ ] Sesuai kriteria terima di PRD
-- [ ] Responsif 360–1440 px
-- [ ] Keadaan kosong/memuat/galat ada
-- [ ] Validasi zod di klien & server
-- [ ] Aksesibel keyboard + label ARIA
-- [ ] Tanpa `any` baru; lulus `tsc` dan `eslint`
-- [ ] Dokumen & CHANGELOG diperbarui
+Hasil pengujian otomatis dan viewport terkini dicatat di [STATUS.md](STATUS.md). Checklist implementasi bukan pernyataan bahwa UAT seluruh PRD sudah selesai. Model data aktual mengikuti [KEPUTUSAN.md](KEPUTUSAN.md).
 
 ---
-
 # BAGIAN B — Checklist 90 Hari Pertama Manajer KDMP Puntukrejo
 
 > Hitungan **H+N** dari tanggal mulai kerja (default **1 Oktober 2026**, ubah di Pengaturan).
@@ -205,5 +121,3 @@ Rujukan: [PRD](PRD.md) · [Workflow](WORKFLOW.md) · [Pemetaan File](PEMETAAN-FI
 | **Dua mingguan** | Hubungi pemangku yang belum dihubungi; tinjau risiko |
 | **Bulanan** | Rapat pengurus; laporan bulanan; cadangan JSON; tinjau dokumen kedaluwarsa |
 | **Per 30 hari** | Retrospektif: apa berjalan baik, apa diubah |
-
-

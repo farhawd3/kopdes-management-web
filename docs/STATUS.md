@@ -1,29 +1,44 @@
-# Status — 30 September 2026
+# Status proyek — 30 September 2026
 
-## Selesai
-- Seluruh dokumen docs-new dibaca dan dijadikan dokumentasi utama.
-- Dokumen dinamai PRD, CHECKLIST, WORKFLOW, PEMETAAN-FILE; changelog di akar.
-- Dokumentasi/prompts/brief lama diarsip lokal dan dikecualikan dari Git.
-- Panduan AI ditulis ulang untuk arah produk baru.
-- Gitignore melindungi semua variasi env, kredensial, cadangan, cache Supabase.
+## Fondasi selesai
 
-## Berjalan
-- Menyiapkan repo GitHub baru dan riwayat commit bersih.
-- Memverifikasi kode dasar sebelum refaktor.
+- Repo privat `halimxn/kopdes-management-web` dibuat dengan commit awal tanpa induk dan berhasil dipush.
+- Dokumen terbaru menggantikan docs lama; panduan AI tunggal, gitignore dan aturan akhir baris dirapikan.
+- Kode, tes, SQL reset, dokumen, konfigurasi, dan riwayat lama diarsip lokal serta dikecualikan dari Git.
+- Runtime lama diganti aplikasi baru. Modul anggota, omzet, stok dagang, dan integrasi kunci AI tidak digunakan.
+- Supabase baru: `mqycnhebhzqaziouipet`, Free, Singapore. Migrasi enam tabel disetujui pemilik dan tabel cloud dapat dibaca.
+- Setup PIN dan login berhasil (respons 200); Beranda dan 16 API domain berhasil dimuat. Database lama tidak diubah.
 
-## Belum selesai
-- Seluruh transformasi aplikasi sesuai PRD; kode runtime masih kode lama.
-- Supabase baru dan migrasi baru.
-- Penguatan PIN, RLS baru, dan sesi.
-- Uji responsif 360–1440 px, perangkat nyata, Lighthouse, UAT.
+## Implementasi tersedia
 
-Tes kode dasar akan dicatat setelah dijalankan. Jangan menyebut proyek baru siap produksi.
+- Beranda, Hari Ini, tugas daftar/papan/kalender, tambah cepat, subtugas, POAC, prasyarat, pengulangan.
+- Proyek/bidang kerja: tujuan, PIC, tanggal, catatan, progres, milestone terkait, tugas dalam lingkup proyek. Filter prioritas dan pengurutan tugas.
+- Tampilan baru terinspirasi workspace dokumen: latar hangat, aksen rose, ikon konsisten, sidebar berkelompok, shortcut, navigasi ponsel.
+- Milestone dan Gantt awal; checklist, gerai, radar kesiapan.
+- Kontak/interaksi, rapat/notulen/keputusan, tindak lanjut ke tugas, dokumen, risiko/isu, tim/pelatihan, jurnal.
+- Snapshot laporan periode pilihan, cetak A4/PDF, salin teks WhatsApp.
+- Profil, tema sistem/terang/gelap, kepadatan, cadangan/pemulihan.
+- Template 43 tugas, enam milestone, tujuh bidang kerja, tujuh gerai. Seluruh status awal rencana.
+- PIN scrypt, sesi acak HttpOnly, rate limit persisten, Zod, pembatasan origin, RLS default deny, pemeriksaan relasi database.
 
-## Verifikasi dasar — 30 September 2026
-- Vitest: 32 berkas, 228/228 tes lulus.
-- TypeScript: lulus tanpa error.
-- Next.js production build: sukses, 43 halaman.
-- Pemindaian pola rahasia calon commit: tidak ada temuan; env lokal dan arsip diabaikan.
-- Repo privat GitHub dibuat: https://github.com/halimxn/kopdes-management-web.
-- Riwayat Git aktif kosong; arsip riwayat lama diverifikasi dengan git fsck (tanpa objek rusak/hilang).
-- Hasil tes di atas untuk kode dasar lama, bukan penerimaan fitur baru.
+## Verifikasi
+
+- Aplikasi baru: **51/51 tes lulus**, termasuk lingkup proyek, filter, aksi tugas, keamanan, dan PostgreSQL lokal.
+- ESLint, TypeScript dan build produksi Next.js berhasil.
+- Audit dependency terakhir: 0 kerentanan; audit sumber: 42/42 berkas terjangkau dari titik masuk aplikasi.
+- Pemeriksaan singkat Beranda/Proyek pada viewport 360, 768, 1024, 1440 px: lebar dokumen sesuai layar, tanpa overflow halaman. Tema terang/gelap diperiksa; formulir proyek dapat dibuka/ditutup tanpa menyimpan data.
+- Pemeriksaan browser memakai data cloud kosong. Alur proyek dengan data diisolasi melalui tes lokal, bukan data fiktif di produksi.
+- Pemindaian pola rahasia tidak menemukan kandidat pada berkas yang akan masuk Git; env dan arsip diabaikan.
+
+## Batas dan penerimaan berikutnya
+
+- UAT data nyata, perangkat fisik Android/iOS/Safari, Lighthouse dan aksesibilitas menyeluruh belum dilakukan.
+- Baseline/drag tanggal/jalur kritis Gantt, serta riwayat cakupan lengkap untuk burnup belum tersedia.
+- Editor blok bebas dan kolaborasi real-time seperti Notion belum tersedia.
+- PWA/offline, palet perintah, CSV, unggah berkas, tautan publik laporan belum tersedia.
+- Anggaran belum diaktifkan, menunggu keputusan produk.
+- Profil dan data operasional nyata diisi pemilik. Setelah profil lengkap, pemilik dapat memasang template atau membuat proyek sendiri.
+
+## Panduan berikutnya
+
+Buka **Proyek → Proyek baru** untuk ruang kerja manual, atau **Pengaturan** untuk profil dan template 90 hari. Ikuti [WORKFLOW.md](WORKFLOW.md). Kredensial dan SQL cloud tetap dilakukan pemilik mengikuti [SUPABASE.md](SUPABASE.md). Tidak perlu mengulang migrasi untuk halaman Proyek.

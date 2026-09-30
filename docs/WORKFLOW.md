@@ -1,206 +1,43 @@
-> Pembaruan pemilik: baca [KEPUTUSAN.md](KEPUTUSAN.md). Dokumen ini adalah rancangan; progres aktual ada di [STATUS.md](STATUS.md).
+# Alur kerja Kopdes Management Web
 
-# Workflow — Puntukrejo Manager Hub
+## Menyiapkan ruang kerja
 
-Tiga alur: **(1)** alur pengembangan, **(2)** alur kerja harian–bulanan manajer di aplikasi, **(3)** alur status data.
-Diagram memakai Mermaid (tampil otomatis di GitHub/VS Code).
+1. Ikuti [panduan Supabase](SUPABASE.md), gunakan proyek baru, dan simpan rahasia hanya di `.env.local`.
+2. Pemilik membuat PIN sendiri, lalu masuk.
+3. Isi profil koperasi dan tanggal mulai di Pengaturan.
+4. Pilih memasang template 90 hari atau membuat proyek sendiri. Template hanya berisi rencana awal.
 
-Rujukan: [PRD](PRD.md) · [Checklist](CHECKLIST.md) · [Pemetaan File](PEMETAAN-FILE.md)
+## Mengelola proyek dan tugas
 
----
+1. Buka **Proyek**, pilih **Proyek baru**, isi judul, kode singkat, tujuan, PIC, tanggal, dan catatan.
+2. Buka kartu proyek. Catatan, progres, milestone terkait, dan tugas berada dalam satu halaman.
+3. Tambahkan tugas dari halaman proyek agar hubungan proyek terisi otomatis.
+4. Gunakan tampilan **Daftar**, **Papan**, atau **Kalender** sesuai kebutuhan. Filter status/prioritas, cari catatan, dan urutkan tenggat.
+5. Klik judul tugas untuk mengubah uraian, tenggat, subtugas, prasyarat, catatan, dan tautan bukti. Papan menyediakan penundaan satu hari/minggu serta penghapusan dengan konfirmasi.
+6. Pindahkan status melalui dropdown atau seret kartu pada papan. Tugas berulang menghasilkan penerus sekali ketika diselesaikan.
 
-## 1. Alur Pengembangan
+Bidang kerja template dan proyek buatan sendiri menggunakan data yang sama. Persentase memperhitungkan progres subtugas; tugas dibatalkan tidak masuk penyebut. Data tanpa tugas belum memiliki progres yang bisa dinilai.
 
-### 1.1 Tahapan
+## Rutinitas manajer
 
-```mermaid
-flowchart LR
-    A[PRD disetujui] --> B[Fase 0<br/>Bersih-bersih & fondasi]
-    B --> C[Fase 1<br/>Rilis 1 MVP]
-    C --> D{Dipakai manajer<br/>≥ 3 hari}
-    D -- umpan balik --> C
-    D -- lolos --> E[Fase 2<br/>Rilis 2]
-    E --> F[Fase 3<br/>Rilis 3]
-    F --> G[Fase 4<br/>UAT & hardening]
-    G --> H[v1.0.0]
-```
+- Pagi: buka Hari Ini, tinjau tugas terlambat dan agenda rapat.
+- Saat bekerja: catat hasil rapat, keputusan, isu, dan tindak lanjut; hubungkan tugas dengan proyek, milestone, atau gerai.
+- Sore: perbarui kesiapan/bukti dan jurnal kerja. Jangan menandai pekerjaan selesai tanpa pelaksanaan nyata.
+- Mingguan: tinjau roadmap dan risiko, simpan snapshot laporan, cetak PDF bila diperlukan.
+- Berkala: ekspor cadangan JSON. Pemulihan mengganti catatan dan snapshot; coba pada lingkungan uji lebih dahulu.
 
-### 1.2 Alur satu fitur
+## Status dan keamanan
 
-```mermaid
-flowchart TD
-    S[Ambil item dari backlog] --> T[Baca kriteria terima di PRD]
-    T --> U[Skema zod + tipe]
-    U --> V[API route + layanan domain]
-    V --> W[UI: kosong → memuat → galat → data]
-    W --> X[Uji 360 / 768 / 1024 / 1440 px]
-    X --> Y{Definition of Done<br/>terpenuhi?}
-    Y -- tidak --> W
-    Y -- ya --> Z[Perbarui docs + CHANGELOG]
-    Z --> PR[Pull request → merge → deploy preview]
-```
+Tugas: `rencana → proses → selesai`, atau `dibatalkan`. Tanggal selesai diisi ketika status berubah ke selesai. Semua perubahan tetap diperiksa server, termasuk relasi/prasyarat, asal permintaan, dan sesi PIN.
 
-### 1.3 Aturan cabang dan commit
-- Cabang: `main` (stabil) ← `redesign/manager-hub` ← `feat/<modul>-<hal>`.
-- Tag `v0-legacy` pada kode lama sebelum penghapusan apa pun.
-- Commit: `feat(tugas): papan seret-lepas`, `fix(gantt): konflik dependensi`, `chore(cleanup): hapus modul anggota`, `docs: perbarui PRD`.
-- Satu PR = satu modul/perubahan; PR penghapusan dipisah dari PR fitur.
+Checklist: `rencana → proses → selesai`. Gerai: `rencana → persiapan → siap uji → siap buka → aktif`. Risiko/isu: `terbuka → ditangani → ditutup`.
 
-### 1.4 Urutan pembersihan yang aman
+## Siklus pengembangan
 
-```mermaid
-flowchart TD
-    A[Tag v0-legacy] --> B[Ekspor JSON data lama]
-    B --> C[Hapus halaman + komponen<br/>modul di luar lingkup]
-    C --> D[Hapus API + lib terkait]
-    D --> E[Hapus tipe mati]
-    E --> F[Hapus hardcode identitas lama]
-    F --> G[tsc + eslint + grep sisa kata terlarang]
-    G --> H[Restruktur folder]
-    H --> I[Arsipkan tabel DB lama<br/>hapus permanen setelah 30 hari]
-```
+1. Baca STATUS, KEPUTUSAN, kebutuhan PRD, dan kode yang berkaitan.
+2. Implementasikan paket kerja; gunakan schema bersama, validasi server, serta keadaan kosong/memuat/galat.
+3. Jalankan tes, lint, typecheck, build; periksa UI utama secara terarah pada ukuran relevan.
+4. Perbarui STATUS, CHECKLIST, dan CHANGELOG sesuai bukti.
+5. Commit/push satu paket tuntas. Deployment dan migrasi cloud dipandu sesuai arahan pemilik.
 
-### 1.5 Lingkungan
-| Lingkungan | Tujuan | Catatan |
-|---|---|---|
-| Lokal | Pengembangan | `.env.local`, Supabase proyek dev |
-| Preview (Vercel) | Tinjau tiap PR | Data uji, bukan data nyata |
-| Produksi | Dipakai manajer | Migrasi DB dijalankan manual dengan cadangan |
-
-Variabel lingkungan tidak pernah di-*commit*; sediakan `.env.example` tanpa nilai rahasia.
-
-### 1.6 Kerangka kualitas
-Sebelum merge: `tsc --noEmit` · `eslint` · uji komponen inti · Lighthouse pada halaman utama · cek manual di ponsel.
-
----
-
-## 2. Alur Kerja Manajer di Aplikasi
-
-### 2.1 Siklus harian
-
-```mermaid
-flowchart TD
-    A[Buka Hari Ini] --> B[Tinjau Terlambat]
-    B --> C[Pilih ≤ 3 prioritas]
-    C --> D[Kerjakan / rapat / lapangan]
-    D --> E{Ada hal baru?}
-    E -- tugas --> F[Tombol +  → tugas dengan tenggat]
-    E -- keputusan --> G[Catat di Rapat / Keputusan]
-    E -- kendala --> H[Catat Isu → jadikan tugas]
-    F --> D
-    G --> D
-    H --> D
-    D --> I[Akhir hari: tandai selesai + jurnal singkat]
-```
-
-### 2.2 Siklus mingguan
-
-```mermaid
-flowchart LR
-    Sen[Senin<br/>Tinjau roadmap & milestone<br/>rencana minggu ini] --> Tengah[Selasa–Kamis<br/>Eksekusi & koordinasi]
-    Tengah --> Jum[Jumat<br/>Perbarui status<br/>Buat laporan mingguan]
-    Jum --> Bagi[Bagikan ke Pengurus / Pengawas / Kades<br/>PDF cetak atau teks WhatsApp]
-    Bagi --> Sen
-```
-
-### 2.3 Alur rapat → tindak lanjut
-
-```mermaid
-flowchart TD
-    A[Jadwalkan rapat + agenda] --> B[Rapat berlangsung]
-    B --> C[Tulis notulen]
-    C --> D[Catat keputusan]
-    C --> E[Catat butir aksi + PJ + tenggat]
-    E --> F[Otomatis jadi tugas di Tugas]
-    F --> G[Tampil di Hari Ini saat jatuh tempo]
-    D --> H[Log keputusan dapat dicari]
-    G --> I[Selesai → dilaporkan di laporan mingguan]
-```
-
-### 2.4 Alur pemangku kepentingan
-
-```mermaid
-flowchart LR
-    A[Tambah pemangku] --> B[Nilai pengaruh & minat]
-    B --> C[Catat interaksi]
-    C --> D{Belum dihubungi > 14 hari?}
-    D -- ya --> E[Pengingat + saran tugas tindak lanjut]
-    D -- tidak --> C
-```
-
-### 2.5 Alur kesiapan gerai
-
-```mermaid
-flowchart LR
-    R[Rencana] --> P[Persiapan] --> U[Siap uji] --> B[Siap buka] --> A[Aktif]
-    P -. checklist wajib < 100% .-> P
-    U -. temuan uji coba .-> P
-    B -. keputusan pengurus tercatat .-> A
-```
-
-Syarat perpindahan status disarankan (bukan dipaksa): **Siap uji** ≥ 70% checklist wajib · **Siap buka** 100% checklist wajib + SOP disetujui + petugas terlatih · **Aktif** setelah keputusan pembukaan tercatat.
-
-### 2.6 Alur laporan
-
-```mermaid
-flowchart TD
-    A[Pilih jenis & periode] --> B[Sistem mengumpulkan data:<br/>tugas selesai, milestone, terlambat,<br/>keputusan, risiko, rencana depan]
-    B --> C[Pratinjau A4]
-    C --> D[Edit catatan manajer]
-    D --> E[Simpan snapshot]
-    E --> F[Cetak/PDF]
-    E --> G[Salin teks WhatsApp]
-```
-
----
-
-## 3. Alur Status Data
-
-### 3.1 Tugas
-
-```mermaid
-stateDiagram-v2
-    [*] --> Rencana
-    Rencana --> DalamProses: mulai
-    DalamProses --> Selesai: tandai selesai
-    DalamProses --> Rencana: tunda
-    Rencana --> Dibatalkan: batalkan
-    DalamProses --> Dibatalkan: batalkan
-    Selesai --> DalamProses: buka kembali
-    Dibatalkan --> Rencana: pulihkan
-```
-
-Penanda turunan (tidak disimpan): **Terlambat** = tenggat < hari ini dan status bukan Selesai/Dibatalkan · **Berisiko** = tenggat ≤ 2 hari dan progres < 50% atau ada prasyarat belum selesai.
-
-### 3.2 Status milestone
-- **Tepat waktu:** semua tugas anak on-track.
-- **Berisiko:** ≥ 1 tugas anak berisiko atau tenggat ≤ 7 hari dengan progres < 70%.
-- **Terlambat:** tanggal target lewat dan belum tercapai.
-- **Tercapai:** semua tugas anak selesai; `actual_date` terisi.
-
-### 3.3 Rumus progres (satu sumber kebenaran: `lib/progress.ts`)
-- Progres tugas = subtugas selesai / total subtugas (atau 0/100 bila tanpa subtugas).
-- Progres milestone/workstream = rata-rata progres tugas, bobot sama (bobot durasi opsional).
-- Progres 90 hari = tugas selesai / tugas tidak dibatalkan.
-- Kesiapan gerai = checklist wajib selesai / total checklist wajib gerai tersebut.
-
-Angka yang sama dipakai oleh Beranda, Gerai, dan Laporan.
-
----
-
-## 4. Alur Migrasi Data Lama
-
-```mermaid
-flowchart TD
-    A[Ekspor JSON: tasks, business_units,<br/>members, unit_daily_reports, products] --> B[Simpan cadangan di luar repo]
-    B --> C[Migrasi skema: tambah kolom & tabel baru]
-    C --> D[Petakan tasks → work_items<br/>business_units → units]
-    D --> E[Pindahkan members, unit_daily_reports,<br/>products ke skema archive_*]
-    E --> F[Verifikasi aplikasi baru berjalan]
-    F --> G[Tunggu 30 hari]
-    G --> H[Hapus archive_* atas persetujuan]
-```
-
-Data uji/demo dari Ladang Laweh **tidak** dimigrasikan; mulai dari data kosong Puntukrejo + template 90 hari.
-
-
+Rancangan lanjutan (baseline Gantt, PWA, editor blok bebas, kolaborasi) tidak boleh ditampilkan sebagai fitur tersedia sebelum benar-benar diimplementasikan dan diuji.

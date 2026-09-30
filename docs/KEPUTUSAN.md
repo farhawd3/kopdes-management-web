@@ -1,21 +1,26 @@
 # Keputusan proyek — 30 September 2026
 
-Instruksi pemilik memperbarui rancangan yang masih menyebut aplikasi lama.
+Instruksi pemilik terbaru menjadi acuan jika berbeda dari rancangan awal PRD.
 
 | Hal | Keputusan |
 |---|---|
-| Repositori | `kopdes-management-web`, riwayat baru tanpa induk |
-| Produk | Kopdes Management Web; profil awal KDMP Puntukrejo |
-| Kode | Dasar refaktor, belum memenuhi PRD baru |
-| Urutan | Push dasar proyek dahulu, lalu transformasi fitur |
-| Database | Supabase baru; database lama tidak diubah |
-| Dokumen | `docs-new` menjadi `docs`, nama tanpa nomor; changelog di akar |
-| Arsip lokal | `.local-backup/legacy-20260930`, diabaikan Git |
-| Data awal | Kosong + template rencana belum selesai; gerai rencana |
-| Profil | Identitas yang belum diketahui diisi saat pengaturan awal |
-| Tanggal mulai | Default rancangan 1 Oktober 2026, dapat diubah |
-| Anggaran | Belum diaktifkan, membutuhkan keputusan pemilik |
+| Repositori | Privat `halimxn/kopdes-management-web`, riwayat baru tanpa induk |
+| Produk | Ruang kerja pribadi manajer koperasi; identitas mengikuti profil |
+| Arah pengalaman | Task/project manager terinspirasi ruang kerja Notion: proyek, catatan, tugas terhubung, daftar/papan/kalender |
+| Kode | Runtime baru yang sederhana; kode lama menjadi arsip referensi lokal |
+| Database | Supabase baru `mqycnhebhzqaziouipet`; database lama tidak diubah |
+| Model data | Enam tabel fisik; 16 domain tervalidasi Zod dalam `hub_records` JSONB, disertai relasi dan transaksi SQL |
+| Migrasi | `20260930000001_manager_hub.sql` dijelaskan, disetujui pemilik, dan tabel terverifikasi tersedia |
+| Proyek | Memakai domain `workstreams`; tujuan, catatan, PIC, tanggal, tugas, dan milestone. Bidang template tetap kompatibel |
+| Form | Form HTML/React dan Zod bersama; tidak menambah lapisan React Hook Form yang belum diperlukan |
+| Desain | Latar hangat, aksen rose, ikon konsisten, sidebar berkelompok; tema gelap dan tata letak adaptif |
+| Dokumen | `docs-new` menggantikan `docs`; CHANGELOG dan AGENTS di akar |
+| Arsip | `.local-backup/legacy-20260930`, diabaikan Git, termasuk Git lama dan konfigurasi lama |
+| Data awal | Kosong; template adalah rencana, bukan capaian nyata |
+| Tanggal | Rancangan mulai 1 Oktober 2026, bisa diubah di profil |
+| Tindakan manual | Pemilik mengisi kredensial dan menjalankan SQL cloud dengan panduan AI |
+| Anggaran | Belum diaktifkan |
 
-PRD, checklist, workflow, dan pemetaan berasal dari audit arsip sumber lama. Jumlah file dan jadwal merupakan konteks rancangan, bukan audit implementasi aktif. Status nyata ada di STATUS.md.
+Model enam tabel menggantikan usulan tabel fisik per domain di rancangan awal. Pengayaan proyek disimpan pada JSONB dengan validasi server; tidak memerlukan SQL tambahan. Jangan mengeksekusi migrasi cloud baru tanpa menjelaskan dan mengonfirmasikannya.
 
-Usulan memakai Supabase lama, menghapus tabel setelah 30 hari, tag legacy di repo baru, dan menunggu persetujuan PRD digantikan keputusan di atas. Konfirmasi SQL cloud tetap diperlukan sebelum berkas migrasi tertentu dijalankan pada proyek tertentu.
+Tidak memakai database lama, menghapus tabel lamanya, atau membawa tag legacy ke repo baru. Status pengujian dan fitur lanjutan yang belum selesai ada di [STATUS.md](STATUS.md). Implementasi ini belum menyamai editor blok bebas atau kolaborasi real-time Notion.

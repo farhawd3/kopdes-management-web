@@ -10,6 +10,8 @@
 - Kode lama hanya dasar refaktor. Produk baru tidak mencakup anggota, omzet, stok dagang, akuntansi, kasir, atau kunci AI pengguna.
 - Identitas berasal dari profil. Jangan mengarang nama, kontak, capaian, atau data operasional.
 - Template adalah rencana yang bisa diedit; bukan pekerjaan yang sudah terlaksana.
+- Pengalaman produk berupa task/project manager terinspirasi Notion: proyek, catatan, tugas terhubung, daftar/papan/kalender. Jangan mengklaim editor blok atau kolaborasi real-time sudah tersedia.
+- Domain `workstreams` juga menjadi proyek; pertahankan kompatibilitas bidang kerja template dan cadangan lama.
 - Bahasa Indonesia sederhana, zona waktu Asia/Jakarta.
 
 ## Kode yang mudah dirawat

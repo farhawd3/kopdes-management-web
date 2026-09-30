@@ -1,79 +1,43 @@
-"use client";
-
-import React, { createContext, useContext, useEffect, useState } from "react";
-
-export type Theme = "light" | "dark";
-export type ThemePreference = Theme | "system";
-
-interface ThemeContextType {
+'use client';
+import { createContext, useContext, useEffect, useSyncExternalStore } from 'react';
+import { usePreference } from './usePreference';
+export type ThemePreference = 'light' | 'dark' | 'system';
+type Theme = 'light' | 'dark';
+const ThemeContext = createContext<{
   theme: Theme;
   preference: ThemePreference;
+  setTheme: (value: ThemePreference) => void;
   toggleTheme: () => void;
-  setTheme: (theme: ThemePreference) => void;
+}>({ theme: 'light', preference: 'system', setTheme: () => {}, toggleTheme: () => {} });
+function subscribe(callback: () => void) {
+  const query = window.matchMedia('(prefers-color-scheme: dark)');
+  query.addEventListener('change', callback);
+  return () => query.removeEventListener('change', callback);
 }
-
-const ThemeContext = createContext<ThemeContextType>({
-  theme: "light",
-  preference: "system",
-  toggleTheme: () => {},
-  setTheme: () => {},
-});
-
-export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [theme, setThemeState] = useState<Theme>("light");
-  const [preference, setPreference] = useState<ThemePreference>("system");
-
-  const applyTheme = (resolvedTheme: Theme) => {
-    setThemeState(resolvedTheme);
-    document.documentElement.classList.toggle("dark", resolvedTheme === "dark");
-    document.body?.classList.toggle("dark", resolvedTheme === "dark");
-    document.documentElement.style.colorScheme = resolvedTheme;
-  };
-
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const [stored, setStored] = usePreference('hub-theme', 'system');
+  const preference: ThemePreference = stored === 'light' || stored === 'dark' ? stored : 'system';
+  const systemDark = useSyncExternalStore(
+    subscribe,
+    () => window.matchMedia('(prefers-color-scheme: dark)').matches,
+    () => false,
+  );
+  const theme: Theme = preference === 'system' ? (systemDark ? 'dark' : 'light') : preference;
   useEffect(() => {
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
-    let savedPreference: ThemePreference = "system";
-    try {
-      const saved = localStorage.getItem("kopdes_theme") as ThemePreference | null;
-      if (saved === "dark" || saved === "light" || saved === "system") savedPreference = saved;
-    } catch {
-      // Ignore localStorage errors in restricted environments
-    }
-    setPreference(savedPreference);
-    applyTheme(savedPreference === "system" ? (media.matches ? "dark" : "light") : savedPreference);
-
-    const handleSystemChange = (event: MediaQueryListEvent) => {
-      let currentPreference: ThemePreference = "system";
-      try {
-        const current = localStorage.getItem("kopdes_theme");
-        if (current === "light" || current === "dark" || current === "system") currentPreference = current;
-      } catch {}
-      if (currentPreference === "system") applyTheme(event.matches ? "dark" : "light");
-    };
-    media.addEventListener("change", handleSystemChange);
-    return () => media.removeEventListener("change", handleSystemChange);
-  }, []);
-
-  const setTheme = (newPreference: ThemePreference) => {
-    setPreference(newPreference);
-    try {
-      localStorage.setItem("kopdes_theme", newPreference);
-    } catch {}
-    const resolved = newPreference === "system"
-      ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
-      : newPreference;
-    applyTheme(resolved);
-  };
-
-  const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
-  };
-
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+    document.documentElement.style.colorScheme = theme;
+  }, [theme]);
   return (
-    <ThemeContext.Provider value={{ theme, preference, toggleTheme, setTheme }}>
+    <ThemeContext.Provider
+      value={{
+        theme,
+        preference,
+        setTheme: setStored,
+        toggleTheme: () => setStored(theme === 'dark' ? 'light' : 'dark'),
+      }}
+    >
       {children}
     </ThemeContext.Provider>
   );
-};
-
+}
 export const useTheme = () => useContext(ThemeContext);

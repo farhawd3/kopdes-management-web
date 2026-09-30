@@ -1,13 +1,21 @@
 > Pembaruan pemilik: baca [KEPUTUSAN.md](KEPUTUSAN.md). Dokumen ini adalah rancangan; progres aktual ada di [STATUS.md](STATUS.md).
 
-# PRD — Ruang Kerja Manajer Proyek KDMP Puntukrejo
+# PRD — Kopdes Management Web
+
+## Pembaruan implementasi 30 September 2026
+
+Pemilik meminta pengalaman task/project manager yang menyerupai ruang kerja Notion dan bentuk web yang lebih segar. Halaman **Proyek** menggabungkan tujuan, PIC, tanggal, catatan, milestone, serta daftar/papan/kalender tugas. Domain `workstreams` dipakai sebagai proyek/bidang kerja agar template tetap kompatibel. Desain diperbarui dengan sidebar berkelompok, ikon konsisten, latar hangat, aksen rose, tema gelap, dan navigasi ponsel.
+
+Model aktual memakai enam tabel fisik dengan 16 domain JSONB tervalidasi, bukan satu tabel fisik untuk setiap domain. Database dan Git lama diarsipkan lokal; cloud lama tidak diubah. Keputusan ini menggantikan usulan teknis/urutan lama di bagian rancangan berikut. Detail ada di [KEPUTUSAN](KEPUTUSAN.md) dan [ARSITEKTUR](ARSITEKTUR.md).
+
+Bagian berikut tetap menjadi acuan kebutuhan jangka lanjut. Editor blok bebas, kolaborasi real-time, baseline Gantt, dan offline belum diimplementasikan. Daftar hasil yang benar-benar tersedia dan diverifikasi selalu mengikuti [STATUS](STATUS.md).
 
 | | |
 |---|---|
-| **Nama produk (sementara)** | **Puntukrejo Manager Hub** |
+| **Nama produk** | **Kopdes Management Web** |
 | **Pemilik produk** | Manajer Koperasi Desa Merah Putih Puntukrejo |
 | **Versi / tanggal** | 1.0 — 30 September 2026 |
-| **Status** | Draft untuk persetujuan pemilik produk |
+| **Status** | Rancangan kebutuhan; implementasi awal tersedia, UAT belum selesai |
 | **Basis** | Redesign total dari aplikasi "Kopdes Merah Putih — Ladang Laweh" (`xkdkmp.vercel.app`, kode di `src.zip`) |
 | **Dokumen terkait** | [Checklist](CHECKLIST.md) · [Workflow](WORKFLOW.md) · [Pemetaan File](PEMETAAN-FILE.md) |
 
