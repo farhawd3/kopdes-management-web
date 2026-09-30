@@ -1,5 +1,44 @@
 import type { Entity } from './schemas';
 export const catalog: Record<Entity, { title: string; description: string; fields: string[] }> = {
+  members: {
+    title: 'Anggota',
+    description: 'Daftar anggota dan status keanggotaan.',
+    fields: ['title', 'member_number', 'date', 'contact', 'address', 'status', 'notes'],
+  },
+  'cash-entries': {
+    title: 'Buku kas',
+    description: 'Catatan uang masuk dan keluar. Ringkasan berdasarkan transaksi yang dicatat.',
+    fields: [
+      'title',
+      'date',
+      'direction',
+      'amount',
+      'category',
+      'account',
+      'unit_id',
+      'reference_number',
+      'link',
+      'notes',
+    ],
+  },
+  'inventory-items': {
+    title: 'Barang',
+    description: 'Daftar barang dan stok buku untuk pembanding saat opname.',
+    fields: [
+      'title',
+      'sku',
+      'unit_id',
+      'measurement',
+      'book_quantity',
+      'minimum_quantity',
+      'notes',
+    ],
+  },
+  'stock-counts': {
+    title: 'Stok opname',
+    description: 'Bandingkan stok buku dengan hasil hitung fisik. Stok buku tidak diubah otomatis.',
+    fields: ['title', 'item_id', 'date', 'book_quantity', 'counted_quantity', 'assignee', 'notes'],
+  },
   organization: {
     title: 'Profil koperasi',
     description: 'Identitas dan awal rencana kerja Anda.',
@@ -37,7 +76,7 @@ export const catalog: Record<Entity, { title: string; description: string; field
   },
   'work-items': {
     title: 'Tugas',
-    description: 'Ubah rencana menjadi langkah kerja yang jelas.',
+    description: 'Daftar tugas, penanggung jawab, dan tenggat.',
     fields: [
       'title',
       'description',
@@ -100,8 +139,19 @@ export const catalog: Record<Entity, { title: string; description: string; field
   },
   meetings: {
     title: 'Rapat & notulen',
-    description: 'Simpan agenda, pembahasan, keputusan, dan tindak lanjut.',
-    fields: ['title', 'date', 'time', 'participants', 'agenda', 'minutes'],
+    description: 'Agenda, tautan rapat online, notulen, dan tindak lanjut.',
+    fields: [
+      'title',
+      'date',
+      'time',
+      'duration',
+      'mode',
+      'location',
+      'meeting_url',
+      'participants',
+      'agenda',
+      'minutes',
+    ],
   },
   decisions: {
     title: 'Keputusan',
@@ -110,12 +160,12 @@ export const catalog: Record<Entity, { title: string; description: string; field
   },
   documents: {
     title: 'Dokumen & legalitas',
-    description: 'Registri dokumen dan masa berlakunya.',
+    description: 'Daftar dokumen dan masa berlakunya.',
     fields: ['title', 'kind', 'number', 'issued_date', 'expires_date', 'status', 'link', 'notes'],
   },
   risks: {
     title: 'Risiko',
-    description: 'Kenali hambatan sebelum menjadi masalah.',
+    description: 'Catat risiko dan rencana penanganannya.',
     fields: ['title', 'probability', 'impact', 'mitigation', 'assignee', 'review_date', 'status'],
   },
   issues: {
@@ -140,6 +190,22 @@ export const catalog: Record<Entity, { title: string; description: string; field
   },
 };
 export const labels: Record<string, string> = {
+  duration: 'Durasi (menit)',
+  member_number: 'Nomor anggota',
+  address: 'Alamat',
+  direction: 'Jenis transaksi',
+  amount: 'Nominal (Rp)',
+  category: 'Kategori',
+  account: 'Kas / rekening',
+  reference_number: 'Nomor bukti',
+  sku: 'Kode barang',
+  measurement: 'Satuan',
+  book_quantity: 'Stok buku',
+  minimum_quantity: 'Batas stok minimum',
+  counted_quantity: 'Hasil hitung fisik',
+  item_id: 'Barang',
+  mode: 'Jenis rapat',
+  meeting_url: 'Tautan rapat online',
   title: 'Nama / judul',
   village: 'Desa',
   district: 'Kecamatan',
@@ -174,7 +240,6 @@ export const labels: Record<string, string> = {
   dimension: 'Dimensi',
   required: 'Wajib',
   evidence: 'Bukti pekerjaan',
-  category: 'Kategori',
   contact: 'Kontak profesional',
   influence: 'Pengaruh (1–5)',
   interest: 'Minat (1–5)',
@@ -200,6 +265,7 @@ export const labels: Record<string, string> = {
   work_item_id: 'Tugas terkait',
 };
 export const references: Record<string, Entity> = {
+  item_id: 'inventory-items',
   issue_id: 'issues',
   workstream_id: 'workstreams',
   milestone_id: 'milestones',
@@ -210,6 +276,9 @@ export const references: Record<string, Entity> = {
   work_item_id: 'work-items',
 };
 export const options: Record<string, string[]> = {
+  'members.status': ['aktif', 'nonaktif'],
+  direction: ['masuk', 'keluar'],
+  mode: ['tatap muka', 'online', 'hybrid'],
   'workstreams.status': ['rencana', 'aktif', 'ditunda', 'selesai', 'diarsipkan'],
   'work-items.status': ['rencana', 'proses', 'selesai', 'dibatalkan'],
   'checklist.status': ['rencana', 'proses', 'selesai'],
@@ -241,6 +310,11 @@ export const navigation = [
   ['/jurnal', 'Jurnal kerja', '✎'],
   ['/pengaturan', 'Pengaturan', '⚙'],
   ['/panduan', 'Panduan', '?'],
+  ['/pencatatan', 'Pencatatan', '▤'],
+  ['/anggota', 'Anggota', '◎'],
+  ['/keuangan', 'Buku kas', '↗'],
+  ['/barang', 'Barang', '▦'],
+  ['/stok-opname', 'Stok opname', '✓'],
 ] as const;
 export const pages: Record<string, Entity[]> = {
   tugas: ['work-items'],

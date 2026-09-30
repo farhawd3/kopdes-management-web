@@ -26,3 +26,10 @@
 - Tambahkan pengujian PostgreSQL lokal dan keamanan; perbarui Next.js/Vitest untuk menutup temuan dependency.
 
 Implementasi awal belum berarti seluruh target PRD atau UAT selesai. Batas dan hasil verifikasi terbaru ada di `docs/STATUS.md`.
+
+## 1 Oktober 2026 — Studio, kalender dan pencatatan
+
+- Susun ulang navigasi Kerja/Catat, tema studio, pencarian halaman, kalender tugas/pemilih tanggal, dropdown dan teks UI.
+- Tambah anggota, buku kas, barang dan opname beserta filter, ringkasan, CSV aman, validasi dan gerbang aktivasi migrasi.
+- Tambah rapat online/hybrid, tautan bergabung, durasi dan ekspor ICS; checklist subtugas langsung di kartu.
+- Siapkan migrasi kedua tanpa mengubah SQL terpasang; pemasangan cloud menunggu persetujuan pemilik.

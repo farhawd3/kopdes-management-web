@@ -80,6 +80,13 @@ export async function save(entity: Entity, input: unknown, id?: string) {
     ? client.from('hub_records').update({ data }).eq('id', id).eq('entity', entity)
     : client.from('hub_records').insert({ entity, data });
   const { data: record, error } = await query.select('*').single();
-  if (error) throw new Error('Penyimpanan gagal. Muat ulang dan coba lagi.');
+  if (error)
+    throw new Error(
+      error.code === '23505'
+        ? 'Nomor atau kode sudah dipakai. Gunakan kode berbeda.'
+        : error.code === '23514'
+          ? 'Data belum dapat disimpan. Periksa isian dan pastikan migrasi pencatatan sudah terpasang.'
+          : 'Penyimpanan gagal. Muat ulang dan coba lagi.',
+    );
   return record as Item;
 }

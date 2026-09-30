@@ -11,11 +11,82 @@ beforeAll(async () => {
     'create role anon; create role authenticated; create role service_role bypassrls;',
   );
   await database.exec(readFileSync('supabase/migrations/20260930000001_manager_hub.sql', 'utf8'));
+  await database.exec(readFileSync('supabase/migrations/20261001000002_operations.sql', 'utf8'));
 }, 30000);
 afterAll(async () => {
   await database?.close();
 });
 describe('Migrasi PostgreSQL nyata di mesin lokal', () => {
+  it('modul pencatatan aktif hanya untuk server', async () => {
+    const result = await database.query<{ ready: boolean; anon_access: boolean }>(
+      "select public.hub_operations_ready() as ready, has_function_privilege('anon','public.hub_operations_ready()','EXECUTE') as anon_access",
+    );
+    expect(result.rows[0]).toEqual({ ready: true, anon_access: false });
+  });
+  it('nomor anggota unik dan nilai kas negatif ditolak', async () => {
+    await database.query(
+      "insert into public.hub_records(entity,data) values('members',$1::jsonb)",
+      [JSON.stringify({ title: 'Anggota uji', member_number: 'A-001' })],
+    );
+    await expect(
+      database.query("insert into public.hub_records(entity,data) values('members',$1::jsonb)", [
+        JSON.stringify({ title: 'Duplikat', member_number: 'a-001' }),
+      ]),
+    ).rejects.toThrow();
+    await expect(
+      database.query(
+        "insert into public.hub_records(entity,data) values('cash-entries',$1::jsonb)",
+        [JSON.stringify({ title: 'Tidak sah', direction: 'keluar', amount: -100 })],
+      ),
+    ).rejects.toThrow();
+  });
+  it('opname wajib merujuk barang dan tidak mengubah stok buku', async () => {
+    const product = randomUUID();
+    await database.query(
+      "insert into public.hub_records(id,entity,data) values($1,'inventory-items',$2::jsonb)",
+      [
+        product,
+        JSON.stringify({
+          title: 'Barang uji',
+          sku: 'TEST-001',
+          book_quantity: 10,
+          minimum_quantity: 2,
+        }),
+      ],
+    );
+    await expect(
+      database.query(
+        "insert into public.hub_records(entity,data) values('stock-counts',$1::jsonb)",
+        [
+          JSON.stringify({
+            title: 'Tidak sah',
+            item_id: randomUUID(),
+            book_quantity: 10,
+            counted_quantity: 8,
+          }),
+        ],
+      ),
+    ).rejects.toThrow();
+    await database.query(
+      "insert into public.hub_records(entity,data) values('stock-counts',$1::jsonb)",
+      [
+        JSON.stringify({
+          title: 'Opname uji',
+          item_id: product,
+          book_quantity: 10,
+          counted_quantity: 8,
+        }),
+      ],
+    );
+    const result = await database.query<{ quantity: number }>(
+      "select (data->>'book_quantity')::integer as quantity from public.hub_records where id=$1",
+      [product],
+    );
+    expect(result.rows[0].quantity).toBe(10);
+    await expect(
+      database.query('delete from public.hub_records where id=$1', [product]),
+    ).rejects.toThrow();
+  });
   it('RLS aktif pada seluruh tabel publik', async () => {
     const result = await database.query<{ relrowsecurity: boolean }>(
       "select relrowsecurity from pg_class join pg_namespace on pg_namespace.oid=relnamespace where nspname='public' and relkind='r'",

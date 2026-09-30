@@ -4,5 +4,5 @@ import { WorkspacePage } from '@/features/WorkspacePage';
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   if (!navigation.some(([href]) => href === `/${slug}`)) notFound();
-  return <WorkspacePage slug={slug} />;
+  return <WorkspacePage key={slug} slug={slug} />;
 }

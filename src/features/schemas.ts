@@ -21,6 +21,14 @@ const link = z
   ])
   .default('');
 const ref = z.union([z.string().uuid(), z.literal('')]).default('');
+const quantity = z.preprocess(
+  (value) => (typeof value === 'string' && value.trim() !== '' ? Number(value) : value),
+  z.number().int().min(0).max(1_000_000_000),
+);
+const money = z.preprocess(
+  (value) => (typeof value === 'string' && value.trim() !== '' ? Number(value) : value),
+  z.number().int().min(1).max(1_000_000_000_000),
+);
 export const statuses = ['rencana', 'proses', 'selesai', 'dibatalkan'] as const;
 const status = z.enum(statuses).default('rencana');
 const poac = z.enum(['planning', 'organizing', 'actuating', 'controlling']).default('planning');
@@ -135,6 +143,10 @@ export const schemas = {
       participants: text,
       agenda: text,
       minutes: text,
+      mode: z.enum(['tatap muka', 'online', 'hybrid']).default('tatap muka'),
+      location: text,
+      meeting_url: link,
+      duration: z.coerce.number().int().min(15).max(480).default(60),
     })
     .strict(),
   decisions: z.object({ title, meeting_id: ref, date, reason: text, link }).strict(),
@@ -191,7 +203,60 @@ export const schemas = {
   journal: z
     .object({ title, date, notes: text, unit_id: ref, work_item_id: ref, stakeholder_id: ref })
     .strict(),
+  members: z
+    .object({
+      title,
+      member_number: title,
+      date,
+      contact: text,
+      address: text,
+      status: z.enum(['aktif', 'nonaktif']).default('aktif'),
+      notes: text,
+    })
+    .strict(),
+  'cash-entries': z
+    .object({
+      title,
+      date,
+      direction: z.enum(['masuk', 'keluar']),
+      amount: money,
+      category: title,
+      account: title,
+      unit_id: ref,
+      reference_number: text,
+      link,
+      notes: text,
+    })
+    .strict(),
+  'inventory-items': z
+    .object({
+      title,
+      sku: title,
+      unit_id: ref,
+      measurement: title,
+      book_quantity: quantity,
+      minimum_quantity: quantity,
+      notes: text,
+    })
+    .strict(),
+  'stock-counts': z
+    .object({
+      title,
+      item_id: z.string().uuid(),
+      date,
+      book_quantity: quantity,
+      counted_quantity: quantity,
+      assignee: title,
+      notes: text,
+    })
+    .strict(),
 };
+export const operationEntities: Entity[] = [
+  'members',
+  'cash-entries',
+  'inventory-items',
+  'stock-counts',
+];
 export type Entity = keyof typeof schemas;
 export type Item = {
   id: string;

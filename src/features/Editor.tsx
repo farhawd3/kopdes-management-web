@@ -6,6 +6,7 @@ import type { Workspace } from './useWorkspace';
 import { today } from '@/lib/date';
 import { api } from '@/lib/client';
 import { ZodError } from 'zod';
+import { DateField } from '@/components/ui/DateField';
 export function Editor({
   entity,
   item,
@@ -23,6 +24,7 @@ export function Editor({
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const headingId = useId();
+  const [stockItem, setStockItem] = useState(String(item?.data.item_id || ''));
   const [error, setError] = useState(''),
     [busy, setBusy] = useState(false);
   useEffect(() => {
@@ -37,7 +39,7 @@ export function Editor({
     due_date: today(),
     date: today(),
     start_date: today(),
-    title: entity === 'organization' ? 'KDMP Puntukrejo' : '',
+    title: '',
   };
   return (
     <dialog ref={dialog} className="editor" onCancel={onClose} aria-labelledby={headingId}>
@@ -101,13 +103,37 @@ export function Editor({
         </div>
         <div className="form-grid">
           {fields.map((field) => {
-            const value = defaults[field as keyof typeof defaults],
+            const value =
+                entity === 'stock-counts' &&
+                field === 'book_quantity' &&
+                stockItem &&
+                stockItem !== item?.data.item_id
+                  ? workspace['inventory-items']?.find((row) => row.id === stockItem)?.data
+                      .book_quantity
+                  : defaults[field as keyof typeof defaults],
               choices = options[entity + '.' + field] || options[field],
               reference = references[field];
             const label =
-              entity === 'workstreams' && field === 'target_date'
-                ? 'Target selesai'
-                : labels[field] || field;
+              entity === 'members' && field === 'date'
+                ? 'Tanggal bergabung'
+                : entity === 'members' && field === 'title'
+                  ? 'Nama anggota'
+                  : entity === 'workstreams' && field === 'target_date'
+                    ? 'Target selesai'
+                    : labels[field] || field;
+            if (field.endsWith('_date') || field === 'date' || field === 'last_contact')
+              return (
+                <DateField
+                  key={field}
+                  name={field}
+                  label={label}
+                  defaultValue={String(value || '')}
+                  required={
+                    ['due_date', 'date'].includes(field) ||
+                    (entity === 'organization' && field === 'start_date')
+                  }
+                />
+              );
             if (field === 'required')
               return (
                 <label key={field} className="check">
@@ -117,25 +143,41 @@ export function Editor({
               );
             if (field === 'dependencies')
               return (
-                <label key={field}>
-                  {label}
-                  <select name={field} multiple defaultValue={(value || []) as string[]}>
+                <fieldset key={field} className="dependency-picker wide">
+                  <legend>{label}</legend>
+                  <div>
                     {(workspace['work-items'] || [])
                       .filter((row) => row.id !== item?.id)
                       .map((row) => (
-                        <option key={row.id} value={row.id}>
+                        <label className="check" key={row.id}>
+                          <input
+                            type="checkbox"
+                            name={field}
+                            value={row.id}
+                            defaultChecked={((value || []) as string[]).includes(row.id)}
+                          />
                           {String(row.data.title)}
-                        </option>
+                        </label>
                       ))}
-                  </select>
-                  <small>Ctrl/⌘ untuk memilih beberapa prasyarat.</small>
-                </label>
+                  </div>
+                  <small>
+                    {(workspace['work-items'] || []).some((row) => row.id !== item?.id)
+                      ? 'Pilih tugas yang harus selesai lebih dahulu.'
+                      : 'Belum ada tugas lain untuk dipilih.'}
+                  </small>
+                </fieldset>
               );
             if (choices || reference)
               return (
                 <label key={field}>
                   {label}
-                  <select name={field} defaultValue={String(value ?? choices?.[0] ?? '')}>
+                  <select
+                    name={field}
+                    defaultValue={String(value ?? choices?.[0] ?? '')}
+                    onChange={
+                      field === 'item_id' ? (event) => setStockItem(event.target.value) : undefined
+                    }
+                  >
                     {reference && <option value="">Belum ditentukan</option>}
                     {choices
                       ? choices.map((choice) => <option key={choice}>{choice}</option>)
@@ -177,18 +219,23 @@ export function Editor({
                   )}
                 </label>
               );
-            const numeric = ['probability', 'impact', 'interest', 'influence'].includes(field);
+            const score = ['probability', 'impact', 'interest', 'influence'].includes(field);
+            const quantity = ['book_quantity', 'minimum_quantity', 'counted_quantity'].includes(
+              field,
+            );
+            const numeric = score || quantity || field === 'amount' || field === 'duration';
             return (
               <label key={field}>
                 {label}
                 <input
+                  key={field === 'book_quantity' ? stockItem : field}
                   name={field}
                   type={
                     field.endsWith('_date') || field === 'date' || field === 'last_contact'
                       ? 'date'
                       : field === 'time'
                         ? 'time'
-                        : field === 'link'
+                        : field === 'link' || field === 'meeting_url'
                           ? 'url'
                           : field === 'color'
                             ? 'color'
@@ -196,25 +243,60 @@ export function Editor({
                               ? 'number'
                               : 'text'
                   }
-                  min={numeric ? 1 : undefined}
-                  max={numeric ? 5 : undefined}
+                  min={field === 'duration' ? 15 : quantity ? 0 : numeric ? 1 : undefined}
+                  max={
+                    field === 'duration'
+                      ? 480
+                      : score
+                        ? 5
+                        : field === 'amount'
+                          ? 1_000_000_000_000
+                          : quantity
+                            ? 1_000_000_000
+                            : undefined
+                  }
+                  step={numeric ? 1 : undefined}
                   maxLength={field === 'title' ? 200 : 5000}
                   required={
-                    ['title', 'due_date', 'date', 'code'].includes(field) ||
+                    [
+                      'title',
+                      'due_date',
+                      'date',
+                      'code',
+                      'member_number',
+                      'amount',
+                      'sku',
+                      'measurement',
+                      'book_quantity',
+                      'minimum_quantity',
+                      'counted_quantity',
+                    ].includes(field) ||
                     (entity === 'organization' && field === 'start_date')
                   }
                   defaultValue={String(
                     value ??
-                      (numeric
+                      (score
                         ? 3
-                        : field === 'color'
-                          ? '#B3243B'
-                          : field === 'time'
-                            ? '09:00'
-                            : ''),
+                        : field === 'duration'
+                          ? 60
+                          : field === 'color'
+                            ? '#B3243B'
+                            : field === 'time'
+                              ? '09:00'
+                              : ''),
                   )}
                 />
                 {field === 'code' && <small>Kode singkat 2–8 karakter, misalnya OPS.</small>}
+                {field === 'meeting_url' && (
+                  <small>
+                    Tempel tautan Google Meet, Zoom, atau layanan rapat yang Anda gunakan.
+                  </small>
+                )}
+                {entity === 'stock-counts' && field === 'book_quantity' && (
+                  <small>
+                    Stok pembanding saat pemeriksaan. Tidak mengubah stok pada daftar barang.
+                  </small>
+                )}
               </label>
             );
           })}

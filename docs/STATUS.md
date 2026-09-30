@@ -1,43 +1,47 @@
-# Status proyek — Workspace fleksibel
+# Status proyek — 1 Oktober 2026
 
-## Perubahan terbaru
+## Paket terbaru: desain studio dan pencatatan
 
-- Konsep program 90 hari dikeluarkan dari UI dan runtime. Proyek memiliki tujuan, tanggal, dan durasinya sendiri. Data lama tidak dihapus.
-- Proyek: status rencana/aktif/ditunda/selesai/arsip, prioritas, PIC, tujuan, tanggal, pencarian, filter, progres tugas.
-- Catatan proyek: judul, paragraf, daftar, checklist, kutipan, pratinjau, penyimpanan server. HTML tidak dieksekusi.
-- Tugas: daftar, papan, kalender, dan Gantt memakai data yang sama; subtugas, prasyarat, pengulangan, filter dan pengurutan tetap tersedia.
-- Gantt: rentang tanggal, skala, filter proyek, navigasi periode, milestone, hari ini, deteksi benturan tanggal prasyarat, geser batang, resize tenggat, tinjau dan simpan. Keyboard/form menjadi alternatif untuk sentuh.
-- Dashboard baru memakai jumlah proyek/tugas aktual dan delapan minggu penyelesaian bergulir.
-- Tema rose/lavender, lapisan kartu dan bayangan lembut, sidebar, tabel, papan, form, halaman proyek dan catatan diperbarui.
-- Rencana/spec lama di `docs/arsip`; seed historis menjadi fixture tes, bukan fitur runtime. SQL terpasang tetap utuh.
+Kode tersedia lokal; aktivasi empat domain pencatatan di Supabase cloud **belum dilakukan**.
 
-## Fondasi tetap aktif
+- Layout baru: sidebar arang, permukaan netral, aksen hijau, tema terang/gelap, navigasi kelompok dan pintasan Kerja/Catat. Halaman lama memakai komponen dan tema bersama.
+- Pencarian halaman Ctrl/⌘ K; navigasi bawah ponsel menyediakan akses Catat. Teks slogan diganti keterangan singkat.
+- Kalender tugas: navigasi bulan, hari ini, agenda tanggal pilihan, status tugas. Form memakai pemilih tanggal dengan kalender, dropdown bertema pada browser pendukung, dan daftar centang prasyarat.
+- Proyek tetap memiliki catatan terformat, daftar/papan/kalender/Gantt, status, prioritas dan tanggal bebas. Checklist subtugas dapat dicentang langsung pada kartu.
+- Rapat: tatap muka/online/hybrid, lokasi, tautan bergabung, durasi, peserta, agenda/notulen, ekspor ICS waktu WIB. Tidak membuat konferensi atau mengirim undangan otomatis.
+- Pencatatan dipisahkan: Anggota, Buku kas, Barang, Stok opname. Tambah/ubah, pencarian, filter, ringkasan dan ekspor CSV. Tidak ada data contoh produksi.
+- Buku kas hanya merangkum uang masuk/keluar yang dicatat; bukan saldo rekening atau laporan laba rugi. Opname membandingkan fisik dengan snapshot stok buku tanpa koreksi otomatis.
 
-Repo privat `halimxn/kopdes-management-web` dengan riwayat awal baru. Supabase baru `mqycnhebhzqaziouipet`; enam tabel, RLS, validasi server, pemeriksaan relasi, transaksi, PIN scrypt, sesi HttpOnly dan batas percobaan persisten. PIN/login dan baca 16 domain berhasil diverifikasi sebelumnya. Database lama tidak digunakan.
+## Database dan aktivasi
 
-Modul kesiapan/gerai, pemangku/interaksi, rapat/keputusan/tindak lanjut, dokumen, risiko/isu, tim/pelatihan, jurnal, snapshot laporan, cetak, salin teks dan backup/pemulihan tetap tersedia.
+Supabase baru `mqycnhebhzqaziouipet`. Migrasi pertama tetap terpasang dan tidak diubah. Enam tabel fisik, 16 domain awal; migrasi `20261001000002_operations.sql` memperluasnya menjadi 20 domain.
 
-## Verifikasi paket
+Migrasi kedua menambah jenis catatan yang diizinkan, indeks nomor anggota/kode barang unik, validasi nominal/jumlah, relasi opname-barang dan fungsi pemeriksaan aktivasi. RLS dan sesi tetap berlaku. Seluruh perubahan berada dalam transaksi; tidak menghapus data lama. Berkas SQL dan langkah pemilik ada di [PENCATATAN.md](PENCATATAN.md).
 
-- **62/62 tes lulus**: keamanan, PostgreSQL lokal, kompatibilitas data lama, lingkup proyek, filter, aksi tugas, geometri Gantt, geser/resize lintas tahun, konflik prasyarat, simpan/gagal simpan jadwal, catatan terformat dan escaping HTML.
-- Lint, TypeScript, build produksi Next.js berhasil. Audit sumber: 43/43 file terjangkau.
-- Pemeriksaan browser singkat Beranda dan Gantt pada 360/768/1024/1440 px: tidak ada overflow dokumen. Grafik lebar menggulir di kontainernya. Tema terang/gelap diperiksa.
-- Browser menggunakan data cloud kosong; tes lokal memakai fixture. Interaksi drag pada data nyata dan perangkat fisik belum menjadi UAT.
+Sebelum migrasi dipasang, aplikasi memberi keterangan belum aktif dan menonaktifkan tombol simpan modul baru. Kegagalan jaringan atau izin tidak dianggap sebagai data kosong. Modul proyek, tugas, dan rapat tetap tersedia.
 
-## Batas yang masih perlu dikerjakan
+## Verifikasi
 
-- Baseline, jalur kritis, dan penjadwalan otomatis seluruh dependensi.
-- Editor blok drag-and-drop dan kolaborasi real-time. Catatan saat ini berbasis teks terformat dengan toolbar.
-- PWA/offline, CSV, unggah berkas, tautan laporan publik.
-- UAT beberapa hari, Android/iOS/Safari fisik, Lighthouse dan audit aksesibilitas menyeluruh.
-- Smoke test deployment produksi. Vercel sebelumnya menampilkan No Production Deployment; keberhasilan hosting belum dikonfirmasi.
+Hasil akhir pengujian paket dan pemeriksaan browser dicatat di bagian penyerahan di bawah. Migrasi diuji pada PostgreSQL lokal melalui PGlite; pengujian itu tidak memasang migrasi cloud. Data uji hanya berada di tes lokal.
 
-## Mulai memakai
+## Fondasi yang dipertahankan
 
-Buka **Proyek → Proyek baru**. Isi tujuan dan jadwal, tambahkan tugas, lalu pilih tampilan Gantt atau tulis catatan proyek. **Gantt & milestone** merangkum jadwal lintas proyek. Pengaturan untuk profil, PIN, dan backup. Tidak ada migrasi cloud tambahan untuk paket ini.
+Repo privat `halimxn/kopdes-management-web`, riwayat baru. Supabase lama tidak digunakan. PIN scrypt, sesi HttpOnly, pembatasan percobaan, Zod server, RLS, log perubahan dan relasi transaksi tetap aktif. Backup JSON dan pemulihan mencakup domain pencatatan baru setelah aktivasi.
 
-## Perbaikan akses Vercel
+Gantt mendukung rentang/skala, geser/resize, tinjau/simpan dan peringatan benturan prasyarat. Beranda, kesiapan gerai, pemangku/interaksi, rapat/keputusan, dokumen, risiko/isu, tim/pelatihan, jurnal, snapshot laporan dan cetak tetap tersedia. Tidak ada program wajib 90 hari; fixture lama hanya untuk tes.
 
-Alamat yang dilaporkan pemilik: `https://kopdes-management-web.vercel.app/pin`. Pencocokan origin sebelumnya hanya membandingkan satu string konfigurasi. Perbaikan menormalkan konfigurasi dan menerima domain deployment dari metadata server Vercel, dengan allowlist tepat tanpa wildcard atau kepercayaan terhadap header Host/Forwarded.
+## Pekerjaan pemilik dan batas berikutnya
 
-Tes terbaru **78/78 lulus**, termasuk 16 skenario origin. Domain `HUB_APP_ORIGIN` produksi harus `https://kopdes-management-web.vercel.app` tanpa path. Pemilik mengubah environment/redeploy dan mencoba PIN sendiri; keberhasilan login di deployment terbaru belum dikonfirmasi.
+- Setujui migrasi kedua, jalankan di proyek Supabase baru, lalu uji simpan data nyata.
+- Verifikasi Vercel setelah deployment terbaru. Perbaikan origin commit `15116e4` sudah dipush sebelumnya; login produksi belum dikonfirmasi. `HUB_APP_ORIGIN` produksi: `https://kopdes-management-web.vercel.app`.
+- Belum ada multiuser/realtime, editor blok bebas, offline, unggah berkas, impor CSV, baseline/jalur kritis, atau penjadwalan otomatis dependensi.
+- Kas sederhana belum mencakup akuntansi lengkap atau rekonsiliasi. Stok belum memiliki pergerakan otomatis/POS. Jumlah stok berupa unit bulat.
+- Perangkat fisik Android/iOS/Safari dan audit aksesibilitas menyeluruh belum diuji. Pemulihan cadangan data nyata masih perlu lingkungan uji.
+
+## Penyerahan paket 1 Oktober 2026
+
+- **92/92 tes lulus**: keamanan/PIN/origin, relasi dan transaksi PostgreSQL, kompatibilitas proyek lama, kalender/navigasi bulan, tanggal kabisat, cashflow dan selisih stok, penolakan nominal tidak sah, formula CSV, ICS/WIB, gerbang migrasi, pengisian stok pembanding, simpan form dan gagal jaringan.
+- Browser IAB: Pencatatan diperiksa 360/768/1024/1440 px tanpa overflow dokumen; form rapat/pemilih tanggal/dropdown diperiksa pada 360 dan 1440 px. Pencarian halaman diuji membuka Rapat. Tema terang/gelap diperiksa pada desktop.
+- Pemeriksaan menggunakan data cloud yang masih kosong dan status migrasi belum aktif. Tidak memasukkan fixture ke database cloud. Uji penyimpanan domain baru berlangsung lokal dengan mock API dan PostgreSQL, belum UAT cloud.
+
+Lint, TypeScript dan build produksi Next.js berhasil. Audit sumber: 48/48 berkas terjangkau. Migrasi cloud dan login deployment terbaru belum diverifikasi.

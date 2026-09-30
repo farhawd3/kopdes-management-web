@@ -37,12 +37,12 @@ export function Dashboard({ data }: { data: Workspace }) {
     <>
       <div className="home-heading">
         <div>
-          <span className="eyebrow">PERSONAL WORKSPACE</span>
+          <span className="eyebrow">BERANDA</span>
           <h1>
             Selamat datang{profile?.manager ? `, ${profile.manager}` : ''}
             <span>.</span>
           </h1>
-          <p>Semua pekerjaan punya tempat. Tentukan fokus Anda hari ini.</p>
+          <p>Lihat jadwal dan tugas yang perlu ditangani.</p>
         </div>
         <span className="date-chip">{formatDate(now)}</span>
       </div>
@@ -53,14 +53,14 @@ export function Dashboard({ data }: { data: Workspace }) {
             Ruang kerja Anda
           </span>
           <h2>
-            Ide tertata.
+            Proyek dan tugas,
             <br />
-            Pekerjaan bergerak.
+            dalam satu tempat.
           </h2>
           <p>
-            {String(profile?.title || 'Bangun ruang kerja sesuai kebutuhan proyek Anda.')}
+            {String(profile?.title || 'Lengkapi profil koperasi di Pengaturan.')}
             <br />
-            Kelola proyek, susun timeline, dan catat keputusan.
+            Lihat jadwal, tugas yang tertunda, dan catatan rapat.
           </p>
           <div className="actions">
             <Link className="primary" href="/proyek">
@@ -86,14 +86,14 @@ export function Dashboard({ data }: { data: Workspace }) {
           {
             label: 'Proyek',
             value: projects.length,
-            detail: 'Ruang kerja yang Anda kelola',
+            detail: 'Proyek yang tercatat',
             href: '/proyek',
             Icon: FolderKanban,
           },
           {
             label: 'Sedang berjalan',
             value: tasks.filter((task) => task.status === 'proses').length,
-            detail: 'Fokus pelaksanaan',
+            detail: 'Tugas dalam proses',
             href: '/tugas?status=proses',
             Icon: ListTodo,
           },
@@ -107,7 +107,7 @@ export function Dashboard({ data }: { data: Workspace }) {
           {
             label: 'Tugas selesai',
             value: tasks.filter((task) => task.status === 'selesai').length,
-            detail: 'Langkah yang telah dituntaskan',
+            detail: 'Tugas berstatus selesai',
             href: '/tugas?status=selesai',
             Icon: CheckCheck,
           },
@@ -156,11 +156,11 @@ export function Dashboard({ data }: { data: Workspace }) {
               <FolderKanban size={25} />
             </span>
             <div>
-              <h3>Mulai dari proyek pertama</h3>
-              <p>Anda menentukan tujuan, isi, dan durasinya. Tambahkan tugas saat siap.</p>
+              <h3>Belum ada proyek</h3>
+              <p>Buat proyek, lalu tambahkan tugas dan jadwalnya.</p>
             </div>
             <Link className="primary" href="/proyek">
-              Buat ruang proyek
+              Buat proyek
               <Plus size={16} />
             </Link>
           </div>
@@ -171,7 +171,7 @@ export function Dashboard({ data }: { data: Workspace }) {
           <div className="section-head">
             <h2>
               <Clock3 size={19} />
-              Fokus terdekat
+              Tenggat terdekat
             </h2>
             <Link className="text-link" href="/hari-ini">
               Hari ini →
@@ -192,7 +192,7 @@ export function Dashboard({ data }: { data: Workspace }) {
           ) : (
             <div className="empty">
               <CheckCheck size={28} className="empty-icon" />
-              <h3>Ruang untuk fokus berikutnya</h3>
+              <h3>Tidak ada tenggat dekat</h3>
               <p>Belum ada tugas jatuh tempo dalam tujuh hari ke depan.</p>
               <Link className="text-link" href="/tugas?baru=1">
                 Tambahkan tugas →
@@ -231,10 +231,10 @@ export function Dashboard({ data }: { data: Workspace }) {
         <Burnup tasks={data['work-items'] || []} />
         <section className="card notebook-card">
           <NotebookPen size={28} />
-          <h2>Catat selagi masih segar.</h2>
+          <h2>Jurnal kerja</h2>
           <p>
-            Simpan ide, hasil kunjungan, dan keputusan. Catatan proyek membantu Anda menghubungkan
-            konteks dengan pekerjaan.
+            Catat hasil kunjungan, pembahasan, dan pekerjaan harian. Simpan tindak lanjut di tugas
+            terkait.
           </p>
           <Link className="button" href="/jurnal">
             Buka jurnal

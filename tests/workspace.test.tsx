@@ -76,9 +76,9 @@ describe('Alur kerja dasar UI', () => {
     expect(screen.getByText('SOP utama')).toBeTruthy();
     expect(screen.queryByText('Baca dokumen')).toBeNull();
   });
-  it('dashboard kosong mengajak memakai template tanpa mengarang capaian', () => {
+  it('dashboard kosong mengajak membuat proyek tanpa mengarang capaian', () => {
     render(<Dashboard data={{}} />);
-    expect(screen.getByText('Mulai dari proyek pertama')).toBeTruthy();
+    expect(screen.getByText('Belum ada proyek')).toBeTruthy();
     expect(screen.getByRole('img', { name: 'Penyelesaian tugas: 0%' })).toBeTruthy();
   });
   it('aksi selesai mengirim status dan tanggal penyelesaian yang valid', async () => {

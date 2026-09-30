@@ -9,11 +9,12 @@ import { Settings } from './Settings';
 import { Reports } from './Reports';
 import { Editor } from './Editor';
 import { Projects } from './Projects';
+import { Operations, recordingPaths } from './Operations';
 import type { Item } from './schemas';
 import { schemas } from './schemas';
 import { today, addDays } from '@/lib/date';
 export function WorkspacePage({ slug }: { slug: string }) {
-  const { data, loading, error, refresh } = useWorkspace(),
+  const { data, loading, error, refresh, operations } = useWorkspace(),
     [tab, setTab] = useState(0),
     [draft, setDraft] = useState<Item>();
   useEffect(() => {
@@ -53,12 +54,17 @@ export function WorkspacePage({ slug }: { slug: string }) {
     <>
       {slug !== 'beranda' && (
         <div className="page-heading">
-          <span className="eyebrow">RUANG KERJA / {title.toUpperCase()}</span>
+          <span className="eyebrow">
+            {recordingPaths.includes(slug) ? 'PENCATATAN' : 'RUANG KERJA'} / {title.toUpperCase()}
+          </span>
           <h1>{title}</h1>
         </div>
       )}
       {slug === 'beranda' && <Dashboard data={data} />}
       {slug === 'proyek' && <Projects data={data} refresh={refresh} />}
+      {recordingPaths.includes(slug) && (
+        <Operations key={slug} slug={slug} data={data} ready={operations} refresh={refresh} />
+      )}
       {slug === 'roadmap' && <Roadmap data={data} refresh={refresh} />}
       {slug === 'laporan' && <Reports />}
       {slug === 'pengaturan' && <Settings refresh={refresh} />}

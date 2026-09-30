@@ -28,3 +28,7 @@ Tidak memakai database lama, menghapus tabel lamanya, atau membawa tag legacy ke
 ## Perubahan arah produk
 
 Pemilik mengganti konsep program 90 hari menjadi workspace proyek fleksibel. Endpoint dan pemasangan template dihapus dari runtime, tanpa menghapus data cloud yang sudah tersimpan. Rancangan lama dipindah ke `docs/arsip`; acuan aktif adalah PRD baru. Catatan terformat disimpan sebagai teks aman pada field `notes`; proyek memakai status/prioritas dengan default kompatibel. Tidak ada SQL baru untuk paket perubahan ini.
+
+## 1 Oktober 2026 — perluasan oleh pemilik
+
+Larangan lingkup anggota/stok pada rancangan sebelumnya dicabut sesuai permintaan terbaru. Empat domain pencatatan ditambahkan (total 20) pada enam tabel fisik. Migrasi kedua disiapkan dan diuji lokal; pemasangan cloud menunggu persetujuan. Desain aktif memakai tema studio, menggantikan rose/lavender. Pencatatan dipisahkan dari proyek/tugas agar mudah dijangkau. Kas sederhana dan opname manual; bukan POS atau akuntansi penuh.

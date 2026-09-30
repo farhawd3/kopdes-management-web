@@ -24,3 +24,12 @@
 - [ ] PWA/offline, CSV, unggah berkas, tautan laporan publik.
 
 Hasil tes dan pemeriksaan viewport di [STATUS](STATUS.md). Rencana historis berada di `arsip/`, tidak dipakai sebagai template runtime.
+
+## Paket studio dan pencatatan
+- [x] Navigasi kelompok, area Kerja/Catat, pencarian halaman, desain studio terang/gelap.
+- [x] Kalender tugas dan pemilih tanggal, dropdown mengikuti tema, teks UI ringkas.
+- [x] Implementasi anggota, buku kas, barang, opname, filter dan CSV dengan gerbang aktivasi database.
+- [x] Rapat online/hybrid, tautan bergabung, durasi dan ekspor agenda ICS.
+- [x] Validasi dan migrasi domain pencatatan disiapkan.
+- [ ] Persetujuan dan pemasangan migrasi kedua di Supabase cloud.
+- [ ] Uji simpan data pencatatan nyata setelah aktivasi.

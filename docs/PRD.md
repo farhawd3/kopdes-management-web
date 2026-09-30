@@ -47,3 +47,9 @@ Enam tabel fisik Supabase dengan domain JSONB, validasi Zod server, relasi datab
 ## Batas implementasi
 
 Belum ada editor blok drag-and-drop, multiuser/kolaborasi real-time, PWA/offline, unggah berkas, baseline/jalur kritis, atau penjadwalan otomatis semua dependensi. UAT dan pengujian perangkat fisik harus dilakukan sebelum penggunaan rutin. Status bukti ada di [STATUS](STATUS.md); rancangan terdahulu disimpan sebagai arsip, bukan instruksi aktif.
+
+## Perluasan 1 Oktober 2026
+
+Arahan terbaru menambahkan area Pencatatan terpisah: anggota, buku kas, barang dan stok opname. Tambah/ubah catatan, pencarian, filter, ringkasan, serta ekspor CSV tersedia. Stok opname memotret stok pembanding, tidak mengubah stok buku otomatis. Buku kas bukan akuntansi lengkap. Aktivasi cloud memerlukan migrasi kedua dan persetujuan pemilik; lihat PENCATATAN.md.
+
+Desain studio menggantikan tema rose/lavender sebagai tampilan aktif: sidebar arang, permukaan netral, aksen hijau. Pencarian halaman Ctrl/⌘ K, navigasi kelompok, akses Catat di ponsel, pemilih tanggal, serta checklist subtugas mempercepat penggunaan. Rapat mendukung jenis online/hybrid, tautan bergabung, durasi, lokasi dan ekspor ICS.

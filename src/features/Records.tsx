@@ -14,6 +14,7 @@ import { ReadinessRadar } from '@/components/charts/ReadinessRadar';
 import { InfluenceMap } from '@/components/charts/InfluenceMap';
 import { ListTodo, Columns3, CalendarDays, Search, Plus, ChartGantt } from 'lucide-react';
 import { TaskTimeline } from './TaskTimeline';
+import { downloadMeeting } from './meeting';
 export function Records({
   entity,
   workspace,
@@ -95,6 +96,12 @@ export function Records({
         )}
       </div>
       <div className="record-meta">
+        {entity === 'meetings' && (
+          <>
+            <span>{String(row.data.time)} WIB</span>
+            <span>{String(row.data.mode || 'tatap muka')}</span>
+          </>
+        )}
         {Boolean(row.data.assignee) && <span>{String(row.data.assignee)}</span>}
         {Boolean(row.data.priority) && <span>Prioritas {String(row.data.priority)}</span>}
         {Boolean(row.data.due_date || row.data.date) && (
@@ -165,8 +172,61 @@ export function Records({
           Buka tautan ↗
         </a>
       )}
+      {entity === 'meetings' && (
+        <>
+          {Boolean(row.data.location) && <p>Lokasi: {String(row.data.location)}</p>}
+          {Boolean(row.data.agenda) && (
+            <p className="record-text">
+              <strong>Agenda: </strong>
+              {String(row.data.agenda)}
+            </p>
+          )}
+          {Boolean(row.data.participants) && <p>Peserta: {String(row.data.participants)}</p>}
+          {Boolean(row.data.meeting_url) && /^https?:\/\//.test(String(row.data.meeting_url)) && (
+            <a
+              className="button meeting-join"
+              href={String(row.data.meeting_url)}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Bergabung ke rapat ↗
+            </a>
+          )}
+          <button className="meeting-join" onClick={() => downloadMeeting(row)}>
+            Unduh agenda (.ics)
+          </button>
+        </>
+      )}
+      {entity === 'work-items' &&
+        Array.isArray(row.data.subtasks) &&
+        row.data.subtasks.length > 0 && (
+          <div className="subtask-list">
+            <small>
+              {row.data.subtasks.filter((task) => task.done).length}/{row.data.subtasks.length}{' '}
+              subtugas selesai
+            </small>
+            {(row.data.subtasks as { title: string; done: boolean }[]).map((task, index) => (
+              <label className="check" key={index}>
+                <input
+                  type="checkbox"
+                  checked={task.done}
+                  disabled={busy}
+                  onChange={(event) =>
+                    void update(row, {
+                      subtasks: (row.data.subtasks as { title: string; done: boolean }[]).map(
+                        (subtask, i) =>
+                          i === index ? { ...subtask, done: event.target.checked } : subtask,
+                      ),
+                    })
+                  }
+                />
+                <span>{task.title}</span>
+              </label>
+            ))}
+          </div>
+        )}
       <div className="actions">
-        <button onClick={() => setEdit(row)}>Detail / ubah</button>
+        <button onClick={() => setEdit(row)}>Buka catatan</button>
         {(entity === 'work-items' || entity === 'checklist') && row.data.status !== 'selesai' && (
           <button
             disabled={busy}

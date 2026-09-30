@@ -42,12 +42,7 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
               </div>
               <button onClick={() => setEdit(selected)}>Ubah proyek</button>
             </div>
-            <p>
-              {String(
-                selected.data.description ||
-                  'Tambahkan tujuan proyek agar setiap tugas memiliki arah yang jelas.',
-              )}
-            </p>
+            <p>{String(selected.data.description || 'Belum ada deskripsi proyek.')}</p>
             <div className="project-properties">
               <span>
                 Status<strong className="badge">{String(selected.data.status || 'rencana')}</strong>
@@ -111,11 +106,9 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
         <>
           <section className="workspace-intro">
             <div>
-              <span className="eyebrow">DARI RENCANA KE HASIL</span>
-              <h2>Setiap proyek, satu ruang kerja.</h2>
-              <p>
-                Hubungkan tujuan, catatan, dan tugas. Mulai dari satu langkah yang bisa dikerjakan.
-              </p>
+              <span className="eyebrow">PROYEK</span>
+              <h2>Proyek Anda</h2>
+              <p>Atur tugas, jadwal, dan catatan setiap proyek.</p>
             </div>
             <button className="primary" onClick={() => setEdit(null)}>
               <Plus size={18} /> Proyek baru
@@ -177,11 +170,7 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
                       <span className="badge">{String(row.data.status || 'rencana')}</span>
                     </div>
                     <h3>{String(row.data.title)}</h3>
-                    <p>
-                      {String(
-                        row.data.description || 'Tujuan, catatan, dan seluruh pekerjaan terkait.',
-                      )}
-                    </p>
+                    <p>{String(row.data.description || 'Belum ada deskripsi proyek.')}</p>
                     <Meter value={scopeProgress(tasks)} />
                     <div className="project-card-foot">
                       <span>
@@ -197,8 +186,8 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
           {!projects.length && (
             <div className="empty card">
               <FolderOpen className="empty-icon" size={36} />
-              <h3>Ruang untuk rencana berikutnya</h3>
-              <p>Tentukan nama, tujuan, dan tanggal proyek Anda. Tambahkan tugas kapan saja.</p>
+              <h3>Belum ada proyek</h3>
+              <p>Buat proyek untuk mengelompokkan tugas dan jadwal.</p>
               <button className="primary" onClick={() => setEdit(null)}>
                 Buat proyek pertama
               </button>

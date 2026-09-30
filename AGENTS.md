@@ -7,7 +7,7 @@
 
 ## Produk
 - Ruang kerja pribadi manajer KDMP Puntukrejo: proyek fleksibel tanpa durasi wajib, tugas, milestone, kesiapan gerai, koordinasi, dokumen, risiko, laporan kerja.
-- Kode lama hanya dasar refaktor. Produk baru tidak mencakup anggota, omzet, stok dagang, akuntansi, kasir, atau kunci AI pengguna.
+- Kode lama hanya dasar refaktor. Arahan 1 Oktober 2026 menambah pencatatan anggota, buku kas, barang dan stok opname terpisah dari ruang kerja. Belum mencakup POS, akuntansi lengkap, simpan pinjam, atau kunci AI pengguna.
 - Identitas berasal dari profil. Jangan mengarang nama, kontak, capaian, atau data operasional.
 - Jangan memasang kembali program 90 hari. Data rencana lama dipertahankan sebagai catatan pengguna; fixture historis hanya dipakai tes.
 - Pengalaman produk berupa task/project manager terinspirasi Notion: proyek, catatan, tugas terhubung, daftar/papan/kalender/Gantt, dan catatan terformat. Jangan mengklaim editor blok drag-and-drop, baseline, jalur kritis otomatis, atau kolaborasi real-time sudah tersedia.
@@ -33,7 +33,7 @@
 - Periksa 360, 768, 1024, 1440 px; navigasi bawah ponsel, rel tablet, sidebar desktop.
 - Area sentuh minimal 44 px, fokus keyboard, label form, status memakai teks selain warna.
 - Tabel/Gantt bergulir dalam kontainer; hormati reduced-motion dan safe area.
-- Token visual mengikuti PRD terbaru.
+- Tema studio: sidebar biru arang, latar netral, aksen hijau lembut; tema gelap tetap tersedia. Token visual di studio.css.
 
 ## Proses
 1. Periksa Git dan pertahankan perubahan pengguna.
@@ -44,3 +44,10 @@
 6. Laporkan hasil dan batasan secara jujur; tes lama bukan bukti fitur baru selesai.
 
 Commit/push per paket kerja, pesan ringkas dengan judul dan isi dipisahkan baris kosong. Cabang fitur `codex/`. Repo baru memakai riwayat bersih sesuai permintaan pemilik; jangan force-push repo lama. Jangan menandai pemeriksaan perangkat yang belum dilakukan.
+
+## Pencatatan dan rapat
+- Acuan aktivasi: docs/PENCATATAN.md. Migrasi 20261001000002_operations.sql perlu persetujuan sebelum dijalankan cloud.
+- Empat domain baru memakai hub_records; pemeriksaan kemampuan server menentukan apakah pencatatan sudah aktif. Jangan menyamarkan migrasi belum terpasang sebagai data nol.
+- Buku kas hanya uang masuk/keluar tercatat; jangan melabeli selisih sebagai laba/saldo bank. Opname menyimpan snapshot stok buku tanpa koreksi stok otomatis.
+- Rapat online memakai tautan pengguna dan unduhan ICS; bukan konferensi video bawaan atau pengiriman undangan otomatis.
+- Bahasa UI langsung, ringkas, tanpa slogan motivasi. Pilih judul yang menjelaskan isi atau tindakan.

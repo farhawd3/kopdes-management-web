@@ -22,7 +22,7 @@ export function Settings({ refresh }: { refresh: () => Promise<void> }) {
     <div className="dashboard-grid">
       <section className="card">
         <span className="eyebrow">WORKSPACE FLEKSIBEL</span>
-        <h2>Atur ruang kerja Anda</h2>
+        <h2>Pengaturan</h2>
         <p>
           Buat proyek dengan tujuan, tanggal, dan catatan sendiri. Kelola pekerjaan melalui daftar,
           papan, kalender, atau Gantt.
