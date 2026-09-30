@@ -31,5 +31,5 @@ Hasil tes dan pemeriksaan viewport di [STATUS](STATUS.md). Rencana historis bera
 - [x] Implementasi anggota, buku kas, barang, opname, filter dan CSV dengan gerbang aktivasi database.
 - [x] Rapat online/hybrid, tautan bergabung, durasi dan ekspor agenda ICS.
 - [x] Validasi dan migrasi domain pencatatan disiapkan.
-- [ ] Persetujuan dan pemasangan migrasi kedua di Supabase cloud.
+- [x] Pemilik mengonfirmasi pemasangan migrasi kedua; aktivasi terverifikasi melalui aplikasi lokal.
 - [ ] Uji simpan data pencatatan nyata setelah aktivasi.

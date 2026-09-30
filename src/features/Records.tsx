@@ -29,6 +29,7 @@ export function Records({
   scopeId?: string;
 }) {
   const [edit, setEdit] = useState<Item | null | undefined>(),
+    [quickTitle, setQuickTitle] = useState(''),
     [search, setSearch] = useState(''),
     [filter, setFilter] = useState(initialFilter),
     [workstream, setWorkstream] = useState(''),
@@ -384,6 +385,45 @@ export function Records({
           })}
           <span>{rows.length} tugas</span>
         </div>
+      )}
+      {entity === 'work-items' && (
+        <form
+          className="inline-task"
+          onSubmit={async (event) => {
+            event.preventDefault();
+            if (busy || !quickTitle.trim()) return;
+            setBusy(true);
+            setError('');
+            try {
+              await api(entity, {
+                data: schemas['work-items'].parse({
+                  title: quickTitle,
+                  due_date: today(),
+                  workstream_id: scopeId || workstream || '',
+                }),
+              });
+              await refresh();
+              setQuickTitle('');
+            } catch (error) {
+              setError((error as Error).message);
+            } finally {
+              setBusy(false);
+            }
+          }}
+        >
+          <Plus size={17} />
+          <input
+            aria-label="Tulis tugas baru"
+            value={quickTitle}
+            maxLength={200}
+            onChange={(event) => setQuickTitle(event.target.value)}
+            placeholder="Tulis tugas, lalu Enter…"
+          />
+          <small>Tenggat hari ini</small>
+          <button disabled={busy || !quickTitle.trim()} type="submit">
+            Tambah
+          </button>
+        </form>
       )}
       <div className="filters">
         <label>

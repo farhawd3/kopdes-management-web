@@ -33,7 +33,7 @@
 - Periksa 360, 768, 1024, 1440 px; navigasi bawah ponsel, rel tablet, sidebar desktop.
 - Area sentuh minimal 44 px, fokus keyboard, label form, status memakai teks selain warna.
 - Tabel/Gantt bergulir dalam kontainer; hormati reduced-motion dan safe area.
-- Tema studio: sidebar biru arang, latar netral, aksen hijau lembut; tema gelap tetap tersedia. Token visual di studio.css.
+- Tema aktif: sidebar netral, aksen indigo, daftar dokumen dan panel edit samping; hindari kartu promosi besar dan slogan. Tema gelap tetap tersedia. Token visual di studio.css.
 
 ## Proses
 1. Periksa Git dan pertahankan perubahan pengguna.

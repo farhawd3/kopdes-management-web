@@ -190,3 +190,9 @@ it('memilih barang menyalin stok buku, tetapi hasil hitung wajib diisi sendiri',
     ),
   );
 });
+it('tambah cepat dari ringkasan membuka buku yang dipilih', () => {
+  render(<Operations slug="pencatatan" data={{}} ready refresh={vi.fn()} />);
+  fireEvent.click(screen.getByRole('button', { name: 'Tambah anggota' }));
+  expect(screen.getByRole('dialog')).toBeTruthy();
+  expect(screen.getByLabelText('Nama anggota')).toBeTruthy();
+});

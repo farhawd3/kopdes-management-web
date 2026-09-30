@@ -130,3 +130,31 @@ describe('Alur kerja dasar UI', () => {
     expect(refresh).not.toHaveBeenCalled();
   });
 });
+it('tambah tugas langsung menyimpan judul dan mempertahankan lingkup proyek', async () => {
+  mocks.api.mockResolvedValue({});
+  const scope = '7fd6a2ac-dc55-48bc-abd8-f0e4c76b00a5';
+  render(
+    <Records
+      entity="work-items"
+      workspace={{}}
+      scopeId={scope}
+      refresh={vi.fn().mockResolvedValue(undefined)}
+    />,
+  );
+  const input = screen.getByLabelText('Tulis tugas baru');
+  fireEvent.change(input, { target: { value: 'Hubungi pemasok' } });
+  fireEvent.submit(input.closest('form')!);
+  await waitFor(() =>
+    expect(mocks.api).toHaveBeenCalledWith(
+      'work-items',
+      expect.objectContaining({
+        data: expect.objectContaining({
+          title: 'Hubungi pemasok',
+          workstream_id: scope,
+          status: 'rencana',
+        }),
+      }),
+    ),
+  );
+  await waitFor(() => expect((input as HTMLInputElement).value).toBe(''));
+});

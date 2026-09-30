@@ -85,7 +85,17 @@ export function Operations({
   const [month, setMonth] = useState('');
   const [filter, setFilter] = useState('');
   const [unit, setUnit] = useState('');
-  const entity = book?.entity;
+  const [captureEntity, setCaptureEntity] = useState<Entity>();
+  const entity = book?.entity || captureEntity;
+  const recent = modules
+    .flatMap((entry) => (data[entry.entity] || []).map((row) => ({ row, entry })))
+    .filter(({ row, entry }) =>
+      `${row.data.title} ${entry.title}`
+        .toLocaleLowerCase('id')
+        .includes(search.toLocaleLowerCase('id')),
+    )
+    .sort((a, b) => b.row.updated_at.localeCompare(a.row.updated_at))
+    .slice(0, 8);
   const all = entity ? data[entity] || [] : [];
   const rows = all
     .filter(
@@ -169,41 +179,105 @@ export function Operations({
       )}
       {!book ? (
         <>
-          <div className="recording-heading">
-            <span className="eyebrow">PENCATATAN HARIAN</span>
-            <h2>Apa yang ingin dicatat?</h2>
-            <p>Pilih buku pencatatan di bawah. Proyek dan tugas tetap ada di bagian Ruang kerja.</p>
+          <div className="notebook-toolbar">
+            <div>
+              <h2>Buku pencatatan</h2>
+              <p>Anggota, kas, dan persediaan.</p>
+            </div>
+            <label className="notebook-search">
+              <Search size={16} />
+              <input
+                aria-label="Cari catatan terakhir"
+                type="search"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder="Cari catatan terakhir…"
+              />
+            </label>
           </div>
-          <div className="recording-grid">
-            {modules.map(({ path, entity, title, description, Icon }) => (
-              <Link href={'/' + path} className="recording-card" key={path}>
-                <div className="section-head">
-                  <span className="module-icon">
-                    <Icon size={24} />
-                  </span>
-                  <ArrowUpRight size={20} />
+          <div className="notebook-layout">
+            <section className="notebook-index" aria-label="Buku pencatatan">
+              {modules.map(({ path, entity, title, description, Icon }, index) => (
+                <article className="notebook-row" key={path}>
+                  <Link className="notebook-link" href={'/' + path}>
+                    <span className={'notebook-spine spine-' + index}>
+                      <Icon size={21} />
+                    </span>
+                    <span>
+                      <strong>{title}</strong>
+                      <small>{description}</small>
+                    </span>
+                    <span className="notebook-count">
+                      {ready ? (data[entity] || []).length : '—'}
+                    </span>
+                    <ArrowUpRight size={16} />
+                  </Link>
+                  <button
+                    disabled={
+                      !ready || (entity === 'stock-counts' && !data['inventory-items']?.length)
+                    }
+                    title={
+                      entity === 'stock-counts' && !data['inventory-items']?.length
+                        ? 'Tambahkan barang terlebih dahulu'
+                        : 'Tambah catatan'
+                    }
+                    aria-label={'Tambah ' + title.toLowerCase()}
+                    onClick={() => {
+                      setCaptureEntity(entity);
+                      setEdit(null);
+                    }}
+                  >
+                    <Plus size={17} />
+                  </button>
+                </article>
+              ))}
+              <details className="notebook-help">
+                <summary>Cara mencatat stok opname</summary>
+                <p>
+                  Tambahkan barang, pilih Hitung stok, lalu isi hasil hitung fisik. Koreksi stok
+                  buku dilakukan terpisah.
+                </p>
+              </details>
+            </section>
+            <aside className="recent-notes">
+              <div className="section-head">
+                <h3>Terakhir diubah</h3>
+                <span className="badge">{recent.length}</span>
+              </div>
+              {recent.length ? (
+                recent.map(({ row, entry }) => (
+                  <button
+                    className="recent-note"
+                    key={row.id}
+                    onClick={() => {
+                      setCaptureEntity(entry.entity);
+                      setEdit(row);
+                    }}
+                  >
+                    <entry.Icon size={17} />
+                    <span>
+                      <strong>{String(row.data.title)}</strong>
+                      <small>
+                        {entry.title} · {formatDate(row.updated_at)}
+                      </small>
+                    </span>
+                    <ArrowUpRight size={14} />
+                  </button>
+                ))
+              ) : (
+                <div className="recent-empty">
+                  <FilePenLine size={22} />
+                  <p>
+                    {search
+                      ? 'Tidak ada catatan yang cocok.'
+                      : ready
+                        ? 'Catatan yang Anda ubah akan muncul di sini.'
+                        : 'Pencatatan belum aktif.'}
+                  </p>
                 </div>
-                <h3>{title}</h3>
-                <p>{description}</p>
-                <span>
-                  {ready ? `${(data[entity] || []).length} catatan` : 'Menunggu aktivasi'}{' '}
-                  <span aria-hidden>→</span>
-                </span>
-              </Link>
-            ))}
+              )}
+            </aside>
           </div>
-          <section className="card recording-guide">
-            <h3>Urutan stok opname</h3>
-            <ol>
-              <li>Daftarkan barang dan stok bukunya.</li>
-              <li>Buka Barang, lalu pilih Hitung stok.</li>
-              <li>Masukkan hasil hitung fisik dan catatan selisih.</li>
-            </ol>
-            <p>
-              Opname menyimpan stok buku saat pemeriksaan. Koreksi stok dilakukan terpisah di
-              halaman Barang.
-            </p>
-          </section>
         </>
       ) : (
         <>

@@ -33,3 +33,8 @@ Implementasi awal belum berarti seluruh target PRD atau UAT selesai. Batas dan h
 - Tambah anggota, buku kas, barang dan opname beserta filter, ringkasan, CSV aman, validasi dan gerbang aktivasi migrasi.
 - Tambah rapat online/hybrid, tautan bergabung, durasi dan ekspor ICS; checklist subtugas langsung di kartu.
 - Siapkan migrasi kedua tanpa mengubah SQL terpasang; pemasangan cloud menunggu persetujuan pemilik.
+
+## Tampilan pencatatan yang lebih langsung
+- Ganti kartu promosi dengan daftar buku dan akses tambah langsung.
+- Tambah catatan terakhir, pencarian, input tugas dengan Enter, serta editor samping.
+- Referensi: Linear (display options) dan Things (scheduling/organization); tema netral dengan aksen indigo.
