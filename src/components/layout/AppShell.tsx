@@ -2,487 +2,334 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { navigation } from '@/features/catalog';
 import { ThemeProvider, useTheme } from '@/lib/ThemeContext';
 import { api, resetAuthNavigation } from '@/lib/client';
-import { usePreference } from '@/lib/usePreference';
 import type { Workspace } from '@/features/useWorkspace';
-import { today } from '@/lib/date';
 import {
-  LayoutDashboard,
-  Sun,
-  CheckCheck,
-  FolderKanban,
-  Route,
-  ClipboardCheck,
-  Store,
-  Users,
-  MessagesSquare,
-  Files,
-  ShieldAlert,
-  Contact,
-  ChartNoAxesCombined,
-  NotebookPen,
-  Settings,
-  CircleHelp,
-  Plus,
-  LockKeyhole,
-  Menu,
+  Sparkles,
   Search,
-  Command,
-  ArrowUpRight,
-  Wallet,
-  Package,
-  BookOpen,
-  CalendarDays,
-  X,
-} from 'lucide-react';
-const icons = [
-  LayoutDashboard,
   Sun,
-  CheckCheck,
+  Moon,
+  Paperclip,
   FolderKanban,
-  Route,
-  ClipboardCheck,
-  Store,
-  Users,
-  MessagesSquare,
-  Files,
-  ShieldAlert,
-  Contact,
-  ChartNoAxesCombined,
-  NotebookPen,
-  Settings,
-  CircleHelp,
-  BookOpen,
-  Users,
-  Wallet,
-  Package,
-  ClipboardCheck,
+  FileText,
+  PhoneCall,
+  HelpCircle,
+  Plus,
+  ArrowUpRight,
+  LogOut,
+  X,
+  Command,
+} from 'lucide-react';
+
+const TOP_NAV_LINKS = [
+  { name: 'Dashboard', path: '/beranda' },
+  { name: 'Tasks', path: '/tugas' },
+  { name: 'Pencatatan', path: '/pencatatan' },
+  { name: 'Projects', path: '/proyek' },
+  { name: 'Settings', path: '/pengaturan' },
 ];
-const groups = [
-  {
-    name: 'Ruang kerja',
-    paths: ['/beranda', '/hari-ini', '/proyek', '/tugas', '/roadmap', '/jurnal'],
-  },
-  { name: 'Koordinasi', paths: ['/rapat', '/dokumen', '/pemangku', '/tim'] },
-  { name: 'Pemantauan', paths: ['/gerai', '/kesiapan', '/risiko', '/laporan'] },
-  {
-    name: 'Pencatatan',
-    paths: ['/pencatatan', '/anggota', '/keuangan', '/barang', '/stok-opname'],
-  },
-  { name: 'Pengaturan', paths: ['/pengaturan', '/panduan'] },
-];
-function Frame({ children }: { children: React.ReactNode }) {
-  const path = usePathname(),
-    { preference, setTheme } = useTheme();
-  const [menu, setMenu] = useState(false),
-    [error, setError] = useState(''),
-    [search, setSearch] = useState('');
-  const dialog = useRef<HTMLDialogElement>(null);
+
+function ShellFrame({ children }: { children: React.ReactNode }) {
+  const path = usePathname();
+  const { preference, setTheme } = useTheme();
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
   const [projectSearch, setProjectSearch] = useState('');
-  const activeGroup = groups.find((group) => group.paths.includes(path)) || groups[0];
+  const [searchQuery, setSearchQuery] = useState('');
+  const searchDialog = useRef<HTMLDialogElement>(null);
+
   useEffect(() => {
-    const receive = (event: Event) => setWorkspace((event as CustomEvent<Workspace | null>).detail);
+    const receive = (event: Event) =>
+      setWorkspace((event as CustomEvent<Workspace | null>).detail);
     window.addEventListener('hub-workspace', receive);
     return () => window.removeEventListener('hub-workspace', receive);
   }, []);
-  const [density, setDensity] = usePreference('hub-density', 'comfortable');
-  const compact = density === 'compact';
-  useEffect(() => {
-    document.documentElement.dataset.density = compact ? 'compact' : 'comfortable';
-  }, [compact]);
+
   useEffect(() => {
     const key = (event: KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault();
-        dialog.current?.showModal();
+        searchDialog.current?.showModal();
       }
-      if (event.key === 'Escape') setMenu(false);
+      if (event.key === 'Escape') searchDialog.current?.close();
     };
     window.addEventListener('keydown', key);
     return () => window.removeEventListener('keydown', key);
   }, []);
-  const current = navigation.find(([href]) => href === path)?.[1] || 'Beranda';
+
+  const managerName = String(
+    workspace?.organization?.[0]?.data?.manager || 'Nicki',
+  );
+
+  const projects = (workspace?.workstreams || []).filter(
+    (item) =>
+      item.data.status !== 'diarsipkan' &&
+      String(item.data.title)
+        .toLocaleLowerCase('id')
+        .includes(projectSearch.toLocaleLowerCase('id')),
+  );
+
   return (
-    <div className="shell studio-shell">
-      <a className="skip" href="#main">
-        Lewati navigasi
-      </a>
-      <a className="skip" href="#main">
-        Lewati navigasi
-      </a>
-      <nav className="app-rail" aria-label="Bagian aplikasi">
-        <Link href="/beranda" className="rail-brand" aria-label="Beranda Kopdes">
-          <span className="rail-brand-box">
-            <CheckCheck size={24} strokeWidth={2.5} />
+    <div className="hub-outer-shell">
+      {/* 1. TOP NAVIGATION BAR */}
+      <header className="hub-topbar" role="banner">
+        {/* Brand Pill (Reference Image top left) */}
+        <Link href="/beranda" className="hub-brand-pill" aria-label="Task Hub Kopdes">
+          <span className="hub-brand-icon">
+            <Sparkles size={13} strokeWidth={3} />
           </span>
+          <span>Task Hub</span>
         </Link>
-        <Link href="/tugas" aria-label="Tugas & Daftar Harian" title="Tugas" aria-current={path === '/tugas' ? 'page' : undefined}>
-          <CheckCheck size={20} />
-        </Link>
-        <Link href="/beranda" aria-label="Beranda" title="Beranda" aria-current={path === '/beranda' ? 'page' : undefined}>
-          <LayoutDashboard size={20} />
-        </Link>
-        <Link href="/proyek" aria-label="Proyek" title="Proyek" aria-current={path === '/proyek' ? 'page' : undefined}>
-          <FolderKanban size={20} />
-        </Link>
-        <Link href="/tugas?view=kalender" aria-label="Kalender Tugas" title="Kalender">
-          <CalendarDays size={20} />
-        </Link>
-        <Link href="/laporan" aria-label="Laporan & Analitik" title="Laporan" aria-current={path === '/laporan' ? 'page' : undefined}>
-          <ChartNoAxesCombined size={20} />
-        </Link>
-        <Link href="/rapat" aria-label="Rapat & Notulen" title="Rapat" aria-current={path === '/rapat' ? 'page' : undefined}>
-          <MessagesSquare size={20} />
-        </Link>
-        <Link href="/pencatatan" aria-label="Pencatatan Koperasi" title="Pencatatan" aria-current={groups[3].paths.includes(path) ? 'page' : undefined}>
-          <BookOpen size={20} />
-        </Link>
-        <Link href="/pengaturan" aria-label="Pengaturan" title="Pengaturan" aria-current={path === '/pengaturan' ? 'page' : undefined}>
-          <Settings size={20} />
-        </Link>
-        <div className="rail-foot-profile">
-          <span className="rail-user-avatar" title="Manajer KDMP Puntukrejo">M</span>
+
+        {/* Center Navigation Pills (Reference Image top center) */}
+        <nav className="hub-nav-pills" aria-label="Navigasi Utama">
+          {TOP_NAV_LINKS.map((link) => {
+            const isActive =
+              link.path === '/beranda'
+                ? path === '/beranda' || path === '/'
+                : path.startsWith(link.path);
+
+            return (
+              <Link
+                key={link.path}
+                href={link.path}
+                className={`hub-nav-pill ${isActive ? 'active' : ''}`}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                {link.name}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Right Action Circle Buttons (Reference Image top right) */}
+        <div className="hub-topbar-actions">
+          <button
+            type="button"
+            className="hub-circle-btn"
+            onClick={() => searchDialog.current?.showModal()}
+            title="Cari (⌘K)"
+            aria-label="Cari fitur atau data"
+          >
+            <Search size={17} />
+          </button>
+
+          <button
+            type="button"
+            className="hub-circle-btn"
+            onClick={() => setTheme(preference === 'dark' ? 'light' : 'dark')}
+            title="Ganti Tema"
+            aria-label="Ganti Tema"
+          >
+            {preference === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+          </button>
+
+          <button
+            type="button"
+            className="hub-circle-btn"
+            onClick={async () => {
+              if (!confirm('Kunci aplikasi dan keluar dari sesi manajer?')) return;
+              try {
+                await api('auth/pin', {}, 'DELETE');
+              } finally {
+                resetAuthNavigation('/pin');
+              }
+            }}
+            title="Kunci & Keluar"
+            aria-label="Kunci sesi manajer"
+          >
+            <LogOut size={16} />
+          </button>
+
+          {/* Profile Circle with Manager Initials */}
+          <Link href="/pengaturan" className="hub-user-avatar" title={`Manajer: ${managerName}`}>
+            {managerName[0]?.toUpperCase() || 'M'}
+          </Link>
         </div>
-      </nav>
-      <aside className={menu ? 'sidebar open' : 'sidebar'} aria-label="Navigasi utama">
-        {/* Workspace Card Selector */}
-        <div className="sidebar-workspace-card">
-          <div className="workspace-logo-box">
-            <span>KD</span>
+      </header>
+
+      {/* 2. MAIN TWO-COLUMN CONTAINER */}
+      <div className="hub-main-container">
+        {/* Left Sidebar */}
+        <aside className="hub-sidebar" aria-label="Navigasi Sisi Kiri">
+          {/* Manager Greeting */}
+          <div className="hub-greeting">
+            <h2>
+              Welcome
+              <br />
+              Back, {managerName}!
+            </h2>
           </div>
-          <div className="workspace-titles">
-            <strong>KDMP Puntukrejo</strong>
-            <small>Ruang Kerja Pribadi</small>
+
+          {/* Projects Section (Reference Image: Projects with paperclip icons) */}
+          <div className="hub-sidebar-section">
+            <span className="hub-section-label">Projects</span>
+            <div className="hub-sidebar-list">
+              {projects.length > 0 ? (
+                projects.slice(0, 5).map((project) => {
+                  const isCurrent = path.includes(project.id);
+                  const taskCount = (workspace?.['work-items'] || []).filter(
+                    (t) =>
+                      t.data.workstream_id === project.id &&
+                      !['selesai', 'dibatalkan'].includes(String(t.data.status)),
+                  ).length;
+
+                  return (
+                    <Link
+                      key={project.id}
+                      href={`/proyek?id=${encodeURIComponent(project.id)}`}
+                      className={`hub-sidebar-item ${isCurrent ? 'active' : ''}`}
+                    >
+                      <span className="hub-item-icon">
+                        <Paperclip size={15} />
+                      </span>
+                      <span className="truncate">{String(project.data.title)}</span>
+                      {taskCount > 0 && (
+                        <span className="hub-count-pill">
+                          {taskCount.toString().padStart(2, '0')}
+                        </span>
+                      )}
+                    </Link>
+                  );
+                })
+              ) : (
+                <Link href="/proyek" className="hub-sidebar-item">
+                  <span className="hub-item-icon">
+                    <Plus size={15} />
+                  </span>
+                  <span>Tambah Proyek</span>
+                </Link>
+              )}
+            </div>
           </div>
-        </div>
 
-        <button className="sidebar-search" onClick={() => dialog.current?.showModal()}>
-          <Search size={16} />
-          <span>Cari halaman</span>
-          <kbd>⌘ K</kbd>
-        </button>
-
-        <Link href="/tugas?baru=1" onClick={() => setMenu(false)} className="sidebar-create">
-          <Plus size={17} />
-          <span>Tugas baru</span>
-        </Link>
-
-        <nav>
-          {/* Projects Section with Search */}
-          <div className="sidebar-section-card">
-            <div className="section-head">
-              <h3>PROYEK</h3>
-              <Link href="/proyek" aria-label="Semua proyek" className="section-head-link">
-                <FolderKanban size={15} />
+          {/* Reports Section (Reference Image) */}
+          <div className="hub-sidebar-section">
+            <span className="hub-section-label">Reports</span>
+            <div className="hub-sidebar-list">
+              <Link
+                href="/laporan"
+                className={`hub-sidebar-item ${path === '/laporan' ? 'active' : ''}`}
+              >
+                <span className="hub-item-icon">
+                  <FileText size={15} />
+                </span>
+                <span>Project Reports</span>
               </Link>
             </div>
-            <div className="sidebar-search-box">
-              <Search size={14} className="search-icon-inside" />
-              <input
-                aria-label="Cari proyek"
-                type="search"
-                placeholder="Cari proyek…"
-                value={projectSearch}
-                onChange={(e) => setProjectSearch(e.target.value)}
-              />
-            </div>
-            <div className="sidebar-project-list">
-              {workspace ? (
-                (workspace.workstreams || [])
-                  .filter(
-                    (item) =>
-                      item.data.status !== 'diarsipkan' &&
-                      String(item.data.title)
-                        .toLocaleLowerCase('id')
-                        .includes(projectSearch.toLocaleLowerCase('id')),
-                  )
-                  .map((item) => {
-                    const taskCount = (workspace['work-items'] || []).filter(
-                      (task) =>
-                        task.data.workstream_id === item.id &&
-                        !['selesai', 'dibatalkan'].includes(String(task.data.status)),
-                    ).length;
-                    return (
-                      <Link
-                        key={item.id}
-                        href={`/proyek?id=${encodeURIComponent(item.id)}`}
-                        onClick={() => setMenu(false)}
-                        className="sidebar-project-item"
-                      >
-                        <span
-                          className="project-dot"
-                          style={{ backgroundColor: String(item.data.color || '#ed7d3d') }}
-                        />
-                        <span className="project-title-text">{String(item.data.title)}</span>
-                        <small className="project-count-pill">
-                          {taskCount.toString().padStart(2, '0')}
-                        </small>
-                      </Link>
-                    );
-                  })
-              ) : (
-                <small className="muted-text">Memuat proyek…</small>
-              )}
-              {workspace && !(workspace.workstreams || []).length && (
-                <p className="sidebar-empty-note">Belum ada proyek.</p>
-              )}
+          </div>
+
+          {/* Other Section (Reference Image: Contact us & Help and Support) */}
+          <div className="hub-sidebar-section">
+            <span className="hub-section-label">Other</span>
+            <div className="hub-sidebar-list">
+              <Link
+                href="/pemangku"
+                className={`hub-sidebar-item ${path === '/pemangku' ? 'active' : ''}`}
+              >
+                <span className="hub-item-icon">
+                  <PhoneCall size={15} />
+                </span>
+                <span>Contact us</span>
+              </Link>
+              <Link
+                href="/panduan"
+                className={`hub-sidebar-item ${path === '/panduan' ? 'active' : ''}`}
+              >
+                <span className="hub-item-icon">
+                  <HelpCircle size={15} />
+                </span>
+                <span>Help and Support</span>
+              </Link>
             </div>
           </div>
 
-          {/* Stakeholders / Contacts Section (Behance Reference) */}
-          <div className="sidebar-section-card">
-            <div className="section-head">
-              <h3>PEMANGKU & KONTAK</h3>
-              <span className="sidebar-pill-badge">Pengurus</span>
+          {/* Bottom Card (Reference Image bottom left with lime gradient) */}
+          <div className="hub-coop-card">
+            <span className="hub-brand-icon" style={{ width: 28, height: 28, fontSize: 13 }}>
+              KD
+            </span>
+            <div>
+              <h4>KDMP Puntukrejo</h4>
+              <p>Ruang Kerja Pribadi Manajer Koperasi Desa Merdeka.</p>
             </div>
-            <div className="sidebar-members-list">
-              {workspace?.stakeholders && workspace.stakeholders.length > 0 ? (
-                workspace.stakeholders.slice(0, 4).map((sh) => (
-                  <Link
-                    key={sh.id}
-                    href="/pemangku"
-                    onClick={() => setMenu(false)}
-                    className="sidebar-member-row"
-                  >
-                    <span className="member-avatar">
-                      {String(sh.data.title).charAt(0).toUpperCase()}
-                    </span>
-                    <div className="member-info">
-                      <span className="member-name">{String(sh.data.title)}</span>
-                      <small className="member-role">{String(sh.data.category || 'Mitra')}</small>
-                    </div>
-                  </Link>
-                ))
-              ) : (
-                <>
-                  <Link href="/pemangku" onClick={() => setMenu(false)} className="sidebar-member-row">
-                    <span className="member-avatar avatar-orange">KP</span>
-                    <div className="member-info">
-                      <span className="member-name">Ketua Pengurus</span>
-                      <small className="member-role">Pengurus Koperasi</small>
-                    </div>
-                  </Link>
-                  <Link href="/pemangku" onClick={() => setMenu(false)} className="sidebar-member-row">
-                    <span className="member-avatar avatar-navy">BD</span>
-                    <div className="member-info">
-                      <span className="member-name">Bendahara</span>
-                      <small className="member-role">Keuangan & Kas</small>
-                    </div>
-                  </Link>
-                  <Link href="/pemangku" onClick={() => setMenu(false)} className="sidebar-member-row">
-                    <span className="member-avatar avatar-slate">DK</span>
-                    <div className="member-info">
-                      <span className="member-name">Dinas Koperasi</span>
-                      <small className="member-role">Pembina Wilayah</small>
-                    </div>
-                  </Link>
-                </>
-              )}
-            </div>
-          </div>
-
-          {/* My To-Do List Shortcut (Behance Reference) */}
-          <div className="sidebar-todo-shortcut">
-            <Link href="/hari-ini" onClick={() => setMenu(false)} className="todo-shortcut-link">
-              <div className="todo-shortcut-left">
-                <Sun size={17} />
-                <span>Tugas Hari Ini</span>
-              </div>
-              <small className="todo-count-badge">
-                {
-                  (workspace?.['work-items'] || []).filter(
-                    (item) =>
-                      item.data.due_date === today() &&
-                      !['selesai', 'dibatalkan'].includes(String(item.data.status)),
-                  ).length.toString().padStart(2, '0')
-                }
-              </small>
+            <Link href="/pencatatan" className="hub-coop-pill-btn">
+              <span>Operasional Aktif</span>
+              <ArrowUpRight size={14} />
             </Link>
           </div>
+        </aside>
 
-          {/* Navigation Groups (Ruang Kerja, Koordinasi, Pemantauan, Pencatatan) */}
-          {groups.map((group) => (
-            <details
-              className={`nav-group ${group === activeGroup ? 'active-group' : ''}`}
-              key={group.name}
-              open={group === activeGroup}
-            >
-              <summary>{group.name}</summary>
-              {group.paths.map((href) => {
-                const index = navigation.findIndex((entry) => entry[0] === href),
-                  entry = navigation[index],
-                  Icon = icons[index];
-                return (
-                  <Link
-                    key={href}
-                    href={href}
-                    onClick={() => setMenu(false)}
-                    aria-current={path === href ? 'page' : undefined}
-                    title={entry[1]}
-                  >
-                    <Icon size={17} strokeWidth={1.7} />
-                    <span>{entry[1]}</span>
-                  </Link>
-                );
-              })}
-            </details>
-          ))}
-        </nav>
-        <div className="sidebar-foot">
-          <span className="workspace-avatar">M</span>
-          <span>
-            KDMP Puntukrejo
-            <br />
-            <strong>Manajer Koperasi</strong>
-          </span>
-        </div>
-      </aside>
-      {menu && (
-        <button className="menu-shade" aria-label="Tutup menu" onClick={() => setMenu(false)} />
-      )}
-      <div className="workspace">
-        <header className="topbar">
-          <div className="topbar-location">
-            <button
-              className="mobile-menu"
-              aria-label="Buka navigasi"
-              aria-expanded={menu}
-              onClick={() => setMenu(!menu)}
-            >
-              <Menu size={20} />
-            </button>
-            <span className="breadcrumb">
-              Kopdes <span>/</span>
-              <strong>{current}</strong>
-            </span>
-          </div>
-          <div className="actions">
-            <button
-              className="search-trigger"
-              aria-label="Cari halaman"
-              onClick={() => dialog.current?.showModal()}
-            >
-              <Search size={18} />
-              <span>Cari</span>
-            </button>
-            <label className="sr-only" htmlFor="theme">
-              Tema
-            </label>
-            <select
-              id="theme"
-              value={preference}
-              onChange={(event) => setTheme(event.target.value as 'system' | 'light' | 'dark')}
-            >
-              <option value="system">Sistem</option>
-              <option value="light">Terang</option>
-              <option value="dark">Gelap</option>
-            </select>
-            <button
-              className="density-toggle"
-              aria-pressed={compact}
-              onClick={() => setDensity(compact ? 'comfortable' : 'compact')}
-            >
-              Ringkas
-            </button>
-            <button
-              aria-label="Kunci aplikasi"
-              onClick={async () => {
-                try {
-                  await api('auth/pin', { action: 'logout' });
-                  resetAuthNavigation('/pin');
-                } catch (e) {
-                  setError((e as Error).message);
-                }
-              }}
-            >
-              <LockKeyhole size={16} />
-            </button>
-          </div>
-        </header>
-        {error && (
-          <p role="alert" className="notice error">
-            {error}
-          </p>
-        )}
-        <main id="main" tabIndex={-1}>
+        {/* Right Main Content Canvas */}
+        <main className="hub-canvas-area" id="main">
           {children}
         </main>
       </div>
-      <nav className="bottom-nav" aria-label="Navigasi ponsel">
-        <Link href="/beranda" aria-current={path === '/beranda' ? 'page' : undefined}>
-          <LayoutDashboard size={20} />
-          <span>Beranda</span>
-        </Link>
-        <Link href="/proyek" aria-current={path === '/proyek' ? 'page' : undefined}>
-          <FolderKanban size={20} />
-          <span>Proyek</span>
-        </Link>
-        <Link className="add" href="/tugas?baru=1" aria-label="Tambah tugas">
-          <Plus size={24} />
-        </Link>
-        <Link href="/pencatatan" aria-current={groups[3].paths.includes(path) ? 'page' : undefined}>
-          <BookOpen size={20} />
-          <span>Catat</span>
-        </Link>
-        <button aria-expanded={menu} onClick={() => setMenu(!menu)}>
-          <Menu size={20} />
-          <span>Menu</span>
-        </button>
-      </nav>
-      <dialog className="command-dialog" ref={dialog} aria-labelledby="command-title">
-        <div className="section-head">
-          <h2 id="command-title">
-            <Command size={18} />
-            Pindah halaman
-          </h2>
-          <button aria-label="Tutup pencarian" onClick={() => dialog.current?.close()}>
+
+      {/* Quick Search Dialog (⌘K) */}
+      <dialog ref={searchDialog} className="modal-dialog-box" style={{ maxWidth: 520, borderRadius: 24, padding: 24 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+          <h3 style={{ margin: 0, fontSize: 16, fontWeight: 750 }}>Cari Cepat (⌘K)</h3>
+          <button
+            type="button"
+            onClick={() => searchDialog.current?.close()}
+            style={{ background: 'none', border: 0, cursor: 'pointer' }}
+          >
             <X size={18} />
           </button>
         </div>
-        <label>
-          <span className="sr-only">Cari halaman</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', background: 'var(--canvas)', borderRadius: 9999 }}>
+          <Search size={16} />
           <input
-            autoFocus
             type="search"
-            value={search}
-            placeholder="Proyek, rapat, buku kas…"
-            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Ketik tujuan: tugas, kas, anggota, proyek..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{ border: 0, background: 'transparent', outline: 'none', width: '100%', fontSize: 13 }}
+            autoFocus
           />
-        </label>
-        <div className="command-results">
-          {navigation
-            .filter(([, label]) =>
-              label.toLocaleLowerCase('id').includes(search.toLocaleLowerCase('id')),
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 14 }}>
+          {[
+            ['/beranda', 'Dashboard', 'Ringkasan operasional dan jadwal'],
+            ['/tugas', 'Tugas & Jadwal', 'Daftar, papan scrum, dan harian'],
+            ['/pencatatan', 'Pencatatan Koperasi', 'Buku kas, anggota, barang, opname'],
+            ['/proyek', 'Proyek & Bidang Kerja', 'Tujuan dan target kerja koperasi'],
+            ['/laporan', 'Laporan Kinerja', 'Rekap mingguan & bulanan manajer'],
+          ]
+            .filter(([, title, desc]) =>
+              `${title} ${desc}`.toLowerCase().includes(searchQuery.toLowerCase()),
             )
-            .map(([href, label]) => (
+            .map(([link, title, desc]) => (
               <Link
-                href={href}
-                key={href}
-                onClick={() => {
-                  dialog.current?.close();
-                  setMenu(false);
+                key={link}
+                href={link}
+                onClick={() => searchDialog.current?.close()}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  padding: '10px 14px',
+                  borderRadius: 14,
+                  textDecoration: 'none',
+                  color: 'inherit',
+                  background: 'var(--surface)',
+                  border: '1px solid var(--line)',
                 }}
               >
-                <span>{label}</span>
-                <ArrowUpRight size={16} />
+                <strong style={{ fontSize: 13.5 }}>{title}</strong>
+                <small style={{ color: 'var(--ink-muted)', fontSize: 11.5 }}>{desc}</small>
               </Link>
             ))}
-          {!navigation.some(([, label]) =>
-            label.toLocaleLowerCase('id').includes(search.toLocaleLowerCase('id')),
-          ) && <p>Tidak ada halaman yang cocok.</p>}
         </div>
-        <small>Ctrl / ⌘ K untuk membuka · Esc untuk menutup</small>
       </dialog>
     </div>
   );
 }
+
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider>
-      <Frame>{children}</Frame>
+      <ShellFrame>{children}</ShellFrame>
     </ThemeProvider>
   );
 }

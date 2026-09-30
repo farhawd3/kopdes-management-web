@@ -13,6 +13,7 @@ import { Operations, recordingPaths } from './Operations';
 import type { Item } from './schemas';
 import { schemas } from './schemas';
 import { today, addDays } from '@/lib/date';
+import { SkeletonLoading } from '@/components/ui/SkeletonLoading';
 export function WorkspacePage({ slug }: { slug: string }) {
   const { data, loading, error, refresh, operations } = useWorkspace(),
     [tab, setTab] = useState(0),
@@ -31,14 +32,7 @@ export function WorkspacePage({ slug }: { slug: string }) {
     return () => window.removeEventListener('hub-task', callback);
   }, []);
   const title = navigation.find(([path]) => path === `/${slug}`)?.[1] || 'Ruang kerja';
-  if (loading)
-    return (
-      <div className="loading" role="status">
-        <div className="skeleton" />
-        <div className="skeleton" />
-        <p>Memuat ruang kerja…</p>
-      </div>
-    );
+  if (loading) return <SkeletonLoading />;
   if (error)
     return (
       <section className="card empty">

@@ -224,7 +224,7 @@ export function TaskDetailDrawer({
           <div className="header-meta-row">
             <span className="task-code-badge">{taskCode}</span>
             {project && (
-              <span className="project-badge" style={{ borderColor: String(project.data.color || '#ed7d3d') }}>
+              <span className="project-badge" style={{ borderColor: String(project.data.color || '#d5f935') }}>
                 {String(project.data.title)}
               </span>
             )}

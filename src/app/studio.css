@@ -1,24 +1,24 @@
 /* Shared studio layout: navigation, workspace surfaces, and recording books. */
 :root {
-  --canvas: #f4f6fa;
+  --canvas: #eef1f6;
   --surface: #ffffff;
-  --line: #eaecf2;
-  --ink: #1e293b;
-  --ink-muted: #64748b;
-  --brand: #ed7d3d;
-  --brand-soft: #fff3ec;
-  --violet: #3f527a;
-  --shadow: 0 4px 18px -2px rgba(63, 82, 122, 0.07), 0 1px 3px rgba(63, 82, 122, 0.04);
+  --line: #e4e8ef;
+  --ink: #111215;
+  --ink-muted: #767c8c;
+  --brand: #d5f935;
+  --brand-soft: #f4fce3;
+  --violet: #121316;
+  --shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
 }
 .dark {
-  --canvas: #161c27;
-  --surface: #20293a;
-  --line: #323f54;
-  --ink: #e2e8f4;
-  --ink-muted: #95a5c0;
-  --brand: #ed7d3d;
-  --brand-soft: #38251b;
-  --violet: #627ca8;
+  --canvas: #0d0e12;
+  --surface: #16171d;
+  --line: #272935;
+  --ink: #f2f4f8;
+  --ink-muted: #8b92a4;
+  --brand: #d5f935;
+  --brand-soft: #242912;
+  --violet: #ffffff;
   --shadow: 0 8px 24px #0002;
 }
 .studio-shell .sidebar {

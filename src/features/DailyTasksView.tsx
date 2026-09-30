@@ -214,7 +214,7 @@ export function DailyTasksView({
                             <span
                               className="task-project-pill"
                               style={{
-                                borderColor: String(project.data.color || '#eaecf2'),
+                                borderColor: String(project.data.color || 'var(--line)'),
                               }}
                             >
                               {String(project.data.title)}

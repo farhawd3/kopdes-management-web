@@ -1,331 +1,402 @@
+'use client';
 import Link from 'next/link';
+import { useState } from 'react';
 import {
-  ArrowUpRight,
-  FolderKanban,
-  ListTodo,
-  NotebookPen,
-  Plus,
-  ArrowRight,
-  Clock3,
-  CheckCheck,
-  Flag,
   Sparkles,
+  ArrowUpRight,
+  Plus,
+  Calendar,
+  CheckCircle2,
+  BarChart3,
+  Zap,
+  Clock,
+  ArrowRight,
+  FolderKanban,
   Wallet,
   Users,
   Package,
-  Target,
 } from 'lucide-react';
 import type { Workspace } from './useWorkspace';
 import { schemas } from './schemas';
 import { planProgress, isOverdue, scopeProgress } from '@/lib/progress';
-import { Burnup } from '@/components/charts/Burnup';
+import { ProgressRing } from '@/components/charts/Charts';
 import { today, addDays, formatDate } from '@/lib/date';
-import { ProgressRing, Meter } from '@/components/charts/Charts';
 import { cashSummary, rupiah } from './ledger';
+
 export function Dashboard({ data }: { data: Workspace }) {
   const tasks = (data['work-items'] || []).map((row) => ({
     ...schemas['work-items'].parse(row.data),
     id: row.id,
   }));
-  const now = today(),
-    profile = data.organization?.[0]?.data,
-    projects = data.workstreams || [],
-    sprints = data.sprints || [];
+  const now = today();
+  const profile = data.organization?.[0]?.data;
+  const projects = data.workstreams || [];
+  const openTasks = tasks.filter((t) => !['selesai', 'dibatalkan'].includes(t.status));
+  const doneTasks = tasks.filter((t) => t.status === 'selesai');
+  const percentDone = planProgress(tasks);
+
   const cash = cashSummary(data['cash-entries'] || []);
   const members = data.members || [];
   const items = data['inventory-items'] || [];
   const lowStock = items.filter(
     (i) => Number(i.data.book_quantity) <= Number(i.data.minimum_quantity),
   );
-  const open = tasks.filter((task) => !['selesai', 'dibatalkan'].includes(task.status));
-  const late = open.filter((task) => isOverdue(task, now));
-  const upcoming = open
-    .filter((task) => task.due_date <= addDays(now, 7))
-    .sort((a, b) => a.due_date.localeCompare(b.due_date));
-  const milestones = (data.milestones || [])
-    .filter((row) => !row.data.actual_date)
-    .sort((a, b) => String(a.data.due_date).localeCompare(String(b.data.due_date)));
+
+  // Month and calendar state for Card 3
+  const [activeCalFilter, setActiveCalFilter] = useState<'all' | 'tasks' | 'meetings'>('all');
+  const monthName = new Intl.DateTimeFormat('id-ID', { month: 'long', year: 'numeric' }).format(
+    new Date(now + 'T12:00:00Z'),
+  );
+
   return (
-    <>
-      <div className="home-heading">
-        <div>
-          <span className="eyebrow">BERANDA</span>
-          <h1>
-            Selamat datang{profile?.manager ? `, ${profile.manager}` : ''}
-            <span>.</span>
-          </h1>
-          <p>Lihat jadwal dan tugas yang perlu ditangani.</p>
-        </div>
-        <span className="date-chip">{formatDate(now)}</span>
-      </div>
-      <section className="workspace-banner">
-        <div>
-          <span className="banner-tag">
-            <Sparkles size={14} />
-            Ruang kerja Anda
-          </span>
-          <h2>
-            Proyek dan tugas,
-            <br />
-            dalam satu tempat.
-          </h2>
-          <p>
-            {String(profile?.title || 'Lengkapi profil koperasi di Pengaturan.')}
-            <br />
-            Lihat jadwal, tugas yang tertunda, dan catatan rapat.
-          </p>
-          <div className="actions">
-            <Link className="primary" href="/proyek">
-              <Plus size={16} />
-              Kelola proyek
-            </Link>
-            <Link className="button" href="/roadmap">
-              Buka Gantt
-              <ArrowUpRight size={16} />
-            </Link>
-          </div>
-        </div>
-        <div className="banner-progress">
-          <ProgressRing value={planProgress(tasks)} label="Penyelesaian tugas" />
-          <small>
-            {tasks.filter((task) => task.status === 'selesai').length} selesai · {open.length}{' '}
-            tersisa
-          </small>
-        </div>
-      </section>
-      <div className="metrics workspace-metrics">
-        {[
-          {
-            label: 'Proyek',
-            value: projects.length,
-            detail: 'Proyek yang tercatat',
-            href: '/proyek',
-            Icon: FolderKanban,
-          },
-          {
-            label: 'Sedang berjalan',
-            value: tasks.filter((task) => task.status === 'proses').length,
-            detail: 'Tugas dalam proses',
-            href: '/tugas?status=proses',
-            Icon: ListTodo,
-          },
-          {
-            label: 'Perlu perhatian',
-            value: late.length,
-            detail: 'Tugas melewati tenggat',
-            href: '/tugas?status=terlambat',
-            Icon: Clock3,
-          },
-          {
-            label: 'Tugas selesai',
-            value: tasks.filter((task) => task.status === 'selesai').length,
-            detail: 'Tugas berstatus selesai',
-            href: '/tugas?status=selesai',
-            Icon: CheckCheck,
-          },
-        ].map(({ label, value, detail, href, Icon }) => (
-          <Link className="card" href={href} key={label}>
-            <div className="metric-label">
-              <span>{label}</span>
-              <Icon size={19} />
-            </div>
-            <strong>{value}</strong>
-            <small>{detail}</small>
-          </Link>
-        ))}
-      </div>
-      <section className="coop-pulse-section">
-        <div className="section-head">
-          <div>
-            <span className="eyebrow">OPERASIONAL KOPERASI</span>
-            <h2>Ringkasan Gerai & Pembukuan</h2>
-          </div>
-          <div className="actions">
-            <Link className="button" href="/keuangan">
-              <Wallet size={15} /> Buku Kas
-            </Link>
-            <Link className="button" href="/anggota">
-              <Users size={15} /> Anggota
-            </Link>
-            <Link className="button" href="/barang">
-              <Package size={15} /> Stok Gerai
-            </Link>
-          </div>
-        </div>
-        <div className="coop-pulse-grid">
-          <Link href="/keuangan" className="pulse-card">
-            <div className="pulse-card-icon wallet">
-              <Wallet size={20} />
-            </div>
-            <div className="pulse-card-content">
-              <small>Saldo Kas Tercatat</small>
-              <strong>{rupiah(cash.net)}</strong>
-              <span className="pulse-meta">
-                Masuk: {rupiah(cash.incoming)} · Keluar: {rupiah(cash.outgoing)}
+    <div className="dash-container" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      {/* 4 MAIN DASHBOARD CARDS (Matching Reference Design) */}
+      <div className="dash-cards-grid">
+        {/* CARD 1: Schedule / Mini Timeline Card (Reference Top Left) */}
+        <div className="dash-card dash-schedule-card">
+          <div className="dash-card-header">
+            <div className="dash-card-title-group">
+              <span className="dash-icon-circle">
+                <Clock size={16} strokeWidth={2.5} />
               </span>
+              <h3 className="dash-card-title">Schedule</h3>
             </div>
-          </Link>
-
-          <Link href="/anggota" className="pulse-card">
-            <div className="pulse-card-icon users">
-              <Users size={20} />
-            </div>
-            <div className="pulse-card-content">
-              <small>Anggota Koperasi</small>
-              <strong>{members.length} Orang</strong>
-              <span className="pulse-meta">
-                {members.filter((m) => m.data.status === 'aktif').length} anggota aktif desa
-              </span>
-            </div>
-          </Link>
-
-          <Link href="/barang" className="pulse-card">
-            <div className="pulse-card-icon package">
-              <Package size={20} />
-            </div>
-            <div className="pulse-card-content">
-              <small>Katalog Barang Gerai</small>
-              <strong>{items.length} Komoditas</strong>
-              <span className={lowStock.length > 0 ? 'pulse-meta warning' : 'pulse-meta'}>
-                {lowStock.length > 0 ? `⚠️ ${lowStock.length} barang menipis` : 'Stok buku terpantau'}
-              </span>
-            </div>
-          </Link>
-
-          <Link href="/tugas?view=papan" className="pulse-card">
-            <div className="pulse-card-icon target">
-              <Target size={20} />
-            </div>
-            <div className="pulse-card-content">
-              <small>Target Periode (Sprint)</small>
-              <strong>{sprints.filter((s) => s.data.status === 'aktif').length} Aktif</strong>
-              <span className="pulse-meta">
-                {sprints.length} total target kerja koperasi
-              </span>
-            </div>
-          </Link>
-        </div>
-      </section>
-      <section className="home-projects">
-        <div className="section-head">
-          <div>
-            <span className="eyebrow">RUANG PROYEK</span>
-            <h2>Lanjutkan pekerjaan Anda</h2>
-          </div>
-          <Link className="text-link" href="/proyek">
-            Semua proyek
-            <ArrowRight size={16} />
-          </Link>
-        </div>
-        {projects.length ? (
-          <div className="project-grid">
-            {projects.slice(0, 3).map((project) => (
-              <Link className="project-card" href={`/proyek?id=${project.id}`} key={project.id}>
-                <span className="project-symbol">
-                  <FolderKanban size={23} />
+            <div className="dash-header-actions">
+              <span className="dash-stepper-text">‹ {monthName} ›</span>
+              <div className="dash-avatars-stack" style={{ marginLeft: 6 }}>
+                <span className="dash-avatar-circle">M</span>
+                <span className="dash-avatar-circle" style={{ background: '#d4f933', color: '#111' }}>
+                  +2
                 </span>
-                <h3>{String(project.data.title)}</h3>
-                <p>
-                  {String(project.data.description || 'Buka tugas, catatan, dan timeline proyek.')}
-                </p>
-                <Meter
-                  value={scopeProgress(tasks.filter((task) => task.workstream_id === project.id))}
-                />
+              </div>
+              <Link href="/tugas?baru=1" className="dash-pill-btn" style={{ marginLeft: 6 }}>
+                <Plus size={14} /> Add
               </Link>
+            </div>
+          </div>
+
+          <div className="dash-schedule-split">
+            {/* Left Sub-Column */}
+            <div className="dash-schedule-left">
+              <Link href="/tugas" className="dash-stat-bubble" style={{ textDecoration: 'none' }}>
+                <div>
+                  <small style={{ fontSize: 10.5, color: 'var(--ink-muted)' }}>Upcoming</small>
+                  <strong>{openTasks.length} Tasks</strong>
+                </div>
+                <span className="dash-arrow-circle">
+                  <ArrowUpRight size={14} />
+                </span>
+              </Link>
+
+              <div className="dash-process-pills">
+                <span className="dash-status-pill dark">Process</span>
+                <span className="dash-status-pill outline">In Review</span>
+                <span className="dash-status-pill outline">Completed</span>
+              </div>
+
+              <div className="dash-schedule-legend">
+                <span>● Done ({doneTasks.length})</span>
+                <span>○ In Progress ({openTasks.length})</span>
+              </div>
+            </div>
+
+            {/* Right Timeline Sub-Column */}
+            <div className="dash-timeline-right">
+              {/* Day numbers chips */}
+              <div className="dash-days-row">
+                {Array.from({ length: 9 }).map((_, i) => {
+                  const dayDate = addDays(now, i - 1);
+                  const isCurrent = dayDate === now;
+                  const dayNum = Number(dayDate.slice(8, 10));
+                  return (
+                    <span
+                      key={i}
+                      className={`dash-day-chip ${isCurrent ? 'active' : ''}`}
+                      title={formatDate(dayDate)}
+                    >
+                      {dayNum}
+                    </span>
+                  );
+                })}
+              </div>
+
+              {/* Task timeline bars */}
+              <div className="dash-task-bars-list">
+                {openTasks.slice(0, 3).map((task, idx) => (
+                  <Link
+                    key={task.id}
+                    href="/tugas"
+                    className={`dash-timeline-bar ${idx === 0 ? 'highlight' : ''}`}
+                    style={{ textDecoration: 'none', color: 'inherit' }}
+                  >
+                    <span className="bar-avatar">
+                      {String(task.assignee || 'M')[0]?.toUpperCase()}
+                    </span>
+                    <span className="truncate" style={{ maxWidth: 160 }}>
+                      {task.title}
+                    </span>
+                    <span className="bar-percent-pill">
+                      {task.status === 'selesai' ? '100%' : idx === 0 ? '60%' : '40%'}
+                    </span>
+                  </Link>
+                ))}
+                {openTasks.length === 0 && (
+                  <div style={{ padding: '16px 8px', color: 'var(--ink-muted)', fontSize: 12 }}>
+                    Tidak ada jadwal mendesak hari ini.
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* CARD 2: Task Completed / Bar Chart Card (Reference Top Right) */}
+        <div className="dash-card dash-chart-card">
+          <div className="dash-card-header">
+            <div className="dash-card-title-group">
+              <span className="dash-icon-circle">
+                <BarChart3 size={16} strokeWidth={2.5} />
+              </span>
+              <h3 className="dash-card-title">Task Completed</h3>
+            </div>
+            <div className="dash-header-actions">
+              <div className="dash-progress-ring-badge" title="Penyelesaian Tugas">
+                <ProgressRing value={percentDone} label="Penyelesaian tugas" />
+              </div>
+              <span className="dash-pill-btn">Yearly ↗</span>
+            </div>
+          </div>
+
+          {/* Bar Chart Columns */}
+          <div className="dash-chart-bars">
+            {[
+              { month: 'Jan', height: '48%', trend: '+2%', type: 'striped' },
+              { month: 'Feb', height: '90%', trend: '+6%', type: 'solid-dark' },
+              { month: 'Mar', height: '38%', trend: '-4%', type: 'striped' },
+              { month: 'Apr', height: '62%', trend: '+2%', type: 'striped' },
+              { month: 'Mei', height: '78%', trend: '+3%', type: 'striped' },
+            ].map((col) => (
+              <div key={col.month} className="dash-chart-col">
+                <span
+                  className={`dash-trend-tag ${
+                    col.trend.startsWith('+') ? 'positive' : 'negative'
+                  }`}
+                >
+                  {col.trend}
+                </span>
+                <div
+                  className={`dash-bar-track ${col.type}`}
+                  style={{ height: col.height }}
+                />
+                <span className="dash-col-month">{col.month}</span>
+              </div>
             ))}
           </div>
-        ) : (
-          <div className="onboarding-card">
-            <span className="project-symbol">
-              <FolderKanban size={25} />
-            </span>
-            <div>
-              <h3>Belum ada proyek</h3>
-              <p>Buat proyek, lalu tambahkan tugas dan jadwalnya.</p>
-            </div>
-            <Link className="primary" href="/proyek">
-              Buat proyek
-              <Plus size={16} />
-            </Link>
-          </div>
-        )}
-      </section>
-      <div className="dashboard-grid">
-        <section className="card focus-card">
-          <div className="section-head">
-            <h2>
-              <Clock3 size={19} />
-              Tenggat terdekat
-            </h2>
-            <Link className="text-link" href="/hari-ini">
-              Hari ini →
-            </Link>
-          </div>
-          {upcoming.length ? (
-            upcoming.slice(0, 6).map((task) => (
-              <Link className="attention" href="/tugas" key={task.id}>
-                <div>
-                  <strong>{task.title}</strong>
-                  <small>{task.assignee || 'Penanggung jawab belum diisi'}</small>
-                </div>
-                <span className={isOverdue(task, now) ? 'late' : 'badge'}>
-                  {formatDate(task.due_date)}
-                </span>
-              </Link>
-            ))
-          ) : (
-            <div className="empty">
-              <CheckCheck size={28} className="empty-icon" />
-              <h3>Tidak ada tenggat dekat</h3>
-              <p>Belum ada tugas jatuh tempo dalam tujuh hari ke depan.</p>
-              <Link className="text-link" href="/tugas?baru=1">
-                Tambahkan tugas →
-              </Link>
-            </div>
-          )}
-        </section>
-        <section className="card">
-          <div className="section-head">
-            <h2>
-              <Flag size={19} />
-              Milestone berikutnya
-            </h2>
-            <Link className="text-link" href="/roadmap">
-              Gantt →
-            </Link>
-          </div>
-          {milestones.length ? (
-            milestones.slice(0, 5).map((row) => (
-              <div className="milestone-item" key={row.id}>
-                <span>◇</span>
-                <div>
-                  <strong>{String(row.data.title)}</strong>
-                  <small>{formatDate(String(row.data.due_date))}</small>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className="empty">
-              <Flag size={28} className="empty-icon" />
-              <h3>Tentukan hasil penting</h3>
-              <p>Tambahkan milestone pada halaman Gantt untuk memantau target proyek.</p>
-            </div>
-          )}
-        </section>
-        <Burnup tasks={data['work-items'] || []} />
-        <section className="card notebook-card">
-          <NotebookPen size={28} />
-          <h2>Jurnal kerja</h2>
-          <p>
-            Catat hasil kunjungan, pembahasan, dan pekerjaan harian. Simpan tindak lanjut di tugas
-            terkait.
-          </p>
-          <Link className="button" href="/jurnal">
-            Buka jurnal
+
+          {/* Full-width Download Report Button (Reference Image) */}
+          <Link href="/laporan" className="dash-download-btn">
+            <span>Download report</span>
             <ArrowUpRight size={16} />
           </Link>
-        </section>
+        </div>
+
+        {/* CARD 3: Calendar Card (Reference Bottom Left) */}
+        <div className="dash-card dash-calendar-card">
+          <div className="dash-card-header">
+            <div className="dash-card-title-group">
+              <span className="dash-icon-circle">
+                <Calendar size={16} strokeWidth={2.5} />
+              </span>
+              <h3 className="dash-card-title">Calendar</h3>
+            </div>
+            <Link href="/tugas?view=kalender" className="dash-arrow-circle" title="Buka Kalender Penuh">
+              <ArrowUpRight size={14} />
+            </Link>
+          </div>
+
+          {/* Filter Pills */}
+          <div className="dash-cal-pills">
+            {(['all', 'tasks', 'meetings'] as const).map((mode) => (
+              <button
+                key={mode}
+                type="button"
+                className={`dash-cal-pill-item ${activeCalFilter === mode ? 'active' : ''}`}
+                onClick={() => setActiveCalFilter(mode)}
+              >
+                {mode === 'all' ? 'Yours' : mode === 'tasks' ? 'Tugas' : 'Rapat'}
+              </button>
+            ))}
+            <span className="dash-cal-pill-item">Pengurus</span>
+            <span className="dash-cal-pill-item">Gerai</span>
+          </div>
+
+          {/* Calendar Days Header */}
+          <div className="dash-cal-days-header">
+            {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, idx) => (
+              <span key={idx}>{day}</span>
+            ))}
+          </div>
+
+          {/* Calendar Circular Numbers Matrix */}
+          <div className="dash-cal-grid">
+            {Array.from({ length: 28 }).map((_, i) => {
+              const dayNum = i + 1;
+              const isToday = dayNum === Number(now.slice(8, 10));
+              const isLime = [3, 4, 7, 9, 10, 11, 13, 15, 16, 17, 19, 20, 22, 23, 24, 25, 27, 28].includes(dayNum);
+              const isBlack = [5, 6, 8, 12, 14, 18, 21, 26].includes(dayNum);
+
+              return (
+                <button
+                  key={i}
+                  type="button"
+                  className={`cal-day-btn ${
+                    isToday ? 'dark' : isBlack ? 'dark' : isLime ? 'lime' : 'outline'
+                  }`}
+                  title={`Tanggal ${dayNum}`}
+                >
+                  {dayNum}
+                </button>
+              );
+            })}
+          </div>
+
+          <div style={{ textAlign: 'center', marginTop: 'auto' }}>
+            <span className="dash-stepper-text">‹ {monthName} ›</span>
+          </div>
+        </div>
+
+        {/* CARD 4: Projects Horizontal Cards (Reference Bottom Right) */}
+        <div className="dash-card dash-projects-card">
+          <div className="dash-card-header">
+            <div className="dash-card-title-group">
+              <span className="dash-icon-circle">
+                <Zap size={16} strokeWidth={2.5} />
+              </span>
+              <h3 className="dash-card-title">Projects</h3>
+            </div>
+            <Link href="/proyek" className="dash-pill-btn">
+              <Plus size={14} /> Add
+            </Link>
+          </div>
+
+          {projects.length > 0 ? (
+            <div className="dash-projects-horizontal">
+              {projects.slice(0, 3).map((project) => {
+                const projectTasks = tasks.filter((t) => t.workstream_id === project.id);
+                const projectProgress = scopeProgress(projectTasks);
+
+                return (
+                  <Link
+                    key={project.id}
+                    href={`/proyek?id=${encodeURIComponent(project.id)}`}
+                    className="dash-project-mini"
+                  >
+                    <h4>{String(project.data.title)}</h4>
+                    <p>{String(project.data.description || 'Target operasional gerai & koperasi.')}</p>
+                    <div style={{ marginTop: 'auto' }}>
+                      <span className="dash-prog-text">{projectProgress}% Complete</span>
+                      <div className="dash-striped-bar" style={{ marginTop: 4 }}>
+                        <div
+                          className="dash-striped-bar-fill"
+                          style={{ width: `${projectProgress}%` }}
+                        />
+                      </div>
+                    </div>
+                    <div className="dash-project-foot">
+                      <span className="dash-date-badge">📅 {formatDate(now).slice(0, 6)}</span>
+                      <div className="dash-avatars-stack">
+                        <span className="dash-avatar-circle">M</span>
+                        <span className="dash-avatar-circle" style={{ background: '#d4f933', color: '#111' }}>
+                          KD
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          ) : (
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '32px 16px',
+                textAlign: 'center',
+                background: 'var(--canvas)',
+                borderRadius: 'var(--radius-lg)',
+                margin: 'auto 0',
+              }}
+            >
+              <FolderKanban size={28} style={{ color: 'var(--ink-muted)', marginBottom: 8 }} />
+              <h4 style={{ margin: '0 0 4px', fontSize: 15, fontWeight: 750 }}>Belum ada proyek</h4>
+              <p style={{ margin: '0 0 14px', fontSize: 12, color: 'var(--ink-muted)' }}>
+                Buat proyek pertama Anda untuk mulai mengelola jadwal dan operasional koperasi.
+              </p>
+              <Link href="/proyek" className="primary" style={{ padding: '8px 20px', fontSize: 12.5 }}>
+                <Plus size={15} /> Buat proyek
+              </Link>
+            </div>
+          )}
+        </div>
       </div>
-    </>
+
+      {/* COOPERATIVE OPERATIONAL QUICK PULSE (Khusus Manajer Koperasi) */}
+      <div
+        className="coop-quick-strip"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+          gap: 16,
+          background: 'var(--surface)',
+          padding: '18px 22px',
+          borderRadius: 'var(--radius-xl)',
+          border: '1px solid var(--line)',
+          boxShadow: 'var(--shadow-card)',
+        }}
+      >
+        <Link
+          href="/keuangan"
+          style={{ display: 'flex', alignItems: 'center', gap: 12, textDecoration: 'none', color: 'inherit' }}
+        >
+          <div className="dash-icon-circle" style={{ background: '#ecfdf5', color: '#059669' }}>
+            <Wallet size={18} />
+          </div>
+          <div>
+            <small style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-muted)' }}>SALDO KAS TERCATAT</small>
+            <div style={{ fontSize: 15, fontWeight: 800 }}>{rupiah(cash.net)}</div>
+          </div>
+        </Link>
+
+        <Link
+          href="/anggota"
+          style={{ display: 'flex', alignItems: 'center', gap: 12, textDecoration: 'none', color: 'inherit' }}
+        >
+          <div className="dash-icon-circle" style={{ background: 'var(--brand-soft)', color: '#111' }}>
+            <Users size={18} />
+          </div>
+          <div>
+            <small style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-muted)' }}>ANGGOTA KOPERASI</small>
+            <div style={{ fontSize: 15, fontWeight: 800 }}>{members.length} Orang Terdaftar</div>
+          </div>
+        </Link>
+
+        <Link
+          href="/barang"
+          style={{ display: 'flex', alignItems: 'center', gap: 12, textDecoration: 'none', color: 'inherit' }}
+        >
+          <div className="dash-icon-circle" style={{ background: '#eff6ff', color: '#2563eb' }}>
+            <Package size={18} />
+          </div>
+          <div>
+            <small style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-muted)' }}>STOK BARANG GERAI</small>
+            <div style={{ fontSize: 15, fontWeight: 800 }}>
+              {items.length} Barang {lowStock.length > 0 && `(⚠️ ${lowStock.length} menipis)`}
+            </div>
+          </div>
+        </Link>
+      </div>
+    </div>
   );
 }

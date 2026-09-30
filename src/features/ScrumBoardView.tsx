@@ -203,8 +203,8 @@ export function ScrumBoardView({
                           <span
                             className="card-project-pill"
                             style={{
-                              borderColor: String(project.data.color || '#ed7d3d'),
-                              color: String(project.data.color || '#ed7d3d'),
+                              borderColor: String(project.data.color || '#d5f935'),
+                              color: String(project.data.color || 'var(--ink)'),
                             }}
                           >
                             {String(project.data.title)}

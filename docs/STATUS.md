@@ -97,4 +97,29 @@ Implementasi redesain menyeluruh visual dan alur kerja sesuai referensi Behance 
   - `npm run typecheck` lolos tanpa ada galat TypeScript (`tsc --noEmit` sukses).
   - `npm run build` sukses mengompilasi bundel produksi Next.js (Turbopack).
 
+## Redesain Menyeluruh — Estetika Neo-Soft Lime & Dark Pill (Task Hub) (1 Oktober 2026)
 
+Implementasi perombakan total desain sesuai referensi visual Task Hub:
+- **Palet Visual & Desain Sistem**:
+  - Warna Utama: Soft Pastel Lime / Chartreuse (`#d5f935`), Dark Charcoal / Pitch Black (`#121316`), Soft Gray Canvas (`#eef1f6`), Surface Pure White (`#ffffff`), Pill Background (`#f1f3f7`).
+  - Seluruh warna oranye (`#ed7d3d`), slate (`#3f527a`), dan magenta lama dibersihkan secara menyeluruh dari seluruh kode sumber.
+  - Kartu membulat lebar (`border-radius: 24px` hingga `32px`), tombol pill melengkung penuh (`border-radius: 9999px`), serta indikator garis striped bermotif diagonal.
+- **Top Navigation Bar & Left Sidebar**:
+  - Top Bar: Brand pill hitam `Task Hub` dengan ikon lingkaran lime, navigasi pill tengah (Dashboard, Tasks, Pencatatan, Proyek, Pengaturan) dengan status aktif latar lime cerah dan teks gelap kontras tinggi, tombol aksi lingkaran (Cari ⌘K, Tema, Logout, dan Avatar Manajer).
+  - Left Sidebar: Sapaan personal `"Welcome Back, [Manager Name]!"`, seksi navigasi proyek dengan hitung tugas, seksi laporan dan bantuan, serta kartu promo koperasi KDMP Puntukrejo berlatar gradien lime di bagian bawah dengan pill badge "14 day free-trial ↗".
+- **Empat Kartu Utama Dashboard**:
+  - **Schedule**: Sub-kolom *Upcoming Tasks* dengan tombol panah melingkar, status pill *Process / In Review*, dan timeline horizontal lengkap dengan *day chips*, indikator garis waktu vertikal, dan progress pill.
+  - **Task Completed**: Diagram batang vertikal bulanan dengan tag tren (`+2%`, `+6%`, `-4%`), bilah bermotif garis (*striped*), tombol penuh lime `Download report`, dan `ProgressRing` untuk aksesibilitas.
+  - **Calendar**: Matriks nomor hari lingkaran (*outline*, lime `#d5f935`, dan hitam `#121316`) dengan filter pill (*Yours*, *Tugas*, *Rapat*).
+  - **Projects**: Kartu horizontal proyek dengan deskripsi, *striped progress bar*, tanggal, dan avatar tim.
+  - Strip ringkasan operasional koperasi: Saldo Kas Desa, Anggota Aktif, dan Stok Barang Gerai.
+- **Skeleton Loading & Optimasi Kinerja**:
+  - Komponen `SkeletonLoading` beranimasi kilau halus (*shimmer animation*) dengan tata letak 4 kartu meniru halaman referensi, mencegah *content layout shift* saat navigasi.
+  - *Client-side in-memory API caching* dengan TTL 60 detik pada operasi baca (`GET`) serta *automatic cache invalidation* saat mutasi (`POST`, `PUT`, `DELETE`) untuk memangkas *request* redundan dan menghemat token.
+- **Task Detail Drawer & Modul Pencatatan**:
+  - Slide-in panel detail tugas dengan backdrop blur, checklist subtugas dengan striped progress bar, editor judul & deskripsi di tempat, dan feed aktivitas.
+  - Halaman Pencatatan (Buku Kas, Anggota, Barang, Opname) dengan segmented pill navigation bar, kartu buku rapi, dan metric cards.
+- **Hasil Verifikasi**:
+  - **100/100 tes lulus** di 9 test suite Vitest.
+  - `tsc --noEmit` lolos dengan 0 kesalahan tipe.
+  - `next build` lolos produksi dengan Turbopack.
