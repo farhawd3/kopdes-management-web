@@ -144,7 +144,7 @@ export function WorkspacePage({ slug }: { slug: string }) {
           <ol>
             <li>Buka Pengaturan, isi profil dan tanggal mulai kerja.</li>
             <li>
-              Pasang template 90 hari. Sesuaikan tugas, tenggat, dan gerai dengan keadaan nyata.
+              Buat proyek sendiri. Tambahkan tujuan, catatan, dan tugas dengan jadwal pilihan Anda.
             </li>
             <li>Buka Hari Ini setiap pagi. Tuntaskan atau jadwalkan ulang tugas.</li>
             <li>Simpan snapshot laporan mingguan dan unduh cadangan JSON.</li>
@@ -162,8 +162,10 @@ export function WorkspacePage({ slug }: { slug: string }) {
           </p>
           <h2>Lingkup awal</h2>
           <p>
-            Garis waktu menampilkan tanggal rencana. Baseline, jalur kritis, notifikasi di luar
-            aplikasi, dan mode offline belum tersedia.
+            Buka Gantt untuk memilih rentang dan skala. Seret batang atau ubah tanggal melalui nama
+            tugas, lalu simpan jadwal. Catatan proyek mendukung judul, daftar, checklist, dan
+            kutipan. Baseline, jalur kritis otomatis, kolaborasi real-time, dan offline belum
+            tersedia.
           </p>
         </section>
       )}

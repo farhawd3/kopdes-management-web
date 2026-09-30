@@ -3,7 +3,7 @@ import { PGlite } from '@electric-sql/pglite';
 import { readFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import { beforeAll, afterAll, describe, it, expect } from 'vitest';
-import { buildPlan } from '@/lib/templates/plan-90-hari';
+import { buildPlan } from './fixtures/legacy-plan';
 let database: PGlite;
 beforeAll(async () => {
   database = new PGlite();

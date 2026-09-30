@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.0 — Workspace fleksibel
+
+- Hapus program 90 hari dari runtime; proyek dibuat dengan tujuan dan durasi sendiri.
+- Tambahkan status/prioritas proyek, filter, catatan terformat dan pratinjau.
+- Tambahkan Gantt interaktif bersama: rentang/skala, geser jadwal, resize tenggat, review/simpan, milestone dan peringatan prasyarat.
+- Sediakan pengaturan tanggal dengan keyboard dan form pada ponsel.
+- Segarkan dashboard, lapisan kartu, sidebar, tabel, papan, form dan tema.
+- Arsipkan spesifikasi lama; pertahankan data cloud dan kompatibilitas cadangan tanpa migrasi tambahan.
 ## 0.1.0 — Fondasi Manager Hub, 30 September 2026
 
 - Mulai repo privat `kopdes-management-web` dengan riwayat baru dan gitignore untuk rahasia/arsip.

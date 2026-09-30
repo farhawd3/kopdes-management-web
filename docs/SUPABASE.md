@@ -51,8 +51,8 @@ Simpan berkas dan jalankan ulang server setelah mengubah env. Nama variabel HUB 
 2. Klik Pengaturan PIN pertama kali.
 3. Masukkan PIN baru 6–12 digit dan token dari `HUB_SETUP_TOKEN`.
 4. Simpan lalu masuk dengan PIN. Hapus `HUB_SETUP_TOKEN` dari konfigurasi hosting setelah inisialisasi sukses.
-5. Isi profil dan tanggal mulai di Pengaturan; pasang template 90 hari.
-6. Seluruh tugas belum selesai. Sesuaikan dengan keadaan nyata; jangan menandai selesai hanya untuk mengisi dashboard.
+5. Isi profil di Pengaturan, lalu buat proyek dan tugas sendiri.
+6. Gunakan status sesuai pelaksanaan nyata; jangan menandai selesai hanya untuk mengisi dashboard.
 
 Pemulihan PIN yang hilang dilakukan melalui administrator server/database. Tidak ada PIN bawaan atau tombol membuka akses tanpa pemeriksaan.
 

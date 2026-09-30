@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { planProgress, taskProgress, readiness, isOverdue } from '@/lib/progress';
 import { today, addDays, daysBetween, nextOccurrence } from '@/lib/date';
 import { schemas, date } from '@/features/schemas';
-import { buildPlan } from '@/lib/templates/plan-90-hari';
+import { buildPlan } from './fixtures/legacy-plan';
 import { reportSnapshot } from '@/features/report-snapshot';
 import { randomUUID } from 'node:crypto';
 describe('Rumus yang dipakai semua halaman', () => {

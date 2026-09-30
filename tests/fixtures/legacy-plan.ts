@@ -1,4 +1,4 @@
-import template from './plan-90-hari.json';
+import template from './legacy-plan.json';
 import { addDays } from '@/lib/date';
 import { schemas, type Entity } from '@/features/schemas';
 export function buildPlan(start: string, uuid: () => string) {

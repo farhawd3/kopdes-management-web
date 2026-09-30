@@ -12,7 +12,8 @@ import { Meter, RiskMatrix } from '@/components/charts/Charts';
 import { TaskCalendar } from './TaskCalendar';
 import { ReadinessRadar } from '@/components/charts/ReadinessRadar';
 import { InfluenceMap } from '@/components/charts/InfluenceMap';
-import { ListTodo, Columns3, CalendarDays, Search, Plus } from 'lucide-react';
+import { ListTodo, Columns3, CalendarDays, Search, Plus, ChartGantt } from 'lucide-react';
+import { TaskTimeline } from './TaskTimeline';
 export function Records({
   entity,
   workspace,
@@ -179,80 +180,89 @@ export function Records({
             ✓ Selesai
           </button>
         )}
-        {entity === 'work-items' && (
-          <>
-            <button
-              disabled={busy}
-              onClick={() => void update(row, { due_date: addDays(String(row.data.due_date), 1) })}
-            >
-              +1 hari
-            </button>
-            <button
-              disabled={busy}
-              onClick={() => void update(row, { due_date: addDays(String(row.data.due_date), 7) })}
-            >
-              +1 minggu
-            </button>
-            <label className="inline-label">
-              Status
-              <select
-                value={String(row.data.status)}
-                disabled={busy}
-                onChange={(e) =>
-                  void update(row, {
-                    status: e.target.value,
-                    completed_at: e.target.value === 'selesai' ? today() : '',
-                  })
-                }
+        <details className="record-options">
+          <summary>Opsi lainnya</summary>
+          <div className="actions">
+            {entity === 'work-items' && (
+              <>
+                <button
+                  disabled={busy}
+                  onClick={() =>
+                    void update(row, { due_date: addDays(String(row.data.due_date), 1) })
+                  }
+                >
+                  +1 hari
+                </button>
+                <button
+                  disabled={busy}
+                  onClick={() =>
+                    void update(row, { due_date: addDays(String(row.data.due_date), 7) })
+                  }
+                >
+                  +1 minggu
+                </button>
+                <label className="inline-label">
+                  Status
+                  <select
+                    value={String(row.data.status)}
+                    disabled={busy}
+                    onChange={(e) =>
+                      void update(row, {
+                        status: e.target.value,
+                        completed_at: e.target.value === 'selesai' ? today() : '',
+                      })
+                    }
+                  >
+                    {options['work-items.status'].map((value) => (
+                      <option key={value}>{value}</option>
+                    ))}
+                  </select>
+                </label>
+              </>
+            )}
+            {(entity === 'meetings' || entity === 'issues') && (
+              <button
+                onClick={() => {
+                  window.dispatchEvent(
+                    new CustomEvent('hub-task', {
+                      detail: {
+                        title: `Tindak lanjut: ${row.data.title}`,
+                        description:
+                          entity === 'meetings'
+                            ? String(row.data.minutes || row.data.agenda || '')
+                            : String(row.data.description || ''),
+                        notes: `Sumber ${entity}: ${row.id}`,
+                        ...(entity === 'meetings' ? { meeting_id: row.id } : { issue_id: row.id }),
+                      },
+                    }),
+                  );
+                }}
               >
-                {options['work-items.status'].map((value) => (
-                  <option key={value}>{value}</option>
-                ))}
-              </select>
-            </label>
-          </>
-        )}
-        {(entity === 'meetings' || entity === 'issues') && (
-          <button
-            onClick={() => {
-              window.dispatchEvent(
-                new CustomEvent('hub-task', {
-                  detail: {
-                    title: `Tindak lanjut: ${row.data.title}`,
-                    description:
-                      entity === 'meetings'
-                        ? String(row.data.minutes || row.data.agenda || '')
-                        : String(row.data.description || ''),
-                    notes: `Sumber ${entity}: ${row.id}`,
-                    ...(entity === 'meetings' ? { meeting_id: row.id } : { issue_id: row.id }),
-                  },
-                }),
-              );
-            }}
-          >
-            + Tindak lanjut
-          </button>
-        )}
-        {!['organization', 'workstreams'].includes(entity) && (
-          <button
-            className="danger"
-            disabled={busy}
-            onClick={async () => {
-              if (!confirm(`Hapus “${row.data.title}”?`)) return;
-              setBusy(true);
-              try {
-                await api(entity, { id: row.id }, 'DELETE');
-                await refresh();
-              } catch (e) {
-                setError((e as Error).message);
-              } finally {
-                setBusy(false);
-              }
-            }}
-          >
-            Hapus
-          </button>
-        )}
+                + Tindak lanjut
+              </button>
+            )}
+            {!['organization', 'workstreams'].includes(entity) && (
+              <button
+                className="danger"
+                disabled={busy}
+                onClick={async () => {
+                  if (!confirm(`Hapus “${row.data.title}”?`)) return;
+                  setBusy(true);
+                  try {
+                    await api(entity, { id: row.id }, 'DELETE');
+                    await refresh();
+                  } catch (e) {
+                    setError((e as Error).message);
+                  } finally {
+                    setBusy(false);
+                  }
+                }}
+              >
+                Hapus
+              </button>
+            )}
+          </div>
+        </details>
       </div>
     </article>
   );
@@ -274,7 +284,7 @@ export function Records({
                       id: '',
                       created_at: '',
                       updated_at: '',
-                      data: schemas['work-items'].parse({
+                      data: schemas[entity].parse({
                         title: 'Tugas baru',
                         due_date: today(),
                         workstream_id: scopeId,
@@ -298,6 +308,7 @@ export function Records({
             ['daftar', 'Daftar', ListTodo],
             ['papan', 'Papan', Columns3],
             ['kalender', 'Kalender', CalendarDays],
+            ['gantt', 'Gantt', ChartGantt],
           ].map(([value, label, Icon]) => {
             const ViewIcon = Icon as typeof ListTodo;
             return (
@@ -393,7 +404,15 @@ export function Records({
           <p>Mulai dengan menambah {catalog[entity].title.toLowerCase()}, atau ubah filter Anda.</p>
         </div>
       )}
-      {view === 'papan' && entity === 'work-items' ? (
+      {view === 'gantt' && entity === 'work-items' ? (
+        <TaskTimeline
+          key={scopeId || workstream}
+          items={rows}
+          workspace={workspace}
+          refresh={refresh}
+          scopeId={scopeId || workstream || undefined}
+        />
+      ) : view === 'papan' && entity === 'work-items' ? (
         <div className="kanban">
           {options['work-items.status'].map((status) => (
             <section

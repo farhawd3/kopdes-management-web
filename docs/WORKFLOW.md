@@ -1,43 +1,21 @@
-# Alur kerja Kopdes Management Web
+# Alur kerja manajer
 
-## Menyiapkan ruang kerja
+1. Masuk menggunakan PIN. Isi profil koperasi melalui Pengaturan jika belum lengkap.
+2. Buat proyek dengan tujuan, PIC, prioritas, dan tanggal pilihan Anda. Tidak wajib memilih durasi tertentu.
+3. Tambahkan tugas dari ruang proyek agar hubungan proyek terisi otomatis.
+4. Gunakan Daftar untuk mengubah status cepat, Papan untuk alur kerja, Kalender untuk agenda, atau Gantt untuk jadwal lintas hari.
+5. Pada Gantt, pilih rentang dan skala. Geser batang atau tarik ujung kanan lalu tinjau dan simpan. Keyboard atau form tanggal memberi cara alternatif.
+6. Tulis catatan proyek memakai judul, daftar, checklist, dan kutipan. Tinjau hasil format lalu simpan.
+7. Catat rapat, keputusan, risiko/isu dan bukti. Buat tugas tindak lanjut dari catatan rapat/isu.
+8. Gunakan Hari Ini saat mulai bekerja. Perbarui status sesuai pelaksanaan nyata, bukan hanya untuk mengisi grafik.
+9. Simpan snapshot laporan berkala dan unduh cadangan JSON. Pemulihan mengganti data; uji pada lingkungan terpisah dahulu.
 
-1. Ikuti [panduan Supabase](SUPABASE.md), gunakan proyek baru, dan simpan rahasia hanya di `.env.local`.
-2. Pemilik membuat PIN sendiri, lalu masuk.
-3. Isi profil koperasi dan tanggal mulai di Pengaturan.
-4. Pilih memasang template 90 hari atau membuat proyek sendiri. Template hanya berisi rencana awal.
+## Status
 
-## Mengelola proyek dan tugas
+Proyek: rencana, aktif, ditunda, selesai, diarsipkan. Status proyek ditentukan manajer; progres tugas dihitung otomatis dan tidak otomatis mengubah status proyek.
 
-1. Buka **Proyek**, pilih **Proyek baru**, isi judul, kode singkat, tujuan, PIC, tanggal, dan catatan.
-2. Buka kartu proyek. Catatan, progres, milestone terkait, dan tugas berada dalam satu halaman.
-3. Tambahkan tugas dari halaman proyek agar hubungan proyek terisi otomatis.
-4. Gunakan tampilan **Daftar**, **Papan**, atau **Kalender** sesuai kebutuhan. Filter status/prioritas, cari catatan, dan urutkan tenggat.
-5. Klik judul tugas untuk mengubah uraian, tenggat, subtugas, prasyarat, catatan, dan tautan bukti. Papan menyediakan penundaan satu hari/minggu serta penghapusan dengan konfirmasi.
-6. Pindahkan status melalui dropdown atau seret kartu pada papan. Tugas berulang menghasilkan penerus sekali ketika diselesaikan.
-
-Bidang kerja template dan proyek buatan sendiri menggunakan data yang sama. Persentase memperhitungkan progres subtugas; tugas dibatalkan tidak masuk penyebut. Data tanpa tugas belum memiliki progres yang bisa dinilai.
-
-## Rutinitas manajer
-
-- Pagi: buka Hari Ini, tinjau tugas terlambat dan agenda rapat.
-- Saat bekerja: catat hasil rapat, keputusan, isu, dan tindak lanjut; hubungkan tugas dengan proyek, milestone, atau gerai.
-- Sore: perbarui kesiapan/bukti dan jurnal kerja. Jangan menandai pekerjaan selesai tanpa pelaksanaan nyata.
-- Mingguan: tinjau roadmap dan risiko, simpan snapshot laporan, cetak PDF bila diperlukan.
-- Berkala: ekspor cadangan JSON. Pemulihan mengganti catatan dan snapshot; coba pada lingkungan uji lebih dahulu.
-
-## Status dan keamanan
-
-Tugas: `rencana → proses → selesai`, atau `dibatalkan`. Tanggal selesai diisi ketika status berubah ke selesai. Semua perubahan tetap diperiksa server, termasuk relasi/prasyarat, asal permintaan, dan sesi PIN.
-
-Checklist: `rencana → proses → selesai`. Gerai: `rencana → persiapan → siap uji → siap buka → aktif`. Risiko/isu: `terbuka → ditangani → ditutup`.
+Tugas: rencana, proses, selesai, dibatalkan. Tanggal selesai dicatat saat penyelesaian. Tugas berulang menghasilkan penerus sekali, secara atomik. Prasyarat melingkar ditolak. Gantt memperingatkan benturan tanggal tetapi tidak menjadwalkan ulang seluruh tugas turunan.
 
 ## Siklus pengembangan
 
-1. Baca STATUS, KEPUTUSAN, kebutuhan PRD, dan kode yang berkaitan.
-2. Implementasikan paket kerja; gunakan schema bersama, validasi server, serta keadaan kosong/memuat/galat.
-3. Jalankan tes, lint, typecheck, build; periksa UI utama secara terarah pada ukuran relevan.
-4. Perbarui STATUS, CHECKLIST, dan CHANGELOG sesuai bukti.
-5. Commit/push satu paket tuntas. Deployment dan migrasi cloud dipandu sesuai arahan pemilik.
-
-Rancangan lanjutan (baseline Gantt, PWA, editor blok bebas, kolaborasi) tidak boleh ditampilkan sebagai fitur tersedia sebelum benar-benar diimplementasikan dan diuji.
+Baca STATUS → KEPUTUSAN → PRD → kode terkait. Terapkan perubahan dalam satu paket, uji domain/keamanan dan UI penting, jalankan lint/typecheck/build, perbarui dokumentasi, kemudian commit/push. Instruksi kredensial dan migrasi cloud tetap mengikuti SUPABASE.md dan dilakukan pemilik.

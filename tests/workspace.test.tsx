@@ -78,8 +78,8 @@ describe('Alur kerja dasar UI', () => {
   });
   it('dashboard kosong mengajak memakai template tanpa mengarang capaian', () => {
     render(<Dashboard data={{}} />);
-    expect(screen.getByText('Mulai dengan rencana 90 hari')).toBeTruthy();
-    expect(screen.getByRole('img', { name: 'Rencana 90 hari: 0%' })).toBeTruthy();
+    expect(screen.getByText('Mulai dari proyek pertama')).toBeTruthy();
+    expect(screen.getByRole('img', { name: 'Penyelesaian tugas: 0%' })).toBeTruthy();
   });
   it('aksi selesai mengirim status dan tanggal penyelesaian yang valid', async () => {
     mocks.api.mockResolvedValue({});

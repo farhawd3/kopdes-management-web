@@ -17,6 +17,11 @@ export async function list(entity: Entity): Promise<Item[]> {
 }
 export async function save(entity: Entity, input: unknown, id?: string) {
   const data = schemas[entity].parse(input);
+  if (entity === 'workstreams') {
+    const project = schemas.workstreams.parse(data);
+    if (project.start_date && project.target_date && project.start_date > project.target_date)
+      throw new Error('Target proyek tidak boleh sebelum tanggal mulai.');
+  }
   for (const [field, target] of Object.entries(references)) {
     const value = (data as Record<string, unknown>)[field];
     if (value) {

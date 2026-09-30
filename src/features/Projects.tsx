@@ -2,7 +2,8 @@
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { FolderOpen, ArrowUpRight, Plus, FileText, Flag } from 'lucide-react';
+import { FolderOpen, ArrowUpRight, Plus, Flag } from 'lucide-react';
+import { ProjectNotes } from './ProjectNotes';
 import { Editor } from './Editor';
 import { Records } from './Records';
 import { schemas, type Item } from './schemas';
@@ -16,6 +17,7 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
     router = useRouter();
   const [edit, setEdit] = useState<Item | null | undefined>();
   const [search, setSearch] = useState('');
+  const [status, setStatus] = useState('');
   const projects = data.workstreams || [];
   const selected = projects.find((row) => row.id === query.get('id'));
   const tasksFor = (id: string) =>
@@ -48,6 +50,12 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
             </p>
             <div className="project-properties">
               <span>
+                Status<strong className="badge">{String(selected.data.status || 'rencana')}</strong>
+              </span>
+              <span>
+                Prioritas<strong>{String(selected.data.priority || 'normal')}</strong>
+              </span>
+              <span>
                 Penanggung jawab{' '}
                 <strong>{String(selected.data.assignee || 'Belum ditentukan')}</strong>
               </span>
@@ -66,17 +74,7 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
             <Meter value={scopeProgress(tasksFor(selected.id))} />
           </section>
           <div className="project-context">
-            <section className="card">
-              <h3>
-                <FileText size={18} /> Catatan proyek
-              </h3>
-              <p className="record-text">
-                {String(
-                  selected.data.notes ||
-                    'Simpan ringkasan, hasil diskusi, dan keputusan penting melalui Ubah proyek.',
-                )}
-              </p>
-            </section>
+            <ProjectNotes key={selected.id} project={selected} refresh={refresh} />
             <section className="card">
               <h3>
                 <Flag size={18} /> Milestone terkait
@@ -97,7 +95,7 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
                 <p>Belum ada milestone untuk proyek ini.</p>
               )}
               <Link className="text-link" href="/roadmap">
-                Kelola di roadmap →
+                Kelola di Gantt →
               </Link>
             </section>
           </div>
@@ -132,12 +130,34 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
               placeholder="Nama atau tujuan proyek…"
             />
           </label>
+          <div className="project-status-tabs" aria-label="Filter status proyek">
+            {[
+              ['', 'Semua'],
+              ['aktif', 'Aktif'],
+              ['rencana', 'Rencana'],
+              ['ditunda', 'Ditunda'],
+              ['selesai', 'Selesai'],
+              ['diarsipkan', 'Arsip'],
+            ].map(([value, label]) => (
+              <button key={value} aria-pressed={status === value} onClick={() => setStatus(value)}>
+                {label}
+                <small>
+                  {
+                    projects.filter((row) => !value || (row.data.status || 'rencana') === value)
+                      .length
+                  }
+                </small>
+              </button>
+            ))}
+          </div>
           <div className="project-grid">
             {projects
-              .filter((row) =>
-                `${row.data.title} ${row.data.description || ''}`
-                  .toLocaleLowerCase('id')
-                  .includes(search.toLocaleLowerCase('id')),
+              .filter(
+                (row) =>
+                  (!status || (row.data.status || 'rencana') === status) &&
+                  `${row.data.title} ${row.data.description || ''}`
+                    .toLocaleLowerCase('id')
+                    .includes(search.toLocaleLowerCase('id')),
               )
               .map((row) => {
                 const tasks = tasksFor(row.id);
@@ -152,7 +172,10 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
                       </span>
                       <ArrowUpRight size={19} />
                     </div>
-                    <span className="eyebrow">{String(row.data.code)}</span>
+                    <div className="record-meta">
+                      <span className="eyebrow">{String(row.data.code)}</span>
+                      <span className="badge">{String(row.data.status || 'rencana')}</span>
+                    </div>
                     <h3>{String(row.data.title)}</h3>
                     <p>
                       {String(
@@ -175,17 +198,19 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
             <div className="empty card">
               <FolderOpen className="empty-icon" size={36} />
               <h3>Ruang untuk rencana berikutnya</h3>
-              <p>Buat proyek pertama, atau pasang template 90 hari di Pengaturan.</p>
-              <Link className="text-link" href="/pengaturan">
-                Buka pengaturan →
-              </Link>
+              <p>Tentukan nama, tujuan, dan tanggal proyek Anda. Tambahkan tugas kapan saja.</p>
+              <button className="primary" onClick={() => setEdit(null)}>
+                Buat proyek pertama
+              </button>
             </div>
           )}
           {projects.length > 0 &&
-            !projects.some((row) =>
-              `${row.data.title} ${row.data.description || ''}`
-                .toLocaleLowerCase('id')
-                .includes(search.toLocaleLowerCase('id')),
+            !projects.some(
+              (row) =>
+                (!status || (row.data.status || 'rencana') === status) &&
+                `${row.data.title} ${row.data.description || ''}`
+                  .toLocaleLowerCase('id')
+                  .includes(search.toLocaleLowerCase('id')),
             ) && <p className="empty">Tidak ada proyek yang sesuai pencarian.</p>}
         </>
       )}

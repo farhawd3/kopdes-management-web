@@ -22,6 +22,8 @@ export const catalog: Record<Entity, { title: string; description: string; field
       'code',
       'description',
       'assignee',
+      'status',
+      'priority',
       'start_date',
       'target_date',
       'color',
@@ -208,6 +210,7 @@ export const references: Record<string, Entity> = {
   work_item_id: 'work-items',
 };
 export const options: Record<string, string[]> = {
+  'workstreams.status': ['rencana', 'aktif', 'ditunda', 'selesai', 'diarsipkan'],
   'work-items.status': ['rencana', 'proses', 'selesai', 'dibatalkan'],
   'checklist.status': ['rencana', 'proses', 'selesai'],
   'units.status': ['rencana', 'persiapan', 'siap uji', 'siap buka', 'aktif'],
@@ -226,7 +229,7 @@ export const navigation = [
   ['/hari-ini', 'Hari Ini', '☀'],
   ['/tugas', 'Tugas', '✓'],
   ['/proyek', 'Proyek', '▣'],
-  ['/roadmap', 'Roadmap', '↗'],
+  ['/roadmap', 'Gantt & milestone', '↗'],
   ['/kesiapan', 'Kesiapan', '☷'],
   ['/gerai', 'Gerai', '▦'],
   ['/pemangku', 'Pemangku', '◎'],

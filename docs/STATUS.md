@@ -1,44 +1,37 @@
-# Status proyek — 30 September 2026
+# Status proyek — Workspace fleksibel
 
-## Fondasi selesai
+## Perubahan terbaru
 
-- Repo privat `halimxn/kopdes-management-web` dibuat dengan commit awal tanpa induk dan berhasil dipush.
-- Dokumen terbaru menggantikan docs lama; panduan AI tunggal, gitignore dan aturan akhir baris dirapikan.
-- Kode, tes, SQL reset, dokumen, konfigurasi, dan riwayat lama diarsip lokal serta dikecualikan dari Git.
-- Runtime lama diganti aplikasi baru. Modul anggota, omzet, stok dagang, dan integrasi kunci AI tidak digunakan.
-- Supabase baru: `mqycnhebhzqaziouipet`, Free, Singapore. Migrasi enam tabel disetujui pemilik dan tabel cloud dapat dibaca.
-- Setup PIN dan login berhasil (respons 200); Beranda dan 16 API domain berhasil dimuat. Database lama tidak diubah.
+- Konsep program 90 hari dikeluarkan dari UI dan runtime. Proyek memiliki tujuan, tanggal, dan durasinya sendiri. Data lama tidak dihapus.
+- Proyek: status rencana/aktif/ditunda/selesai/arsip, prioritas, PIC, tujuan, tanggal, pencarian, filter, progres tugas.
+- Catatan proyek: judul, paragraf, daftar, checklist, kutipan, pratinjau, penyimpanan server. HTML tidak dieksekusi.
+- Tugas: daftar, papan, kalender, dan Gantt memakai data yang sama; subtugas, prasyarat, pengulangan, filter dan pengurutan tetap tersedia.
+- Gantt: rentang tanggal, skala, filter proyek, navigasi periode, milestone, hari ini, deteksi benturan tanggal prasyarat, geser batang, resize tenggat, tinjau dan simpan. Keyboard/form menjadi alternatif untuk sentuh.
+- Dashboard baru memakai jumlah proyek/tugas aktual dan delapan minggu penyelesaian bergulir.
+- Tema rose/lavender, lapisan kartu dan bayangan lembut, sidebar, tabel, papan, form, halaman proyek dan catatan diperbarui.
+- Rencana/spec lama di `docs/arsip`; seed historis menjadi fixture tes, bukan fitur runtime. SQL terpasang tetap utuh.
 
-## Implementasi tersedia
+## Fondasi tetap aktif
 
-- Beranda, Hari Ini, tugas daftar/papan/kalender, tambah cepat, subtugas, POAC, prasyarat, pengulangan.
-- Proyek/bidang kerja: tujuan, PIC, tanggal, catatan, progres, milestone terkait, tugas dalam lingkup proyek. Filter prioritas dan pengurutan tugas.
-- Tampilan baru terinspirasi workspace dokumen: latar hangat, aksen rose, ikon konsisten, sidebar berkelompok, shortcut, navigasi ponsel.
-- Milestone dan Gantt awal; checklist, gerai, radar kesiapan.
-- Kontak/interaksi, rapat/notulen/keputusan, tindak lanjut ke tugas, dokumen, risiko/isu, tim/pelatihan, jurnal.
-- Snapshot laporan periode pilihan, cetak A4/PDF, salin teks WhatsApp.
-- Profil, tema sistem/terang/gelap, kepadatan, cadangan/pemulihan.
-- Template 43 tugas, enam milestone, tujuh bidang kerja, tujuh gerai. Seluruh status awal rencana.
-- PIN scrypt, sesi acak HttpOnly, rate limit persisten, Zod, pembatasan origin, RLS default deny, pemeriksaan relasi database.
+Repo privat `halimxn/kopdes-management-web` dengan riwayat awal baru. Supabase baru `mqycnhebhzqaziouipet`; enam tabel, RLS, validasi server, pemeriksaan relasi, transaksi, PIN scrypt, sesi HttpOnly dan batas percobaan persisten. PIN/login dan baca 16 domain berhasil diverifikasi sebelumnya. Database lama tidak digunakan.
 
-## Verifikasi
+Modul kesiapan/gerai, pemangku/interaksi, rapat/keputusan/tindak lanjut, dokumen, risiko/isu, tim/pelatihan, jurnal, snapshot laporan, cetak, salin teks dan backup/pemulihan tetap tersedia.
 
-- Aplikasi baru: **51/51 tes lulus**, termasuk lingkup proyek, filter, aksi tugas, keamanan, dan PostgreSQL lokal.
-- ESLint, TypeScript dan build produksi Next.js berhasil.
-- Audit dependency terakhir: 0 kerentanan; audit sumber: 42/42 berkas terjangkau dari titik masuk aplikasi.
-- Pemeriksaan singkat Beranda/Proyek pada viewport 360, 768, 1024, 1440 px: lebar dokumen sesuai layar, tanpa overflow halaman. Tema terang/gelap diperiksa; formulir proyek dapat dibuka/ditutup tanpa menyimpan data.
-- Pemeriksaan browser memakai data cloud kosong. Alur proyek dengan data diisolasi melalui tes lokal, bukan data fiktif di produksi.
-- Pemindaian pola rahasia tidak menemukan kandidat pada berkas yang akan masuk Git; env dan arsip diabaikan.
+## Verifikasi paket
 
-## Batas dan penerimaan berikutnya
+- **62/62 tes lulus**: keamanan, PostgreSQL lokal, kompatibilitas data lama, lingkup proyek, filter, aksi tugas, geometri Gantt, geser/resize lintas tahun, konflik prasyarat, simpan/gagal simpan jadwal, catatan terformat dan escaping HTML.
+- Lint, TypeScript, build produksi Next.js berhasil. Audit sumber: 43/43 file terjangkau.
+- Pemeriksaan browser singkat Beranda dan Gantt pada 360/768/1024/1440 px: tidak ada overflow dokumen. Grafik lebar menggulir di kontainernya. Tema terang/gelap diperiksa.
+- Browser menggunakan data cloud kosong; tes lokal memakai fixture. Interaksi drag pada data nyata dan perangkat fisik belum menjadi UAT.
 
-- UAT data nyata, perangkat fisik Android/iOS/Safari, Lighthouse dan aksesibilitas menyeluruh belum dilakukan.
-- Baseline/drag tanggal/jalur kritis Gantt, serta riwayat cakupan lengkap untuk burnup belum tersedia.
-- Editor blok bebas dan kolaborasi real-time seperti Notion belum tersedia.
-- PWA/offline, palet perintah, CSV, unggah berkas, tautan publik laporan belum tersedia.
-- Anggaran belum diaktifkan, menunggu keputusan produk.
-- Profil dan data operasional nyata diisi pemilik. Setelah profil lengkap, pemilik dapat memasang template atau membuat proyek sendiri.
+## Batas yang masih perlu dikerjakan
 
-## Panduan berikutnya
+- Baseline, jalur kritis, dan penjadwalan otomatis seluruh dependensi.
+- Editor blok drag-and-drop dan kolaborasi real-time. Catatan saat ini berbasis teks terformat dengan toolbar.
+- PWA/offline, CSV, unggah berkas, tautan laporan publik.
+- UAT beberapa hari, Android/iOS/Safari fisik, Lighthouse dan audit aksesibilitas menyeluruh.
+- Smoke test deployment produksi. Vercel sebelumnya menampilkan No Production Deployment; keberhasilan hosting belum dikonfirmasi.
 
-Buka **Proyek → Proyek baru** untuk ruang kerja manual, atau **Pengaturan** untuk profil dan template 90 hari. Ikuti [WORKFLOW.md](WORKFLOW.md). Kredensial dan SQL cloud tetap dilakukan pemilik mengikuti [SUPABASE.md](SUPABASE.md). Tidak perlu mengulang migrasi untuk halaman Proyek.
+## Mulai memakai
+
+Buka **Proyek → Proyek baru**. Isi tujuan dan jadwal, tambahkan tugas, lalu pilih tampilan Gantt atau tulis catatan proyek. **Gantt & milestone** merangkum jadwal lintas proyek. Pengaturan untuk profil, PIN, dan backup. Tidak ada migrasi cloud tambahan untuk paket ini.

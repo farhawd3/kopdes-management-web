@@ -5,7 +5,7 @@
 | [Status](STATUS.md) | Implementasi nyata, verifikasi, kendala, langkah berikut |
 | [Keputusan](KEPUTUSAN.md) | Pembaruan dari instruksi pemilik |
 | [PRD](PRD.md) | Kebutuhan dan kriteria terima |
-| [Checklist](CHECKLIST.md) | Backlog dan template 90 hari |
+| [Checklist](CHECKLIST.md) | Implementasi, penerimaan dan backlog aktif |
 | [Workflow](WORKFLOW.md) | Alur kerja dan status |
 | [Pemetaan file](PEMETAAN-FILE.md) | Rujukan transformasi kode lama |
 | [Arsitektur](ARSITEKTUR.md) | Struktur runtime, domain data, keamanan dan batasan |

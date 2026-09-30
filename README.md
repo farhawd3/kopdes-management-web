@@ -1,8 +1,8 @@
 # Kopdes Management Web
 
-Ruang kerja pribadi manajer KDMP Puntukrejo: rencana 90 hari, tugas, kesiapan gerai, koordinasi, dokumen, risiko, dan laporan kerja.
+Ruang kerja pribadi manajer KDMP Puntukrejo: proyek fleksibel, tugas, kesiapan gerai, koordinasi, dokumen, risiko, dan laporan kerja.
 
-**Status: implementasi awal baru; aktivasi dan pemeriksaan cloud sedang berlangsung.** Fitur lanjutan dan penerimaan perangkat masih terbuka di [STATUS](docs/STATUS.md). Tidak ada data operasional tiruan.
+**Status: workspace proyek aktif secara lokal; deployment produksi belum terverifikasi.** Fitur lanjutan dan penerimaan perangkat masih terbuka di [STATUS](docs/STATUS.md). Tidak ada data operasional tiruan.
 
 ## Mulai lokal
 
@@ -18,7 +18,7 @@ Salin `.env.example` menjadi `.env.local`, lalu ikuti [panduan Supabase dan PIN]
 npm run dev
 ```
 
-Buka `http://localhost:3000/pin`. Buat PIN pertama dengan token pengaturan server, masuk, lengkapi profil, lalu pasang template 90 hari. Template berisi 43 tugas, 6 milestone, 7 bidang kerja, dan 7 gerai rencana; semuanya belum selesai.
+Buka `http://localhost:3000/pin`. Jika belum diinisialisasi, buat PIN pertama dengan token pengaturan server. Masuk, lengkapi profil, lalu buat proyek sendiri dengan tujuan dan jadwal pilihan Anda.
 
 ## Pemeriksaan
 
@@ -38,7 +38,7 @@ Tes database memakai PostgreSQL lokal PGlite dan tidak mengubah Supabase cloud. 
 | `src/app` | Rute Next.js, API, dan layout |
 | `src/features` | Skema domain, layanan data, form, dan halaman kerja |
 | `src/components` | Navigasi, tombol, dan grafik bersama |
-| `src/lib` | Tanggal, progres, tema, keamanan, dan template |
+| `src/lib` | Tanggal, progres, timeline, tema, dan keamanan |
 | `supabase/migrations` | Satu migrasi awal khusus proyek baru |
 | `tests` | Validasi domain, keamanan API, transaksi PostgreSQL |
 | `docs` | Kebutuhan, keputusan, arsitektur, panduan, status |
@@ -55,6 +55,6 @@ Repository: [halimxn/kopdes-management-web](https://github.com/halimxn/kopdes-ma
 
 ## Proyek dan tugas
 
-Buka **Proyek** untuk membuat ruang kerja berisi tujuan, PIC, catatan, milestone dan tugas. Data proyek memakai bidang kerja yang sama dengan template 90 hari. Halaman **Tugas** menyediakan daftar, papan dan kalender, pencarian, filter status/proyek/prioritas, serta pengurutan. Klik judul tugas untuk membuka detail.
+Buka **Proyek** untuk membuat ruang kerja berisi tujuan, PIC, catatan, milestone dan tugas. Data proyek memakai domain `workstreams` yang kompatibel dengan data lama. Halaman **Tugas** menyediakan daftar, papan, kalender dan Gantt, pencarian, filter status/proyek/prioritas, serta pengurutan. Klik judul tugas untuk membuka detail.
 
-Desain memakai latar hangat dan aksen rose, navigasi yang dikelompokkan, tema terang/gelap, serta navigasi bawah di ponsel. Editor blok bebas dan kolaborasi real-time belum tersedia.
+Desain memakai latar hangat dan aksen rose, navigasi yang dikelompokkan, tema terang/gelap, serta navigasi bawah di ponsel. Catatan mendukung format sederhana. Editor blok drag-and-drop dan kolaborasi real-time belum tersedia.

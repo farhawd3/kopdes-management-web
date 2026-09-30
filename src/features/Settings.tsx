@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { api, resetAuthNavigation } from '@/lib/client';
+import Link from 'next/link';
 export function Settings({ refresh }: { refresh: () => Promise<void> }) {
   const [message, setMessage] = useState(''),
     [busy, setBusy] = useState(false);
@@ -20,20 +21,15 @@ export function Settings({ refresh }: { refresh: () => Promise<void> }) {
   return (
     <div className="dashboard-grid">
       <section className="card">
-        <span className="eyebrow">MULAI TERARAH</span>
-        <h2>Rencana 90 hari pertama</h2>
+        <span className="eyebrow">WORKSPACE FLEKSIBEL</span>
+        <h2>Atur ruang kerja Anda</h2>
         <p>
-          43 tugas, 6 milestone, 7 bidang kerja, dan 7 gerai rencana. Seluruhnya belum selesai dan
-          dapat Anda sesuaikan.
+          Buat proyek dengan tujuan, tanggal, dan catatan sendiri. Kelola pekerjaan melalui daftar,
+          papan, kalender, atau Gantt.
         </p>
-        <p>Lengkapi profil dan tanggal mulai sebelum memasang template. Pemasangan hanya sekali.</p>
-        <button
-          className="primary"
-          disabled={busy}
-          onClick={() => void run(() => api('template', {}), 'Template berhasil dipasang.')}
-        >
-          Gunakan template 90 hari
-        </button>
+        <Link className="primary" href="/proyek">
+          Buka proyek
+        </Link>
       </section>
       <section className="card">
         <h2>Cadangan data kerja</h2>

@@ -14,15 +14,15 @@ Halaman dan API anggota, stok dagang, keuangan, omzet, kinerja berbasis pendapat
 | `/pin` | PIN, pengaturan PIN awal |
 | `/beranda` | Dashboard, perhatian, progres, grafik |
 | `/hari-ini` | Terlambat, hari ini, tujuh hari berikutnya, rapat |
-| `/tugas` | Daftar, papan, kalender, form tugas |
+| `/tugas` | Daftar, papan, kalender, Gantt, form tugas |
 | `/proyek` | Galeri proyek, tujuan/catatan, progres, milestone, tugas dalam lingkup proyek |
-| `/roadmap` | Milestone dan Gantt awal |
+| `/roadmap` | Gantt interaktif, rentang/skala, geser/resize jadwal, milestone |
 | `/kesiapan`, `/gerai` | Checklist dan kesiapan lima dimensi |
 | `/pemangku`, `/rapat` | Kontak/interaksi, rapat/keputusan/tindak lanjut |
 | `/dokumen`, `/risiko` | Registri dokumen, risiko/isu |
 | `/tim`, `/jurnal` | Petugas/pelatihan dan catatan kerja |
 | `/laporan` | Snapshot, cetak/PDF, salin teks |
-| `/pengaturan`, `/panduan` | Profil, template, PIN, backup, petunjuk |
+| `/pengaturan`, `/panduan` | Profil, PIN, backup, petunjuk |
 
 Rute dinamis `(app)/[slug]` memakai allowlist navigasi, sehingga satu file tidak berarti menerima sembarang halaman. Layout memeriksa sesi server. Halaman domain memakai komponen terpisah di `features`.
 
@@ -30,7 +30,7 @@ Rute dinamis `(app)/[slug]` memakai allowlist navigasi, sehingga satu file tidak
 
 - `/api/auth/pin`: setup, login, change, logout.
 - `/api/[entity]`: domain yang terdaftar dalam `schemas.ts` saja.
-- `/api/template`: memasang rencana satu kali.
+- Endpoint template lama dilepas; data tersimpan dan fungsi SQL historis tetap dipertahankan.
 - `/api/reports`: daftar dan snapshot laporan server.
 - `/api/backup`: ekspor dan pemulihan transaksi.
 

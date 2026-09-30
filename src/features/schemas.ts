@@ -44,6 +44,8 @@ export const schemas = {
       description: text,
       notes: text,
       assignee: text,
+      status: z.enum(['rencana', 'aktif', 'ditunda', 'selesai', 'diarsipkan']).default('rencana'),
+      priority: z.enum(['rendah', 'normal', 'tinggi', 'mendesak']).default('normal'),
       start_date: optionalDate,
       target_date: optionalDate,
       color: z
