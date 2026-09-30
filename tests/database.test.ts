@@ -12,7 +12,8 @@ beforeAll(async () => {
   );
   await database.exec(readFileSync('supabase/migrations/20260930000001_manager_hub.sql', 'utf8'));
   await database.exec(readFileSync('supabase/migrations/20261001000002_operations.sql', 'utf8'));
-}, 30000);
+  await database.exec(readFileSync('supabase/migrations/20261001000003_cooperative_redesign.sql', 'utf8'));
+}, 60000);
 afterAll(async () => {
   await database?.close();
 });
@@ -216,5 +217,22 @@ describe('Migrasi PostgreSQL nyata di mesin lokal', () => {
   it('perubahan PIN mencabut seluruh sesi', async () => {
     await database.query("select public.change_manager_pin('test-hash','new-hash')");
     expect((await database.query('select * from public.manager_sessions')).rows).toHaveLength(0);
+  });
+  it('entitas sprints dapat disimpan dan dirujuk oleh tugas', async () => {
+    const sprintId = randomUUID();
+    await database.query(
+      "insert into public.hub_records(id,entity,data) values($1,'sprints',$2::jsonb)",
+      [sprintId, JSON.stringify({ title: 'Sprint 1 Persiapan', goal: 'Kesiapan toko', status: 'aktif' })],
+    );
+    const taskId = randomUUID();
+    await database.query(
+      "insert into public.hub_records(id,entity,data) values($1,'work-items',$2::jsonb)",
+      [taskId, JSON.stringify({ title: 'Tugas sprint', sprint_id: sprintId, code: 'KD-44001', due_date: '2026-10-01' })],
+    );
+    const result = await database.query<{ id: string }>(
+      "select id from public.hub_records where entity='work-items' and data->>'sprint_id'=$1",
+      [sprintId],
+    );
+    expect(result.rows[0].id).toBe(taskId);
   });
 });

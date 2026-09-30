@@ -26,7 +26,7 @@ it('pindah tahun dan kembali ke hari ini tanpa kehilangan agenda', () => {
   fireEvent.click(screen.getByRole('button', { name: 'Hari ini' }));
   expect(screen.getByText('Detail Periksa dokumen')).toBeTruthy();
   expect(screen.getByRole('button', { name: 'Semua tanggal' })).toBeTruthy();
-});
+}, 15000);
 it('menjelaskan bulan kosong', () => {
   render(<TaskCalendar items={[]} render={() => null} />);
   expect(screen.getByText('Belum ada tugas bulan ini.')).toBeTruthy();

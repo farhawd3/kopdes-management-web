@@ -17,9 +17,13 @@ export function useWorkspace() {
           .map(async (entity) => [entity, await api<Item[]>(entity)] as const),
       );
       setData(Object.fromEntries(entries));
+      window.dispatchEvent(
+        new CustomEvent('hub-workspace', { detail: Object.fromEntries(entries) }),
+      );
       setOperations(capabilities.operations);
       setError('');
     } catch (e) {
+      window.dispatchEvent(new CustomEvent('hub-workspace', { detail: null }));
       setError((e as Error).message);
     } finally {
       setLoading(false);

@@ -6,6 +6,8 @@ import { navigation } from '@/features/catalog';
 import { ThemeProvider, useTheme } from '@/lib/ThemeContext';
 import { api, resetAuthNavigation } from '@/lib/client';
 import { usePreference } from '@/lib/usePreference';
+import type { Workspace } from '@/features/useWorkspace';
+import { today } from '@/lib/date';
 import {
   LayoutDashboard,
   Sun,
@@ -32,6 +34,7 @@ import {
   Wallet,
   Package,
   BookOpen,
+  CalendarDays,
   X,
 } from 'lucide-react';
 const icons = [
@@ -77,6 +80,14 @@ function Frame({ children }: { children: React.ReactNode }) {
     [error, setError] = useState(''),
     [search, setSearch] = useState('');
   const dialog = useRef<HTMLDialogElement>(null);
+  const [workspace, setWorkspace] = useState<Workspace | null>(null);
+  const [projectSearch, setProjectSearch] = useState('');
+  const activeGroup = groups.find((group) => group.paths.includes(path)) || groups[0];
+  useEffect(() => {
+    const receive = (event: Event) => setWorkspace((event as CustomEvent<Workspace | null>).detail);
+    window.addEventListener('hub-workspace', receive);
+    return () => window.removeEventListener('hub-workspace', receive);
+  }, []);
   const [density, setDensity] = usePreference('hub-density', 'comfortable');
   const compact = density === 'compact';
   useEffect(() => {
@@ -99,43 +110,206 @@ function Frame({ children }: { children: React.ReactNode }) {
       <a className="skip" href="#main">
         Lewati navigasi
       </a>
-      <aside className={menu ? 'sidebar open' : 'sidebar'} aria-label="Navigasi utama">
-        <Link href="/beranda" className="brand">
-          <span className="brand-icon">k.</span>
-          <span>
-            Kopdes<span className="brand-sub">MANAGEMENT</span>
+      <a className="skip" href="#main">
+        Lewati navigasi
+      </a>
+      <nav className="app-rail" aria-label="Bagian aplikasi">
+        <Link href="/beranda" className="rail-brand" aria-label="Beranda Kopdes">
+          <span className="rail-brand-box">
+            <CheckCheck size={24} strokeWidth={2.5} />
           </span>
         </Link>
+        <Link href="/tugas" aria-label="Tugas & Daftar Harian" title="Tugas" aria-current={path === '/tugas' ? 'page' : undefined}>
+          <CheckCheck size={20} />
+        </Link>
+        <Link href="/beranda" aria-label="Beranda" title="Beranda" aria-current={path === '/beranda' ? 'page' : undefined}>
+          <LayoutDashboard size={20} />
+        </Link>
+        <Link href="/proyek" aria-label="Proyek" title="Proyek" aria-current={path === '/proyek' ? 'page' : undefined}>
+          <FolderKanban size={20} />
+        </Link>
+        <Link href="/tugas?view=kalender" aria-label="Kalender Tugas" title="Kalender">
+          <CalendarDays size={20} />
+        </Link>
+        <Link href="/laporan" aria-label="Laporan & Analitik" title="Laporan" aria-current={path === '/laporan' ? 'page' : undefined}>
+          <ChartNoAxesCombined size={20} />
+        </Link>
+        <Link href="/rapat" aria-label="Rapat & Notulen" title="Rapat" aria-current={path === '/rapat' ? 'page' : undefined}>
+          <MessagesSquare size={20} />
+        </Link>
+        <Link href="/pencatatan" aria-label="Pencatatan Koperasi" title="Pencatatan" aria-current={groups[3].paths.includes(path) ? 'page' : undefined}>
+          <BookOpen size={20} />
+        </Link>
+        <Link href="/pengaturan" aria-label="Pengaturan" title="Pengaturan" aria-current={path === '/pengaturan' ? 'page' : undefined}>
+          <Settings size={20} />
+        </Link>
+        <div className="rail-foot-profile">
+          <span className="rail-user-avatar" title="Manajer KDMP Puntukrejo">M</span>
+        </div>
+      </nav>
+      <aside className={menu ? 'sidebar open' : 'sidebar'} aria-label="Navigasi utama">
+        {/* Workspace Card Selector */}
+        <div className="sidebar-workspace-card">
+          <div className="workspace-logo-box">
+            <span>KD</span>
+          </div>
+          <div className="workspace-titles">
+            <strong>KDMP Puntukrejo</strong>
+            <small>Ruang Kerja Pribadi</small>
+          </div>
+        </div>
+
         <button className="sidebar-search" onClick={() => dialog.current?.showModal()}>
           <Search size={16} />
           <span>Cari halaman</span>
           <kbd>⌘ K</kbd>
         </button>
-        <div className="sidebar-areas">
-          <Link
-            href="/proyek"
-            onClick={() => setMenu(false)}
-            aria-current={!groups[3].paths.includes(path) ? 'page' : undefined}
-          >
-            <FolderKanban size={15} />
-            Kerja
-          </Link>
-          <Link
-            href="/pencatatan"
-            onClick={() => setMenu(false)}
-            aria-current={groups[3].paths.includes(path) ? 'page' : undefined}
-          >
-            <BookOpen size={15} />
-            Catat
-          </Link>
-        </div>
+
         <Link href="/tugas?baru=1" onClick={() => setMenu(false)} className="sidebar-create">
           <Plus size={17} />
           <span>Tugas baru</span>
         </Link>
+
         <nav>
+          {/* Projects Section with Search */}
+          <div className="sidebar-section-card">
+            <div className="section-head">
+              <h3>PROYEK</h3>
+              <Link href="/proyek" aria-label="Semua proyek" className="section-head-link">
+                <FolderKanban size={15} />
+              </Link>
+            </div>
+            <div className="sidebar-search-box">
+              <Search size={14} className="search-icon-inside" />
+              <input
+                aria-label="Cari proyek"
+                type="search"
+                placeholder="Cari proyek…"
+                value={projectSearch}
+                onChange={(e) => setProjectSearch(e.target.value)}
+              />
+            </div>
+            <div className="sidebar-project-list">
+              {workspace ? (
+                (workspace.workstreams || [])
+                  .filter(
+                    (item) =>
+                      item.data.status !== 'diarsipkan' &&
+                      String(item.data.title)
+                        .toLocaleLowerCase('id')
+                        .includes(projectSearch.toLocaleLowerCase('id')),
+                  )
+                  .map((item) => {
+                    const taskCount = (workspace['work-items'] || []).filter(
+                      (task) =>
+                        task.data.workstream_id === item.id &&
+                        !['selesai', 'dibatalkan'].includes(String(task.data.status)),
+                    ).length;
+                    return (
+                      <Link
+                        key={item.id}
+                        href={`/proyek?id=${encodeURIComponent(item.id)}`}
+                        onClick={() => setMenu(false)}
+                        className="sidebar-project-item"
+                      >
+                        <span
+                          className="project-dot"
+                          style={{ backgroundColor: String(item.data.color || '#ed7d3d') }}
+                        />
+                        <span className="project-title-text">{String(item.data.title)}</span>
+                        <small className="project-count-pill">
+                          {taskCount.toString().padStart(2, '0')}
+                        </small>
+                      </Link>
+                    );
+                  })
+              ) : (
+                <small className="muted-text">Memuat proyek…</small>
+              )}
+              {workspace && !(workspace.workstreams || []).length && (
+                <p className="sidebar-empty-note">Belum ada proyek.</p>
+              )}
+            </div>
+          </div>
+
+          {/* Stakeholders / Contacts Section (Behance Reference) */}
+          <div className="sidebar-section-card">
+            <div className="section-head">
+              <h3>PEMANGKU & KONTAK</h3>
+              <span className="sidebar-pill-badge">Pengurus</span>
+            </div>
+            <div className="sidebar-members-list">
+              {workspace?.stakeholders && workspace.stakeholders.length > 0 ? (
+                workspace.stakeholders.slice(0, 4).map((sh) => (
+                  <Link
+                    key={sh.id}
+                    href="/pemangku"
+                    onClick={() => setMenu(false)}
+                    className="sidebar-member-row"
+                  >
+                    <span className="member-avatar">
+                      {String(sh.data.title).charAt(0).toUpperCase()}
+                    </span>
+                    <div className="member-info">
+                      <span className="member-name">{String(sh.data.title)}</span>
+                      <small className="member-role">{String(sh.data.category || 'Mitra')}</small>
+                    </div>
+                  </Link>
+                ))
+              ) : (
+                <>
+                  <Link href="/pemangku" onClick={() => setMenu(false)} className="sidebar-member-row">
+                    <span className="member-avatar avatar-orange">KP</span>
+                    <div className="member-info">
+                      <span className="member-name">Ketua Pengurus</span>
+                      <small className="member-role">Pengurus Koperasi</small>
+                    </div>
+                  </Link>
+                  <Link href="/pemangku" onClick={() => setMenu(false)} className="sidebar-member-row">
+                    <span className="member-avatar avatar-navy">BD</span>
+                    <div className="member-info">
+                      <span className="member-name">Bendahara</span>
+                      <small className="member-role">Keuangan & Kas</small>
+                    </div>
+                  </Link>
+                  <Link href="/pemangku" onClick={() => setMenu(false)} className="sidebar-member-row">
+                    <span className="member-avatar avatar-slate">DK</span>
+                    <div className="member-info">
+                      <span className="member-name">Dinas Koperasi</span>
+                      <small className="member-role">Pembina Wilayah</small>
+                    </div>
+                  </Link>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* My To-Do List Shortcut (Behance Reference) */}
+          <div className="sidebar-todo-shortcut">
+            <Link href="/hari-ini" onClick={() => setMenu(false)} className="todo-shortcut-link">
+              <div className="todo-shortcut-left">
+                <Sun size={17} />
+                <span>Tugas Hari Ini</span>
+              </div>
+              <small className="todo-count-badge">
+                {
+                  (workspace?.['work-items'] || []).filter(
+                    (item) =>
+                      item.data.due_date === today() &&
+                      !['selesai', 'dibatalkan'].includes(String(item.data.status)),
+                  ).length.toString().padStart(2, '0')
+                }
+              </small>
+            </Link>
+          </div>
+
+          {/* Navigation Groups (Ruang Kerja, Koordinasi, Pemantauan, Pencatatan) */}
           {groups.map((group) => (
-            <details className="nav-group" key={group.name} open>
+            <details
+              className={`nav-group ${group === activeGroup ? 'active-group' : ''}`}
+              key={group.name}
+              open={group === activeGroup}
+            >
               <summary>{group.name}</summary>
               {group.paths.map((href) => {
                 const index = navigation.findIndex((entry) => entry[0] === href),
@@ -149,7 +323,7 @@ function Frame({ children }: { children: React.ReactNode }) {
                     aria-current={path === href ? 'page' : undefined}
                     title={entry[1]}
                   >
-                    <Icon size={18} strokeWidth={1.7} />
+                    <Icon size={17} strokeWidth={1.7} />
                     <span>{entry[1]}</span>
                   </Link>
                 );
@@ -158,11 +332,11 @@ function Frame({ children }: { children: React.ReactNode }) {
           ))}
         </nav>
         <div className="sidebar-foot">
-          <span className="workspace-avatar">K</span>
+          <span className="workspace-avatar">M</span>
           <span>
-            Kopdes Management
+            KDMP Puntukrejo
             <br />
-            <strong>Ruang kerja pribadi</strong>
+            <strong>Manajer Koperasi</strong>
           </span>
         </div>
       </aside>

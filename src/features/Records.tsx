@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { catalog, labels, options } from './catalog';
 import { schemas, type Entity, type Item } from './schemas';
@@ -12,9 +12,25 @@ import { Meter, RiskMatrix } from '@/components/charts/Charts';
 import { TaskCalendar } from './TaskCalendar';
 import { ReadinessRadar } from '@/components/charts/ReadinessRadar';
 import { InfluenceMap } from '@/components/charts/InfluenceMap';
-import { ListTodo, Columns3, CalendarDays, Search, Plus, ChartGantt } from 'lucide-react';
+import {
+  ListTodo,
+  Columns3,
+  CalendarDays,
+  Search,
+  Plus,
+  ChartGantt,
+  CalendarClock,
+  UploadCloud,
+  Target,
+  X,
+} from 'lucide-react';
 import { TaskTimeline } from './TaskTimeline';
 import { downloadMeeting } from './meeting';
+import { DailyTasksView } from './DailyTasksView';
+import { TaskDetailDrawer } from './TaskDetailDrawer';
+import { SprintModal } from './SprintModal';
+import { SprintCard } from './SprintCard';
+import { CsvDropzone } from '@/components/ui/CsvDropzone';
 export function Records({
   entity,
   workspace,
@@ -28,18 +44,52 @@ export function Records({
   initialFilter?: string;
   scopeId?: string;
 }) {
+  const query = useSearchParams(),
+    router = useRouter();
   const [edit, setEdit] = useState<Item | null | undefined>(),
+    [detailTask, setDetailTask] = useState<Item | null>(null),
+    [showSprintModal, setShowSprintModal] = useState<Item | boolean>(false),
+    [showCsvModal, setShowCsvModal] = useState(false),
+    [sprintFilter, setSprintFilter] = useState(''),
     [quickTitle, setQuickTitle] = useState(''),
     [search, setSearch] = useState(''),
     [filter, setFilter] = useState(initialFilter),
     [workstream, setWorkstream] = useState(''),
     [priority, setPriority] = useState(''),
     [sort, setSort] = useState('due'),
-    [view, setView] = useState('daftar'),
+    [view, setView] = useState(
+      query.get('view') === 'kalender'
+        ? 'kalender'
+        : query.get('view') === 'harian'
+          ? 'harian'
+          : 'daftar',
+    ),
     [error, setError] = useState(''),
     [busy, setBusy] = useState(false);
-  const query = useSearchParams(),
-    router = useRouter();
+  function createTask(date = today(), status = 'rencana') {
+    setEdit({
+      id: '',
+      created_at: '',
+      updated_at: '',
+      data: {
+        ...schemas['work-items'].parse({
+          title: 'Tugas baru',
+          due_date: date,
+          status,
+          workstream_id: scopeId || workstream || '',
+          sprint_id: sprintFilter || '',
+        }),
+        title: '',
+      },
+    });
+  }
+  const requestedView = query.get('view');
+  useEffect(() => {
+    // A sidebar link can change only the query while this page remains mounted.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (requestedView === 'kalender') setView('kalender');
+    else if (requestedView === 'harian') setView('harian');
+  }, [requestedView]);
   const quickAdd = entity === 'work-items' && query.get('baru') === '1';
   const effectiveFilter = filter || (entity === 'work-items' ? query.get('status') || '' : '');
   const all = (workspace[entity] || []).filter(
@@ -57,6 +107,7 @@ export function Records({
                 !['selesai', 'dibatalkan'].includes(String(row.data.status))
               : row.data.status === effectiveFilter)) &&
           (!workstream || row.data.workstream_id === workstream) &&
+          (!sprintFilter || row.data.sprint_id === sprintFilter) &&
           (!priority || row.data.priority === priority),
       )
       .sort((a, b) =>
@@ -366,6 +417,7 @@ export function Records({
       {entity === 'work-items' && (
         <div className="database-views" aria-label="Tampilan tugas">
           {[
+            ['harian', 'Harian', CalendarClock],
             ['daftar', 'Daftar', ListTodo],
             ['papan', 'Papan', Columns3],
             ['kalender', 'Kalender', CalendarDays],
@@ -384,6 +436,41 @@ export function Records({
             );
           })}
           <span>{rows.length} tugas</span>
+          <div className="view-extra-actions">
+            <button
+              type="button"
+              className="btn-sprint-trigger"
+              title="Kelola Target Periode (Sprint)"
+              onClick={() => setShowSprintModal(true)}
+            >
+              <Target size={15} />
+              <span>Sprint</span>
+            </button>
+            <button
+              type="button"
+              className="btn-csv-trigger"
+              title="Tarik & Lepas File CSV"
+              onClick={() => setShowCsvModal(true)}
+            >
+              <UploadCloud size={15} />
+              <span>Impor CSV</span>
+            </button>
+          </div>
+        </div>
+      )}
+      {entity === 'work-items' && (workspace.sprints || []).length > 0 && !sprintFilter && (
+        <div className="active-sprints-row">
+          {(workspace.sprints || [])
+            .filter((s) => s.data.status === 'aktif')
+            .map((sprint) => (
+              <SprintCard
+                key={sprint.id}
+                sprint={sprint}
+                tasks={all}
+                onEdit={(item) => setShowSprintModal(item)}
+                onRefresh={refresh}
+              />
+            ))}
         </div>
       )}
       {entity === 'work-items' && (
@@ -469,6 +556,19 @@ export function Records({
             </select>
           </label>
         )}
+        {entity === 'work-items' && (workspace.sprints || []).length > 0 && (
+          <label>
+            Target periode
+            <select value={sprintFilter} onChange={(e) => setSprintFilter(e.target.value)}>
+              <option value="">Semua periode (Sprint)</option>
+              {(workspace.sprints || []).map((row) => (
+                <option key={row.id} value={row.id}>
+                  {String(row.data.title)}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
         {entity === 'work-items' && (
           <>
             <label>
@@ -498,13 +598,21 @@ export function Records({
       )}
       {entity === 'risks' && <RiskMatrix items={rows} />}
       {entity === 'stakeholders' && <InfluenceMap items={rows} />}
-      {!rows.length && (
+      {!rows.length && view === 'daftar' && (
         <div className="empty card">
           <h3>Belum ada catatan</h3>
           <p>Mulai dengan menambah {catalog[entity].title.toLowerCase()}, atau ubah filter Anda.</p>
         </div>
       )}
-      {view === 'gantt' && entity === 'work-items' ? (
+      {view === 'harian' && entity === 'work-items' ? (
+        <DailyTasksView
+          tasks={rows}
+          workspace={workspace}
+          onOpenTask={(task) => setDetailTask(task)}
+          onCreateTask={(date) => createTask(date)}
+          onRefresh={refresh}
+        />
+      ) : view === 'gantt' && entity === 'work-items' ? (
         <TaskTimeline
           key={scopeId || workstream}
           items={rows}
@@ -529,12 +637,20 @@ export function Records({
               <h3>
                 {status} <small>{rows.filter((row) => row.data.status === status).length}</small>
               </h3>
+              <button className="board-add" onClick={() => createTask(today(), status)}>
+                <Plus size={20} /> Tambah tugas
+              </button>
               {rows.filter((row) => row.data.status === status).map(card)}
             </section>
           ))}
         </div>
       ) : view === 'kalender' && entity === 'work-items' ? (
-        <TaskCalendar items={rows} render={card} />
+        <TaskCalendar
+          items={rows}
+          render={card}
+          onCreate={createTask}
+          onEdit={(item) => setDetailTask(item)}
+        />
       ) : entity === 'work-items' && rows.length ? (
         <div className="task-table-wrap">
           <table className="task-table">
@@ -554,7 +670,10 @@ export function Records({
               {rows.map((row) => (
                 <tr key={row.id}>
                   <td>
-                    <button className="task-title" onClick={() => setEdit(row)}>
+                    <button className="task-title" onClick={() => setDetailTask(row)}>
+                      <span className="task-code-badge-inline">
+                        {String(row.data.code || `#KD-${row.id.slice(0, 4).toUpperCase()}`)}
+                      </span>
                       {String(row.data.title)}
                     </button>
                     <small>
@@ -632,6 +751,76 @@ export function Records({
           }}
           onSaved={refresh}
         />
+      )}
+      {detailTask && entity === 'work-items' && (
+        <TaskDetailDrawer
+          task={detailTask}
+          workspace={workspace}
+          onClose={() => setDetailTask(null)}
+          onUpdated={async () => {
+            await refresh();
+            const refreshed = (workspace['work-items'] || []).find((t) => t.id === detailTask.id);
+            if (refreshed) setDetailTask(refreshed);
+          }}
+          onPrev={() => {
+            const idx = rows.findIndex((t) => t.id === detailTask.id);
+            if (idx > 0) setDetailTask(rows[idx - 1]);
+          }}
+          onNext={() => {
+            const idx = rows.findIndex((t) => t.id === detailTask.id);
+            if (idx >= 0 && idx < rows.length - 1) setDetailTask(rows[idx + 1]);
+          }}
+        />
+      )}
+      {showSprintModal && (
+        <SprintModal
+          sprint={typeof showSprintModal === 'object' ? showSprintModal : null}
+          onClose={() => setShowSprintModal(false)}
+          onSaved={refresh}
+        />
+      )}
+      {showCsvModal && (
+        <dialog className="csv-import-dialog" open>
+          <div className="section-head">
+            <h3>Impor File CSV — {catalog[entity].title}</h3>
+            <button
+              type="button"
+              className="close-dialog-btn"
+              onClick={() => setShowCsvModal(false)}
+            >
+              <X size={18} />
+            </button>
+          </div>
+          <p className="dialog-sub">
+            Unggah file CSV dengan kolom sesuai format data untuk menambahkan data secara langsung.
+          </p>
+          <CsvDropzone
+            onDataParsed={async (parsedRows) => {
+              setBusy(true);
+              setError('');
+              try {
+                for (const row of parsedRows) {
+                  if (row.title && row.title.trim()) {
+                    const fallbackData: Record<string, unknown> = {
+                      due_date: today(),
+                      date: today(),
+                      ...row,
+                    };
+                    const parsed = schemas[entity].parse(fallbackData);
+                    await api(entity, { data: parsed });
+                  }
+                }
+                await refresh();
+                setShowCsvModal(false);
+              } catch (err) {
+                setError((err as Error).message || 'Gagal mengimpor beberapa baris data CSV.');
+              } finally {
+                setBusy(false);
+              }
+            }}
+          />
+          {error && <p className="notice error">{error}</p>}
+        </dialog>
       )}
     </section>
   );

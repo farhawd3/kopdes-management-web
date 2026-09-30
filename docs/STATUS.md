@@ -58,3 +58,31 @@ Referensi resmi: [Linear display options](https://linear.app/docs/display-option
 - Tambah tugas langsung dengan Enter, tenggat hari ini terlihat, dan lingkup proyek dipertahankan.
 - Editor berupa panel samping desktop/layar penuh ponsel. Sidebar netral, aksen indigo, border tipis dan bayangan minimal menggantikan tampilan kartu promosi.
 - Suite 92 tes sebelumnya lulus; dua tes interaksi baru juga lulus (total 94). Lint, TypeScript, dan build sukses pada perubahan aplikasi. Tidak ada migrasi tambahan.
+
+## Redesain Menyeluruh — Estetika Behance & Ruang Kerja Pribadi Koperasi (1 Oktober 2026)
+
+Implementasi redesain menyeluruh visual dan alur kerja sesuai referensi Behance (.gif):
+- **Palet Visual & Desain Sistem**:
+  - Warna Utama: Primary `#ed7d3d` (Vibrant Terracotta / Orange), Secondary `#3f527a` (Deep Slate Navy), Line & Border `#eaecf2`, Soft Peach `#fff3ec`.
+  - Nuansa Latar: Kanvas `#f4f6fa` dengan ambient radial glow halus, kartu dengan sudut membulat `12px–16px`, dan bayangan lembut bertingkat. Mode gelap menggunakan slate-navy `#161c27` dan `#20293a` dengan aksen oranye bercahaya.
+- **Dual-Navigation Layout**:
+  - **App-Rail (Rel Sisi Kiri 72px)**: Menampilkan brand icon kotak oranye `KD`, navigasi ikonik (Tugas, Beranda, Proyek, Kalender, Laporan, Rapat, Pencatatan, Pengaturan), dan avatar profil Manajer Koperasi di bagian bawah.
+  - **Sidebar Ruang Kerja Kontekstual**: Kartu selektor organisasi KDMP Puntukrejo ("Ruang Kerja Pribadi"), pencarian proyek dengan filter cepat, daftar proyek dengan status dot berwarna dan badge hitung tugas numerik (`03`, `01`), daftar pemangku kepentingan (Pengurus, Bendahara, Dinas Koperasi), pintasan tugas hari ini, dan navigasi modul pencatatan.
+- **Tampilan Tugas Harian (Daily Tasks)**:
+  - Tampilan baru `harian` yang mengelompokkan tugas berdasarkan hari (Senin s.d. Minggu, dan Mendatang/Upcoming).
+  - Setiap tugas memiliki checkmark lingkaran dengan animasi penyelesaian, kode tugas unik (misal `#KD-44008`), pill proyek, serta hierarki subtugas terindentasi dengan garis pohon (`├──`, `└──`) yang dapat dicentang interaktif langsung.
+- **Task Detail Drawer**:
+  - Drawer slideover dari kanan yang menampilkan tombol pill "Tandai Selesai" (#3f527a), penyuntingan judul & deskripsi langsung di tempat, grid metadata 3-kolom ("DIBUAT OLEH", "PENANGGUNG JAWAB", "PEMANGKU / TIM"), pohon subtugas dengan progress bar, feed timeline ringkasan aktivitas (Summary) dengan riwayat audit/catatan, serta composer catatan kaya dengan formatting toolbar (bold, italic, underline, list) dan tombol Kirim oranye (#ed7d3d).
+- **Date Range Picker Matrix**:
+  - Komponen pemilih rentang tanggal dengan daftar bulan vertikal di sisi kiri (indikator garis oranye aktif) dan matriks kalender hari (Mo–Su) di sisi kanan yang menyorot tanggal awal (#3f527a), tanggal akhir (#ed7d3d), dan rentang terarsir (#eaecf2), lengkap dengan penghitung durasi hari dan tombol pembersih rentang.
+- **Target Periode Koperasi (Sprint)**:
+  - Modul Target Periode fleksibel yang memungkinkan manajer menetapkan periode kerja (1 minggu, 2 minggu, 1 bulan, kustom), tujuan target, dan kartu pemantauan progres persentase tugas.
+- **Drag & Drop CSV**:
+  - Komponen Dropzone CSV dengan ikon awan dan garis putus-putus untuk bulk import data tugas dan pencatatan koperasi secara cepat.
+- **Pembaruan Database**:
+  - Berkas migrasi `supabase/migrations/20261001000003_cooperative_redesign.sql` dibuat untuk mendukung entitas `sprints`, indeks pencarian kode tugas `(data->>'code')`, dan relasi `sprint_id`.
+- **Verifikasi**:
+  - **99/99 tes lulus** (9 suite vitest, termasuk `tests/redesign.test.tsx`).
+  - `npm run typecheck` lolos tanpa ada error TypeScript.
+  - `npm run build` sukses mengompilasi bundel produksi Next.js.
+

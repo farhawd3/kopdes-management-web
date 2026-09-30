@@ -68,9 +68,11 @@ export const schemas = {
   'work-items': z
     .object({
       title,
+      code: text,
       description: text,
       workstream_id: ref,
       milestone_id: ref,
+      sprint_id: ref,
       unit_id: ref,
       meeting_id: ref,
       issue_id: ref,
@@ -81,9 +83,37 @@ export const schemas = {
       priority: z.enum(['rendah', 'normal', 'tinggi', 'mendesak']).default('normal'),
       poac,
       recurrence: z.enum(['tidak', 'harian', 'mingguan', 'bulanan']).default('tidak'),
+      recurrence_time: z
+        .string()
+        .regex(/^([01]\d|2[0-3]):[0-5]\d$/)
+        .default('09:00'),
+      recurrence_end_date: optionalDate,
+      followers: z.array(z.string()).default([]),
       subtasks: z
-        .array(z.object({ title, done: z.boolean() }).strict())
+        .array(
+          z
+            .object({
+              title,
+              done: z.boolean(),
+              code: text.optional(),
+            })
+            .strict(),
+        )
         .max(100)
+        .default([]),
+      activities: z
+        .array(
+          z
+            .object({
+              id: z.string(),
+              user: z.string(),
+              role: text,
+              text,
+              created_at: z.string(),
+              type: z.enum(['log', 'comment', 'status_change', 'creation']).default('comment'),
+            })
+            .strict(),
+        )
         .default([]),
       dependencies: z.array(z.string().uuid()).max(100).default([]),
       link,
@@ -247,6 +277,17 @@ export const schemas = {
       book_quantity: quantity,
       counted_quantity: quantity,
       assignee: title,
+      notes: text,
+    })
+    .strict(),
+  sprints: z
+    .object({
+      title,
+      goal: text,
+      duration: z.enum(['1 minggu', '2 minggu', '1 bulan', 'kustom']).default('2 minggu'),
+      start_date: optionalDate,
+      end_date: optionalDate,
+      status: z.enum(['rencana', 'aktif', 'selesai']).default('aktif'),
       notes: text,
     })
     .strict(),
