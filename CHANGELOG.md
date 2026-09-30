@@ -1,5 +1,11 @@
 # Changelog
 
+### Perbaikan origin Vercel
+
+- Normalisasi konfigurasi origin dan kenali domain deployment resmi dari metadata server Vercel.
+- Tetap tolak origin asing/kosong, domain Vercel lain, downgrade HTTP, serta pemalsuan Host/Forwarded.
+- Tambahkan 16 pengujian origin dan panduan konfigurasi domain produksi.
+
 ## 0.2.0 — Workspace fleksibel
 
 - Hapus program 90 hari dari runtime; proyek dibuat dengan tujuan dan durasi sendiri.

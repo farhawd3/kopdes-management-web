@@ -35,3 +35,9 @@ Modul kesiapan/gerai, pemangku/interaksi, rapat/keputusan/tindak lanjut, dokumen
 ## Mulai memakai
 
 Buka **Proyek → Proyek baru**. Isi tujuan dan jadwal, tambahkan tugas, lalu pilih tampilan Gantt atau tulis catatan proyek. **Gantt & milestone** merangkum jadwal lintas proyek. Pengaturan untuk profil, PIN, dan backup. Tidak ada migrasi cloud tambahan untuk paket ini.
+
+## Perbaikan akses Vercel
+
+Alamat yang dilaporkan pemilik: `https://kopdes-management-web.vercel.app/pin`. Pencocokan origin sebelumnya hanya membandingkan satu string konfigurasi. Perbaikan menormalkan konfigurasi dan menerima domain deployment dari metadata server Vercel, dengan allowlist tepat tanpa wildcard atau kepercayaan terhadap header Host/Forwarded.
+
+Tes terbaru **78/78 lulus**, termasuk 16 skenario origin. Domain `HUB_APP_ORIGIN` produksi harus `https://kopdes-management-web.vercel.app` tanpa path. Pemilik mengubah environment/redeploy dan mencoba PIN sendiri; keberhasilan login di deployment terbaru belum dikonfirmasi.

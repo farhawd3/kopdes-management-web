@@ -59,3 +59,11 @@ Pemulihan PIN yang hilang dilakukan melalui administrator server/database. Tidak
 ## Sebelum hosting
 
 Gunakan HTTPS, isi origin dan kunci server pada environment hosting, jalankan seluruh pemeriksaan, lalu verifikasi login/logout, kedaluwarsa sesi, simpan data, cadangan dan pemulihan pada proyek uji. Jangan mengaktifkan paket berbayar atau integrasi migrasi otomatis.
+
+## Jika muncul “Asal permintaan tidak diizinkan” di Vercel
+
+Untuk domain aktif saat ini, isi `HUB_APP_ORIGIN` pada environment Production dengan `https://kopdes-management-web.vercel.app`. Jangan sertakan `/pin`, tanda kutip, atau nilai localhost. Setelah menyimpan perubahan, Redeploy agar konfigurasi baru dipakai.
+
+Server juga menerima alamat deployment/branch dari `VERCEL_URL` dan `VERCEL_BRANCH_URL` ketika berjalan di Vercel. Domain produksi dari `VERCEL_PROJECT_PRODUCTION_URL` hanya ditambahkan pada environment production. Ini adalah metadata server Vercel, bukan nilai Host/Forwarded dari pengunjung. Domain lain, Origin kosong, dan wildcard seluruh `vercel.app` tetap ditolak. Domain kustom tambahan memakai `HUB_APP_ORIGIN`.
+
+Tidak perlu membuat PIN atau menjalankan migrasi ulang. Login produksi tetap perlu dicoba pemilik setelah Redeploy.

@@ -17,9 +17,44 @@ export async function readJson(request: Request): Promise<unknown> {
   }
   return JSON.parse(Buffer.concat(chunks).toString('utf8'));
 }
+function normalizedOrigin(value: string | null | undefined): string | null {
+  if (!value) return null;
+  try {
+    const url = new URL(value.trim());
+    if (
+      !['https:', 'http:'].includes(url.protocol) ||
+      url.username ||
+      url.password ||
+      url.pathname !== '/' ||
+      url.search ||
+      url.hash
+    )
+      return null;
+    return url.origin;
+  } catch {
+    return null;
+  }
+}
 export function sameOrigin(request: Request) {
-  const expected = process.env.HUB_APP_ORIGIN || new URL(request.url).origin;
-  if (request.headers.get('origin') !== expected) throw new Error('FORBIDDEN');
+  const allowed = new Set<string>();
+  const onVercel = process.env.VERCEL === '1';
+  const configured = normalizedOrigin(process.env.HUB_APP_ORIGIN);
+  if (configured && (!onVercel || configured.startsWith('https://'))) allowed.add(configured);
+  // Hanya metadata server Vercel; Host/Forwarded dari permintaan bukan sumber kepercayaan.
+  if (onVercel) {
+    const hosts = [process.env.VERCEL_URL, process.env.VERCEL_BRANCH_URL];
+    if (process.env.VERCEL_ENV === 'production')
+      hosts.push(process.env.VERCEL_PROJECT_PRODUCTION_URL);
+    for (const host of hosts) {
+      if (!host || !/^[a-z0-9.-]+$/i.test(host)) continue;
+      const origin = normalizedOrigin(`https://${host}`);
+      if (origin) allowed.add(origin);
+    }
+  } else if (!process.env.HUB_APP_ORIGIN && process.env.NODE_ENV !== 'production') {
+    allowed.add(new URL(request.url).origin);
+  }
+  const origin = normalizedOrigin(request.headers.get('origin'));
+  if (!origin || !allowed.has(origin)) throw new Error('ORIGIN_FORBIDDEN');
 }
 export function failure(error: unknown) {
   if (error instanceof SyntaxError)
@@ -33,7 +68,7 @@ export function failure(error: unknown) {
   const status =
     message === 'UNAUTHORIZED'
       ? 401
-      : message === 'FORBIDDEN'
+      : message === 'FORBIDDEN' || message === 'ORIGIN_FORBIDDEN'
         ? 403
         : message === 'PAYLOAD_TOO_LARGE'
           ? 413
@@ -43,9 +78,11 @@ export function failure(error: unknown) {
       error:
         message === 'UNAUTHORIZED'
           ? 'Sesi berakhir. Buka halaman PIN.'
-          : message === 'FORBIDDEN'
-            ? 'Asal permintaan tidak diizinkan.'
-            : message,
+          : message === 'ORIGIN_FORBIDDEN'
+            ? 'Asal permintaan tidak diizinkan. Alamat aplikasi perlu disesuaikan pada konfigurasi hosting.'
+            : message === 'FORBIDDEN'
+              ? 'Permintaan tidak diizinkan.'
+              : message,
     },
     { status },
   );
