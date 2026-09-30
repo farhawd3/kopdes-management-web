@@ -31,6 +31,7 @@ import { TaskDetailDrawer } from './TaskDetailDrawer';
 import { SprintModal } from './SprintModal';
 import { SprintCard } from './SprintCard';
 import { CsvDropzone } from '@/components/ui/CsvDropzone';
+import { ScrumBoardView } from './ScrumBoardView';
 export function Records({
   entity,
   workspace,
@@ -278,7 +279,9 @@ export function Records({
           </div>
         )}
       <div className="actions">
-        <button onClick={() => setEdit(row)}>Buka catatan</button>
+        <button onClick={() => (entity === 'work-items' ? setDetailTask(row) : setEdit(row))}>
+          Buka catatan
+        </button>
         {(entity === 'work-items' || entity === 'checklist') && row.data.status !== 'selesai' && (
           <button
             disabled={busy}
@@ -418,8 +421,8 @@ export function Records({
         <div className="database-views" aria-label="Tampilan tugas">
           {[
             ['harian', 'Harian', CalendarClock],
+            ['papan', 'Scrum View', Columns3],
             ['daftar', 'Daftar', ListTodo],
-            ['papan', 'Papan', Columns3],
             ['kalender', 'Kalender', CalendarDays],
             ['gantt', 'Gantt', ChartGantt],
           ].map(([value, label, Icon]) => {
@@ -621,29 +624,13 @@ export function Records({
           scopeId={scopeId || workstream || undefined}
         />
       ) : view === 'papan' && entity === 'work-items' ? (
-        <div className="kanban">
-          {options['work-items.status'].map((status) => (
-            <section
-              className="kanban-column"
-              key={status}
-              onDragOver={(e) => e.preventDefault()}
-              onDrop={(e) => {
-                e.preventDefault();
-                const row = all.find((item) => item.id === e.dataTransfer.getData('text/plain'));
-                if (row)
-                  void update(row, { status, completed_at: status === 'selesai' ? today() : '' });
-              }}
-            >
-              <h3>
-                {status} <small>{rows.filter((row) => row.data.status === status).length}</small>
-              </h3>
-              <button className="board-add" onClick={() => createTask(today(), status)}>
-                <Plus size={20} /> Tambah tugas
-              </button>
-              {rows.filter((row) => row.data.status === status).map(card)}
-            </section>
-          ))}
-        </div>
+        <ScrumBoardView
+          tasks={rows}
+          workspace={workspace}
+          onOpenTask={(task) => setDetailTask(task)}
+          onCreateTask={(status) => createTask(today(), status)}
+          onRefresh={refresh}
+        />
       ) : view === 'kalender' && entity === 'work-items' ? (
         <TaskCalendar
           items={rows}

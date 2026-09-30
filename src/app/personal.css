@@ -2345,6 +2345,360 @@ body {
 }
 
 /* --------------------------------------------------------------------------
+   10. SCRUM VIEW / KANBAN BOARD (Behance Reference Image 4)
+   -------------------------------------------------------------------------- */
+.scrum-view-container {
+  width: 100%;
+  overflow-x: auto;
+  padding: 8px 0 24px;
+}
+
+.scrum-board-columns {
+  display: flex;
+  gap: 18px;
+  min-width: 1120px;
+  align-items: flex-start;
+}
+
+.scrum-column {
+  flex: 1 1 240px;
+  min-width: 230px;
+  max-width: 320px;
+  background: var(--canvas);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.2s ease;
+}
+
+.scrum-column.drag-over {
+  background: var(--brand-soft);
+  border-color: var(--brand);
+}
+
+.scrum-column-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 4px 6px;
+}
+
+.column-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.column-title {
+  font-size: 14.5px;
+  font-weight: 750;
+  color: var(--ink-heading);
+  margin: 0;
+}
+
+.column-subtitle {
+  font-size: 11px;
+  color: var(--ink-muted);
+}
+
+.column-count-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink-muted);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+}
+
+.scrum-add-task-card {
+  width: 100%;
+  min-height: 80px;
+  border: 2px dashed var(--line-strong);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--brand);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.scrum-add-task-card:hover {
+  border-color: var(--brand);
+  background: var(--brand-soft);
+  transform: translateY(-1px);
+}
+
+.add-task-icon-circle {
+  color: var(--brand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scrum-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 80px;
+}
+
+.scrum-task-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+  text-align: left;
+}
+
+.scrum-task-card:hover {
+  border-color: var(--brand-soft-border);
+  box-shadow: var(--shadow-float);
+  transform: translateY(-2px);
+}
+
+.card-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.card-date-pill {
+  font-size: 11px;
+  font-weight: 650;
+  color: var(--secondary);
+  background: var(--secondary-soft);
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+}
+
+.card-project-pill {
+  font-size: 10.5px;
+  font-weight: 700;
+  border: 1px solid;
+  padding: 1px 7px;
+  border-radius: var(--radius-pill);
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 6px;
+}
+
+.card-task-code {
+  font-size: 10px;
+  font-weight: 750;
+  color: var(--brand);
+  font-family: monospace;
+}
+
+.card-task-title {
+  font-size: 13.5px;
+  font-weight: 750;
+  color: var(--ink-heading);
+  margin: 0;
+  line-height: 1.35;
+}
+
+.card-description-snippet {
+  font-size: 12px;
+  color: var(--ink-muted);
+  margin: 0 0 10px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-bottom-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+
+.card-avatars-row {
+  display: flex;
+  align-items: center;
+}
+
+.scrum-user-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--brand-soft);
+  border: 2px solid var(--surface);
+  color: var(--brand);
+  font-size: 9.5px;
+  font-weight: 750;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scrum-user-avatar.avatar-secondary {
+  background: var(--secondary-soft);
+  color: var(--secondary);
+  margin-left: -6px;
+}
+
+.card-progress-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.progress-labels-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-muted);
+}
+
+.progress-percent-text {
+  color: var(--brand);
+  font-weight: 700;
+}
+
+.scrum-progress-bar-track {
+  width: 100%;
+  height: 5px;
+  background: var(--line);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.scrum-progress-bar-fill {
+  height: 100%;
+  background: var(--brand);
+  border-radius: var(--radius-pill);
+  transition: width 0.3s ease;
+}
+
+/* --------------------------------------------------------------------------
+   11. COOPERATIVE PULSE (Dashboard Operasional Koperasi)
+   -------------------------------------------------------------------------- */
+.coop-pulse-section {
+  margin: 30px 0;
+}
+
+.coop-pulse-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.pulse-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.pulse-card:hover {
+  border-color: var(--brand-soft-border);
+  box-shadow: var(--shadow-card);
+  transform: translateY(-2px);
+}
+
+.pulse-card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.pulse-card-icon.wallet {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.pulse-card-icon.users {
+  background: #fff3ec;
+  color: var(--brand);
+}
+
+.pulse-card-icon.package {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.pulse-card-icon.target {
+  background: #f5f3ff;
+  color: #7c3aed;
+}
+
+.pulse-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.pulse-card-content small {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.pulse-card-content strong {
+  font-size: 16.5px;
+  font-weight: 750;
+  color: var(--ink-heading);
+}
+
+.pulse-meta {
+  font-size: 11.5px;
+  color: var(--ink-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pulse-meta.warning {
+  color: var(--late);
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
    9. MOBILE & TABLET RESPONSIVENESS
    -------------------------------------------------------------------------- */
 @media (max-width: 767px) {
@@ -2376,3 +2730,4 @@ body {
     grid-template-columns: 1fr;
   }
 }
+

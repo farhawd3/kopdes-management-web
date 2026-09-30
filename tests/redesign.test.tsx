@@ -4,6 +4,7 @@ import { DailyTasksView } from '@/features/DailyTasksView';
 import { TaskDetailDrawer } from '@/features/TaskDetailDrawer';
 import { DateRangePicker } from '@/components/ui/DateRangePicker';
 import { SprintCard } from '@/features/SprintCard';
+import { ScrumBoardView } from '@/features/ScrumBoardView';
 import { schemas, type Item } from '@/features/schemas';
 
 const mocks = vi.hoisted(() => ({ api: vi.fn() }));
@@ -141,4 +142,39 @@ describe('Fitur Redesain Behance', () => {
     expect(screen.getByText('50%')).toBeTruthy();
     expect(screen.getByText('1 dari 2 tugas selesai')).toBeTruthy();
   });
+
+  it('ScrumBoardView menampilkan kolom Backlog, To Do, dan kartu tugas dengan tombol Add Task', () => {
+    const task: Item = {
+      id: 'task-scrum-1',
+      created_at: '',
+      updated_at: '',
+      data: {
+        title: 'Penataan Rak Etalase Gerai',
+        status: 'rencana',
+        code: 'KD-44010',
+        due_date: '2026-10-01',
+        description: 'Menyusun barang sembako di rak depan',
+      },
+    };
+
+    render(
+      <ScrumBoardView
+        tasks={[task]}
+        workspace={{}}
+        onOpenTask={vi.fn()}
+        onCreateTask={vi.fn()}
+        onRefresh={vi.fn().mockResolvedValue(undefined)}
+      />,
+    );
+
+    expect(screen.getByText('Backlog')).toBeTruthy();
+    expect(screen.getByText('Ice Box')).toBeTruthy();
+    expect(screen.getByText('To Do')).toBeTruthy();
+    expect(screen.getByText('Impediments')).toBeTruthy();
+    expect(screen.getByText('Selesai')).toBeTruthy();
+    expect(screen.getByText('KD-44010')).toBeTruthy();
+    expect(screen.getByText('Penataan Rak Etalase Gerai')).toBeTruthy();
+    expect(screen.getAllByText('Add Task').length).toBeGreaterThan(0);
+  });
 });
+

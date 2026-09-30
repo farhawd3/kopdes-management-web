@@ -10,6 +10,10 @@ import {
   CheckCheck,
   Flag,
   Sparkles,
+  Wallet,
+  Users,
+  Package,
+  Target,
 } from 'lucide-react';
 import type { Workspace } from './useWorkspace';
 import { schemas } from './schemas';
@@ -17,6 +21,7 @@ import { planProgress, isOverdue, scopeProgress } from '@/lib/progress';
 import { Burnup } from '@/components/charts/Burnup';
 import { today, addDays, formatDate } from '@/lib/date';
 import { ProgressRing, Meter } from '@/components/charts/Charts';
+import { cashSummary, rupiah } from './ledger';
 export function Dashboard({ data }: { data: Workspace }) {
   const tasks = (data['work-items'] || []).map((row) => ({
     ...schemas['work-items'].parse(row.data),
@@ -24,7 +29,14 @@ export function Dashboard({ data }: { data: Workspace }) {
   }));
   const now = today(),
     profile = data.organization?.[0]?.data,
-    projects = data.workstreams || [];
+    projects = data.workstreams || [],
+    sprints = data.sprints || [];
+  const cash = cashSummary(data['cash-entries'] || []);
+  const members = data.members || [];
+  const items = data['inventory-items'] || [];
+  const lowStock = items.filter(
+    (i) => Number(i.data.book_quantity) <= Number(i.data.minimum_quantity),
+  );
   const open = tasks.filter((task) => !['selesai', 'dibatalkan'].includes(task.status));
   const late = open.filter((task) => isOverdue(task, now));
   const upcoming = open
@@ -122,6 +134,78 @@ export function Dashboard({ data }: { data: Workspace }) {
           </Link>
         ))}
       </div>
+      <section className="coop-pulse-section">
+        <div className="section-head">
+          <div>
+            <span className="eyebrow">OPERASIONAL KOPERASI</span>
+            <h2>Ringkasan Gerai & Pembukuan</h2>
+          </div>
+          <div className="actions">
+            <Link className="button" href="/keuangan">
+              <Wallet size={15} /> Buku Kas
+            </Link>
+            <Link className="button" href="/anggota">
+              <Users size={15} /> Anggota
+            </Link>
+            <Link className="button" href="/barang">
+              <Package size={15} /> Stok Gerai
+            </Link>
+          </div>
+        </div>
+        <div className="coop-pulse-grid">
+          <Link href="/keuangan" className="pulse-card">
+            <div className="pulse-card-icon wallet">
+              <Wallet size={20} />
+            </div>
+            <div className="pulse-card-content">
+              <small>Saldo Kas Tercatat</small>
+              <strong>{rupiah(cash.net)}</strong>
+              <span className="pulse-meta">
+                Masuk: {rupiah(cash.incoming)} · Keluar: {rupiah(cash.outgoing)}
+              </span>
+            </div>
+          </Link>
+
+          <Link href="/anggota" className="pulse-card">
+            <div className="pulse-card-icon users">
+              <Users size={20} />
+            </div>
+            <div className="pulse-card-content">
+              <small>Anggota Koperasi</small>
+              <strong>{members.length} Orang</strong>
+              <span className="pulse-meta">
+                {members.filter((m) => m.data.status === 'aktif').length} anggota aktif desa
+              </span>
+            </div>
+          </Link>
+
+          <Link href="/barang" className="pulse-card">
+            <div className="pulse-card-icon package">
+              <Package size={20} />
+            </div>
+            <div className="pulse-card-content">
+              <small>Katalog Barang Gerai</small>
+              <strong>{items.length} Komoditas</strong>
+              <span className={lowStock.length > 0 ? 'pulse-meta warning' : 'pulse-meta'}>
+                {lowStock.length > 0 ? `⚠️ ${lowStock.length} barang menipis` : 'Stok buku terpantau'}
+              </span>
+            </div>
+          </Link>
+
+          <Link href="/tugas?view=papan" className="pulse-card">
+            <div className="pulse-card-icon target">
+              <Target size={20} />
+            </div>
+            <div className="pulse-card-content">
+              <small>Target Periode (Sprint)</small>
+              <strong>{sprints.filter((s) => s.data.status === 'aktif').length} Aktif</strong>
+              <span className="pulse-meta">
+                {sprints.length} total target kerja koperasi
+              </span>
+            </div>
+          </Link>
+        </div>
+      </section>
       <section className="home-projects">
         <div className="section-head">
           <div>

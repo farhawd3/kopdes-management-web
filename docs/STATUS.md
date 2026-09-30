@@ -79,10 +79,22 @@ Implementasi redesain menyeluruh visual dan alur kerja sesuai referensi Behance 
   - Modul Target Periode fleksibel yang memungkinkan manajer menetapkan periode kerja (1 minggu, 2 minggu, 1 bulan, kustom), tujuan target, dan kartu pemantauan progres persentase tugas.
 - **Drag & Drop CSV**:
   - Komponen Dropzone CSV dengan ikon awan dan garis putus-putus untuk bulk import data tugas dan pencatatan koperasi secara cepat.
+- **Tampilan Papan Scrum (ScrumBoardView)**:
+  - Tampilan papan kerja kanban sesuai Behance Reference Image 4 dengan kolom tahapan kerja (*Backlog*, *Ice Box*, *To Do*, *Impediments*, *Selesai*).
+  - Kartu dashed dropzone `+ Add Task` di bagian atas setiap kolom.
+  - Kartu tugas sprint kaya visual dengan pill rentang tanggal, judul & kode tugas unik, snippet deskripsi, avatar anggota/manajer, progress bar oranye terisi dengan persentase penyelesaian dan indikator tenggat.
+  - Interaksi drag-and-drop status antar kolom serta klik kartu langsung membuka `TaskDetailDrawer`.
+- **Ringkasan Operasional Koperasi (Cooperative Pulse Dashboard)**:
+  - Seksi ringkasan eksekutif pada Beranda khusus 1 user (Manajer KDMP Puntukrejo): Saldo Kas Tercatat (dengan perincian kas masuk & kas keluar), Jumlah Anggota Koperasi, Katalog Barang Gerai (dengan deteksi peringatan stok menipis otomatis), dan Target Periode (Sprint) aktif.
+  - Pintasan navigasi cepat ke Buku Kas, Anggota, Stok Gerai, dan Target Periode.
+- **Pembersihan Total Desain Lama**:
+  - Seluruh kode warna lawas (seperti magenta `#a64768`, `#9b4566`, hijau tua `#27695f`, dan sidebar gelap lama `#202f38`) di `globals.css`, `workspace.css`, dan `studio.css` telah dibersihkan secara menyeluruh tanpa sisa.
+  - Standarisasi penuh pada sistem token palet Behance: Primary `#ed7d3d`, Secondary `#3f527a`, Secondary Light `#eaecf2`, Latar `#f4f6fa`, Surface `#ffffff`.
 - **Pembaruan Database**:
-  - Berkas migrasi `supabase/migrations/20261001000003_cooperative_redesign.sql` dibuat untuk mendukung entitas `sprints`, indeks pencarian kode tugas `(data->>'code')`, dan relasi `sprint_id`.
+  - Berkas migrasi `supabase/migrations/20261001000003_cooperative_redesign.sql` mendukung entitas `sprints`, indeks pencarian kode tugas `(data->>'code')`, dan integritas relasi `sprint_id`.
 - **Verifikasi**:
-  - **99/99 tes lulus** (9 suite vitest, termasuk `tests/redesign.test.tsx`).
-  - `npm run typecheck` lolos tanpa ada error TypeScript.
-  - `npm run build` sukses mengompilasi bundel produksi Next.js.
+  - **100/100 tes lulus** (9 suite vitest, termasuk pengujian `ScrumBoardView`, `DailyTasksView`, `TaskDetailDrawer`, `DateRangePicker`, `SprintCard`).
+  - `npm run typecheck` lolos tanpa ada galat TypeScript (`tsc --noEmit` sukses).
+  - `npm run build` sukses mengompilasi bundel produksi Next.js (Turbopack).
+
 

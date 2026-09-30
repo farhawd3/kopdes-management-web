@@ -1,25 +1,25 @@
 /* Workspace surfaces and interactive project views. Base controls live in globals.css. */
 :root {
-  --canvas: #f5f4f8;
-  --surface: #fff;
-  --line: #e7e4ed;
-  --ink: #302b3c;
-  --ink-muted: #716a7c;
-  --brand: #9b4566;
-  --brand-soft: #f8eaf0;
-  --violet: #7467b1;
-  --shadow: 0 8px 28px #39304a09, 0 1px 3px #39304a04;
+  --canvas: #f4f6fa;
+  --surface: #ffffff;
+  --line: #eaecf2;
+  --ink: #1e293b;
+  --ink-muted: #64748b;
+  --brand: #ed7d3d;
+  --brand-soft: #fff3ec;
+  --violet: #3f527a;
+  --shadow: 0 4px 18px -2px rgba(63, 82, 122, 0.07), 0 1px 3px rgba(63, 82, 122, 0.04);
 }
 .dark {
-  --canvas: #15151e;
-  --surface: #20212d;
-  --line: #343445;
-  --ink: #f1edf7;
-  --ink-muted: #b1abbf;
-  --brand: #ef9eb9;
-  --brand-soft: #3c2937;
-  --violet: #b4a4ef;
-  --shadow: 0 8px 28px #00000020;
+  --canvas: #161c27;
+  --surface: #20293a;
+  --line: #323f54;
+  --ink: #e2e8f4;
+  --ink-muted: #95a5c0;
+  --brand: #ed7d3d;
+  --brand-soft: #38251b;
+  --violet: #627ca8;
+  --shadow: 0 8px 28px #00000030;
 }
 body {
   background: var(--canvas);
