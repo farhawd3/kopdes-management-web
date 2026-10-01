@@ -1,5 +1,19 @@
 # Changelog
 
+### Penyelarasan Komponen, Perbaikan Tombol Modal & Kerapian Dropdown (1 Oktober 2026)
+
+- **Perbaikan Tombol Tutup Pop Up (Silang Modal)**:
+  - Memperbaiki hilangnya tombol silang pada popup Jurnal Kerja dan semua modal formulir dengan menghapus offset sticky negatif warisan (`top: -28px` dan `top: -16px`) yang menarik header ke luar area tampilan.
+  - Memastikan tombol tutup memiliki posisi stabil (`position: static`), ukuran seragam 36px, kontras tinggi, dan ikon `X` yang jelas di semua perangkat.
+- **Perbaikan Dropdown Terhimpit Kartu**:
+  - Memberikan prioritas `z-index: 500+` saat dropdown terbuka (`.custom-select-wrap.is-open` dan `.custom-select-menu`) sehingga menu pilihan tidak lagi terpotong atau tertutup kartu di bawahnya pada bilah filter maupun kontrol beranda.
+  - Menata drawer opsi kartu (`details.record-options`) dengan tata letak bersih agar pilihan status tidak berdesakan dengan tombol aksi.
+- **Penyelarasan Tampilan "Terakhir Dibuka" di Sidebar**:
+  - Mendesain ulang chip riwayat halaman terakhir dibuka dengan kontainer berstruktur, ikon halaman masing-masing, tipografi rapi, dan penanda halaman yang sedang aktif.
+- **Harmonisasi Ikon Seluruh Halaman**:
+  - Mengganti emoji mentah (`📅`, `📁`, `🔴`, `🟡`, `🟢`, `⚪`) pada judul bagian rapat dan status kedaluwarsa dokumen dengan ikon Lucide yang serasi (`CalendarDays`, `FolderArchive`, `AlertCircle`, `Clock`, `CheckCircle2`, `ShieldCheck`).
+  - Menambahkan ikon resmi `ArrowRightCircle` untuk rute `/tindak-lanjut` pada navigasi sidebar.
+
 ### Karakter Halaman, Navigasi Terstruktur & Ruang Kerja Editorial (1 Oktober 2026)
 
 - **Penataan & Kerapian Komponen Menyeluruh (*Comprehensive Component Polish*)**:

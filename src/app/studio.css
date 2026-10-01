@@ -1254,10 +1254,8 @@
   backdrop-filter: blur(1px);
 }
 .editor .section-head {
-  position: sticky;
-  top: -28px;
-  padding: 18px 0;
-  z-index: 31;
+  position: static;
+  padding: 0 0 16px;
   background: var(--surface);
 }
 .editor .form-grid {
@@ -1304,9 +1302,6 @@
   .editor {
     width: 100vw;
     padding: 16px;
-  }
-  .editor .section-head {
-    top: -16px;
   }
   .recording-metrics > div {
     border-right: 0;

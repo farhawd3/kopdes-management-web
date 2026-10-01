@@ -36,6 +36,8 @@ import {
   HelpCircle,
   SunMedium,
   Sparkles,
+  Clock,
+  ArrowRightCircle,
 } from 'lucide-react';
 import { usePreference } from '@/lib/usePreference';
 import { searchWorkspace } from '@/features/workspace-navigation';
@@ -44,6 +46,7 @@ import { ManagerActionModal } from './ManagerActionModal';
 
 const navIcons: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
   '/beranda': House,
+  '/tindak-lanjut': ArrowRightCircle,
   '/hari-ini': SunMedium,
   '/tugas': CheckCheck,
   '/proyek': FolderKanban,
@@ -283,18 +286,28 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
 
             {recents.length > 0 && (
               <div className="sidebar-recents">
-                <span className="sidebar-recents-title">Terakhir dibuka</span>
+                <div className="sidebar-recents-header">
+                  <Clock size={11} className="sidebar-recents-icon" />
+                  <span className="sidebar-recents-title">Terakhir dibuka</span>
+                </div>
                 <div className="sidebar-recents-chips">
-                  {recents.map((href) => (
-                    <Link
-                      key={href}
-                      href={href}
-                      className="sidebar-recent-chip"
-                      onClick={() => setMenu(false)}
-                    >
-                      <span>{navigation.find(([url]) => url === href)?.[1] || href}</span>
-                    </Link>
-                  ))}
+                  {recents.map((href) => {
+                    const RecentIcon = navIcons[href] || ArrowUpRight;
+                    const label = navigation.find(([url]) => url === href)?.[1] || href;
+                    const isCurrent = path === href;
+                    return (
+                      <Link
+                        key={href}
+                        href={href}
+                        className={`sidebar-recent-chip ${isCurrent ? 'is-active' : ''}`}
+                        onClick={() => setMenu(false)}
+                        title={label}
+                      >
+                        <RecentIcon size={12} className="recent-chip-icon" />
+                        <span className="recent-chip-text">{label}</span>
+                      </Link>
+                    );
+                  })}
                 </div>
               </div>
             )}

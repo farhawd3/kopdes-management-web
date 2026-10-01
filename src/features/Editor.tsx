@@ -1,6 +1,15 @@
 'use client';
 import { useEffect, useId, useRef, useState } from 'react';
-import { X, CheckCircle2, FolderKanban, FileText, Sparkles } from 'lucide-react';
+import {
+  X,
+  CheckCircle2,
+  FolderKanban,
+  FileText,
+  Sparkles,
+  BookOpen,
+  Calendar,
+  Users,
+} from 'lucide-react';
 import { schemas, type Entity, type Item } from './schemas';
 import { catalog, formatChoiceLabel, labels, options, references } from './catalog';
 import type { Workspace } from './useWorkspace';
@@ -253,6 +262,12 @@ export function Editor({
                 <CheckCircle2 size={13} />
               ) : entity === 'workstreams' ? (
                 <FolderKanban size={13} />
+              ) : entity === 'journal' ? (
+                <BookOpen size={13} />
+              ) : entity === 'meetings' ? (
+                <Calendar size={13} />
+              ) : entity === 'stakeholders' ? (
+                <Users size={13} />
               ) : (
                 <FileText size={13} />
               )}
@@ -276,9 +291,10 @@ export function Editor({
             type="button"
             className="editor-close-btn"
             aria-label="Tutup formulir"
+            title="Tutup formulir (Esc)"
             onClick={requestClose}
           >
-            <X size={18} />
+            <X size={20} strokeWidth={2.25} />
           </button>
         </div>
         {savedDraft && (

@@ -45,6 +45,9 @@ import {
   FolderOpen,
   CheckCircle2,
   Video,
+  AlertCircle,
+  ShieldCheck,
+  FolderArchive,
 } from 'lucide-react';
 import { TaskTimeline } from './TaskTimeline';
 import { downloadMeeting } from './meeting';
@@ -311,14 +314,24 @@ export function Records({
                       : 'is-valid'
                 }`}
               >
-                {String(row.data.expires_date) < today()
-                  ? `🔴 Kadaluwarsa (${formatDate(String(row.data.expires_date))})`
-                  : String(row.data.expires_date) <= addDays(today(), 30)
-                    ? `🟡 Berakhir dalam 30 hari (${formatDate(String(row.data.expires_date))})`
-                    : `🟢 Berlaku s.d. ${formatDate(String(row.data.expires_date))}`}
+                {String(row.data.expires_date) < today() ? (
+                  <>
+                    <AlertCircle size={13} /> Kadaluwarsa ({formatDate(String(row.data.expires_date))})
+                  </>
+                ) : String(row.data.expires_date) <= addDays(today(), 30) ? (
+                  <>
+                    <Clock size={13} /> Berakhir dalam 30 hari ({formatDate(String(row.data.expires_date))})
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 size={13} /> Berlaku s.d. {formatDate(String(row.data.expires_date))}
+                  </>
+                )}
               </span>
             ) : (
-              <span className="doc-expiry is-permanent">⚪ Masa berlaku tetap</span>
+              <span className="doc-expiry is-permanent">
+                <ShieldCheck size={13} /> Masa berlaku tetap
+              </span>
             )}
           </div>
         </div>
@@ -1120,7 +1133,10 @@ export function Records({
               <>
                 <section className="meeting-section-group" aria-label="Rapat akan datang dan hari ini">
                   <div className="meeting-section-header">
-                    <h3>📅 Rapat Mendatang & Hari Ini</h3>
+                    <div className="meeting-section-title-wrap">
+                      <CalendarDays size={16} />
+                      <h3>Rapat Mendatang & Hari Ini</h3>
+                    </div>
                     <span className="badge">{upcoming.length}</span>
                   </div>
                   {upcoming.length > 0 ? (
@@ -1135,7 +1151,10 @@ export function Records({
                 {past.length > 0 && (
                   <section className="meeting-section-group past-meetings" aria-label="Riwayat rapat sebelumnya">
                     <div className="meeting-section-header">
-                      <h3>📁 Riwayat Rapat Sebelumnya</h3>
+                      <div className="meeting-section-title-wrap">
+                        <FolderArchive size={16} />
+                        <h3>Riwayat Rapat Sebelumnya</h3>
+                      </div>
                       <span className="badge">{past.length}</span>
                     </div>
                     <div className="records">{past.map(card)}</div>

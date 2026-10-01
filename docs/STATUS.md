@@ -8,13 +8,12 @@
   - `npm run lint`: **0 kesalahan linting** (`eslint src tests`).
   - `npm run build`: **Next.js 16.3.7 Turbopack production build berhasil**, 9/9 rute teroptimasi penuh.
 
-- **Pembersihan & Penataan Komponen Keseluruhan (*Comprehensive Component Polish*)**:
-  - **Koreksi Geometri & Radius Kartu**: Memperbaiki radius berlebih (`--radius-xl` dari 32px menjadi 18px, `--radius-lg` dari 24px menjadi 14px, `--radius-md` dari 18px menjadi 10px, `--radius-sm` dari 12px menjadi 8px) sehingga seluruh kartu, modal, tabel, dan formulir memiliki lekukan sudut yang proporsional, rapi, dan tidak memotong konten.
-  - **Eliminasi Distorsi Tombol Topbar**: Menghapus `aspect-ratio: 1 / 1` global yang sebelumnya memotong dan mendistorsi tombol `+ Tambah` (`.quick-action-hub-btn`) dan kotak pratinjau tema (`.swatch-preview`), serta memberikan tinggi seragam 40px untuk seluruh tombol aksi header.
-  - **Penataan Kartu Tugas Fokus Beranda**: Menghapus latar belakang warna-warni berselang-seling (`.tone-0`, `.tone-1`, `.tone-2`) yang membuat tampilan beranda tampak ramai dan tidak beraturan; seluruh kartu tugas kini memakai latar bersih kohesif dengan warna penanda fokus pada status badge.
-  - **Penyelarasan Header Beranda**: Menghilangkan duplikasi teks tanggal kecil di atas judul beranda dan menggantinya dengan label hierarki `Ruang Kerja Manajer`.
-  - **Kerapian Dock Navigasi Ponsel**: Menyesuaikan lebar dock menjadi 320px dengan jarak ketukan lega, tipografi 10px terbaca, dan kontras tinggi pada tombol aksi tengah.
-  - **Pembersihan Kartu Modul Domain**: Menghapus artefak garis tebal asimetris dan gradien diagonal pada kartu `/gerai`, `/dokumen`, `/rapat`, dan `/risiko`, menyelaraskan seluruh tampilan ke dalam standar kartu kerja profesional.
+- **Penyelarasan Komponen Menyeluruh & Perbaikan Bug Visual (Oktober 2026)**:
+  - **Tombol Tutup Modal (Silang Pop Up)**: Memperbaiki masalah hilangnya tombol silang pada popup Jurnal Kerja dan modal form dengan menghapus offset sticky negatif (`top: -28px` / `top: -16px`) warisan di CSS yang sebelumnya menarik header ke luar area `overflow: hidden`. Memperkuat posisi, ukuran (36px), kontras, dan ketahanan tombol tutup di semua ukuran layar.
+  - **Solusi Dropdown Terhimpit Kartu**: Mengatasi masalah dropdown yang terpotong atau tertutup kartu di bawahnya (`.filters`, `.dashboard-controls`, dan `.record-options`) dengan menetapkan stacking context dan `z-index: 500+` ketika dropdown terbuka, serta menata drawer opsi kartu agar rapi dan tidak sempit.
+  - **Perapian Tampilan "Terakhir Dibuka" di Sidebar**: Mendesain ulang wadah dan chip riwayat navigasi terakhir dengan kontainer terstruktur, tipografi rapi, ikon halaman yang sesuai, status aktif, dan efek hover yang lembut.
+  - **Harmonisasi Ikon Menyeluruh**: Mengganti emoji mentah (`📅`, `📁`, `🔴`, `🟡`, `🟢`, `⚪`) pada header bagian rapat dan status kedaluwarsa dokumen dengan ikon Lucide yang senada (`CalendarDays`, `FolderArchive`, `AlertCircle`, `Clock`, `CheckCircle2`, `ShieldCheck`), serta melengkapi ikon `ArrowRightCircle` untuk rute `/tindak-lanjut`.
+
 
 - **Header Ringkas & Pusat Aksi Terpadu**:
   - Tombol `+ Aksi` dan `+ Tugas baru` yang sebelumnya hadir bersamaan di header disatukan menjadi satu tombol `+ Tambah` yang ringkas di topbar desktop/tablet dan dock mengambang ponsel.
