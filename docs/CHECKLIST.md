@@ -1,5 +1,11 @@
 # Checklist produk aktif
 
+## Reset database kosong
+- [x] Berkas reset migrasi 1–5 dan panduan manual tersedia.
+- [x] Reset diuji lokal; menolak penghapusan jika catatan atau laporan sudah ada.
+- [ ] SQL dijalankan pemilik di proyek `mqycnhebhzqaziouipet`.
+- [ ] PIN dibuat ulang dan penyimpanan catatan diverifikasi setelah reset cloud.
+
 ## Tersedia
 - [x] Proyek fleksibel tanpa patokan durasi program.
 - [x] Status, prioritas, pencarian, filter dan properti proyek.

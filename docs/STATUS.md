@@ -1,5 +1,13 @@
 # Status proyek — 2 Oktober 2026
 
+## Reset proyek Supabase saat ini
+
+- Pemilik memilih reset proyek `mqycnhebhzqaziouipet`, bukan membuat proyek baru.
+- Berkas manual: `supabase/reset/RESET_DATABASE_KOSONG.sql`; panduan: `docs/RESET-DATABASE.md`. Menggabungkan migrasi 1–5 dalam satu transaksi, menghapus PIN/sesi, dan menolak reset jika catatan atau laporan sudah ada.
+- Pengujian PostgreSQL lokal lulus: pemasangan bersih, reset ulang, RLS/izin anonim, tabel lain tetap ada, serta pembatalan ketika catatan/laporan ditemukan.
+- **Belum dijalankan di cloud.** Pemilik menjalankan SQL melalui editor setelah meninjau dampaknya. Tidak ada perubahan URL/kunci Supabase.
+- Perubahan paginasi pada working tree masih perlu integrasi UI dan verifikasi ringkasan; reset database bukan bukti data besar sudah ditangani.
+
 ## Paket Perapian Detail Kecil (2 Oktober 2026)
 
 - **Verifikasi Kualitas Kode**:

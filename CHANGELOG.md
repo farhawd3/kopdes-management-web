@@ -1,5 +1,11 @@
 # Changelog
 
+### Reset database kosong (2 Oktober 2026)
+
+- Menyiapkan SQL reset untuk proyek Supabase saat ini, disertai panduan pembuatan ulang PIN.
+- Menambahkan pengaman agar catatan kerja dan laporan yang sudah tersimpan tidak terhapus tanpa ditinjau.
+- Menguji pemasangan ulang, izin akses, dan pembatalan reset di PostgreSQL lokal. Cloud belum diubah.
+
 ### Estetika, Perapian UI Menyeluruh & Grafis Animasi (1 Oktober 2026)
 
 - **Perapian Header Tanggal Atas**: Merapikan penataan chip tanggal (`.home-date-chip`) di kanan atas tajuk beranda dengan tata letak pill horizontal sejajar, ikon kalender rapi, border 1.5px tegas, dan tanpa pemotongan baris.
