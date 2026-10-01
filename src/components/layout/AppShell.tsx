@@ -154,7 +154,33 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
             <strong>{name}</strong>
           </div>
         </Link>
-        <span className="manager-location">{current}</span>
+        <div className="manager-location-wrap">
+          <span className="manager-location">{current}</span>
+          <button
+            type="button"
+            className="topbar-fav-btn"
+            aria-label={
+              favorites.includes(path)
+                ? 'Hapus halaman ini dari favorit'
+                : 'Simpan halaman ini ke favorit'
+            }
+            title={favorites.includes(path) ? 'Hapus dari favorit' : 'Simpan ke favorit'}
+            onClick={() =>
+              setFavoriteText(
+                (favorites.includes(path)
+                  ? favorites.filter((href) => href !== path)
+                  : [...favorites, path]
+                ).join('|'),
+              )
+            }
+          >
+            <Star
+              size={15}
+              fill={favorites.includes(path) ? '#f59e0b' : 'none'}
+              color={favorites.includes(path) ? '#f59e0b' : 'var(--ink-muted)'}
+            />
+          </button>
+        </div>
         <div className="manager-actions">
           <button
             type="button"
@@ -243,83 +269,58 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
         </button>
 
         <div className="manager-sidebar-nav-scroll">
-          {(favorites.length > 0 || recents.length > 0) && (
-            <section className="sidebar-quick-access" aria-label="Akses cepat">
-              {favorites.length > 0 && (
-                <div className="sidebar-favorites-compact">
-                  <div className="sidebar-sub-head">
-                    <span className="sidebar-sub-label">
-                      <Star size={11} className="star-gold" /> Favorit
-                    </span>
-                    <button
-                      type="button"
-                      className="star-toggle-btn"
-                      aria-label={
-                        favorites.includes(path)
-                          ? 'Hapus halaman ini dari favorit'
-                          : 'Simpan halaman ini ke favorit'
-                      }
-                      title={favorites.includes(path) ? 'Hapus dari favorit' : 'Tambah ke favorit'}
-                      onClick={() =>
-                        setFavoriteText(
-                          (favorites.includes(path)
-                            ? favorites.filter((href) => href !== path)
-                            : [...favorites, path]
-                          ).join('|'),
-                        )
-                      }
+          {recents.length > 0 && (
+            <div className="sidebar-recents-strip" aria-label="Terakhir dibuka">
+              <span className="recents-strip-label">
+                <Clock size={11} /> Terakhir:
+              </span>
+              <div className="recents-strip-chips">
+                {recents.slice(0, 3).map((href) => {
+                  const label = navigation.find(([url]) => url === href)?.[1] || href;
+                  const isCurrent = path === href;
+                  return (
+                    <Link
+                      key={href}
+                      href={href}
+                      className={`recents-chip ${isCurrent ? 'is-active' : ''}`}
+                      onClick={() => setMenu(false)}
+                      title={label}
                     >
-                      <Star size={12} fill={favorites.includes(path) ? 'currentColor' : 'none'} />
-                    </button>
-                  </div>
-                  <div className="sidebar-favorites-items">
-                    {favorites.map((href) => {
-                      const FavIcon = navIcons[href] || ArrowUpRight;
-                      return (
-                        <Link
-                          key={href}
-                          href={href}
-                          aria-current={path === href ? 'page' : undefined}
-                          className={`sidebar-fav-item ${path === href ? 'is-active' : ''}`}
-                          onClick={() => setMenu(false)}
-                        >
-                          <FavIcon size={13} className="fav-item-icon" />
-                          <span>{navigation.find(([url]) => url === href)?.[1] || href}</span>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
+                      {label}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
-              {recents.length > 0 && (
-                <div className="sidebar-recents-compact">
-                  <div className="sidebar-sub-head">
-                    <span className="sidebar-sub-label">
-                      <Clock size={11} /> Terakhir
-                    </span>
-                  </div>
-                  <div className="sidebar-recents-chips">
-                    {recents.slice(0, 4).map((href) => {
-                      const RecentIcon = navIcons[href] || ArrowUpRight;
-                      const label = navigation.find(([url]) => url === href)?.[1] || href;
-                      const isCurrent = path === href;
-                      return (
-                        <Link
-                          key={href}
-                          href={href}
-                          className={`sidebar-recent-chip ${isCurrent ? 'is-active' : ''}`}
-                          onClick={() => setMenu(false)}
-                          title={label}
-                        >
-                          <RecentIcon size={11} className="recent-chip-icon" />
-                          <span className="recent-chip-text">{label}</span>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
+          {favorites.length > 0 && (
+            <section className="manager-sidebar-section sidebar-favorites-group">
+              <h2 className="sidebar-section-title">
+                <span>Favorit</span>
+              </h2>
+              <nav className="sidebar-nav-list">
+                {favorites.map((href) => {
+                  const FavIcon = navIcons[href] || ArrowUpRight;
+                  const label = navigation.find(([url]) => url === href)?.[1] || href;
+                  const isActive = path === href;
+                  return (
+                    <Link
+                      key={href}
+                      href={href}
+                      aria-current={isActive ? 'page' : undefined}
+                      className={`sidebar-nav-item ${isActive ? 'is-active' : ''}`}
+                      onClick={() => setMenu(false)}
+                    >
+                      <span className="sidebar-item-icon">
+                        <FavIcon size={16} />
+                      </span>
+                      <span className="sidebar-item-label">{label}</span>
+                      <Star size={11} className="sidebar-item-star-badge" fill="#f59e0b" color="#f59e0b" />
+                    </Link>
+                  );
+                })}
+              </nav>
             </section>
           )}
           {sections.map(([label, paths]) => (

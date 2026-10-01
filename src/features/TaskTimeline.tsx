@@ -7,6 +7,7 @@ import { api } from '@/lib/client';
 import { schemas, type Item } from './schemas';
 import type { Workspace } from './useWorkspace';
 import { Editor } from './Editor';
+import { Select } from '@/components/ui/Select';
 export function TaskTimeline({
   items,
   workspace,
@@ -112,11 +113,16 @@ export function TaskTimeline({
         </label>
         <label>
           Skala
-          <select value={scale} onChange={(event) => setScale(event.target.value)}>
-            <option value="hari">Hari</option>
-            <option value="minggu">Minggu</option>
-            <option value="bulan">Bulan</option>
-          </select>
+          <Select
+            value={scale}
+            onChange={setScale}
+            options={[
+              { value: 'hari', label: 'Hari' },
+              { value: 'minggu', label: 'Minggu' },
+              { value: 'bulan', label: 'Bulan' },
+            ]}
+            ariaLabel="Skala waktu"
+          />
         </label>
         <button
           onClick={() => {

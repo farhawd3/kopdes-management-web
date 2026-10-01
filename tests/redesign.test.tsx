@@ -10,6 +10,7 @@ import { Editor } from '@/features/Editor';
 import { Records } from '@/features/Records';
 import { Operations } from '@/features/Operations';
 import { type Item } from '@/features/schemas';
+import { today, addDays } from '@/lib/date';
 
 const mocks = vi.hoisted(() => ({ api: vi.fn() }));
 vi.mock('@/lib/client', () => ({ api: mocks.api }));
@@ -37,7 +38,7 @@ describe('Fitur Redesain Behance', () => {
       updated_at: '',
       data: {
         title: 'Verifikasi Stok Gerai',
-        due_date: '2026-10-01',
+        due_date: today(),
         status: 'rencana',
         code: 'KD-44008',
         subtasks: [
@@ -195,7 +196,7 @@ describe('Fitur Redesain Behance', () => {
       data: {
         title: 'Cek kas harian',
         status: 'rencana',
-        due_date: '2026-10-01',
+        due_date: today(),
       },
     };
     const overdueTask: Item = {
@@ -205,7 +206,7 @@ describe('Fitur Redesain Behance', () => {
       data: {
         title: 'LPJ Bulanan',
         status: 'rencana',
-        due_date: '2026-09-20',
+        due_date: addDays(today(), -5),
       },
     };
     const meeting: Item = {
@@ -214,7 +215,7 @@ describe('Fitur Redesain Behance', () => {
       updated_at: '',
       data: {
         title: 'Rapat Pengurus KDMP',
-        date: '2026-10-01',
+        date: today(),
         time: '14:00',
         mode: 'Tatap muka',
       },

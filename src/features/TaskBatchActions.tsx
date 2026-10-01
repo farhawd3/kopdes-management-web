@@ -3,6 +3,7 @@ import { useState } from 'react';
 import type { Item } from './schemas';
 import { api } from '@/lib/client';
 import { today } from '@/lib/date';
+import { Select } from '@/components/ui/Select';
 
 export function TaskBatchActions({
   items,
@@ -48,13 +49,19 @@ export function TaskBatchActions({
           <div className="batch-fields">
             <label>
               Status baru
-              <select value={status} disabled={busy} onChange={(e) => setStatus(e.target.value)}>
-                <option value="">Tidak diubah</option>
-                <option value="rencana">Rencana</option>
-                <option value="proses">Dikerjakan</option>
-                <option value="selesai">Selesai</option>
-                <option value="dibatalkan">Dibatalkan</option>
-              </select>
+              <Select
+                value={status}
+                onChange={setStatus}
+                disabled={busy}
+                options={[
+                  { value: '', label: 'Tidak diubah' },
+                  { value: 'rencana', label: 'Rencana' },
+                  { value: 'proses', label: 'Dikerjakan' },
+                  { value: 'selesai', label: 'Selesai' },
+                  { value: 'dibatalkan', label: 'Dibatalkan' },
+                ]}
+                ariaLabel="Status baru"
+              />
             </label>
             <label>
               Tenggat baru
