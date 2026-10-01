@@ -20,60 +20,36 @@ import { DateField } from '@/components/ui/DateField';
 
 const STAKEHOLDER_PRESETS = [
   {
-    label: 'Kepala Desa',
-    title: 'Bpk. ... (Kepala Desa)',
-    category: 'Pemerintah Desa (Kepala Desa / BPD / Perangkat)',
-    influence: 5,
-    interest: 4,
-    follow_up: 'Audiensi progres persiapan dan dukungan desa',
-  },
-  {
-    label: 'Babinsa (TNI)',
-    title: 'Sertu ... (Babinsa Desa)',
-    category: 'Keamanan Desa (Babinsa / Bhabinkamtibmas)',
-    influence: 4,
-    interest: 3,
-    follow_up: 'Koordinasi pengamanan gerai dan aset koperasi',
-  },
-  {
-    label: 'Bhabinkamtibmas',
-    title: 'Aipda ... (Bhabinkamtibmas)',
-    category: 'Keamanan Desa (Babinsa / Bhabinkamtibmas)',
-    influence: 4,
-    interest: 3,
-    follow_up: 'Koordinasi ketertiban lingkungan operasional koperasi',
-  },
-  {
-    label: 'Pengawas Koperasi',
-    title: 'Bpk/Ibu ... (Pengawas Koperasi)',
-    category: 'Badan Pengawas Koperasi',
-    influence: 5,
-    interest: 5,
-    follow_up: 'Penyampaian laporan perkembangan dan kepatuhan bulanan',
-  },
-  {
-    label: 'Pengurus Koperasi',
-    title: 'Bpk/Ibu ... (Pengurus Koperasi)',
-    category: 'Pengurus & Pengelola Koperasi',
-    influence: 4,
-    interest: 5,
-    follow_up: 'Rapat koordinasi rutin pelaksanaan program kerja',
-  },
-  {
-    label: 'Dinas Koperasi & UKM',
-    title: 'Dinas Koperasi & UKM Kab. Karanganyar',
-    category: 'Dinas Koperasi & UKM / Pembina',
-    influence: 4,
-    interest: 3,
-    follow_up: 'Konsultasi kepatuhan legalitas dan pembinaan koperasi',
-  },
-  {
-    label: 'Kelompok Tani (Gapoktan)',
-    title: 'Gapoktan / Kelompok Tani ...',
-    category: 'Masyarakat Desa & Kelompok Tani',
+    label: 'Agrinas',
+    title: '',
+    category: 'Agrinas',
     influence: 3,
-    interest: 5,
-    follow_up: 'Sosialisasi kemitraan penyerapan hasil pertanian lokal',
+    interest: 3,
+    follow_up: '',
+  },
+  {
+    label: 'PIC / Babinsa',
+    title: '',
+    category: 'PIC lapangan / Babinsa',
+    influence: 3,
+    interest: 3,
+    follow_up: '',
+  },
+  {
+    label: 'Pengurus / Pengawas',
+    title: '',
+    category: 'Pengurus dan pengawas koperasi',
+    influence: 3,
+    interest: 3,
+    follow_up: '',
+  },
+  {
+    label: 'Pemerintah desa',
+    title: '',
+    category: 'Pemerintah desa',
+    influence: 3,
+    interest: 3,
+    follow_up: '',
   },
 ] as const;
 
@@ -281,7 +257,7 @@ export function Editor({
                   : entity === 'workstreams'
                     ? 'Tambah Proyek Baru'
                     : entity === 'stakeholders'
-                      ? 'Tambah Pemangku Kepentingan'
+                      ? 'Tambah Mitra atau Kontak'
                       : entity === 'meetings'
                         ? 'Jadwalkan Rapat Baru'
                         : `Tambah ${catalog[entity].title}`}
@@ -336,7 +312,7 @@ export function Editor({
           <div className="stakeholder-preset-banner">
             <div className="preset-label">
               <Sparkles size={14} />
-              <strong>Pilihan Cepat Pemangku Desa:</strong>
+              <strong>Jenis kontak</strong>
             </div>
             <div className="preset-buttons">
               {STAKEHOLDER_PRESETS.map((p) => (
@@ -351,7 +327,7 @@ export function Editor({
               ))}
             </div>
             <small className="preset-hint">
-              Klik untuk mengisi template jabatan, wewenang, dan panduan koordinasi secara otomatis.
+              Pilih jenis, lalu isi nama orang atau lembaga sesuai data Anda.
             </small>
           </div>
         )}
@@ -387,7 +363,7 @@ export function Editor({
                   : entity === 'workstreams' && field === 'target_date'
                     ? 'Target selesai'
                     : entity === 'stakeholders' && field === 'title'
-                      ? 'Nama pemangku / Pejabat'
+                      ? 'Nama orang atau lembaga'
                       : entity === 'stakeholders' && field === 'contact'
                         ? 'Nomor WhatsApp / Kontak telepon'
                         : entity === 'stakeholders' && field === 'influence'
@@ -442,6 +418,14 @@ export function Editor({
                     <span className="field-caption">{label}</span>
                   </legend>
                   <div className="dependency-checkboxes">
+                    {((value || []) as string[])
+                      .filter((id) => !(workspace['work-items'] || []).some((row) => row.id === id))
+                      .map((id) => (
+                        <label className="check" key={id}>
+                          <input type="checkbox" name={field} value={id} defaultChecked />
+                          <span>Tugas terkait di halaman lain ({id.slice(0, 8)})</span>
+                        </label>
+                      ))}
                     {(workspace['work-items'] || [])
                       .filter((row) => row.id !== item?.id)
                       .map((row) => (
@@ -553,6 +537,13 @@ export function Editor({
                     }
                   >
                     {reference && <option value="">Belum Ditentukan</option>}
+                    {reference &&
+                      Boolean(value) &&
+                      !(workspace[reference] || []).some((row) => row.id === value) && (
+                        <option value={String(value)}>
+                          Catatan terkait yang belum dimuat ({String(value).slice(0, 8)})
+                        </option>
+                      )}
                     {allChoices
                       ? allChoices.map((choice) => (
                           <option key={choice} value={choice}>

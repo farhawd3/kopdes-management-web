@@ -1,0 +1,247 @@
+/* Shared finishing layer. Keep page-specific layouts in their own sheets. */
+:root[data-theme-color='lime'] {
+  --brand: #c5e64d;
+  --brand-hover: #aed43b;
+  --brand-soft: #f2f8d9;
+  --brand-soft-border: #d4e997;
+  --brand-text: #222b13;
+  --pill-active: #c5e64d;
+}
+:root.dark[data-theme-color='lime'] {
+  --brand: #c5e64d;
+  --brand-soft: #2b3620;
+  --brand-text: #1b2612;
+}
+.manager-topbar {
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface) 94%, var(--brand-soft));
+}
+.manager-sidebar {
+  background: var(--surface) !important;
+  border-right: 1px solid var(--line-strong) !important;
+}
+.manager-sidebar-nav-scroll {
+  gap: 10px !important;
+}
+.sidebar-nav-item {
+  min-height: 44px;
+  border-radius: 13px;
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease;
+}
+.sidebar-nav-item:hover {
+  transform: translateX(2px);
+}
+.sidebar-nav-item.is-active,
+.sidebar-nav-item[aria-current='page'] {
+  background: var(--brand-soft) !important;
+  color: var(--ink-heading) !important;
+  box-shadow: inset 3px 0 var(--brand) !important;
+}
+.sidebar-item-icon {
+  color: inherit;
+}
+.manager-main
+  :is(.tabs, .database-views, .project-status-tabs, .recording-tabs, .settings-tabs-row) {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  width: max-content;
+  max-width: 100%;
+  padding: 5px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--canvas) 76%, var(--surface));
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.manager-main
+  :is(
+    .tabs button,
+    .database-views button,
+    .project-status-tabs button,
+    .recording-tabs a,
+    .settings-tabs-row button
+  ) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 8px 14px;
+  border-radius: 11px;
+  white-space: nowrap;
+}
+.manager-main
+  :is(
+    .tabs [aria-selected='true'],
+    .database-views [aria-pressed='true'],
+    .project-status-tabs [aria-pressed='true'],
+    .recording-tabs [aria-current='page']
+  ) {
+  background: var(--surface);
+  color: var(--ink-heading);
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--ink) 9%, transparent);
+}
+.manager-main :is(.primary, .button, .section-head button, .workspace-load-more) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  border-radius: 12px;
+  font-weight: 650;
+}
+.manager-main :is(button, a) svg,
+.manager-topbar :is(button, a) svg,
+.manager-sidebar :is(button, a) svg {
+  flex: 0 0 auto;
+  stroke: currentColor;
+  opacity: 1;
+}
+.manager-main .primary {
+  background: var(--brand);
+  color: var(--brand-text);
+  border: 1px solid var(--brand-hover);
+}
+.workspace-scope-control {
+  display: flex;
+  gap: 6px;
+  width: max-content;
+  max-width: 100%;
+  padding: 5px;
+  background: var(--canvas);
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  margin-bottom: 18px;
+}
+.workspace-scope-control button {
+  min-height: 40px;
+  padding: 7px 14px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ink-muted);
+  cursor: pointer;
+}
+.workspace-scope-control button[aria-pressed='true'] {
+  background: var(--surface);
+  color: var(--ink-heading);
+  box-shadow: 0 2px 9px color-mix(in srgb, var(--ink) 8%, transparent);
+}
+.workspace-partial-note {
+  color: var(--ink-muted);
+  font-size: 13px;
+  margin: 0 0 16px;
+}
+.workspace-more-details {
+  margin: 16px 0 24px;
+}
+.workspace-more-details summary {
+  cursor: pointer;
+  color: var(--ink-heading);
+  font-weight: 650;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+.workspace-more-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.manager-main :is(.history-filter-tabs, .focus-filters) {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  max-width: 100%;
+  padding: 5px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--canvas) 76%, var(--surface));
+  overflow-x: auto;
+}
+.manager-main :is(.history-filter-tabs button, .focus-filters button) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 8px 14px;
+  border-radius: 11px;
+  white-space: nowrap;
+}
+.manager-main
+  :is(
+    .history-filter-tabs button[aria-pressed='true'],
+    .focus-filters button[aria-pressed='true']
+  ) {
+  background: var(--surface);
+  color: var(--ink-heading);
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--ink) 9%, transparent);
+}
+.task-database :is(.btn-sprint-trigger, .btn-csv-trigger, .table-btn-done, .saved-views summary) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  border-radius: 12px;
+}
+.workspace-load-more {
+  color: var(--ink-heading);
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  padding: 9px 16px;
+  cursor: pointer;
+  margin: 12px 0;
+}
+.workspace-load-more:hover {
+  border-color: var(--brand);
+  background: var(--brand-soft);
+}
+.workspace-load-more:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+.workspace-page
+  > :is(.card, .home-panel, .follow-up-panel, .domain-records, .task-database, .project-card) {
+  animation: workspace-arrive 0.28s ease both;
+}
+@keyframes workspace-arrive {
+  from {
+    opacity: 0.72;
+    transform: translateY(7px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (max-width: 767px) {
+  .manager-main {
+    padding: 16px 14px 110px !important;
+  }
+  .manager-main :is(.tabs, .database-views, .project-status-tabs, .recording-tabs) {
+    width: 100%;
+  }
+  .workspace-scope-control {
+    width: 100%;
+  }
+  .workspace-scope-control button {
+    flex: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .workspace-page
+    > :is(.card, .home-panel, .follow-up-panel, .domain-records, .task-database, .project-card) {
+    animation: none;
+  }
+  .sidebar-nav-item {
+    transition: none;
+  }
+}
+:root[data-motion='minimal']
+  .workspace-page
+  > :is(.card, .home-panel, .follow-up-panel, .domain-records, .task-database, .project-card) {
+  animation: none;
+}

@@ -1,9 +1,16 @@
 # Checklist produk aktif
 
+## Perapian 2 Oktober
+- [x] Panduan onboarding berbasis rundown, termasuk proyek, milestone, tugas, rapat, dan kontak.
+- [x] Label Mitra & kontak serta pilihan Agrinas tanpa identitas palsu.
+- [x] Daftar tugas dan catatan per 50 baris, riwayat selesai, cache bacaan, dan penanda ringkasan parsial.
+- [ ] Migrasi indeks paginasi `20261002000006_paged_records.sql` dijalankan di proyek Supabase saat ini.
+- [ ] Pemeriksaan visual setelah login pada 360, 768, 1024, dan 1440 px di perangkat/browse nyata.
+
 ## Reset database kosong
 - [x] Berkas reset migrasi 1–5 dan panduan manual tersedia.
 - [x] Reset diuji lokal; menolak penghapusan jika catatan atau laporan sudah ada.
-- [ ] SQL dijalankan pemilik di proyek `mqycnhebhzqaziouipet`.
+- [x] SQL dijalankan pemilik di proyek `mqycnhebhzqaziouipet` (konfirmasi pemilik).
 - [ ] PIN dibuat ulang dan penyimpanan catatan diverifikasi setelah reset cloud.
 
 ## Tersedia
@@ -21,7 +28,7 @@
 - [x] Pusat Aksi Cepat Manajer (Superapp Action Center) dengan pintasan keyboard 1-9 untuk seluruh operasional dan perencanaan.
 - [x] Dasbor beranda multifungsi: pintasan aksi cepat harian, peringatan otomatis stok persediaan kritis, dan rekapitulasi data riil.
 - [x] Ruang kerja editorial: 5 palet tema seimbang (Lime & Ink, Sage, Lavender, Peach, Sky) dan pratinjau komponen langsung di Pengaturan.
-- [x] Navigasi sidebar terstruktur: favorit sematan, riwayat terakhir dibuka dinamis, dan grup menu kolapsibel.
+- [x] Navigasi sidebar terstruktur: favorit sematan dan grup menu kolapsibel; menu Terakhir dihapus agar pilihan tidak berulang.
 - [x] Karakter visual tiap modul: proyek terhubung, dokumen dengan masa berlaku berkode warna, risiko 3-level, dan alur terstruktur rapat.
 
 ## Penerimaan berikutnya

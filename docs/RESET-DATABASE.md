@@ -4,7 +4,7 @@ Target tetap proyek **mqycnhebhzqaziouipet**. URL Supabase tidak berubah. Tidak 
 
 ## Yang dilakukan
 
-`supabase/reset/RESET_DATABASE_KOSONG.sql` membuat kembali enam tabel aplikasi dari migrasi 1–5, termasuk indeks, pemeriksaan relasi, RLS, dan izin akses server. PIN, sesi masuk, log aktivitas, serta penanda template lama dihapus. Setelah selesai, buat PIN lagi.
+`supabase/reset/RESET_DATABASE_KOSONG.sql` membuat kembali enam tabel aplikasi dari migrasi 1–6, termasuk indeks, pemeriksaan relasi, RLS, dan izin akses server. PIN, sesi masuk, log aktivitas, serta penanda template lama dihapus. Setelah selesai, buat PIN lagi.
 
 Berkas berhenti jika `hub_records` atau `manager_reports` ternyata berisi data. Jangan menghapus pengaman ini. Unduh cadangan dan tinjau isinya terlebih dahulu. Tabel lain, Supabase Auth, dan Storage tidak dihapus. Seluruh langkah berada dalam satu transaksi: bila ada kesalahan, reset tidak disimpan.
 

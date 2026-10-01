@@ -1,5 +1,12 @@
 # Changelog
 
+### Navigasi, tugas, dan panduan onboarding (2 Oktober 2026)
+
+- Menyatukan tampilan tab, tombol, ikon, kartu, dan gerak masuk halaman; memperkuat warna Lime.
+- Mengganti menu Pemangku menjadi Mitra & kontak, menyederhanakan formulir, dan menambah Agrinas.
+- Memuat catatan per 50 baris dengan riwayat tugas selesai dan cache bacaan singkat. Ringkasan yang parsial kini disebut apa adanya.
+- Menambahkan panduan pengisian rundown dan menyiapkan migrasi indeks untuk data besar. Migrasi indeks cloud masih menunggu langkah manual.
+
 ### Reset database kosong (2 Oktober 2026)
 
 - Menyiapkan SQL reset untuk proyek Supabase saat ini, disertai panduan pembuatan ulang PIN.

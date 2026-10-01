@@ -1,11 +1,20 @@
 # Status proyek — 2 Oktober 2026
 
+## Navigasi, kontak, dan data bertahap
+
+- Pemeriksaan kode: 123 tes lulus, typecheck, lint, dan build lulus. Kueri daftar tugas dibaca langsung dari Supabase setelah reset. Pemeriksaan visual halaman pribadi pada semua ukuran belum dilakukan karena sesi browser pemeriksaan kedaluwarsa.
+- Halaman kini meminta domain yang dibutuhkan saja, maksimal 50 catatan per permintaan. Tugas aktif dan selesai terbaru dipisah dari riwayat selesai lama; tombol **Muat 50 lagi** tersedia. Beranda memberi tahu saat ringkasan berasal dari data parsial.
+- Cache bacaan 60 detik menggabungkan permintaan serentak dan dibersihkan setelah perubahan. Uji baca langsung Supabase berhasil dan menemukan satu tugas setelah reset. Uji visual halaman login diperlukan untuk melihat data pribadi; sesi browser pemeriksaan sudah kedaluwarsa.
+- Menu **Terakhir** dihapus; menu **Mitra & kontak** menggantikan label lama. Kategori Agrinas ditambah tanpa data orang rekaan. Warna Lime lebih tegas dan gaya kartu/tombol/tab dirapikan di `polish.css`.
+- Panduan contoh pengisian rundown tersedia di `docs/PANDUAN-ONBOARDING.md`.
+- Migrasi indeks `20261002000006_paged_records.sql` disiapkan dan diuji lokal. Pemilik menyetujui dan akan menjalankannya melalui SQL Editor. **Hasil cloud belum dikonfirmasi**; data tetap bisa dibaca tanpa indeks ini, tetapi performa data besar belum dioptimalkan di cloud.
+
 ## Reset proyek Supabase saat ini
 
 - Pemilik memilih reset proyek `mqycnhebhzqaziouipet`, bukan membuat proyek baru.
-- Berkas manual: `supabase/reset/RESET_DATABASE_KOSONG.sql`; panduan: `docs/RESET-DATABASE.md`. Menggabungkan migrasi 1–5 dalam satu transaksi, menghapus PIN/sesi, dan menolak reset jika catatan atau laporan sudah ada.
+- Berkas manual: `supabase/reset/RESET_DATABASE_KOSONG.sql`; panduan: `docs/RESET-DATABASE.md`. Versi terbaru menggabungkan migrasi 1–6 dalam satu transaksi, menghapus PIN/sesi, dan menolak reset jika catatan atau laporan sudah ada. Saat reset cloud sebelumnya dijalankan, berkas mencakup migrasi 1–5.
 - Pengujian PostgreSQL lokal lulus: pemasangan bersih, reset ulang, RLS/izin anonim, tabel lain tetap ada, serta pembatalan ketika catatan/laporan ditemukan.
-- **Belum dijalankan di cloud.** Pemilik menjalankan SQL melalui editor setelah meninjau dampaknya. Tidak ada perubahan URL/kunci Supabase.
+- Pemilik mengonfirmasi SQL reset berhasil dijalankan di cloud. Tidak ada perubahan URL/kunci Supabase. Pembuatan ulang PIN dan uji simpan setelah reset belum dikonfirmasi.
 - Perubahan paginasi pada working tree masih perlu integrasi UI dan verifikasi ringkasan; reset database bukan bukti data besar sudah ditangani.
 
 ## Paket Perapian Detail Kecil (2 Oktober 2026)

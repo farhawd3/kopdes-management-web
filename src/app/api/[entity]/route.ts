@@ -3,15 +3,19 @@ import { z } from 'zod';
 import { requireSession } from '@/lib/server/auth';
 import { sameOrigin, failure, readJson } from '@/lib/server/http';
 import { entityName } from '@/features/schemas';
-import { list, save } from '@/features/service';
+import { listPage, save } from '@/features/service';
+import { listQuerySchema } from '@/features/query';
 import { db } from '@/lib/server/db';
 type Context = { params: Promise<{ entity: string }> };
-export async function GET(_request: Request, context: Context) {
+export async function GET(request: Request, context: Context) {
   try {
     await requireSession();
     const entity = entityName((await context.params).entity);
     if (!entity) return NextResponse.json({ error: 'Rute tidak ditemukan.' }, { status: 404 });
-    return NextResponse.json(await list(entity), { headers: { 'Cache-Control': 'no-store' } });
+    const query = listQuerySchema.parse(Object.fromEntries(new URL(request.url).searchParams));
+    return NextResponse.json(await listPage(entity, query), {
+      headers: { 'Cache-Control': 'no-store' },
+    });
   } catch (error) {
     return failure(error);
   }

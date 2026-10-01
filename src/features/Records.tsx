@@ -14,7 +14,6 @@ import { readiness } from '@/lib/progress';
 import { Meter, RiskMatrix } from '@/components/charts/Charts';
 import { TaskCalendar } from './TaskCalendar';
 import { ReadinessRadar } from '@/components/charts/ReadinessRadar';
-import { InfluenceMap } from '@/components/charts/InfluenceMap';
 import { Select } from '@/components/ui/Select';
 import {
   ListTodo,
@@ -292,7 +291,9 @@ export function Records({
             {Boolean(row.data.kind) && (
               <span className="doc-kind-pill">{String(row.data.kind)}</span>
             )}
-            <span className={`doc-status-pill status-${String(row.data.status || 'belum ada').replace(/\s+/g, '-')}`}>
+            <span
+              className={`doc-status-pill status-${String(row.data.status || 'belum ada').replace(/\s+/g, '-')}`}
+            >
               {String(row.data.status) === 'tersedia' ? (
                 <>
                   <CheckCircle2 size={12} />
@@ -327,15 +328,18 @@ export function Records({
               >
                 {String(row.data.expires_date) < today() ? (
                   <>
-                    <AlertCircle size={13} /> Kadaluwarsa ({formatDate(String(row.data.expires_date))})
+                    <AlertCircle size={13} /> Kadaluwarsa (
+                    {formatDate(String(row.data.expires_date))})
                   </>
                 ) : String(row.data.expires_date) <= addDays(today(), 30) ? (
                   <>
-                    <Clock size={13} /> Berakhir dalam 30 hari ({formatDate(String(row.data.expires_date))})
+                    <Clock size={13} /> Berakhir dalam 30 hari (
+                    {formatDate(String(row.data.expires_date))})
                   </>
                 ) : (
                   <>
-                    <CheckCircle2 size={13} /> Berlaku s.d. {formatDate(String(row.data.expires_date))}
+                    <CheckCircle2 size={13} /> Berlaku s.d.{' '}
+                    {formatDate(String(row.data.expires_date))}
                   </>
                 )}
               </span>
@@ -347,59 +351,41 @@ export function Records({
           </div>
         </div>
       )}
-      {entity === 'risks' && (() => {
-        const prob = Number(row.data.probability || 3);
-        const imp = Number(row.data.impact || 3);
-        const score = prob * imp;
-        const level = score >= 15
-          ? { label: 'Bahaya Kritis', cls: 'risk-critical', desc: 'Perlu tindakan segera' }
-          : score >= 8
-            ? { label: 'Perlu Waspada', cls: 'risk-warning', desc: 'Siapkan mitigasi' }
-            : { label: 'Terkendali', cls: 'risk-safe', desc: 'Dalam SOP standar' };
-        return (
-          <div className="risk-card-details">
-            <div className="risk-level-strip">
-              <span className={`risk-level-badge ${level.cls}`}>
-                {level.label} ({score}/25)
-              </span>
-              <span className="risk-level-desc">{level.desc}</span>
+      {entity === 'risks' &&
+        (() => {
+          const prob = Number(row.data.probability || 3);
+          const imp = Number(row.data.impact || 3);
+          const score = prob * imp;
+          const level =
+            score >= 15
+              ? { label: 'Bahaya Kritis', cls: 'risk-critical', desc: 'Perlu tindakan segera' }
+              : score >= 8
+                ? { label: 'Perlu Waspada', cls: 'risk-warning', desc: 'Siapkan mitigasi' }
+                : { label: 'Terkendali', cls: 'risk-safe', desc: 'Dalam SOP standar' };
+          return (
+            <div className="risk-card-details">
+              <div className="risk-level-strip">
+                <span className={`risk-level-badge ${level.cls}`}>
+                  {level.label} ({score}/25)
+                </span>
+                <span className="risk-level-desc">{level.desc}</span>
+              </div>
+              {Boolean(row.data.mitigation) && (
+                <p className="record-text">
+                  <strong>Rencana Mitigasi: </strong>
+                  {String(row.data.mitigation)}
+                </p>
+              )}
+              {Boolean(row.data.review_date) && (
+                <small className="risk-review-date">
+                  Jadwal Tinjau: {formatDate(String(row.data.review_date))}
+                </small>
+              )}
             </div>
-            {Boolean(row.data.mitigation) && (
-              <p className="record-text">
-                <strong>Rencana Mitigasi: </strong>
-                {String(row.data.mitigation)}
-              </p>
-            )}
-            {Boolean(row.data.review_date) && (
-              <small className="risk-review-date">
-                Jadwal Tinjau: {formatDate(String(row.data.review_date))}
-              </small>
-            )}
-          </div>
-        );
-      })()}
+          );
+        })()}
       {entity === 'stakeholders' &&
         (() => {
-          const inf = Number(row.data.influence || 3);
-          const int = Number(row.data.interest || 3);
-          const highInf = inf >= 3;
-          const highInt = int >= 3;
-          const quadrant =
-            highInf && highInt
-              ? { label: 'Libatkan Erat', desc: 'Mitra Kunci Strategis', cls: 'quadrant-manage' }
-              : highInf
-                ? {
-                    label: 'Jaga Dukungan',
-                    desc: 'Penjaga Otoritas & Keamanan',
-                    cls: 'quadrant-satisfy',
-                  }
-                : highInt
-                  ? {
-                      label: 'Beri Informasi',
-                      desc: 'Komunitas & Warga Terdampak',
-                      cls: 'quadrant-inform',
-                    }
-                  : { label: 'Pantau', desc: 'Mitra Pendukung Berkala', cls: 'quadrant-monitor' };
           const rawContact = String(row.data.contact || '').trim();
           const phoneDigits = rawContact.replace(/[^\d+]/g, '');
           const isPhone = phoneDigits.length >= 8;
@@ -414,15 +400,6 @@ export function Records({
 
           return (
             <div className="stakeholder-card-body">
-              <div className="stakeholder-strategy-row">
-                <span className={`stakeholder-quadrant-tag ${quadrant.cls}`}>
-                  {quadrant.label} · {quadrant.desc}
-                </span>
-                <span className="stakeholder-scores">
-                  Wewenang: {inf}/5 · Keterlibatan: {int}/5
-                </span>
-              </div>
-
               {rawContact && (
                 <div className="stakeholder-contact-row">
                   <span className="contact-text">
@@ -488,101 +465,102 @@ export function Records({
           Buka tautan ↗
         </a>
       )}
-      {entity === 'meetings' && (() => {
-        const linkedDecisions = (workspace.decisions || []).filter(
-          (d) => d.data.meeting_id === row.id,
-        );
-        return (
-          <div className="meeting-card-details">
-            {Boolean(row.data.location) && String(row.data.mode).toLowerCase() !== 'online' && (
-              <p className="meeting-detail-row">
-                <MapPin size={13} />
-                <strong>Tempat / Lokasi: </strong>
-                <span>{String(row.data.location)}</span>
-              </p>
-            )}
-            {Boolean(row.data.participants) && (
-              <p className="meeting-detail-row">
-                <Users size={13} />
-                <strong>Peserta Rapat: </strong>
-                <span>{String(row.data.participants)}</span>
-              </p>
-            )}
-            {Boolean(row.data.agenda) && (
-              <div className="meeting-section-box">
-                <BookOpen size={13} />
-                <strong>Agenda Pembahasan: </strong>
-                <p className="record-text">{String(row.data.agenda)}</p>
-              </div>
-            )}
-            {Boolean(row.data.minutes) && (
-              <div className="meeting-section-box">
-                <FileText size={13} />
-                <strong>Notulen / Hasil Kesepakatan: </strong>
-                <p className="record-text">{String(row.data.minutes)}</p>
-              </div>
-            )}
-            {linkedDecisions.length > 0 && (
-              <div className="meeting-section-box meeting-decisions-box">
-                <div className="meeting-decisions-head">
-                  <CheckCircle2 size={13} />
-                  <strong>Keputusan Terkait ({linkedDecisions.length}):</strong>
+      {entity === 'meetings' &&
+        (() => {
+          const linkedDecisions = (workspace.decisions || []).filter(
+            (d) => d.data.meeting_id === row.id,
+          );
+          return (
+            <div className="meeting-card-details">
+              {Boolean(row.data.location) && String(row.data.mode).toLowerCase() !== 'online' && (
+                <p className="meeting-detail-row">
+                  <MapPin size={13} />
+                  <strong>Tempat / Lokasi: </strong>
+                  <span>{String(row.data.location)}</span>
+                </p>
+              )}
+              {Boolean(row.data.participants) && (
+                <p className="meeting-detail-row">
+                  <Users size={13} />
+                  <strong>Peserta Rapat: </strong>
+                  <span>{String(row.data.participants)}</span>
+                </p>
+              )}
+              {Boolean(row.data.agenda) && (
+                <div className="meeting-section-box">
+                  <BookOpen size={13} />
+                  <strong>Agenda Pembahasan: </strong>
+                  <p className="record-text">{String(row.data.agenda)}</p>
                 </div>
-                <ul className="meeting-decisions-list">
-                  {linkedDecisions.map((dec) => (
-                    <li key={dec.id}>
-                      <span className="decision-title">{String(dec.data.title)}</span>
-                      {dec.data.reason ? (
-                        <span className="decision-reason"> · {String(dec.data.reason)}</span>
-                      ) : null}
-                    </li>
-                  ))}
-                </ul>
+              )}
+              {Boolean(row.data.minutes) && (
+                <div className="meeting-section-box">
+                  <FileText size={13} />
+                  <strong>Notulen / Hasil Kesepakatan: </strong>
+                  <p className="record-text">{String(row.data.minutes)}</p>
+                </div>
+              )}
+              {linkedDecisions.length > 0 && (
+                <div className="meeting-section-box meeting-decisions-box">
+                  <div className="meeting-decisions-head">
+                    <CheckCircle2 size={13} />
+                    <strong>Keputusan Terkait ({linkedDecisions.length}):</strong>
+                  </div>
+                  <ul className="meeting-decisions-list">
+                    {linkedDecisions.map((dec) => (
+                      <li key={dec.id}>
+                        <span className="decision-title">{String(dec.data.title)}</span>
+                        {dec.data.reason ? (
+                          <span className="decision-reason"> · {String(dec.data.reason)}</span>
+                        ) : null}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              <div className="meeting-action-row">
+                {Boolean(row.data.meeting_url) &&
+                  String(row.data.mode).toLowerCase() !== 'tatap muka' &&
+                  /^https?:\/\//.test(String(row.data.meeting_url)) && (
+                    <a
+                      className="button meeting-join btn-join-meeting"
+                      href={String(row.data.meeting_url)}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <Video size={13} />
+                      Masuk Rapat Online ↗
+                    </a>
+                  )}
+                <button
+                  className="button meeting-join btn-download-ics"
+                  onClick={() => downloadMeeting(row)}
+                  title="Unduh jadwal rapat .ics"
+                >
+                  Unduh Jadwal (.ics)
+                </button>
+                <button
+                  className="button meeting-followup-btn"
+                  onClick={() => {
+                    window.dispatchEvent(
+                      new CustomEvent('hub-task', {
+                        detail: {
+                          title: `Tindak lanjut: ${row.data.title}`,
+                          description: String(row.data.minutes || row.data.agenda || ''),
+                          notes: `Sumber meetings: ${row.id}`,
+                          meeting_id: row.id,
+                        },
+                      }),
+                    );
+                  }}
+                  title="Buat tugas tindak lanjut rapat"
+                >
+                  + Tindak Lanjut
+                </button>
               </div>
-            )}
-            <div className="meeting-action-row">
-              {Boolean(row.data.meeting_url) &&
-                String(row.data.mode).toLowerCase() !== 'tatap muka' &&
-                /^https?:\/\//.test(String(row.data.meeting_url)) && (
-                  <a
-                    className="button meeting-join btn-join-meeting"
-                    href={String(row.data.meeting_url)}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <Video size={13} />
-                    Masuk Rapat Online ↗
-                  </a>
-                )}
-              <button
-                className="button meeting-join btn-download-ics"
-                onClick={() => downloadMeeting(row)}
-                title="Unduh jadwal rapat .ics"
-              >
-                Unduh Jadwal (.ics)
-              </button>
-              <button
-                className="button meeting-followup-btn"
-                onClick={() => {
-                  window.dispatchEvent(
-                    new CustomEvent('hub-task', {
-                      detail: {
-                        title: `Tindak lanjut: ${row.data.title}`,
-                        description: String(row.data.minutes || row.data.agenda || ''),
-                        notes: `Sumber meetings: ${row.id}`,
-                        meeting_id: row.id,
-                      },
-                    }),
-                  );
-                }}
-                title="Buat tugas tindak lanjut rapat"
-              >
-                + Tindak Lanjut
-              </button>
             </div>
-          </div>
-        );
-      })()}
+          );
+        })()}
       {entity === 'work-items' &&
         Array.isArray(row.data.subtasks) &&
         row.data.subtasks.length > 0 && (
@@ -1002,7 +980,6 @@ export function Records({
         </p>
       )}
       {entity === 'risks' && <RiskMatrix items={rows} />}
-      {entity === 'stakeholders' && <InfluenceMap items={rows} />}
       {!rows.length && view === 'daftar' && (
         <div className="empty card">
           <h3>Belum ada catatan</h3>
@@ -1142,7 +1119,10 @@ export function Records({
 
             return (
               <>
-                <section className="meeting-section-group" aria-label="Rapat akan datang dan hari ini">
+                <section
+                  className="meeting-section-group"
+                  aria-label="Rapat akan datang dan hari ini"
+                >
                   <div className="meeting-section-header">
                     <div className="meeting-section-title-wrap">
                       <CalendarDays size={16} />
@@ -1160,7 +1140,10 @@ export function Records({
                 </section>
 
                 {past.length > 0 && (
-                  <section className="meeting-section-group past-meetings" aria-label="Riwayat rapat sebelumnya">
+                  <section
+                    className="meeting-section-group past-meetings"
+                    aria-label="Riwayat rapat sebelumnya"
+                  >
                     <div className="meeting-section-header">
                       <div className="meeting-section-title-wrap">
                         <FolderArchive size={16} />

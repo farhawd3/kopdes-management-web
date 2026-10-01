@@ -45,7 +45,7 @@ export async function POST(request: Request) {
       list('decisions'),
       list('risks'),
       list('milestones'),
-      list('cash-entries').catch(() => []),
+      list('cash-entries'),
     ]);
 
     const snapshot = {
@@ -154,10 +154,7 @@ export async function DELETE(request: Request) {
       }
     }
     if (!id) throw new Error('ID laporan diperlukan.');
-    const { error } = await db()
-      .from('manager_reports')
-      .delete()
-      .eq('id', id);
+    const { error } = await db().from('manager_reports').delete().eq('id', id);
     if (error) throw new Error('Laporan gagal dihapus.');
     return NextResponse.json({ success: true, id });
   } catch (error) {

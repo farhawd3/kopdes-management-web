@@ -53,7 +53,7 @@ const navIcons: Record<string, React.ComponentType<{ size?: number; className?: 
   '/jurnal': BookOpen,
   '/rapat': Users,
   '/dokumen': FileText,
-  '/pemangku': Briefcase,
+  '/mitra': Briefcase,
   '/tim': UserCheck,
   '/gerai': Store,
   '/kesiapan': CheckCircle2,
@@ -73,7 +73,7 @@ const sections = [
     'Pekerjaan',
     ['/beranda', '/tindak-lanjut', '/hari-ini', '/tugas', '/proyek', '/roadmap', '/jurnal'],
   ],
-  ['Koordinasi', ['/rapat', '/dokumen', '/pemangku', '/tim']],
+  ['Koordinasi', ['/rapat', '/dokumen', '/mitra', '/tim']],
   ['Operasional', ['/gerai', '/kesiapan', '/risiko', '/laporan']],
   ['Pencatatan', ['/pencatatan', '/anggota', '/keuangan', '/barang', '/stok-opname']],
   ['Lainnya', ['/pengaturan', '/panduan']],
@@ -82,15 +82,10 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
   const path = usePathname(),
     query = useSearchParams();
   const [favoriteText, setFavoriteText] = usePreference('hub-favorites', '/hari-ini|/tugas');
-  const [recentsText, setRecentsText] = usePreference('hub-recents', '/beranda|/hari-ini|/tugas|/pencatatan');
   const [collapsedText, setCollapsedText] = usePreference('hub-nav-collapsed', '');
   const favorites = favoriteText
     .split('|')
     .filter((href) => navigation.some(([url]) => url === href));
-  const recents = recentsText
-    .split('|')
-    .filter((href) => href && href !== path && navigation.some(([url]) => url === href))
-    .slice(0, 4);
   const collapsed = collapsedText.split('|').filter(Boolean);
   const { preference, setTheme } = useTheme();
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
@@ -99,16 +94,6 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
     [error, setError] = useState(''),
     [actionModalOpen, setActionModalOpen] = useState(false);
   const dialog = useRef<HTMLDialogElement>(null);
-
-  useEffect(() => {
-    if (path && navigation.some(([url]) => url === path)) {
-      const list = recentsText.split('|').filter(Boolean);
-      const updated = [path, ...list.filter((p) => p !== path)].slice(0, 6).join('|');
-      if (updated !== recentsText) {
-        setRecentsText(updated);
-      }
-    }
-  }, [path, recentsText, setRecentsText]);
 
   useEffect(() => {
     const receive = (event: Event) => setWorkspace((event as CustomEvent<Workspace | null>).detail);
@@ -268,34 +253,6 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
         </button>
 
         <div className="manager-sidebar-nav-scroll">
-          {recents.length > 0 && (
-            <section className="manager-sidebar-section sidebar-recents-section" aria-label="Terakhir dibuka">
-              <h2 className="sidebar-section-title">Terakhir</h2>
-              <nav className="sidebar-nav-list">
-                {recents.slice(0, 3).map((href) => {
-                  const RecentIcon = navIcons[href] || ArrowUpRight;
-                  const label = navigation.find(([url]) => url === href)?.[1] || href;
-                  const isActive = path === href;
-                  return (
-                    <Link
-                      key={href}
-                      href={href}
-                      aria-current={isActive ? 'page' : undefined}
-                      className={`sidebar-nav-item ${isActive ? 'is-active' : ''}`}
-                      onClick={() => setMenu(false)}
-                      title={label}
-                    >
-                      <span className="sidebar-item-icon">
-                        <RecentIcon size={15} />
-                      </span>
-                      <span className="sidebar-item-label">{label}</span>
-                    </Link>
-                  );
-                })}
-              </nav>
-            </section>
-          )}
-
           {favorites.length > 0 && (
             <section className="manager-sidebar-section sidebar-favorites-group">
               <h2 className="sidebar-section-title">
@@ -318,7 +275,12 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
                         <FavIcon size={16} />
                       </span>
                       <span className="sidebar-item-label">{label}</span>
-                      <Star size={11} className="sidebar-item-star-badge" fill="#f59e0b" color="#f59e0b" />
+                      <Star
+                        size={11}
+                        className="sidebar-item-star-badge"
+                        fill="#f59e0b"
+                        color="#f59e0b"
+                      />
                     </Link>
                   );
                 })}

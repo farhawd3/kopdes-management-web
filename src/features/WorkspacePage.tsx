@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useWorkspace } from './useWorkspace';
-import { pages, navigation } from './catalog';
+import { pages, navigation, catalog } from './catalog';
 import { Records } from './Records';
 import { Dashboard } from './Dashboard';
 import { Roadmap } from './Roadmap';
@@ -13,14 +13,38 @@ import { Operations, recordingPaths } from './Operations';
 import { useSearchParams } from 'next/navigation';
 import { FollowUps } from './FollowUps';
 import { TodayView } from './TodayView';
-import type { Item } from './schemas';
+import type { Entity, Item } from './schemas';
 import { schemas } from './schemas';
 import { today } from '@/lib/date';
 import { SkeletonLoading } from '@/components/ui/SkeletonLoading';
+import { pageEntities } from './workspace-scope';
 export function WorkspacePage({ slug }: { slug: string }) {
   const query = useSearchParams();
   const requestedSection = query.get('bagian');
-  const { data, loading, error, refresh, operations } = useWorkspace(),
+  const [taskScope, setTaskScope] = useState<'current' | 'history'>(() =>
+    ['selesai', 'dibatalkan'].includes(query.get('status') || '') ? 'history' : 'current',
+  );
+  const requestedRecord =
+    query.get('record') || query.get('task') || (slug === 'proyek' ? query.get('id') : null);
+  const selectedEntity = (
+    query.get('task')
+      ? 'work-items'
+      : slug === 'proyek' && query.get('id')
+        ? 'workstreams'
+        : query.get('bagian') || pages[slug]?.[0]
+  ) as Entity | undefined;
+  const detail =
+    requestedRecord &&
+    selectedEntity &&
+    pageEntities(slug).includes(selectedEntity) &&
+    /^[a-f\d-]{36}$/i.test(requestedRecord)
+      ? { entity: selectedEntity, id: requestedRecord }
+      : undefined;
+  const { data, loading, error, refresh, operations, more, loadMore, fetching } = useWorkspace(
+      slug,
+      { scope: taskScope },
+      detail,
+    ),
     [tabChoice, setTabChoice] = useState<{ section: string | null; index: number } | null>(null),
     [draft, setDraft] = useState<Item>();
   useEffect(() => {
@@ -38,7 +62,9 @@ export function WorkspacePage({ slug }: { slug: string }) {
   }, []);
   const sectionIndex = pages[slug]?.findIndex((entity) => entity === requestedSection) ?? -1;
   const tab = tabChoice?.section === requestedSection ? tabChoice.index : Math.max(0, sectionIndex);
-  const title = navigation.find(([path]) => path === `/${slug}`)?.[1] || 'Ruang kerja';
+  const title =
+    navigation.find(([path]) => path === `/${slug}`)?.[1] ||
+    (slug === 'pemangku' ? 'Mitra & kontak' : 'Ruang kerja');
   if (loading) return <SkeletonLoading />;
   if (error)
     return (
@@ -60,6 +86,30 @@ export function WorkspacePage({ slug }: { slug: string }) {
           </span>
           <h1>{title}</h1>
         </div>
+      )}
+      {slug === 'tugas' && (
+        <div className="workspace-scope-control" role="group" aria-label="Rentang tugas">
+          <button
+            type="button"
+            aria-pressed={taskScope === 'current'}
+            onClick={() => setTaskScope('current')}
+          >
+            Aktif dan terbaru
+          </button>
+          <button
+            type="button"
+            aria-pressed={taskScope === 'history'}
+            onClick={() => setTaskScope('history')}
+          >
+            Riwayat selesai
+          </button>
+        </div>
+      )}
+      {Object.keys(more).length > 0 && (
+        <p className="workspace-partial-note">
+          Menampilkan catatan yang sudah dimuat. Angka pada halaman ini dapat bertambah saat Anda
+          memuat catatan lain.
+        </p>
       )}
       {slug === 'tindak-lanjut' && <FollowUps data={data} />}
       {slug === 'beranda' && <Dashboard data={data} />}
@@ -106,7 +156,7 @@ export function WorkspacePage({ slug }: { slug: string }) {
                                   ? 'Pelatihan'
                                   : entity === 'staff'
                                     ? 'Tim'
-                                    : 'Pemangku kepentingan'}
+                                    : 'Mitra & kontak'}
                 </button>
               ))}
             </div>
@@ -117,7 +167,49 @@ export function WorkspacePage({ slug }: { slug: string }) {
             workspace={data}
             refresh={refresh}
           />
+          {more[pages[slug][tab]] !== undefined && (
+            <button
+              className="workspace-load-more"
+              type="button"
+              disabled={fetching !== null}
+              onClick={() => void loadMore(pages[slug][tab])}
+            >
+              {fetching === pages[slug][tab]
+                ? 'Memuat…'
+                : `Muat 50 ${pages[slug][tab] === 'work-items' ? 'tugas' : 'catatan'} lagi`}
+            </button>
+          )}
         </>
+      )}
+      {slug === 'beranda' && more['work-items'] !== undefined && (
+        <button
+          className="workspace-load-more"
+          type="button"
+          disabled={fetching !== null}
+          onClick={() => void loadMore('work-items')}
+        >
+          {fetching === 'work-items' ? 'Memuat…' : 'Muat 50 tugas lagi'}
+        </button>
+      )}
+      {!pages[slug] && slug !== 'beranda' && Object.keys(more).length > 0 && (
+        <details className="workspace-more-details">
+          <summary>Catatan lain yang belum dimuat</summary>
+          <div className="workspace-more-actions">
+            {(Object.keys(more) as Entity[]).map((entity) => (
+              <button
+                className="workspace-load-more"
+                key={entity}
+                type="button"
+                disabled={fetching !== null}
+                onClick={() => void loadMore(entity)}
+              >
+                {fetching === entity
+                  ? 'Memuat…'
+                  : `Muat 50 ${catalog[entity].title.toLowerCase()} lagi`}
+              </button>
+            ))}
+          </div>
+        </details>
       )}
       {slug === 'panduan' && (
         <section className="card prose">
