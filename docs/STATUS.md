@@ -1,4 +1,20 @@
-# Status proyek — 1 Oktober 2026
+# Status proyek — 2 Oktober 2026
+
+## Paket Perapian Detail Kecil (2 Oktober 2026)
+
+- **Verifikasi Kualitas Kode**:
+  - `npm test`: **118/118 pengujian lulus** — termasuk perbaikan tes TodayView yang sebelumnya gagal karena tanggal hardcoded.
+  - `npm run typecheck`: **0 kesalahan TypeScript**.
+  - `npm run lint`: **0 kesalahan / 0 peringatan** ESLint.
+  - `npm run build`: **Next.js 16.3.7 Turbopack berhasil**, 9/9 rute teroptimasi.
+
+- **Perbaikan Rinci**:
+  - **Sidebar tidak rapi**: Tinggi terkunci `100vh`, hanya `.manager-sidebar-nav-scroll` yang bergulir. Scrollbar tipis 4px. `.sidebar-group-toggle` lebih kompak (32px, huruf kapital kecil).
+  - **Tindak Lanjut tidak rapi**: `<select>` raw diganti `Select` terpadu. Filter tersusun dalam `.follow-up-toolbar`. Empty state menggunakan `ShieldCheck`. Panel tidak lagi memiliki judul ganda.
+  - **Card mepet ke parent**: Seluruh card utama mendapat `border: 1.5px`, `border-radius: 20px`, `padding: 24px 28px`, `margin-bottom: 24px`. `.manager-main` mendapat `padding: 28px 36px 48px`.
+  - **Pengaturan mepet ke kiri**: `settings-container` kini `width: 100%; max-width: 100%`. Grid warna, pengaturan tampilan, dan cadangan mengisi lebar penuh secara responsif.
+  - **Select seragam**: `TaskTimeline` (skala Gantt) dan `TaskBatchActions` (ubah massal) kini memakai komponen `Select` terpadu.
+  - **Tes tanggal rapuh**: `redesign.test.tsx` kini menggunakan `today()` dan `addDays()` sehingga tidak gagal saat dijalankan di luar tanggal hardcoded.
 
 ## Paket Estetika & Perapian UI Menyeluruh (Oktober 2026)
 
