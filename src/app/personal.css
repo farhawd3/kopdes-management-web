@@ -31,14 +31,14 @@
   --danger: #ef4444;
   --danger-soft: #fef2f2;
   --warning: #f59e0b;
-  --radius-xl: 32px;
-  --radius-lg: 24px;
-  --radius-md: 18px;
-  --radius-sm: 12px;
+  --radius-xl: 18px;
+  --radius-lg: 14px;
+  --radius-md: 10px;
+  --radius-sm: 8px;
   --radius-pill: 9999px;
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.03);
-  --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.04);
-  --shadow-float: 0 16px 40px rgba(0, 0, 0, 0.08);
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.05);
+  --shadow-float: 0 12px 32px rgba(0, 0, 0, 0.08);
 }
 
 .dark {
@@ -68,9 +68,9 @@
   --danger: #f87171;
   --danger-soft: #331818;
   --warning: #fbbf24;
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-  --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.4);
-  --shadow-float: 0 16px 40px rgba(0, 0, 0, 0.5);
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.2);
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.25);
+  --shadow-float: 0 12px 32px rgba(0, 0, 0, 0.35);
 }
 
 /* Base Body Styles */
@@ -1945,11 +1945,12 @@ dialog.editor .form-grid {
   display: flex;
   gap: 8px;
 }
-.manager-actions button,
-.manager-actions a {
+.manager-actions button:not(.quick-action-hub-btn),
+.manager-actions a:not(.quick-action-hub-btn) {
   display: grid;
   place-items: center;
   width: 40px;
+  height: 40px;
   min-height: 40px;
   padding: 0;
   border: 1px solid var(--line);
@@ -1958,22 +1959,32 @@ dialog.editor .form-grid {
   color: var(--ink);
   transition: all 0.15s ease;
 }
-.manager-actions button:hover,
-.manager-actions a:hover {
+.manager-actions button:not(.quick-action-hub-btn):hover,
+.manager-actions a:not(.quick-action-hub-btn):hover {
   background: var(--surface-subtle);
   border-color: var(--line-strong);
 }
-.manager-actions .quick-create {
+.manager-actions .quick-action-hub-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 40px;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 20px;
   background: var(--brand);
-  color: var(--brand-text);
-  border-color: var(--brand);
+  color: var(--brand-text, #111215);
+  font-size: 13px;
+  font-weight: 700;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
 }
-.manager-actions .quick-create:hover {
+.manager-actions .quick-action-hub-btn:hover {
   background: var(--brand-hover);
-}
-.manager-actions button:nth-of-type(2) {
-  background: var(--surface-subtle);
-  color: var(--ink);
+  transform: translateY(-1px);
 }
 
 /* Modern Clean Sidebar */
@@ -2687,17 +2698,16 @@ dialog.editor .form-grid {
   box-shadow: var(--shadow-card);
   border-color: var(--line-strong);
 }
-.tone-0 {
-  background: color-mix(in srgb, var(--lavender) 20%, var(--surface));
-  border-color: color-mix(in srgb, var(--lavender) 45%, var(--line));
-}
-.tone-1 {
-  background: var(--brand-soft);
-  border-color: var(--brand);
-}
+.tone-0,
+.tone-1,
 .tone-2 {
-  background: var(--surface-subtle);
+  background: var(--surface);
   border-color: var(--line);
+}
+.tone-0:hover,
+.tone-1:hover,
+.tone-2:hover {
+  border-color: var(--line-strong);
 }
 .focus-task-top {
   display: flex;
@@ -3171,16 +3181,16 @@ select option {
     bottom: calc(14px + env(safe-area-inset-bottom));
     left: 50%;
     transform: translateX(-50%);
-    width: 288px;
-    max-width: calc(100vw - 32px);
-    padding: 7px;
-    border-radius: 42px;
+    width: 320px;
+    max-width: calc(100vw - 24px);
+    padding: 6px 10px;
+    border-radius: 40px;
     background: #282a29;
     border: 1px solid #4b4e48;
-    box-shadow: 0 10px 25px #0002;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     z-index: 60;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-around;
   }
   .manager-dock a,
   .manager-dock button {
@@ -3189,20 +3199,19 @@ select option {
     justify-content: center;
     align-items: center;
     gap: 3px;
-    width: 48px;
-    min-width: 44px;
-    height: 48px;
-    padding: 0;
+    min-width: 48px;
+    height: 46px;
+    padding: 0 4px;
     border: 0;
-    border-radius: 50%;
+    border-radius: 12px;
     background: transparent;
-    color: #fff;
-    font-size: 8px;
-    font-weight: 500;
+    color: #cbd5e1;
+    font-size: 10px;
+    font-weight: 600;
   }
   .manager-dock [aria-current='page'] {
-    background: white;
-    color: #282a29;
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
   }
   .home-heading {
     margin-bottom: 20px;
@@ -7685,16 +7694,12 @@ dialog.task-detail-drawer::backdrop {
   flex-shrink: 0;
 }
 
-.manager-actions button,
-.manager-actions a {
+.manager-actions button:not(.quick-action-hub-btn),
+.manager-actions a:not(.quick-action-hub-btn) {
   aspect-ratio: 1 / 1;
 }
 
 .sidebar-avatar {
-  aspect-ratio: 1 / 1;
-}
-
-.swatch-preview {
   aspect-ratio: 1 / 1;
 }
 
@@ -8893,11 +8898,11 @@ button.dash-bar-col { flex: 1 0 44px; }
   height: 44px;
   border-radius: 50%;
   background: var(--brand);
-  color: #ffffff;
+  color: var(--brand-text, #111215);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 14px rgba(179, 36, 59, 0.4);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
   margin-bottom: 2px;
 }
@@ -9787,15 +9792,15 @@ button.dash-bar-col { flex: 1 0 44px; }
 .swatch-demo-line { font-size:11px; padding:8px 12px; border-radius:8px; }
 .swatch-check { color:#29312d; }
 .color-swatch-item { display:flex; flex-direction:column; align-items:stretch; gap:12px; }
-.page-jurnal .records { display:block; border-left:2px solid var(--line); margin-left:10px; padding-left:24px; }
-.page-jurnal .record.card { position:relative; margin-bottom:18px; box-shadow:none; }
-.page-jurnal .record.card::before { content:''; position:absolute; width:10px; height:10px; border-radius:50%; background:var(--brand); left:-30px; top:30px; }
-.page-dokumen .records { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr)); }
-.page-dokumen .record.card { border-top:3px solid var(--brand); }
-.page-rapat .record.card { border-left:3px solid var(--brand); }
-.page-risiko .record.card { box-shadow:none; border-top:3px solid var(--lavender,#aba0cc); }
-.page-gerai .record.card { background:linear-gradient(145deg,var(--surface),var(--brand-soft)); }
-.page-panduan .prose { max-width:760px; line-height:1.8; box-shadow:none; }
+.page-jurnal .records { display: flex; flex-direction: column; gap: 14px; border-left: 2px solid var(--line); margin-left: 8px; padding-left: 20px; }
+.page-jurnal .record.card { position: relative; margin-bottom: 0; box-shadow: var(--shadow-sm); border-radius: var(--radius-lg); }
+.page-jurnal .record.card::before { content: ''; position: absolute; width: 8px; height: 8px; border-radius: 50%; background: var(--brand); left: -25px; top: 22px; }
+.page-dokumen .records { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 16px; }
+.page-dokumen .record.card { border-left: 3.5px solid var(--primary, #628baa); border-radius: var(--radius-lg); }
+.page-rapat .record.card { border-left: 3.5px solid var(--brand); border-radius: var(--radius-lg); }
+.page-risiko .record.card { border-left: 3.5px solid var(--lavender, #9688bf); border-radius: var(--radius-lg); }
+.page-gerai .record.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+.page-panduan .prose { max-width: 760px; line-height: 1.8; box-shadow: none; }
 .project-card { display:flex; flex-direction:column; }
 .project-card > p { flex:1; line-height:1.6; }
 .project-card-foot { margin-top:18px; padding-top:14px; border-top:1px solid var(--line); }

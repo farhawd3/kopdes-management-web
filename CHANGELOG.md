@@ -2,6 +2,13 @@
 
 ### Karakter Halaman, Navigasi Terstruktur & Ruang Kerja Editorial (1 Oktober 2026)
 
+- **Penataan & Kerapian Komponen Menyeluruh (*Comprehensive Component Polish*)**:
+  - Menormalkan radius sudut kartu dan tabel dari 32px/24px menjadi 18px/14px yang proporsional dan tidak memotong isi konten.
+  - Memperbaiki aturan `aspect-ratio` yang sebelumnya merusak proporsi tombol `+ Tambah` dan pratinjau tema di Pengaturan.
+  - Menghapus latar belang-belang warna acak (`.tone-0`, `.tone-1`, `.tone-2`) pada kartu tugas beranda, menggantikannya dengan desain permukaan bersih dan fokus status.
+  - Menghilangkan duplikasi tanggal pada tajuk beranda dan memasang eyebrow hierarkis `Ruang Kerja Manajer`.
+  - Merapikan dock ponsel bawah menjadi 320px dengan jarak ketuk nyaman dan kontras teks tombol aksi tengah yang tinggi.
+  - Membersihkan kartu gerai, dokumen, rapat, dan risiko dari garis tebal asimetris dan gradien miring.
 - **Header Ringkas & Pusat Aksi Terpadu**:
   - Menyatukan tombol `+ Aksi` dan `+ Tugas baru` di header menjadi satu tombol `+ Tambah` yang ringkas, terhubung ke 9 aksi cepat.
 - **Navigasi Sidebar Terstruktur**:

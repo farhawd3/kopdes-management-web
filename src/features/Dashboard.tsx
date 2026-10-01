@@ -118,7 +118,7 @@ export function Dashboard({ data }: { data: Workspace }) {
     <div className="manager-home">
       <header className="home-heading">
         <div>
-          <small>{formatDate(now)}</small>
+          <span className="home-eyebrow">Ruang Kerja Manajer</span>
           <h1>Pekerjaan saya</h1>
         </div>
         <div className="home-heading-actions">

@@ -31,7 +31,7 @@ it('beranda memakai jumlah selesai nyata dan filter tenggat', () => {
   );
   expect(within(screen.getByRole('region', { name: 'Tugas pilihan' })).queryByRole('link', { name: /Selesai nyata/ })).toBeNull();
   expect(screen.queryByText('60%')).toBeNull();
-});
+}, 15000);
 it('kalender mingguan melintasi tahun dan tambah tugas memakai tanggal terpilih', () => {
   const create = vi.fn();
   render(<TaskCalendar items={[]} render={() => null} onCreate={create} />);

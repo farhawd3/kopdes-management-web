@@ -8,6 +8,14 @@
   - `npm run lint`: **0 kesalahan linting** (`eslint src tests`).
   - `npm run build`: **Next.js 16.3.7 Turbopack production build berhasil**, 9/9 rute teroptimasi penuh.
 
+- **Pembersihan & Penataan Komponen Keseluruhan (*Comprehensive Component Polish*)**:
+  - **Koreksi Geometri & Radius Kartu**: Memperbaiki radius berlebih (`--radius-xl` dari 32px menjadi 18px, `--radius-lg` dari 24px menjadi 14px, `--radius-md` dari 18px menjadi 10px, `--radius-sm` dari 12px menjadi 8px) sehingga seluruh kartu, modal, tabel, dan formulir memiliki lekukan sudut yang proporsional, rapi, dan tidak memotong konten.
+  - **Eliminasi Distorsi Tombol Topbar**: Menghapus `aspect-ratio: 1 / 1` global yang sebelumnya memotong dan mendistorsi tombol `+ Tambah` (`.quick-action-hub-btn`) dan kotak pratinjau tema (`.swatch-preview`), serta memberikan tinggi seragam 40px untuk seluruh tombol aksi header.
+  - **Penataan Kartu Tugas Fokus Beranda**: Menghapus latar belakang warna-warni berselang-seling (`.tone-0`, `.tone-1`, `.tone-2`) yang membuat tampilan beranda tampak ramai dan tidak beraturan; seluruh kartu tugas kini memakai latar bersih kohesif dengan warna penanda fokus pada status badge.
+  - **Penyelarasan Header Beranda**: Menghilangkan duplikasi teks tanggal kecil di atas judul beranda dan menggantinya dengan label hierarki `Ruang Kerja Manajer`.
+  - **Kerapian Dock Navigasi Ponsel**: Menyesuaikan lebar dock menjadi 320px dengan jarak ketukan lega, tipografi 10px terbaca, dan kontras tinggi pada tombol aksi tengah.
+  - **Pembersihan Kartu Modul Domain**: Menghapus artefak garis tebal asimetris dan gradien diagonal pada kartu `/gerai`, `/dokumen`, `/rapat`, dan `/risiko`, menyelaraskan seluruh tampilan ke dalam standar kartu kerja profesional.
+
 - **Header Ringkas & Pusat Aksi Terpadu**:
   - Tombol `+ Aksi` dan `+ Tugas baru` yang sebelumnya hadir bersamaan di header disatukan menjadi satu tombol `+ Tambah` yang ringkas di topbar desktop/tablet dan dock mengambang ponsel.
   - Membuka modal aksi cepat (`ManagerActionModal`) dengan 9 opsi kontekstual (Kas, Anggota, Barang, Opname, Tugas, Rapat, Laporan, Risiko).
