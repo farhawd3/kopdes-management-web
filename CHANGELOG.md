@@ -1,5 +1,23 @@
 # Changelog
 
+### Karakter Halaman, Navigasi Terstruktur & Ruang Kerja Editorial (1 Oktober 2026)
+
+- **Header Ringkas & Pusat Aksi Terpadu**:
+  - Menyatukan tombol `+ Aksi` dan `+ Tugas baru` di header menjadi satu tombol `+ Tambah` yang ringkas, terhubung ke 9 aksi cepat.
+- **Navigasi Sidebar Terstruktur**:
+  - Fitur sematkan halaman favorit (`hub-favorites`) dengan bintang interaktif.
+  - Tampilan dinamis halaman terakhir dibuka (*recents*) untuk akses kerja kilat.
+  - Kelompok menu kolapsibel untuk tampilan sidebar yang lebih tenang dan fokus.
+- **Karakter Tiap Halaman**:
+  - **Beranda**: Prioritas pekerjaan perlu perhatian (`FollowUps`) dan agenda fokus di atas ringkasan metrik.
+  - **Proyek**: Kartu menonjolkan ringkasan tujuan, progres, indikator kendala, dan langkah tenggat. Halaman detail menyatukan dokumen dan keputusan strategis terkait.
+  - **Dokumen**: Lencana nomor dokumen, jenis dokumen, status kelengkapan, dan masa berlaku berkode warna (🔴/🟡/🟢).
+  - **Risiko**: 3-level tingkat perhatian (Bahaya Kritis, Perlu Waspada, Terkendali), skor dampak/probabilitas, mitigasi terencana, dan jadwal tinjau.
+  - **Rapat**: Pengelompokan terpisah rapat mendatang vs riwayat, dengan kartu mengikuti alur Agenda → Notulen → Keputusan Terkait → Tindak Lanjut langsung.
+  - **Pengaturan**: 4 tab terorganisasi dengan Kartu Pratinjau Tema Langsung (*Live Component Preview*).
+- **Penyelarasan 5 Tema Warna**:
+  - Penyesuaian Lime & Ink (bawaan), Sage, Lavender, Peach, dan Sky dengan warna latar lembut dan teks kontras jelas.
+
 ### Superapp Manajer, Alur Laporan & Hapus Draf, dan Pusat Aksi Terpadu (1 Oktober 2026)
 
 - **Alur Laporan Lengkap & Tombol Hapus Draf (`/laporan`)**:

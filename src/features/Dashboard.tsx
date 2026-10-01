@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { useState } from 'react';
 import {
   ArrowUpRight,
-  Plus,
   CalendarDays,
   ArrowRight,
   Wallet,
@@ -123,10 +122,10 @@ export function Dashboard({ data }: { data: Workspace }) {
           <h1>Pekerjaan saya</h1>
         </div>
         <div className="home-heading-actions">
-          <Link href="/tugas?baru=1" className="primary">
-            <Plus size={18} />
-            Tugas baru
-          </Link>
+          <span className="home-date-chip">
+            <CalendarDays size={14} />
+            <span>{formatDate(now)}</span>
+          </span>
         </div>
       </header>
 
@@ -199,6 +198,9 @@ export function Dashboard({ data }: { data: Workspace }) {
         </div>
       )}
 
+      {/* ── Prioritas Utama: Perlu Perhatian (Follow-ups) ────── */}
+      <FollowUps data={data} compact />
+
       <div className="dashboard-controls">
         <label>
           <span>Proyek</span>
@@ -222,6 +224,7 @@ export function Dashboard({ data }: { data: Workspace }) {
           Grafik tugas mengikuti proyek pilihan. Klik status atau tanggal untuk melihat tugasnya.
         </p>
       </div>
+
       {/* ── Stat Cards Row ───────────────────────────────── */}
       <div className="dash-stats-row">
         <StatCard
@@ -251,8 +254,6 @@ export function Dashboard({ data }: { data: Workspace }) {
           href="/rapat"
         />
       </div>
-
-      <FollowUps data={data} compact />
       <div className="home-grid">
         {/* ── Left: Task Focus ─────────────────────────── */}
         <section className="home-work" aria-label="Tugas pilihan">

@@ -1,12 +1,39 @@
 # Status proyek — 1 Oktober 2026
 
-## Paket Superapp Manajer & Manajemen Draf Laporan
+## Paket Karakter Halaman, Navigasi Terstruktur & Ruang Kerja Editorial
 
 - **Verifikasi Kualitas Kode**:
-  - `npm test`: **118/118 pengujian lulus (11 suites)** tanpa kegagalan (termasuk migrasi 4 dan 5 diuji pada PostgreSQL lokal PGlite).
+  - `npm test`: **118/118 pengujian lulus (11 suites)** tanpa kegagalan (seluruh pengujian database, timeline, security, redesign, kalender, dan operasi lulus).
   - `npm run typecheck`: **0 kesalahan tipe TypeScript** (`tsc --noEmit`).
   - `npm run lint`: **0 kesalahan linting** (`eslint src tests`).
   - `npm run build`: **Next.js 16.3.7 Turbopack production build berhasil**, 9/9 rute teroptimasi penuh.
+
+- **Header Ringkas & Pusat Aksi Terpadu**:
+  - Tombol `+ Aksi` dan `+ Tugas baru` yang sebelumnya hadir bersamaan di header disatukan menjadi satu tombol `+ Tambah` yang ringkas di topbar desktop/tablet dan dock mengambang ponsel.
+  - Membuka modal aksi cepat (`ManagerActionModal`) dengan 9 opsi kontekstual (Kas, Anggota, Barang, Opname, Tugas, Rapat, Laporan, Risiko).
+
+- **Navigasi Sidebar Terstruktur & Pintas**:
+  - **Favorit**: Fitur sematkan halaman favorit (`hub-favorites`) dengan tombol bintang interaktif di setiap item menu.
+  - **Terakhir Dibuka**: Menampilkan chip riwayat navigasi terakhir secara dinamis untuk perpindahan cepat antar-halaman kerja.
+  - **Kelompok Menu Kolapsibel**: Kelompok menu (Pekerjaan, Koordinasi, Operasional, Pencatatan, Lainnya) dapat dilipat/dibuka secara independen.
+
+- **Karakter Visual Tiap Halaman**:
+  - **Beranda (`/beranda`)**: Mendahulukan bagian "Perlu Perhatian" (`FollowUps`) dan Agenda Rapat/Fokus harian tepat di bawah strip aksi cepat.
+  - **Proyek (`/proyek`)**: Kartu menonjolkan ringkasan tujuan, progres, indikator kendala/isu terbuka, dan langkah tenggat berikutnya. Halaman detail menyatukan tugas, catatan terformat, milestone, dokumen terkait, dan keputusan formal terkait.
+  - **Dokumen (`/dokumen`)**: Kartu menampilkan nomor dokumen, jenis dokumen, status kelengkapan (Tersedia / Diproses / Belum Ada), serta masa berlaku berwarna (🔴 Kadaluwarsa, 🟡 <30 hari, 🟢 Valid).
+  - **Risiko (`/risiko`)**: Tampilan tingkat keparahan terstruktur 3-level (Bahaya Kritis, Perlu Waspada, Terkendali), skor dampak/probabilitas (x/25), rencana mitigasi, dan jadwal tinjau berkala.
+  - **Rapat (`/rapat`)**: Pemisahan jelas antara rapat "Akan Datang & Hari Ini" dengan "Riwayat Rapat Selesai". Urutan kartu mengikuti alur logis: Agenda Pembahasan → Notulen Hasil → Keputusan Terkait → Tindak Lanjut (+ tombol buat tugas langsung & tautan online menonjol).
+  - **Pengaturan (`/pengaturan`)**: Dibagi menjadi 4 tab terfokus (Tampilan & Tema, Profil Koperasi, Keamanan PIN, dan Cadangan & Pemulihan), dilengkapi **Kartu Pratinjau Tema Langsung** (*Live Component Preview Stage*) yang memperlihatkan contoh tombol, tugas interaktif, status badge, dan bar progres nyata dalam palet tema terpilih.
+
+- **Penyelarasan 5 Tema Warna Editorial**:
+  - Lime & Ink (bawaan): Hijau lembut `#CEDD86` & lavender `#B5A8D6` pada latar `#F6F7F3`.
+  - Sage: Hijau `#759887` & pasir `#DCCDB5` pada latar `#F4F6F2`.
+  - Lavender: Ungu `#9688BF` & biru abu `#A9BBCB` pada latar `#F7F5FA`.
+  - Peach: Terakota `#C98267` & krem `#E8D6B8` pada latar `#FBF6F1`.
+  - Sky: Biru `#628BAA` & mint `#ADD1C2` pada latar `#F3F7FA`.
+  - Teks arang gelap kontras tinggi, penanda status dengan teks eksplisit di semua tema, dan mode gelap tetap terjaga penuh.
+
+## Paket Superapp Manajer & Manajemen Draf Laporan
 
 - **Alur Laporan Lengkap & Tombol Hapus Draf (`/laporan`)**:
   - **Pembedaan Status Jelas**: Setiap laporan kini memiliki status eksplisit: `Draf Kerja` (kuning/amber) vs `Dokumen Resmi` (hijau resmi) berkop KDMP.

@@ -9,50 +9,64 @@ export const COLOR_STYLES: {
   id: ColorStyle;
   name: string;
   primary: string;
+  companion: string;
   soft: string;
+  canvas: string;
   desc: string;
 }[] = [
   {
     id: 'lime',
-    name: 'Lime & arang',
+    name: 'Lime & Ink (Bawaan)',
     primary: '#CEDD86',
-    soft: '#f7fde8',
-    desc: 'Hijau lembut dengan teks gelap',
-  },
-  {
-    id: 'peach',
-    name: 'Peach',
-    primary: '#ed7d3d',
-    soft: '#fff3ec',
-    desc: 'Terakota hangat dan krem',
-  },
-  {
-    id: 'lavender',
-    name: 'Lavender',
-    primary: '#8b7ad0',
-    soft: '#f4f1fd',
-    desc: 'Ungu lembut & indigo elegan',
+    companion: '#B5A8D6',
+    soft: '#f1f5e0',
+    canvas: '#F6F7F3',
+    desc: 'Hijau lembut dengan teks arang kontras',
   },
   {
     id: 'sage',
     name: 'Sage',
-    primary: '#4b8f62',
-    soft: '#eef7f2',
-    desc: 'Hijau daun lembut & natural',
+    primary: '#759887',
+    companion: '#DCCDB5',
+    soft: '#e7efe9',
+    canvas: '#F4F6F2',
+    desc: 'Hijau herbal sejuk & aksen pasir',
+  },
+  {
+    id: 'lavender',
+    name: 'Lavender',
+    primary: '#9688BF',
+    companion: '#A9BBCB',
+    soft: '#ece8f7',
+    canvas: '#F7F5FA',
+    desc: 'Ungu lembut & biru abu elegan',
+  },
+  {
+    id: 'peach',
+    name: 'Peach',
+    primary: '#C98267',
+    companion: '#E8D6B8',
+    soft: '#faeae3',
+    canvas: '#FBF6F1',
+    desc: 'Terakota hangat & krem natural',
+  },
+  {
+    id: 'sky',
+    name: 'Sky',
+    primary: '#628BAA',
+    companion: '#ADD1C2',
+    soft: '#e3eef6',
+    canvas: '#F3F7FA',
+    desc: 'Biru danau sejuk & mint bersih',
   },
   {
     id: 'sand',
     name: 'Pasir',
     primary: '#B89C76',
-    soft: '#F8F3EB',
-    desc: 'Cokelat lembut dan putih hangat',
-  },
-  {
-    id: 'sky',
-    name: 'Sky',
-    primary: '#4295e4',
-    soft: '#f0f7fe',
-    desc: 'Biru pastel sejuk & bersih',
+    companion: '#9CB0A3',
+    soft: '#F4ECE1',
+    canvas: '#F8F5EF',
+    desc: 'Cokelat kayu lembut & putih hangat',
   },
 ];
 

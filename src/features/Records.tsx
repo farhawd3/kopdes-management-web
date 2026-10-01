@@ -43,6 +43,8 @@ import {
   Phone,
   AlertTriangle,
   FolderOpen,
+  CheckCircle2,
+  Video,
 } from 'lucide-react';
 import { TaskTimeline } from './TaskTimeline';
 import { downloadMeeting } from './meeting';
@@ -278,17 +280,80 @@ export function Records({
           {row.data.evidence ? ` · ${String(row.data.evidence)}` : ''}
         </p>
       )}
-      {entity === 'documents' && Boolean(row.data.expires_date) && (
-        <p className={String(row.data.expires_date) <= addDays(today(), 30) ? 'late' : ''}>
-          Berlaku sampai {formatDate(String(row.data.expires_date))}
-        </p>
+      {entity === 'documents' && (
+        <div className="document-card-details">
+          <div className="doc-meta-pills">
+            {Boolean(row.data.number) && (
+              <span className="doc-number-pill">No: {String(row.data.number)}</span>
+            )}
+            {Boolean(row.data.kind) && (
+              <span className="doc-kind-pill">{String(row.data.kind)}</span>
+            )}
+            <span className={`doc-status-pill status-${String(row.data.status || 'belum ada').replace(/\s+/g, '-')}`}>
+              {String(row.data.status) === 'tersedia'
+                ? '✓ Tersedia Lengkap'
+                : String(row.data.status) === 'diproses'
+                  ? '⏳ Sedang Diproses'
+                  : '⚠ Belum Ada / Diurus'}
+            </span>
+          </div>
+          <div className="doc-dates-row">
+            {Boolean(row.data.issued_date) && (
+              <span className="doc-date">Terbit: {formatDate(String(row.data.issued_date))}</span>
+            )}
+            {Boolean(row.data.expires_date) ? (
+              <span
+                className={`doc-expiry ${
+                  String(row.data.expires_date) < today()
+                    ? 'is-expired'
+                    : String(row.data.expires_date) <= addDays(today(), 30)
+                      ? 'is-near-expiry'
+                      : 'is-valid'
+                }`}
+              >
+                {String(row.data.expires_date) < today()
+                  ? `🔴 Kadaluwarsa (${formatDate(String(row.data.expires_date))})`
+                  : String(row.data.expires_date) <= addDays(today(), 30)
+                    ? `🟡 Berakhir dalam 30 hari (${formatDate(String(row.data.expires_date))})`
+                    : `🟢 Berlaku s.d. ${formatDate(String(row.data.expires_date))}`}
+              </span>
+            ) : (
+              <span className="doc-expiry is-permanent">⚪ Masa berlaku tetap</span>
+            )}
+          </div>
+        </div>
       )}
-      {entity === 'risks' && (
-        <p>
-          Skor {Number(row.data.probability) * Number(row.data.impact)}/25 ·{' '}
-          {String(row.data.mitigation || 'Mitigasi belum dicatat')}
-        </p>
-      )}
+      {entity === 'risks' && (() => {
+        const prob = Number(row.data.probability || 3);
+        const imp = Number(row.data.impact || 3);
+        const score = prob * imp;
+        const level = score >= 15
+          ? { label: 'Bahaya Kritis', cls: 'risk-critical', desc: 'Perlu tindakan segera' }
+          : score >= 8
+            ? { label: 'Perlu Waspada', cls: 'risk-warning', desc: 'Siapkan mitigasi' }
+            : { label: 'Terkendali', cls: 'risk-safe', desc: 'Dalam SOP standar' };
+        return (
+          <div className="risk-card-details">
+            <div className="risk-level-strip">
+              <span className={`risk-level-badge ${level.cls}`}>
+                {level.label} ({score}/25)
+              </span>
+              <span className="risk-level-desc">{level.desc}</span>
+            </div>
+            {Boolean(row.data.mitigation) && (
+              <p className="record-text">
+                <strong>Rencana Mitigasi: </strong>
+                {String(row.data.mitigation)}
+              </p>
+            )}
+            {Boolean(row.data.review_date) && (
+              <small className="risk-review-date">
+                Jadwal Tinjau: {formatDate(String(row.data.review_date))}
+              </small>
+            )}
+          </div>
+        );
+      })()}
       {entity === 'stakeholders' &&
         (() => {
           const inf = Number(row.data.influence || 3);
@@ -399,58 +464,101 @@ export function Records({
           Buka tautan ↗
         </a>
       )}
-      {entity === 'meetings' && (
-        <div className="meeting-card-details">
-          {Boolean(row.data.location) && String(row.data.mode).toLowerCase() !== 'online' && (
-            <p className="meeting-detail-row">
-              <MapPin size={13} />
-              <strong>Tempat / Lokasi: </strong>
-              <span>{String(row.data.location)}</span>
-            </p>
-          )}
-          {Boolean(row.data.participants) && (
-            <p className="meeting-detail-row">
-              <Users size={13} />
-              <strong>Peserta Rapat: </strong>
-              <span>{String(row.data.participants)}</span>
-            </p>
-          )}
-          {Boolean(row.data.agenda) && (
-            <div className="meeting-section-box">
-              <BookOpen size={13} />
-              <strong>Agenda Pembahasan: </strong>
-              <p className="record-text">{String(row.data.agenda)}</p>
+      {entity === 'meetings' && (() => {
+        const linkedDecisions = (workspace.decisions || []).filter(
+          (d) => d.data.meeting_id === row.id,
+        );
+        return (
+          <div className="meeting-card-details">
+            {Boolean(row.data.location) && String(row.data.mode).toLowerCase() !== 'online' && (
+              <p className="meeting-detail-row">
+                <MapPin size={13} />
+                <strong>Tempat / Lokasi: </strong>
+                <span>{String(row.data.location)}</span>
+              </p>
+            )}
+            {Boolean(row.data.participants) && (
+              <p className="meeting-detail-row">
+                <Users size={13} />
+                <strong>Peserta Rapat: </strong>
+                <span>{String(row.data.participants)}</span>
+              </p>
+            )}
+            {Boolean(row.data.agenda) && (
+              <div className="meeting-section-box">
+                <BookOpen size={13} />
+                <strong>Agenda Pembahasan: </strong>
+                <p className="record-text">{String(row.data.agenda)}</p>
+              </div>
+            )}
+            {Boolean(row.data.minutes) && (
+              <div className="meeting-section-box">
+                <FileText size={13} />
+                <strong>Notulen / Hasil Kesepakatan: </strong>
+                <p className="record-text">{String(row.data.minutes)}</p>
+              </div>
+            )}
+            {linkedDecisions.length > 0 && (
+              <div className="meeting-section-box meeting-decisions-box">
+                <div className="meeting-decisions-head">
+                  <CheckCircle2 size={13} />
+                  <strong>Keputusan Terkait ({linkedDecisions.length}):</strong>
+                </div>
+                <ul className="meeting-decisions-list">
+                  {linkedDecisions.map((dec) => (
+                    <li key={dec.id}>
+                      <span className="decision-title">{String(dec.data.title)}</span>
+                      {dec.data.reason ? (
+                        <span className="decision-reason"> · {String(dec.data.reason)}</span>
+                      ) : null}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            <div className="meeting-action-row">
+              {Boolean(row.data.meeting_url) &&
+                String(row.data.mode).toLowerCase() !== 'tatap muka' &&
+                /^https?:\/\//.test(String(row.data.meeting_url)) && (
+                  <a
+                    className="button meeting-join btn-join-meeting"
+                    href={String(row.data.meeting_url)}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <Video size={13} />
+                    Masuk Rapat Online ↗
+                  </a>
+                )}
+              <button
+                className="button meeting-join btn-download-ics"
+                onClick={() => downloadMeeting(row)}
+                title="Unduh jadwal rapat .ics"
+              >
+                Unduh Jadwal (.ics)
+              </button>
+              <button
+                className="button meeting-followup-btn"
+                onClick={() => {
+                  window.dispatchEvent(
+                    new CustomEvent('hub-task', {
+                      detail: {
+                        title: `Tindak lanjut: ${row.data.title}`,
+                        description: String(row.data.minutes || row.data.agenda || ''),
+                        notes: `Sumber meetings: ${row.id}`,
+                        meeting_id: row.id,
+                      },
+                    }),
+                  );
+                }}
+                title="Buat tugas tindak lanjut rapat"
+              >
+                + Tindak Lanjut
+              </button>
             </div>
-          )}
-          {Boolean(row.data.minutes) && (
-            <div className="meeting-section-box">
-              <FileText size={13} />
-              <strong>Notulen / Hasil Kesepakatan: </strong>
-              <p className="record-text">{String(row.data.minutes)}</p>
-            </div>
-          )}
-          <div className="meeting-action-row">
-            {Boolean(row.data.meeting_url) &&
-              String(row.data.mode).toLowerCase() !== 'tatap muka' &&
-              /^https?:\/\//.test(String(row.data.meeting_url)) && (
-                <a
-                  className="button meeting-join btn-join-meeting"
-                  href={String(row.data.meeting_url)}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Masuk Rapat Online ↗
-                </a>
-              )}
-            <button
-              className="button meeting-join btn-download-ics"
-              onClick={() => downloadMeeting(row)}
-            >
-              Unduh Jadwal (.ics)
-            </button>
           </div>
-        </div>
-      )}
+        );
+      })()}
       {entity === 'work-items' &&
         Array.isArray(row.data.subtasks) &&
         row.data.subtasks.length > 0 && (
@@ -1000,6 +1108,42 @@ export function Records({
               })}
             </tbody>
           </table>
+        </div>
+      ) : entity === 'meetings' ? (
+        <div className="meetings-container">
+          {(() => {
+            const todayStr = today();
+            const upcoming = rows.filter((r) => String(r.data.date) >= todayStr);
+            const past = rows.filter((r) => String(r.data.date) < todayStr);
+
+            return (
+              <>
+                <section className="meeting-section-group" aria-label="Rapat akan datang dan hari ini">
+                  <div className="meeting-section-header">
+                    <h3>📅 Rapat Mendatang & Hari Ini</h3>
+                    <span className="badge">{upcoming.length}</span>
+                  </div>
+                  {upcoming.length > 0 ? (
+                    <div className="records">{upcoming.map(card)}</div>
+                  ) : (
+                    <div className="empty card compact">
+                      <p>Tidak ada rapat yang terjadwal hari ini atau mendatang.</p>
+                    </div>
+                  )}
+                </section>
+
+                {past.length > 0 && (
+                  <section className="meeting-section-group past-meetings" aria-label="Riwayat rapat sebelumnya">
+                    <div className="meeting-section-header">
+                      <h3>📁 Riwayat Rapat Sebelumnya</h3>
+                      <span className="badge">{past.length}</span>
+                    </div>
+                    <div className="records">{past.map(card)}</div>
+                  </section>
+                )}
+              </>
+            );
+          })()}
         </div>
       ) : (
         <div className="records">{rows.map(card)}</div>

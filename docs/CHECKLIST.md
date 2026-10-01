@@ -14,6 +14,9 @@
 - [x] Alur laporan eksekutif lengkap: simpan sebagai draf, terbitkan resmi, filter arsip, dan tombol hapus draf.
 - [x] Pusat Aksi Cepat Manajer (Superapp Action Center) dengan pintasan keyboard 1-9 untuk seluruh operasional dan perencanaan.
 - [x] Dasbor beranda multifungsi: pintasan aksi cepat harian, peringatan otomatis stok persediaan kritis, dan rekapitulasi data riil.
+- [x] Ruang kerja editorial: 5 palet tema seimbang (Lime & Ink, Sage, Lavender, Peach, Sky) dan pratinjau komponen langsung di Pengaturan.
+- [x] Navigasi sidebar terstruktur: favorit sematan, riwayat terakhir dibuka dinamis, dan grup menu kolapsibel.
+- [x] Karakter visual tiap modul: proyek terhubung, dokumen dengan masa berlaku berkode warna, risiko 3-level, dan alur terstruktur rapat.
 
 ## Penerimaan berikutnya
 - [ ] UAT dengan data nyata selama beberapa hari.

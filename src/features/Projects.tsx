@@ -2,14 +2,24 @@
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { FolderOpen, ArrowUpRight, Plus, Flag } from 'lucide-react';
+import {
+  FolderOpen,
+  ArrowUpRight,
+  Plus,
+  Flag,
+  FileText,
+  Scale,
+  AlertCircle,
+  Calendar,
+  CheckCircle2,
+} from 'lucide-react';
 import { ProjectNotes } from './ProjectNotes';
 import { Editor } from './Editor';
 import { Records } from './Records';
 import { schemas, type Item } from './schemas';
 import type { Workspace } from './useWorkspace';
 import { scopeProgress } from '@/lib/progress';
-import { formatDate } from '@/lib/date';
+import { formatDate, today } from '@/lib/date';
 import { Meter } from '@/components/charts/Charts';
 
 export function Projects({ data, refresh }: { data: Workspace; refresh: () => Promise<void> }) {
@@ -20,10 +30,14 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
   const [status, setStatus] = useState('');
   const projects = data.workstreams || [];
   const selected = projects.find((row) => row.id === query.get('id'));
+
   const tasksFor = (id: string) =>
     (data['work-items'] || [])
       .filter((row) => row.data.workstream_id === id)
       .map((row) => ({ ...schemas['work-items'].parse(row.data), id: row.id }));
+
+  const now = today();
+
   return (
     <>
       {selected ? (
@@ -68,9 +82,13 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
             </div>
             <Meter value={scopeProgress(tasksFor(selected.id))} />
           </section>
+
           <div className="project-context">
+            {/* Project Notes */}
             <ProjectNotes key={selected.id} project={selected} refresh={refresh} />
-            <section className="card">
+
+            {/* Related Milestones */}
+            <section className="card project-related-card">
               <h3>
                 <Flag size={18} /> Milestone terkait
               </h3>
@@ -93,7 +111,61 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
                 Kelola di Gantt →
               </Link>
             </section>
+
+            {/* Related Documents */}
+            <section className="card project-related-card">
+              <h3>
+                <FileText size={18} /> Dokumen & Perizinan Terkait
+              </h3>
+              {(data.documents || []).filter((row) => row.data.workstream_id === selected.id)
+                .length ? (
+                (data.documents || [])
+                  .filter((row) => row.data.workstream_id === selected.id)
+                  .map((row) => (
+                    <div className="attention doc-item-row" key={row.id}>
+                      <div>
+                        <strong>{String(row.data.title)}</strong>
+                        <small>{String(row.data.category || 'Dokumen')}</small>
+                      </div>
+                      {Boolean(row.data.link) && (
+                        <a href={String(row.data.link)} target="_blank" rel="noreferrer" className="text-link">
+                          Buka berkas ↗
+                        </a>
+                      )}
+                    </div>
+                  ))
+              ) : (
+                <p>Belum ada dokumen yang ditautkan ke proyek ini.</p>
+              )}
+              <Link className="text-link" href="/dokumen">
+                Buka arsip dokumen →
+              </Link>
+            </section>
+
+            {/* Related Decisions */}
+            <section className="card project-related-card">
+              <h3>
+                <Scale size={18} /> Keputusan Strategis
+              </h3>
+              {(data.decisions || []).filter((row) => row.data.workstream_id === selected.id)
+                .length ? (
+                (data.decisions || [])
+                  .filter((row) => row.data.workstream_id === selected.id)
+                  .map((row) => (
+                    <div className="attention decision-item-row" key={row.id}>
+                      <strong>{String(row.data.title)}</strong>
+                      {Boolean(row.data.reason) && <small>{String(row.data.reason)}</small>}
+                    </div>
+                  ))
+              ) : (
+                <p>Belum ada keputusan formal yang dicatat untuk proyek ini.</p>
+              )}
+              <Link className="text-link" href="/rapat?bagian=decisions">
+                Buka buku keputusan →
+              </Link>
+            </section>
           </div>
+
           <Records
             key={selected.id}
             entity="work-items"
@@ -108,7 +180,7 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
             <div>
               <span className="eyebrow">PROYEK</span>
               <h2>Proyek Anda</h2>
-              <p>Atur tugas, jadwal, dan catatan setiap proyek.</p>
+              <p>Atur tujuan, tugas, kendala, dan progres setiap inisiatif kerja.</p>
             </div>
             <button className="primary" onClick={() => setEdit(null)}>
               <Plus size={18} /> Proyek baru
@@ -154,6 +226,13 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
               )
               .map((row) => {
                 const tasks = tasksFor(row.id);
+                const openIssues = (data.issues || []).filter(
+                  (i) => i.data.workstream_id === row.id && i.data.status !== 'ditutup',
+                );
+                const nextTask = tasks
+                  .filter((t) => !['selesai', 'dibatalkan'].includes(t.status) && t.due_date >= now)
+                  .sort((a, b) => a.due_date.localeCompare(b.due_date))[0];
+
                 return (
                   <Link className="project-card" href={`/proyek?id=${row.id}`} key={row.id}>
                     <div className="section-head">
@@ -170,8 +249,38 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
                       <span className="badge">{String(row.data.status || 'rencana')}</span>
                     </div>
                     <h3>{String(row.data.title)}</h3>
-                    <p>{String(row.data.description || 'Belum ada deskripsi proyek.')}</p>
-                    <Meter value={scopeProgress(tasks)} />
+                    <p>{String(row.data.description || 'Belum ada deskripsi tujuan proyek.')}</p>
+
+                    {/* Progress Meter */}
+                    <div className="project-progress-wrap">
+                      <div className="project-progress-head">
+                        <small>Progres Penyelesaian</small>
+                        <strong>{scopeProgress(tasks)}%</strong>
+                      </div>
+                      <Meter value={scopeProgress(tasks)} />
+                    </div>
+
+                    {/* Obstacles & Next Steps */}
+                    <div className="project-card-highlights">
+                      <div className="project-highlight-item">
+                        {openIssues.length > 0 ? (
+                          <span className="issue-warning-badge">
+                            <AlertCircle size={13} /> {openIssues.length} kendala aktif
+                          </span>
+                        ) : (
+                          <span className="issue-clear-badge">
+                            <CheckCircle2 size={13} /> Kendala terkendali
+                          </span>
+                        )}
+                      </div>
+                      {nextTask && (
+                        <div className="project-next-step">
+                          <Calendar size={13} />
+                          <span>Langkah berikut: {nextTask.title} ({formatDate(nextTask.due_date)})</span>
+                        </div>
+                      )}
+                    </div>
+
                     <div className="project-card-foot">
                       <span>
                         {tasks.filter((task) => task.status === 'selesai').length} /{' '}
