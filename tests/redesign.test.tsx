@@ -236,6 +236,11 @@ describe('Fitur Redesain Behance', () => {
     expect(screen.getByText('LPJ Bulanan')).toBeTruthy();
     expect(screen.getByText('Rapat Pengurus KDMP')).toBeTruthy();
     expect(screen.getByText('14:00 WIB')).toBeTruthy();
+
+    const formBtn = screen.getByRole('button', { name: /Form lengkap/i });
+    expect(formBtn).toBeTruthy();
+    fireEvent.click(formBtn);
+    expect(screen.getByRole('heading', { name: /Tambah Tugas Baru/i })).toBeTruthy();
   });
 
   it('Editor pemangku kepentingan menyediakan pilihan cepat Babinsa dan Kades', () => {

@@ -568,9 +568,10 @@ export function TodayView({
             updated_at: '',
             data: {
               ...schemas['work-items'].parse({
-                title: '',
+                title: 'Tugas baru',
                 due_date: now,
               }),
+              title: '',
             },
           }}
           onClose={() => setShowCreateModal(false)}
