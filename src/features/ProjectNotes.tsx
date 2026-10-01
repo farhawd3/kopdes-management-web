@@ -1,6 +1,6 @@
 'use client';
 import { useRef, useState } from 'react';
-import { FileText, Heading2, List, ListChecks, Quote, Pencil, Save } from 'lucide-react';
+import { FileText, Heading2, List, ListChecks, Quote, Pencil, Save, CheckSquare, Square } from 'lucide-react';
 import type { Item } from './schemas';
 import { api } from '@/lib/client';
 
@@ -13,8 +13,12 @@ export function NoteContent({ text }: { text: string }) {
         if (/^- \[[ xX]\] /.test(line))
           return (
             <div className="note-check" key={index}>
-              <span aria-label={line[3].toLowerCase() === 'x' ? 'Selesai' : 'Belum selesai'}>
-                {line[3].toLowerCase() === 'x' ? '☑' : '☐'}
+              <span className="note-check-icon" aria-label={line[3].toLowerCase() === 'x' ? 'Selesai' : 'Belum selesai'}>
+                {line[3].toLowerCase() === 'x' ? (
+                  <CheckSquare size={15} className="text-success" />
+                ) : (
+                  <Square size={15} className="text-muted" />
+                )}
               </span>
               <span>{line.slice(6)}</span>
             </div>

@@ -230,12 +230,68 @@ export function SparkLine({ data, color = 'var(--brand)' }: { data: number[]; co
   );
 }
 
+/* ─── RadialProgressRing ──────────────────────────────────── */
+export function RadialProgressRing({
+  percentage,
+  size = 46,
+  strokeWidth = 5,
+  color,
+}: {
+  percentage: number;
+  size?: number;
+  strokeWidth?: number;
+  color?: string;
+}) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setMounted(true), 80);
+    return () => clearTimeout(t);
+  }, []);
+
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const safePct = Math.min(100, Math.max(0, percentage));
+  const offset = circumference - ((mounted ? safePct : 0) / 100) * circumference;
+
+  return (
+    <div className="stat-radial-wrap" style={{ width: size, height: size }}>
+      <svg width={size} height={size} className="stat-radial-svg" aria-hidden="true">
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke="color-mix(in srgb, currentColor 15%, transparent)"
+          strokeWidth={strokeWidth}
+        />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke={color || 'currentColor'}
+          strokeWidth={strokeWidth}
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+          transform={`rotate(-90 ${size / 2} ${size / 2})`}
+          className="stat-radial-circle"
+          style={{ transition: 'stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1)' }}
+        />
+      </svg>
+      <span className="stat-radial-val">{percentage}%</span>
+    </div>
+  );
+}
+
 /* ─── StatCard ────────────────────────────────────────────── */
 export function StatCard({
   label,
   value,
   sub,
   accent = false,
+  percentage,
+  icon,
   sparkData,
   href,
 }: {
@@ -243,16 +299,30 @@ export function StatCard({
   value: number | string;
   sub?: string;
   accent?: boolean;
+  percentage?: number;
+  icon?: React.ReactNode;
   sparkData?: number[];
   href?: string;
 }) {
+  const isPercent = percentage !== undefined || (typeof value === 'string' && value.endsWith('%'));
+  const pctVal =
+    percentage ??
+    (typeof value === 'string' && value.endsWith('%') ? parseInt(value, 10) || 0 : 0);
+
   const Inner = (
     <div className={`dash-stat-card${accent ? ' dash-stat-accent' : ''}`}>
       <div className="dash-stat-top">
         <span className="dash-stat-label">{label}</span>
-        {sparkData && (
+        {isPercent ? (
+          <RadialProgressRing
+            percentage={pctVal}
+            color={accent ? 'var(--brand-text)' : 'var(--brand)'}
+          />
+        ) : icon ? (
+          <div className="dash-stat-icon-wrap">{icon}</div>
+        ) : sparkData && Math.max(0, ...sparkData) > 0 ? (
           <SparkLine data={sparkData} color={accent ? 'var(--brand-text)' : 'var(--brand)'} />
-        )}
+        ) : null}
       </div>
       <strong className="dash-stat-value">
         {typeof value === 'number' ? <AnimatedCounter value={value} /> : value}

@@ -10,7 +10,6 @@ import {
   BarChart3,
   ShieldAlert,
   X,
-  ArrowRight,
   TrendingDown,
   TrendingUp,
 } from 'lucide-react';
@@ -176,48 +175,75 @@ export function ManagerActionModal({ open, onClose }: { open: boolean; onClose: 
       <div className="action-modal-container">
         <header className="action-modal-header">
           <div>
-            <div className="action-modal-badge">Superapp KDMP Puntukrejo</div>
-            <h2 id="action-modal-title">Tambah catatan</h2>
+            <div className="action-modal-badge">Pusat Aksi Manajer</div>
+            <h2 id="action-modal-title">Tambah Catatan & Kegiatan</h2>
             <p>
-              Pilih tindakan yang ingin segera dilakukan. Tekan angka <kbd>1</kbd> s.d. <kbd>9</kbd>{' '}
-              untuk memilih instan.
+              Pilih tindakan cepat. Tekan angka <kbd>1</kbd> s.d. <kbd>9</kbd> untuk membuka formulir langsung.
             </p>
           </div>
-          <button className="action-modal-close" onClick={onClose} aria-label="Tutup menu aksi">
-            <X size={20} />
+          <button
+            type="button"
+            className="action-modal-close"
+            onClick={onClose}
+            aria-label="Tutup menu aksi"
+            title="Tutup (Esc)"
+          >
+            <X size={20} strokeWidth={2.25} />
           </button>
         </header>
 
-        <div className="action-modal-grid">
-          {actions.map((item) => {
-            const { id, title, desc, href, badge, badgeCls, Icon, keyShortcut } = item;
-            return (
-              <button
-                key={id}
-                type="button"
-                className="action-card-btn"
-                onClick={() => handleSelect(href)}
-              >
-                <div className="action-card-top">
-                  <span className={`action-badge ${badgeCls}`}>{badge}</span>
-                  <kbd className="action-key">{keyShortcut}</kbd>
-                </div>
-                <div className="action-card-main">
-                  <div className="action-icon-squircle">
-                    <Icon size={20} />
-                  </div>
-                  <div className="action-text">
-                    <strong>{title}</strong>
-                    <p>{desc}</p>
-                  </div>
-                </div>
-                <div className="action-card-footer">
-                  <span>Buka formulir</span>
-                  <ArrowRight size={14} className="action-arrow" />
-                </div>
-              </button>
-            );
-          })}
+        <div className="action-modal-sections">
+          <div className="action-group-box">
+            <span className="action-group-title">Pencatatan Operasional</span>
+            <div className="action-modal-grid">
+              {actions.slice(0, 5).map((item) => {
+                const { id, title, desc, href, Icon, keyShortcut } = item;
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    className="action-card-btn"
+                    onClick={() => handleSelect(href)}
+                  >
+                    <div className="action-icon-squircle">
+                      <Icon size={18} />
+                    </div>
+                    <div className="action-text">
+                      <strong>{title}</strong>
+                      <small>{desc}</small>
+                    </div>
+                    <kbd className="action-key">{keyShortcut}</kbd>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="action-group-box">
+            <span className="action-group-title">Pekerjaan & Evaluasi</span>
+            <div className="action-modal-grid">
+              {actions.slice(5).map((item) => {
+                const { id, title, desc, href, Icon, keyShortcut } = item;
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    className="action-card-btn"
+                    onClick={() => handleSelect(href)}
+                  >
+                    <div className="action-icon-squircle">
+                      <Icon size={18} />
+                    </div>
+                    <div className="action-text">
+                      <strong>{title}</strong>
+                      <small>{desc}</small>
+                    </div>
+                    <kbd className="action-key">{keyShortcut}</kbd>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </div>
     </dialog>

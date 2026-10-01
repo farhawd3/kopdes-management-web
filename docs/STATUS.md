@@ -1,5 +1,26 @@
 # Status proyek — 1 Oktober 2026
 
+## Paket Estetika & Perapian UI Menyeluruh (Oktober 2026)
+
+- **Verifikasi Kualitas Kode**:
+  - `npm test`: **118/118 pengujian lulus (11 suites)** tanpa kegagalan.
+  - `npm run typecheck`: **0 kesalahan tipe TypeScript** (`tsc --noEmit`).
+  - `npm run lint`: **0 kesalahan linting / 0 peringatan** (`eslint src tests`).
+  - `npm run build`: **Next.js 16.3.7 Turbopack production build berhasil**, 9/9 rute teroptimasi penuh.
+
+- **Perbaikan Rinci Sesuai Masukan Manajer**:
+  - **Perapian Tanggal di Atas (`.home-date-chip`)**: Mengatasi masalah ikon kalender dan teks tanggal yang bertumpuk canggung di kanan atas beranda. Menambahkan kontainer pill horizontal rapi (`display: inline-flex; align-items: center; gap: 8px`), border 1.5px tegas, latar kartu, dan bayangan halus.
+  - **Peningkatan Popup Modal & Border Jelas**: Memperkuat wadah dialog (`dialog.editor`, `.manager-action-dialog`) dengan border 1.5px bertegasan tinggi (`var(--line-strong)`), bayangan ganda (*dual-stage shadow*), dan latar belakang *backdrop blur* (8px). Menyeragamkan seluruh input form (`.field-input`, `.field-select`, `.field-textarea`) dengan garis tepi 1.5px yang serasi dan cincin fokus halus tanpa garis hitam pekat kasar. Tombol silang penutup modal diperjelas dengan kontras tinggi dan efek hover tegas.
+  - **Sidebar Hemat Tempat**: Mengompresi kartu `Favorit` dan `Terakhir Dibuka` dari wadah besar ~300px menjadi baris chip ringkas (`.sidebar-recents-compact` dan `.sidebar-favorites-compact`) setinggi ~35px. Jika tidak ada item favorit disematkan, bagian favorit tidak memakan tempat sama sekali, mencegah scrollbar yang tidak perlu pada menu utama.
+  - **Penyelesaian Misteri "Garis Hitam" pada Kartu**: Menghilangkan garis hitam mendatar yang muncul saat data penyelesaian tugas bernilai 0. Masalah ini disebabkan oleh *polyline SparkLine* statis pada koordinat `y=33`. Komponen digantikan oleh `RadialProgressRing` interaktif dengan animasi lingkaran progres melingkar, serta ikon squircle bernuansa badge untuk kartu tugas aktif, terlambat, dan rapat.
+  - **Kartu & Grafik Lebih Unik & Beranimasi**:
+    - **Radial Progress Ring**: Animasi lingkaran SVG SVG stroke-dashoffset halus (0.8s) dengan persentase di tengah.
+    - **WeekBarChart**: Pilar grafik kini memakai gradien lembut, efek hover interaktif, dan penanda berpendar (*glow effect*) untuk hari ini (`bar-today`).
+    - **TaskDonutChart**: Transisi segmen donat interaktif yang membesar saat kursor diarahkan, serta center counter dengan tipografi tegas.
+    - **Project Progress**: Bar kemajuan proyek kini beranimasi bertahap (*staggered delay*).
+  - **Penyederhanaan Desain Aksi Cepat**: Menghilangkan tombol pintasan duplikat di bawah judul beranda. Mengelompokkan 9 tindakan di modal aksi manajer menjadi 2 seksi logis teratur (*Pencatatan Operasional* dan *Pekerjaan & Evaluasi*), menghapus teks pengulangan "Buka formulir →", dan menambahkan tombol silang `<X>` yang jelas dengan dukungan tombol `Esc`.
+  - **Pembersihan Total Emoji**: Menghapus seluruh karakter emoji mentah pada berkas `Editor.tsx`, `Operations.tsx`, `Records.tsx`, `ProjectNotes.tsx`, `Reports.tsx`, dan `catalog.ts`. Seluruhnya digantikan oleh ikon SVG Lucide yang konsisten dan selaras dengan tema aplikasi.
+
 ## Paket Karakter Halaman, Navigasi Terstruktur & Ruang Kerja Editorial
 
 - **Verifikasi Kualitas Kode**:

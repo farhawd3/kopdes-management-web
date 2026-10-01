@@ -515,9 +515,9 @@ export function Editor({
                     value={meetingMode}
                     onChange={(event) => setMeetingMode(event.target.value)}
                   >
-                    <option value="tatap muka">🏢 Tatap Muka (Pertemuan Langsung di Lokasi)</option>
-                    <option value="online">💻 Online Penuh (Google Meet / Zoom)</option>
-                    <option value="hybrid">🌐 Hybrid (Fisik di Lokasi + Tautan Online)</option>
+                    <option value="tatap muka">Tatap Muka (Pertemuan Langsung di Lokasi)</option>
+                    <option value="online">Online Penuh (Google Meet / Zoom)</option>
+                    <option value="hybrid">Hybrid (Fisik di Lokasi + Tautan Online)</option>
                   </select>
                   <small className="field-helper">
                     {meetingMode === 'tatap muka'

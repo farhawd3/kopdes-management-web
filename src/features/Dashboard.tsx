@@ -11,7 +11,8 @@ import {
   ClipboardCheck,
   FolderKanban,
   AlertTriangle,
-  BarChart3,
+  ListTodo,
+  Calendar,
 } from 'lucide-react';
 import { FollowUps } from './FollowUps';
 import type { Workspace } from './useWorkspace';
@@ -129,53 +130,6 @@ export function Dashboard({ data }: { data: Workspace }) {
         </div>
       </header>
 
-      {/* ── Superapp Manager Quick Action Strip ───────────────── */}
-      <div className="home-quick-strip">
-        <span className="strip-title">Pintasan Cepat:</span>
-        <div className="strip-buttons">
-          <Link
-            href="/keuangan?baru=1&arah=masuk"
-            className="strip-btn btn-cash-in"
-            title="Catat setoran atau penerimaan uang kas"
-          >
-            <Wallet size={14} />
-            <span>+ Kas Masuk</span>
-          </Link>
-          <Link
-            href="/keuangan?baru=1&arah=keluar"
-            className="strip-btn btn-cash-out"
-            title="Catat belanja atau pengeluaran kas"
-          >
-            <Wallet size={14} />
-            <span>+ Kas Keluar</span>
-          </Link>
-          <Link href="/anggota?baru=1" className="strip-btn" title="Daftarkan anggota baru">
-            <Users size={14} />
-            <span>+ Anggota</span>
-          </Link>
-          <Link
-            href="/barang?baru=1"
-            className="strip-btn"
-            title="Input produk atau beli persediaan"
-          >
-            <Package size={14} />
-            <span>+ Stok Barang</span>
-          </Link>
-          <Link href="/stok-opname?baru=1" className="strip-btn" title="Hitung fisik stok opname">
-            <ClipboardCheck size={14} />
-            <span>+ Opname</span>
-          </Link>
-          <Link
-            href="/laporan"
-            className="strip-btn btn-report"
-            title="Buka lembar laporan eksekutif"
-          >
-            <BarChart3 size={14} />
-            <span>+ Laporan</span>
-          </Link>
-        </div>
-      </div>
-
       {/* ── Critical Stock Alert Banner ───────────────────────── */}
       {criticalStockItems.length > 0 && (
         <div className="stock-alert-banner">
@@ -230,27 +184,30 @@ export function Dashboard({ data }: { data: Workspace }) {
         <StatCard
           label="Penyelesaian tugas"
           value={`${completion}%`}
+          percentage={completion}
           sub={`${completedCount} dari ${totalTasks} selesai`}
           accent
           href="/tugas?status=selesai"
-          sparkData={doneCounts}
         />
         <StatCard
           label="Tugas aktif"
           value={open.length}
           sub="belum selesai atau dibatalkan"
+          icon={<ListTodo size={18} />}
           href="/tugas"
         />
         <StatCard
           label="Terlambat"
           value={overdueCount}
           sub={overdueCount > 0 ? 'perlu diperhatikan' : 'semua tepat waktu'}
+          icon={<AlertTriangle size={18} />}
           href="/tugas?status=terlambat"
         />
         <StatCard
           label="Rapat hari ini"
           value={todayMeetingCount}
           sub={meeting ? String(meeting.data.title) : 'tidak ada jadwal'}
+          icon={<Calendar size={18} />}
           href="/rapat"
         />
       </div>

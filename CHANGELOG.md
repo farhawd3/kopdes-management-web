@@ -1,5 +1,21 @@
 # Changelog
 
+### Estetika, Perapian UI Menyeluruh & Grafis Animasi (1 Oktober 2026)
+
+- **Perapian Header Tanggal Atas**: Merapikan penataan chip tanggal (`.home-date-chip`) di kanan atas tajuk beranda dengan tata letak pill horizontal sejajar, ikon kalender rapi, border 1.5px tegas, dan tanpa pemotongan baris.
+- **Peningkatan Visual Modal Pop Up & Border Tegas**:
+  - Memberikan border 1.5px bertegasan tinggi (`var(--line-strong)`) dan bayangan berlapis mendalam pada semua modal dialog (`dialog.editor`, `.manager-action-dialog`).
+  - Menyeragamkan seluruh input form (`.field-input`, `.field-select`, `.field-textarea`) dengan garis tepi 1.5px dan cincin fokus lembut bernuansa brand/dark, menghilangkan garis hitam pekat yang kasar.
+  - Memperjelas tombol silang penutup modal dengan kontras tinggi dan efek hover tegas.
+- **Sidebar Hemat Ruang**: Mengompresi wadah `Favorit` dan `Terakhir Dibuka` menjadi barisan chip kompak (~35px) dan otomatis menyembunyikan Favorit jika belum ada item disematkan, membebaskan ruang vertikal untuk navigasi utama tanpa scrollbar yang mengganggu.
+- **Penyelesaian Misteri "Garis Hitam" pada Kartu**: Menghapus garis mendatar hitam pada kartu penyelesaian tugas dengan mengganti *sparkline* kosong dengan `RadialProgressRing` interaktif beranimasi lingkaran melingkar serta badge squircle berikon untuk metrik lainnya.
+- **Grafik & Kartu Unik Beranimasi**:
+  - `WeekBarChart`: Pilar grafik dengan gradien warna modern, penanda menyala (*glow*) untuk hari ini, dan animasi pengisian lembut saat dimuat.
+  - `TaskDonutChart`: Animasi segmen donat saat dimuat dan interaksi membesar pada segmen saat disentuh kursor.
+  - Kartu Metrik: Efek angkat mikro (*micro-lift*) dan bayangan melayang saat diarahkan kursor.
+- **Penyederhanaan Pusat Aksi Cepat**: Menghilangkan tombol pintasan duplikat di beranda dan menata ulang modal aksi manajer menjadi 2 kelompok logis rapi (*Pencatatan Operasional* dan *Pekerjaan & Evaluasi*) tanpa pengulangan teks yang berisik.
+- **Penghapusan Total Emoji Mentah**: Menghapus seluruh karakter emoji mentah pada berkas `Editor.tsx`, `Operations.tsx`, `Records.tsx`, `ProjectNotes.tsx`, `Reports.tsx`, dan `catalog.ts`, menggantikannya dengan ikon SVG Lucide yang konsisten dan elegan.
+
 ### Penyelarasan Komponen, Perbaikan Tombol Modal & Kerapian Dropdown (1 Oktober 2026)
 
 - **Perbaikan Tombol Tutup Pop Up (Silang Modal)**:

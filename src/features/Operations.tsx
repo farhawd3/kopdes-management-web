@@ -6,6 +6,7 @@ import {
   ArrowUpRight,
   Plus,
   Users,
+  User,
   Wallet,
   Package,
   ClipboardCheck,
@@ -272,9 +273,19 @@ export function Operations({
           <span className="table-title-text">{display(row, field)}</span>
           {entity === 'cash-entries' && (member || item) && (
             <span className="table-title-subtitle">
-              {member && `👤 ${member.data.title}`}
+              {member && (
+                <span className="inline-flex items-center gap-1">
+                  <User size={12} className="inline-icon" />
+                  {String(member.data.title)}
+                </span>
+              )}
               {member && item && ' · '}
-              {item && `📦 ${item.data.title}`}
+              {item && (
+                <span className="inline-flex items-center gap-1">
+                  <Package size={12} className="inline-icon" />
+                  {String(item.data.title)}
+                </span>
+              )}
             </span>
           )}
         </button>

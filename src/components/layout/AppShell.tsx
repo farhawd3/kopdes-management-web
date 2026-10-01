@@ -243,75 +243,85 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
         </button>
 
         <div className="manager-sidebar-nav-scroll">
-          <section className="sidebar-quick-access" aria-label="Akses cepat">
-            <div className="sidebar-favorites">
-              <div className="sidebar-section-head-row">
-                <h2>Favorit</h2>
-                <button
-                  type="button"
-                  aria-label={
-                    favorites.includes(path)
-                      ? 'Hapus halaman ini dari favorit'
-                      : 'Simpan halaman ini ke favorit'
-                  }
-                  aria-pressed={favorites.includes(path)}
-                  onClick={() =>
-                    setFavoriteText(
-                      (favorites.includes(path)
-                        ? favorites.filter((href) => href !== path)
-                        : [...favorites, path]
-                      ).join('|'),
-                    )
-                  }
-                >
-                  <Star size={15} fill={favorites.includes(path) ? 'currentColor' : 'none'} />
-                </button>
-              </div>
-              <div className="sidebar-favorites-list">
-                {favorites.map((href) => (
-                  <Link
-                    key={href}
-                    href={href}
-                    aria-current={path === href ? 'page' : undefined}
-                    className={`sidebar-favorite-link ${path === href ? 'is-active' : ''}`}
-                    onClick={() => setMenu(false)}
-                  >
-                    <Star size={13} fill={path === href ? 'currentColor' : 'none'} />
-                    <span>{navigation.find(([url]) => url === href)?.[1] || href}</span>
-                  </Link>
-                ))}
-              </div>
-              {!favorites.length && <small>Klik ikon bintang untuk menyematkan favorit.</small>}
-            </div>
+          {(favorites.length > 0 || recents.length > 0) && (
+            <section className="sidebar-quick-access" aria-label="Akses cepat">
+              {favorites.length > 0 && (
+                <div className="sidebar-favorites-compact">
+                  <div className="sidebar-sub-head">
+                    <span className="sidebar-sub-label">
+                      <Star size={11} className="star-gold" /> Favorit
+                    </span>
+                    <button
+                      type="button"
+                      className="star-toggle-btn"
+                      aria-label={
+                        favorites.includes(path)
+                          ? 'Hapus halaman ini dari favorit'
+                          : 'Simpan halaman ini ke favorit'
+                      }
+                      title={favorites.includes(path) ? 'Hapus dari favorit' : 'Tambah ke favorit'}
+                      onClick={() =>
+                        setFavoriteText(
+                          (favorites.includes(path)
+                            ? favorites.filter((href) => href !== path)
+                            : [...favorites, path]
+                          ).join('|'),
+                        )
+                      }
+                    >
+                      <Star size={12} fill={favorites.includes(path) ? 'currentColor' : 'none'} />
+                    </button>
+                  </div>
+                  <div className="sidebar-favorites-items">
+                    {favorites.map((href) => {
+                      const FavIcon = navIcons[href] || ArrowUpRight;
+                      return (
+                        <Link
+                          key={href}
+                          href={href}
+                          aria-current={path === href ? 'page' : undefined}
+                          className={`sidebar-fav-item ${path === href ? 'is-active' : ''}`}
+                          onClick={() => setMenu(false)}
+                        >
+                          <FavIcon size={13} className="fav-item-icon" />
+                          <span>{navigation.find(([url]) => url === href)?.[1] || href}</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
-            {recents.length > 0 && (
-              <div className="sidebar-recents">
-                <div className="sidebar-recents-header">
-                  <Clock size={11} className="sidebar-recents-icon" />
-                  <span className="sidebar-recents-title">Terakhir dibuka</span>
+              {recents.length > 0 && (
+                <div className="sidebar-recents-compact">
+                  <div className="sidebar-sub-head">
+                    <span className="sidebar-sub-label">
+                      <Clock size={11} /> Terakhir
+                    </span>
+                  </div>
+                  <div className="sidebar-recents-chips">
+                    {recents.slice(0, 4).map((href) => {
+                      const RecentIcon = navIcons[href] || ArrowUpRight;
+                      const label = navigation.find(([url]) => url === href)?.[1] || href;
+                      const isCurrent = path === href;
+                      return (
+                        <Link
+                          key={href}
+                          href={href}
+                          className={`sidebar-recent-chip ${isCurrent ? 'is-active' : ''}`}
+                          onClick={() => setMenu(false)}
+                          title={label}
+                        >
+                          <RecentIcon size={11} className="recent-chip-icon" />
+                          <span className="recent-chip-text">{label}</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
                 </div>
-                <div className="sidebar-recents-chips">
-                  {recents.map((href) => {
-                    const RecentIcon = navIcons[href] || ArrowUpRight;
-                    const label = navigation.find(([url]) => url === href)?.[1] || href;
-                    const isCurrent = path === href;
-                    return (
-                      <Link
-                        key={href}
-                        href={href}
-                        className={`sidebar-recent-chip ${isCurrent ? 'is-active' : ''}`}
-                        onClick={() => setMenu(false)}
-                        title={label}
-                      >
-                        <RecentIcon size={12} className="recent-chip-icon" />
-                        <span className="recent-chip-text">{label}</span>
-                      </Link>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </section>
+              )}
+            </section>
+          )}
           {sections.map(([label, paths]) => (
             <section key={label} className="manager-sidebar-section">
               <h2 className="sidebar-section-title">

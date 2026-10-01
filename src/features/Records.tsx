@@ -293,11 +293,22 @@ export function Records({
               <span className="doc-kind-pill">{String(row.data.kind)}</span>
             )}
             <span className={`doc-status-pill status-${String(row.data.status || 'belum ada').replace(/\s+/g, '-')}`}>
-              {String(row.data.status) === 'tersedia'
-                ? '✓ Tersedia Lengkap'
-                : String(row.data.status) === 'diproses'
-                  ? '⏳ Sedang Diproses'
-                  : '⚠ Belum Ada / Diurus'}
+              {String(row.data.status) === 'tersedia' ? (
+                <>
+                  <CheckCircle2 size={12} />
+                  <span>Tersedia Lengkap</span>
+                </>
+              ) : String(row.data.status) === 'diproses' ? (
+                <>
+                  <Clock size={12} />
+                  <span>Sedang Diproses</span>
+                </>
+              ) : (
+                <>
+                  <AlertCircle size={12} />
+                  <span>Belum Ada / Diurus</span>
+                </>
+              )}
             </span>
           </div>
           <div className="doc-dates-row">

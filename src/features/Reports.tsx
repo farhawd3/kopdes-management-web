@@ -417,7 +417,7 @@ export function Reports() {
                     `Status: *${isCurrentDraft ? 'DRAF KERJA' : 'DOKUMEN RESMI'}*`,
                     `Periode: ${formatDate(selected.period_start)} — ${formatDate(selected.period_end)}`,
                     ``,
-                    `📊 *RINGKASAN EKSEKUTIF*`,
+                    `*RINGKASAN EKSEKUTIF*`,
                     `• Capaian Tugas Selesai: ${selected.snapshot.completed.length}`,
                     `• Milestone Tercapai: ${selected.snapshot.milestones.length}`,
                     `• Tugas Terlambat/Kendala: ${selected.snapshot.overdue.length}`,
@@ -429,24 +429,24 @@ export function Reports() {
                       : []),
                     ``,
                     ...(selected.snapshot.notes
-                      ? [`📝 *CATATAN MANAJER:*\n${selected.snapshot.notes}`, ``]
+                      ? [`*CATATAN MANAJER:*\n${selected.snapshot.notes}`, ``]
                       : []),
-                    `✅ *CAPAIAN SELESAI:*`,
+                    `*CAPAIAN SELESAI:*`,
                     ...(selected.snapshot.completed.length
                       ? selected.snapshot.completed.map((line) => `• ${line}`)
                       : ['(Nihil)']),
                     ``,
-                    `🚩 *MILESTONE TERCAPAI:*`,
+                    `*MILESTONE TERCAPAI:*`,
                     ...(selected.snapshot.milestones.length
                       ? selected.snapshot.milestones.map((line) => `• ${line}`)
                       : ['(Nihil)']),
                     ``,
-                    `📅 *RENCANA 7 HARI MENDATANG:*`,
+                    `*RENCANA 7 HARI MENDATANG:*`,
                     ...(selected.snapshot.next.length
                       ? selected.snapshot.next.map((line) => `• ${line}`)
                       : ['(Nihil)']),
                     ``,
-                    `⚠️ *KENDALA / TUGAS TERLAMBAT:*`,
+                    `*KENDALA / TUGAS TERLAMBAT:*`,
                     ...(selected.snapshot.overdue.length
                       ? selected.snapshot.overdue.map((line) => `• ${line}`)
                       : ['(Nihil - aman)']),
