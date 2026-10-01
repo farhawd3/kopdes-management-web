@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { addDays, daysBetween, formatDate, today } from '@/lib/date';
 
@@ -79,8 +79,23 @@ export function DateRangePicker({
     setActiveMonthYear((prev) => ({ ...prev, year: prev.year + amount }));
   }
 
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') onClose?.();
+    }
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
   return (
-    <div className="date-range-picker-modal" role="dialog" aria-label="Pemilih Rentang Tanggal">
+    <div
+      className="date-range-picker-modal"
+      role="dialog"
+      aria-label="Pemilih Rentang Tanggal"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose?.();
+      }}
+    >
       <div className="date-range-picker-card">
         <div className="range-picker-body">
           {/* Left Month List Sidebar */}

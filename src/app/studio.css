@@ -1111,28 +1111,36 @@
   line-height: 1.6;
 }
 .notebook-spine {
-  width: 45px;
-  height: 52px;
+  width: 48px;
+  height: 48px;
   flex-shrink: 0;
   border: 1px solid var(--line);
-  border-left: 4px solid #8192c4;
   background: var(--surface);
-  color: #7183b5;
-  border-radius: 3px 7px 7px 3px;
-  display: grid;
-  place-items: center;
+  color: var(--ink);
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.spine-0 {
+  background: #ecfdf5;
+  color: #059669;
+  border-color: #d1fae5;
 }
 .spine-1 {
-  border-left-color: #bd9b62;
-  color: #ac874a;
+  background: #f0f9ff;
+  color: #0284c7;
+  border-color: #e0f2fe;
 }
 .spine-2 {
-  border-left-color: #78a798;
-  color: #598f7c;
+  background: #faf5ff;
+  color: #7c3aed;
+  border-color: #f3e8ff;
 }
 .spine-3 {
-  border-left-color: #b78fa9;
-  color: #a37594;
+  background: #fffbeb;
+  color: #d97706;
+  border-color: #fef3c7;
 }
 .notebook-count {
   font-size: 12px;

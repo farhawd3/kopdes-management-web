@@ -1,9 +1,12 @@
 'use client';
+import React from 'react';
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { catalog, labels, options } from './catalog';
+import { catalog, labels, options, formatChoiceLabel } from './catalog';
 import { schemas, type Entity, type Item } from './schemas';
 import type { Workspace } from './useWorkspace';
+import { SavedTaskViews, type TaskView } from './SavedTaskViews';
+import { TaskBatchActions } from './TaskBatchActions';
 import { Editor } from './Editor';
 import { api } from '@/lib/client';
 import { today, addDays, formatDate } from '@/lib/date';
@@ -12,6 +15,7 @@ import { Meter, RiskMatrix } from '@/components/charts/Charts';
 import { TaskCalendar } from './TaskCalendar';
 import { ReadinessRadar } from '@/components/charts/ReadinessRadar';
 import { InfluenceMap } from '@/components/charts/InfluenceMap';
+import { Select } from '@/components/ui/Select';
 import {
   ListTodo,
   Columns3,
@@ -23,6 +27,22 @@ import {
   UploadCloud,
   Target,
   X,
+  Shield,
+  Landmark,
+  Scale,
+  Users2,
+  Building2,
+  Wheat,
+  Handshake,
+  CircleDot,
+  Clock,
+  MapPin,
+  Users,
+  BookOpen,
+  FileText,
+  Phone,
+  AlertTriangle,
+  FolderOpen,
 } from 'lucide-react';
 import { TaskTimeline } from './TaskTimeline';
 import { downloadMeeting } from './meeting';
@@ -32,6 +52,47 @@ import { SprintModal } from './SprintModal';
 import { SprintCard } from './SprintCard';
 import { CsvDropzone } from '@/components/ui/CsvDropzone';
 import { ScrumBoardView } from './ScrumBoardView';
+
+function getStakeholderCategoryClass(category: string) {
+  const cat = category.toLowerCase();
+  if (cat.includes('keamanan') || cat.includes('babinsa') || cat.includes('bhabinkamtibmas'))
+    return 'badge-security';
+  if (
+    cat.includes('pemerintah') ||
+    cat.includes('kepala desa') ||
+    cat.includes('kades') ||
+    cat.includes('bpd')
+  )
+    return 'badge-gov';
+  if (cat.includes('pengawas')) return 'badge-supervisor';
+  if (cat.includes('pengurus') || cat.includes('pengelola')) return 'badge-board';
+  if (cat.includes('dinas') || cat.includes('pembina')) return 'badge-agency';
+  if (cat.includes('masyarakat') || cat.includes('tani') || cat.includes('gapoktan'))
+    return 'badge-community';
+  if (cat.includes('mitra') || cat.includes('pemasok')) return 'badge-partner';
+  return 'badge-general';
+}
+
+function getStakeholderCategoryIcon(category: string): React.ReactElement {
+  const cat = category.toLowerCase();
+  if (cat.includes('keamanan') || cat.includes('babinsa') || cat.includes('bhabinkamtibmas'))
+    return <Shield size={13} />;
+  if (
+    cat.includes('pemerintah') ||
+    cat.includes('kepala desa') ||
+    cat.includes('kades') ||
+    cat.includes('bpd')
+  )
+    return <Landmark size={13} />;
+  if (cat.includes('pengawas')) return <Scale size={13} />;
+  if (cat.includes('pengurus') || cat.includes('pengelola')) return <Users2 size={13} />;
+  if (cat.includes('dinas') || cat.includes('pembina')) return <Building2 size={13} />;
+  if (cat.includes('masyarakat') || cat.includes('tani') || cat.includes('gapoktan'))
+    return <Wheat size={13} />;
+  if (cat.includes('mitra') || cat.includes('pemasok')) return <Handshake size={13} />;
+  return <CircleDot size={13} />;
+}
+
 export function Records({
   entity,
   workspace,
@@ -47,14 +108,21 @@ export function Records({
 }) {
   const query = useSearchParams(),
     router = useRouter();
-  const [edit, setEdit] = useState<Item | null | undefined>(),
-    [detailTask, setDetailTask] = useState<Item | null>(null),
+  const [edit, setEdit] = useState<Item | null | undefined>(() =>
+      (workspace[entity] || []).find((row) => row.id === query.get('record')),
+    ),
+    [detailTask, setDetailTask] = useState<Item | null>(() =>
+      entity === 'work-items'
+        ? (workspace['work-items'] || []).find((item) => item.id === query.get('task')) || null
+        : null,
+    ),
     [showSprintModal, setShowSprintModal] = useState<Item | boolean>(false),
     [showCsvModal, setShowCsvModal] = useState(false),
     [sprintFilter, setSprintFilter] = useState(''),
+    [filtersOpen, setFiltersOpen] = useState(false),
     [quickTitle, setQuickTitle] = useState(''),
     [search, setSearch] = useState(''),
-    [filter, setFilter] = useState(initialFilter),
+    [filter, setFilter] = useState<string | null>(initialFilter || null),
     [workstream, setWorkstream] = useState(''),
     [priority, setPriority] = useState(''),
     [sort, setSort] = useState('due'),
@@ -90,9 +158,10 @@ export function Records({
     // eslint-disable-next-line react-hooks/set-state-in-effect
     if (requestedView === 'kalender') setView('kalender');
     else if (requestedView === 'harian') setView('harian');
+    else setView('daftar');
   }, [requestedView]);
-  const quickAdd = entity === 'work-items' && query.get('baru') === '1';
-  const effectiveFilter = filter || (entity === 'work-items' ? query.get('status') || '' : '');
+  const quickAdd = query.get('baru') === '1';
+  const effectiveFilter = filter ?? (entity === 'work-items' ? query.get('status') || '' : '');
   const all = (workspace[entity] || []).filter(
       (row) => !scopeId || row.data.workstream_id === scopeId,
     ),
@@ -147,12 +216,29 @@ export function Records({
             {String(row.data.status)}
           </span>
         )}
+        {entity === 'stakeholders' && Boolean(row.data.category) && (
+          <span
+            className={`stakeholder-badge ${getStakeholderCategoryClass(String(row.data.category))}`}
+          >
+            {getStakeholderCategoryIcon(String(row.data.category))} {String(row.data.category)}
+          </span>
+        )}
       </div>
       <div className="record-meta">
         {entity === 'meetings' && (
           <>
-            <span>{String(row.data.time)} WIB</span>
-            <span>{String(row.data.mode || 'tatap muka')}</span>
+            <span className="meeting-time-tag">
+              <Clock size={12} /> {String(row.data.time)} WIB
+            </span>
+            <span
+              className={`meeting-mode-tag mode-${String(row.data.mode || 'tatap muka').replace(' ', '-')}`}
+            >
+              {String(row.data.mode).toLowerCase() === 'online'
+                ? 'Online'
+                : String(row.data.mode).toLowerCase() === 'hybrid'
+                  ? 'Hybrid'
+                  : 'Tatap Muka'}
+            </span>
           </>
         )}
         {Boolean(row.data.assignee) && <span>{String(row.data.assignee)}</span>}
@@ -203,22 +289,110 @@ export function Records({
           {String(row.data.mitigation || 'Mitigasi belum dicatat')}
         </p>
       )}
-      {entity === 'stakeholders' && (
-        <p>
-          {String(row.data.category)} ·{' '}
-          {row.data.last_contact
-            ? `Kontak terakhir ${formatDate(String(row.data.last_contact))}`
-            : 'Belum ada kontak'}
-          {String(row.data.last_contact) < addDays(today(), -14) ? ' · Perlu dihubungi' : ''}
-        </p>
-      )}
-      {['description', 'notes', 'minutes', 'reason', 'follow_up'].map((key) =>
-        row.data[key] ? (
-          <p className="record-text" key={key}>
-            <strong>{labels[key]}: </strong>
-            {String(row.data[key])}
-          </p>
-        ) : null,
+      {entity === 'stakeholders' &&
+        (() => {
+          const inf = Number(row.data.influence || 3);
+          const int = Number(row.data.interest || 3);
+          const highInf = inf >= 3;
+          const highInt = int >= 3;
+          const quadrant =
+            highInf && highInt
+              ? { label: 'Libatkan Erat', desc: 'Mitra Kunci Strategis', cls: 'quadrant-manage' }
+              : highInf
+                ? {
+                    label: 'Jaga Dukungan',
+                    desc: 'Penjaga Otoritas & Keamanan',
+                    cls: 'quadrant-satisfy',
+                  }
+                : highInt
+                  ? {
+                      label: 'Beri Informasi',
+                      desc: 'Komunitas & Warga Terdampak',
+                      cls: 'quadrant-inform',
+                    }
+                  : { label: 'Pantau', desc: 'Mitra Pendukung Berkala', cls: 'quadrant-monitor' };
+          const rawContact = String(row.data.contact || '').trim();
+          const phoneDigits = rawContact.replace(/[^\d+]/g, '');
+          const isPhone = phoneDigits.length >= 8;
+          const waPhone = phoneDigits.startsWith('0')
+            ? '62' + phoneDigits.slice(1)
+            : phoneDigits.replace(/^\+/, '');
+          const lastContactStr = String(row.data.last_contact || '');
+          const isLate = Boolean(lastContactStr && lastContactStr < addDays(today(), -14));
+          const interactions = (workspace.interactions || []).filter(
+            (i) => i.data.stakeholder_id === row.id,
+          );
+
+          return (
+            <div className="stakeholder-card-body">
+              <div className="stakeholder-strategy-row">
+                <span className={`stakeholder-quadrant-tag ${quadrant.cls}`}>
+                  {quadrant.label} · {quadrant.desc}
+                </span>
+                <span className="stakeholder-scores">
+                  Wewenang: {inf}/5 · Keterlibatan: {int}/5
+                </span>
+              </div>
+
+              {rawContact && (
+                <div className="stakeholder-contact-row">
+                  <span className="contact-text">
+                    <span className="contact-icon">
+                      <Phone size={12} />
+                    </span>{' '}
+                    {rawContact}
+                  </span>
+                  {isPhone && (
+                    <div className="contact-actions">
+                      <a
+                        href={`https://wa.me/${waPhone}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="button wa-btn"
+                        title="Kirim pesan WhatsApp"
+                      >
+                        WhatsApp ↗
+                      </a>
+                      <a
+                        href={`tel:${phoneDigits}`}
+                        className="button call-btn"
+                        title="Panggil nomor telepon"
+                      >
+                        Telepon
+                      </a>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <div className="stakeholder-comm-status">
+                <span className={`comm-date ${isLate ? 'late-warning' : ''}`}>
+                  {lastContactStr
+                    ? `Kontak terakhir: ${formatDate(lastContactStr)}`
+                    : 'Belum ada catatan interaksi'}
+                  {isLate ? ' · Perlu dihubungi kembali (>14 hari)' : ''}
+                </span>
+                {interactions.length > 0 && (
+                  <span className="comm-count">{interactions.length} riwayat interaksi</span>
+                )}
+              </div>
+            </div>
+          );
+        })()}
+      {['description', 'notes', 'minutes', 'reason', 'follow_up']
+        .filter((key) => entity !== 'stakeholders' || key !== 'follow_up')
+        .map((key) =>
+          row.data[key] ? (
+            <p className="record-text" key={key}>
+              <strong>{labels[key]}: </strong>
+              {String(row.data[key])}
+            </p>
+          ) : null,
+        )}
+      {entity === 'stakeholders' && Boolean(row.data.follow_up) && (
+        <div className="stakeholder-followup-callout">
+          <strong>Tindak Lanjut:</strong> {String(row.data.follow_up)}
+        </div>
       )}
       {Boolean(row.data.link) && (
         <a href={String(row.data.link)} target="_blank" rel="noreferrer">
@@ -226,29 +400,56 @@ export function Records({
         </a>
       )}
       {entity === 'meetings' && (
-        <>
-          {Boolean(row.data.location) && <p>Lokasi: {String(row.data.location)}</p>}
-          {Boolean(row.data.agenda) && (
-            <p className="record-text">
-              <strong>Agenda: </strong>
-              {String(row.data.agenda)}
+        <div className="meeting-card-details">
+          {Boolean(row.data.location) && String(row.data.mode).toLowerCase() !== 'online' && (
+            <p className="meeting-detail-row">
+              <MapPin size={13} />
+              <strong>Tempat / Lokasi: </strong>
+              <span>{String(row.data.location)}</span>
             </p>
           )}
-          {Boolean(row.data.participants) && <p>Peserta: {String(row.data.participants)}</p>}
-          {Boolean(row.data.meeting_url) && /^https?:\/\//.test(String(row.data.meeting_url)) && (
-            <a
-              className="button meeting-join"
-              href={String(row.data.meeting_url)}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Bergabung ke rapat ↗
-            </a>
+          {Boolean(row.data.participants) && (
+            <p className="meeting-detail-row">
+              <Users size={13} />
+              <strong>Peserta Rapat: </strong>
+              <span>{String(row.data.participants)}</span>
+            </p>
           )}
-          <button className="meeting-join" onClick={() => downloadMeeting(row)}>
-            Unduh agenda (.ics)
-          </button>
-        </>
+          {Boolean(row.data.agenda) && (
+            <div className="meeting-section-box">
+              <BookOpen size={13} />
+              <strong>Agenda Pembahasan: </strong>
+              <p className="record-text">{String(row.data.agenda)}</p>
+            </div>
+          )}
+          {Boolean(row.data.minutes) && (
+            <div className="meeting-section-box">
+              <FileText size={13} />
+              <strong>Notulen / Hasil Kesepakatan: </strong>
+              <p className="record-text">{String(row.data.minutes)}</p>
+            </div>
+          )}
+          <div className="meeting-action-row">
+            {Boolean(row.data.meeting_url) &&
+              String(row.data.mode).toLowerCase() !== 'tatap muka' &&
+              /^https?:\/\//.test(String(row.data.meeting_url)) && (
+                <a
+                  className="button meeting-join btn-join-meeting"
+                  href={String(row.data.meeting_url)}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Masuk Rapat Online ↗
+                </a>
+              )}
+            <button
+              className="button meeting-join btn-download-ics"
+              onClick={() => downloadMeeting(row)}
+            >
+              Unduh Jadwal (.ics)
+            </button>
+          </div>
+        </div>
       )}
       {entity === 'work-items' &&
         Array.isArray(row.data.subtasks) &&
@@ -292,7 +493,7 @@ export function Records({
               })
             }
           >
-            ✓ Selesai
+            Selesai
           </button>
         )}
         <details className="record-options">
@@ -329,7 +530,9 @@ export function Records({
                     }
                   >
                     {options['work-items.status'].map((value) => (
-                      <option key={value}>{value}</option>
+                      <option key={value} value={value}>
+                        {formatChoiceLabel(value)}
+                      </option>
                     ))}
                   </select>
                 </label>
@@ -382,7 +585,13 @@ export function Records({
     </article>
   );
   return (
-    <section className={entity === 'work-items' ? 'task-database' : undefined}>
+    <section
+      className={
+        entity === 'work-items'
+          ? `task-database task-view-${view}`
+          : `domain-records domain-${entity}`
+      }
+    >
       <div className="section-head">
         <div>
           <h2>{catalog[entity].title}</h2>
@@ -421,7 +630,7 @@ export function Records({
         <div className="database-views" aria-label="Tampilan tugas">
           {[
             ['harian', 'Harian', CalendarClock],
-            ['papan', 'Scrum View', Columns3],
+            ['papan', 'Papan', Columns3],
             ['daftar', 'Daftar', ListTodo],
             ['kalender', 'Kalender', CalendarDays],
             ['gantt', 'Gantt', ChartGantt],
@@ -439,7 +648,8 @@ export function Records({
             );
           })}
           <span>{rows.length} tugas</span>
-          <div className="view-extra-actions">
+          <details className="view-extra-actions">
+            <summary>Lainnya</summary>
             <button
               type="button"
               className="btn-sprint-trigger"
@@ -447,7 +657,7 @@ export function Records({
               onClick={() => setShowSprintModal(true)}
             >
               <Target size={15} />
-              <span>Sprint</span>
+              <span>Periode kerja</span>
             </button>
             <button
               type="button"
@@ -458,7 +668,7 @@ export function Records({
               <UploadCloud size={15} />
               <span>Impor CSV</span>
             </button>
-          </div>
+          </details>
         </div>
       )}
       {entity === 'work-items' && (workspace.sprints || []).length > 0 && !sprintFilter && (
@@ -515,7 +725,15 @@ export function Records({
           </button>
         </form>
       )}
-      <div className="filters">
+      <button
+        type="button"
+        className="mobile-filter-toggle"
+        aria-expanded={filtersOpen}
+        onClick={() => setFiltersOpen(!filtersOpen)}
+      >
+        Cari & filter{search || effectiveFilter || workstream || priority ? ' · aktif' : ''}
+      </button>
+      <div className={`filters ${filtersOpen ? 'filters-expanded' : ''}`}>
         <label>
           <span className="field-caption">
             <Search size={14} /> Cari
@@ -529,71 +747,123 @@ export function Records({
         </label>
         {options[entity + '.status'] && (
           <label>
-            Status
-            <select
+            <span className="field-caption">Status</span>
+            <Select
               value={effectiveFilter}
-              onChange={(e) => {
-                setFilter(e.target.value);
-                if (entity === 'work-items' && query.has('status'))
-                  router.replace(scopeId ? `/proyek?id=${scopeId}` : '/tugas');
+              onChange={(value) => {
+                setFilter(value);
+                if (entity === 'work-items' && query.has('status')) {
+                  const next = new URLSearchParams(query.toString());
+                  next.delete('status');
+                  router.replace(
+                    (scopeId ? '/proyek' : '/tugas') + (next.size ? '?' + next.toString() : ''),
+                  );
+                }
               }}
-            >
-              <option value="">Semua status</option>
-              {entity === 'work-items' && <option value="terlambat">Terlambat</option>}
-              {options[entity + '.status'].map((value) => (
-                <option key={value}>{value}</option>
-              ))}
-            </select>
+              options={[
+                { value: '', label: 'Semua Status' },
+                ...(entity === 'work-items' ? [{ value: 'terlambat', label: 'Terlambat' }] : []),
+                ...options[entity + '.status'].map((value) => ({
+                  value,
+                  label: formatChoiceLabel(value),
+                })),
+              ]}
+              ariaLabel="Status"
+            />
           </label>
         )}
         {!scopeId && ['work-items', 'checklist'].includes(entity) && (
           <label>
-            Proyek / bidang kerja
-            <select value={workstream} onChange={(e) => setWorkstream(e.target.value)}>
-              <option value="">Semua proyek</option>
-              {(workspace.workstreams || []).map((row) => (
-                <option key={row.id} value={row.id}>
-                  {String(row.data.title)}
-                </option>
-              ))}
-            </select>
+            <span className="field-caption">Proyek / bidang kerja</span>
+            <Select
+              value={workstream}
+              onChange={setWorkstream}
+              options={[
+                { value: '', label: 'Semua Proyek' },
+                ...(workspace.workstreams || []).map((row) => ({
+                  value: row.id,
+                  label: String(row.data.title),
+                })),
+              ]}
+              ariaLabel="Proyek / bidang kerja"
+            />
           </label>
         )}
         {entity === 'work-items' && (workspace.sprints || []).length > 0 && (
           <label>
-            Target periode
-            <select value={sprintFilter} onChange={(e) => setSprintFilter(e.target.value)}>
-              <option value="">Semua periode (Sprint)</option>
-              {(workspace.sprints || []).map((row) => (
-                <option key={row.id} value={row.id}>
-                  {String(row.data.title)}
-                </option>
-              ))}
-            </select>
+            <span className="field-caption">Target periode</span>
+            <Select
+              value={sprintFilter}
+              onChange={setSprintFilter}
+              options={[
+                { value: '', label: 'Semua Target Periode (Sprint)' },
+                ...(workspace.sprints || []).map((row) => ({
+                  value: row.id,
+                  label: String(row.data.title),
+                })),
+              ]}
+              ariaLabel="Target periode"
+            />
           </label>
         )}
         {entity === 'work-items' && (
           <>
             <label>
-              Prioritas
-              <select value={priority} onChange={(e) => setPriority(e.target.value)}>
-                <option value="">Semua prioritas</option>
-                {options.priority.map((value) => (
-                  <option key={value}>{value}</option>
-                ))}
-              </select>
+              <span className="field-caption">Prioritas</span>
+              <Select
+                value={priority}
+                onChange={setPriority}
+                options={[
+                  { value: '', label: 'Semua Prioritas' },
+                  ...options.priority.map((value) => ({
+                    value,
+                    label: formatChoiceLabel(value),
+                  })),
+                ]}
+                ariaLabel="Prioritas"
+              />
             </label>
             <label>
-              Urutkan
-              <select value={sort} onChange={(e) => setSort(e.target.value)}>
-                <option value="due">Tenggat terdekat</option>
-                <option value="title">Nama tugas</option>
-                <option value="updated">Terakhir diubah</option>
-              </select>
+              <span className="field-caption">Urutkan</span>
+              <Select
+                value={sort}
+                onChange={setSort}
+                options={[
+                  { value: 'due', label: 'Tenggat Terdekat' },
+                  { value: 'title', label: 'Nama Tugas (A–Z)' },
+                  { value: 'updated', label: 'Terakhir Diubah' },
+                ]}
+                ariaLabel="Urutkan"
+              />
             </label>
           </>
         )}
       </div>
+      {entity === 'work-items' && (
+        <>
+          <SavedTaskViews
+            value={{
+              search,
+              status: effectiveFilter,
+              project: workstream,
+              priority,
+              sort: sort as TaskView['sort'],
+              view: view as TaskView['view'],
+              sprint: sprintFilter,
+            }}
+            onApply={(saved) => {
+              setSearch(saved.search);
+              setFilter(saved.status);
+              setWorkstream(saved.project);
+              setPriority(saved.priority);
+              setSort(saved.sort);
+              setView(saved.view);
+              setSprintFilter(saved.sprint);
+            }}
+          />
+          <TaskBatchActions items={rows} refresh={refresh} />
+        </>
+      )}
       {error && (
         <p className="notice error" role="alert">
           {error}
@@ -643,83 +913,91 @@ export function Records({
           <table className="task-table">
             <thead>
               <tr>
-                <th>Tugas</th>
-                <th>Status</th>
-                <th>Prioritas</th>
-                <th>Tenggat</th>
-                <th>Penanggung jawab</th>
-                <th>
+                <th className="col-task-title">Tugas & Proyek</th>
+                <th className="col-task-status">Status</th>
+                <th className="col-task-priority">Prioritas</th>
+                <th className="col-task-due">Tenggat</th>
+                <th className="col-task-assignee">Penanggung Jawab</th>
+                <th className="col-task-action">
                   <span className="sr-only">Aksi</span>
                 </th>
               </tr>
             </thead>
             <tbody>
-              {rows.map((row) => (
-                <tr key={row.id}>
-                  <td>
-                    <button className="task-title" onClick={() => setDetailTask(row)}>
-                      <span className="task-code-badge-inline">
-                        {String(row.data.code || `#KD-${row.id.slice(0, 4).toUpperCase()}`)}
-                      </span>
-                      {String(row.data.title)}
-                    </button>
-                    <small>
-                      {String(
-                        workspace.workstreams?.find(
-                          (project) => project.id === row.data.workstream_id,
-                        )?.data.title || 'Tanpa proyek',
-                      )}
-                    </small>
-                  </td>
-                  <td>
-                    <label>
-                      <span className="sr-only">Status {String(row.data.title)}</span>
-                      <select
-                        disabled={busy}
-                        value={String(row.data.status)}
-                        onChange={(event) =>
-                          void update(row, {
-                            status: event.target.value,
-                            completed_at: event.target.value === 'selesai' ? today() : '',
-                          })
-                        }
-                      >
-                        {options['work-items.status'].map((value) => (
-                          <option key={value}>{value}</option>
-                        ))}
-                      </select>
-                    </label>
-                  </td>
-                  <td>
-                    <span className={`badge priority-${row.data.priority}`}>
-                      {String(row.data.priority)}
-                    </span>
-                  </td>
-                  <td
-                    className={
-                      String(row.data.due_date) < today() &&
-                      !['selesai', 'dibatalkan'].includes(String(row.data.status))
-                        ? 'late'
-                        : ''
-                    }
-                  >
-                    {formatDate(String(row.data.due_date))}
-                  </td>
-                  <td>{String(row.data.assignee || '—')}</td>
-                  <td>
-                    {!['selesai', 'dibatalkan'].includes(String(row.data.status)) && (
-                      <button
-                        disabled={busy}
-                        onClick={() =>
-                          void update(row, { status: 'selesai', completed_at: today() })
-                        }
-                      >
-                        ✓ Selesai
+              {rows.map((row) => {
+                const isLate =
+                  String(row.data.due_date) < today() &&
+                  !['selesai', 'dibatalkan'].includes(String(row.data.status));
+                const project = workspace.workstreams?.find((p) => p.id === row.data.workstream_id);
+                return (
+                  <tr key={row.id}>
+                    <td className="col-task-title">
+                      <button className="task-title" onClick={() => setDetailTask(row)}>
+                        <span className="task-code-badge-inline">
+                          {String(row.data.code || `#KD-${row.id.slice(0, 4).toUpperCase()}`)}
+                        </span>
+                        <span className="task-title-text">{String(row.data.title)}</span>
                       </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
+                      <small className="task-project-label">
+                        <FolderOpen size={11} /> {String(project?.data.title || 'Tanpa proyek')}
+                      </small>
+                    </td>
+                    <td className="col-task-status">
+                      <label className="task-status-label">
+                        <span className="sr-only">Status {String(row.data.title)}</span>
+                        <select
+                          disabled={busy}
+                          className={`task-table-status-select status-${row.data.status}`}
+                          value={String(row.data.status)}
+                          onChange={(event) =>
+                            void update(row, {
+                              status: event.target.value,
+                              completed_at: event.target.value === 'selesai' ? today() : '',
+                            })
+                          }
+                        >
+                          {options['work-items.status'].map((value) => (
+                            <option key={value} value={value}>
+                              {formatChoiceLabel(value)}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                    </td>
+                    <td className="col-task-priority">
+                      <span className={`badge priority-${row.data.priority}`}>
+                        {String(row.data.priority)}
+                      </span>
+                    </td>
+                    <td className="col-task-due">
+                      {isLate ? (
+                        <span className="table-badge badge-late" title="Tenggat sudah terlewati">
+                          <AlertTriangle size={11} /> {formatDate(String(row.data.due_date))}
+                        </span>
+                      ) : (
+                        <span className="table-date">{formatDate(String(row.data.due_date))}</span>
+                      )}
+                    </td>
+                    <td className="col-task-assignee">
+                      <span className="task-assignee-text">{String(row.data.assignee || '—')}</span>
+                    </td>
+                    <td className="col-task-action">
+                      {!['selesai', 'dibatalkan'].includes(String(row.data.status)) && (
+                        <button
+                          className="table-btn-done"
+                          disabled={busy}
+                          onClick={() =>
+                            void update(row, { status: 'selesai', completed_at: today() })
+                          }
+                          title="Tandai tugas selesai"
+                        >
+                          Selesai
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -734,21 +1012,21 @@ export function Records({
           workspace={workspace}
           onClose={() => {
             setEdit(undefined);
-            if (quickAdd) router.replace('/tugas');
+            if (quickAdd)
+              router.replace(entity === 'work-items' ? '/tugas' : window.location.pathname);
           }}
           onSaved={refresh}
         />
       )}
       {detailTask && entity === 'work-items' && (
         <TaskDetailDrawer
-          task={detailTask}
+          key={detailTask.id}
+          task={
+            (workspace['work-items'] || []).find((item) => item.id === detailTask.id) || detailTask
+          }
           workspace={workspace}
           onClose={() => setDetailTask(null)}
-          onUpdated={async () => {
-            await refresh();
-            const refreshed = (workspace['work-items'] || []).find((t) => t.id === detailTask.id);
-            if (refreshed) setDetailTask(refreshed);
-          }}
+          onUpdated={refresh}
           onPrev={() => {
             const idx = rows.findIndex((t) => t.id === detailTask.id);
             if (idx > 0) setDetailTask(rows[idx - 1]);
@@ -767,47 +1045,63 @@ export function Records({
         />
       )}
       {showCsvModal && (
-        <dialog className="csv-import-dialog" open>
-          <div className="section-head">
-            <h3>Impor File CSV — {catalog[entity].title}</h3>
-            <button
-              type="button"
-              className="close-dialog-btn"
-              onClick={() => setShowCsvModal(false)}
-            >
-              <X size={18} />
-            </button>
-          </div>
-          <p className="dialog-sub">
-            Unggah file CSV dengan kolom sesuai format data untuk menambahkan data secara langsung.
-          </p>
-          <CsvDropzone
-            onDataParsed={async (parsedRows) => {
-              setBusy(true);
-              setError('');
-              try {
-                for (const row of parsedRows) {
-                  if (row.title && row.title.trim()) {
-                    const fallbackData: Record<string, unknown> = {
-                      due_date: today(),
-                      date: today(),
-                      ...row,
-                    };
-                    const parsed = schemas[entity].parse(fallbackData);
-                    await api(entity, { data: parsed });
+        <div
+          className="sprint-modal-backdrop"
+          role="dialog"
+          aria-labelledby="csv-modal-title"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowCsvModal(false);
+          }}
+        >
+          <div className="sprint-modal-card">
+            <header className="sprint-modal-head">
+              <div className="title-with-badge">
+                <span className="sprint-icon-pill">
+                  <UploadCloud size={18} />
+                </span>
+                <h2 id="csv-modal-title">Impor File CSV — {catalog[entity].title}</h2>
+              </div>
+              <button
+                type="button"
+                className="close-btn"
+                onClick={() => setShowCsvModal(false)}
+                aria-label="Tutup modal"
+              >
+                <X size={18} />
+              </button>
+            </header>
+            <p className="dialog-sub">
+              Unggah file CSV dengan kolom sesuai format data untuk menambahkan data secara
+              langsung.
+            </p>
+            <CsvDropzone
+              onDataParsed={async (parsedRows) => {
+                setBusy(true);
+                setError('');
+                try {
+                  for (const row of parsedRows) {
+                    if (row.title && row.title.trim()) {
+                      const fallbackData: Record<string, unknown> = {
+                        due_date: today(),
+                        date: today(),
+                        ...row,
+                      };
+                      const parsed = schemas[entity].parse(fallbackData);
+                      await api(entity, { data: parsed });
+                    }
                   }
+                  await refresh();
+                  setShowCsvModal(false);
+                } catch (err) {
+                  setError((err as Error).message || 'Gagal mengimpor beberapa baris data CSV.');
+                } finally {
+                  setBusy(false);
                 }
-                await refresh();
-                setShowCsvModal(false);
-              } catch (err) {
-                setError((err as Error).message || 'Gagal mengimpor beberapa baris data CSV.');
-              } finally {
-                setBusy(false);
-              }
-            }}
-          />
-          {error && <p className="notice error">{error}</p>}
-        </dialog>
+              }}
+            />
+            {error && <p className="notice error">{error}</p>}
+          </div>
+        </div>
       )}
     </section>
   );

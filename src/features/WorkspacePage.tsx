@@ -10,13 +10,18 @@ import { Reports } from './Reports';
 import { Editor } from './Editor';
 import { Projects } from './Projects';
 import { Operations, recordingPaths } from './Operations';
+import { useSearchParams } from 'next/navigation';
+import { FollowUps } from './FollowUps';
+import { TodayView } from './TodayView';
 import type { Item } from './schemas';
 import { schemas } from './schemas';
-import { today, addDays } from '@/lib/date';
+import { today } from '@/lib/date';
 import { SkeletonLoading } from '@/components/ui/SkeletonLoading';
 export function WorkspacePage({ slug }: { slug: string }) {
+  const query = useSearchParams();
+  const requestedSection = query.get('bagian');
   const { data, loading, error, refresh, operations } = useWorkspace(),
-    [tab, setTab] = useState(0),
+    [tabChoice, setTabChoice] = useState<{ section: string | null; index: number } | null>(null),
     [draft, setDraft] = useState<Item>();
   useEffect(() => {
     const callback = (event: Event) => {
@@ -31,6 +36,8 @@ export function WorkspacePage({ slug }: { slug: string }) {
     window.addEventListener('hub-task', callback);
     return () => window.removeEventListener('hub-task', callback);
   }, []);
+  const sectionIndex = pages[slug]?.findIndex((entity) => entity === requestedSection) ?? -1;
+  const tab = tabChoice?.section === requestedSection ? tabChoice.index : Math.max(0, sectionIndex);
   const title = navigation.find(([path]) => path === `/${slug}`)?.[1] || 'Ruang kerja';
   if (loading) return <SkeletonLoading />;
   if (error)
@@ -45,7 +52,7 @@ export function WorkspacePage({ slug }: { slug: string }) {
       </section>
     );
   return (
-    <>
+    <div className={`workspace-page page-${slug}`}>
       {slug !== 'beranda' && (
         <div className="page-heading">
           <span className="eyebrow">
@@ -54,48 +61,22 @@ export function WorkspacePage({ slug }: { slug: string }) {
           <h1>{title}</h1>
         </div>
       )}
+      {slug === 'tindak-lanjut' && <FollowUps data={data} />}
       {slug === 'beranda' && <Dashboard data={data} />}
       {slug === 'proyek' && <Projects data={data} refresh={refresh} />}
       {recordingPaths.includes(slug) && (
-        <Operations key={slug} slug={slug} data={data} ready={operations} refresh={refresh} />
+        <Operations
+          key={slug + query.toString()}
+          slug={slug}
+          data={data}
+          ready={operations}
+          refresh={refresh}
+        />
       )}
       {slug === 'roadmap' && <Roadmap data={data} refresh={refresh} />}
       {slug === 'laporan' && <Reports />}
       {slug === 'pengaturan' && <Settings refresh={refresh} />}
-      {slug === 'hari-ini' && (
-        <>
-          {[
-            ['Terlambat', (value: string) => value < today()],
-            ['Hari ini', (value: string) => value === today()],
-            ['Menyusul 7 hari', (value: string) => value > today() && value <= addDays(today(), 7)],
-          ].map(([label, predicate]) => (
-            <section key={String(label)}>
-              <h2>{String(label)}</h2>
-              <Records
-                entity="work-items"
-                workspace={{
-                  ...data,
-                  'work-items': (data['work-items'] || []).filter(
-                    (row) =>
-                      !['selesai', 'dibatalkan'].includes(String(row.data.status)) &&
-                      (predicate as (v: string) => boolean)(String(row.data.due_date)),
-                  ),
-                }}
-                refresh={refresh}
-              />
-            </section>
-          ))}
-          <h2>Agenda rapat hari ini</h2>
-          <Records
-            entity="meetings"
-            workspace={{
-              ...data,
-              meetings: (data.meetings || []).filter((row) => row.data.date === today()),
-            }}
-            refresh={refresh}
-          />
-        </>
-      )}
+      {slug === 'hari-ini' && <TodayView workspace={data} refresh={refresh} />}
       {pages[slug] && (
         <>
           {pages[slug].length > 1 && (
@@ -105,7 +86,7 @@ export function WorkspacePage({ slug }: { slug: string }) {
                   role="tab"
                   aria-selected={tab === index}
                   key={entity}
-                  onClick={() => setTab(index)}
+                  onClick={() => setTabChoice({ section: requestedSection, index })}
                 >
                   {entity === 'organization'
                     ? 'Profil koperasi'
@@ -131,7 +112,7 @@ export function WorkspacePage({ slug }: { slug: string }) {
             </div>
           )}
           <Records
-            key={pages[slug][tab]}
+            key={pages[slug][tab] + (query.get('record') || '') + (query.get('task') || '')}
             entity={pages[slug][tab]}
             workspace={data}
             refresh={refresh}
@@ -178,6 +159,6 @@ export function WorkspacePage({ slug }: { slug: string }) {
           onSaved={refresh}
         />
       )}
-    </>
+    </div>
   );
 }

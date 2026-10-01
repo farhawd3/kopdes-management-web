@@ -1,7 +1,8 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Repeat, Clock, Calendar } from 'lucide-react';
 import { addDays, today } from '@/lib/date';
+import { Select } from '@/components/ui/Select';
 
 export function RecursiveScheduleModal({
   currentType = 'mingguan',
@@ -22,6 +23,14 @@ export function RecursiveScheduleModal({
   const [time, setTime] = useState(currentTime || '09:00');
   const [endDate, setEndDate] = useState(currentEndDate || addDays(today(), 60));
 
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') onClose();
+    }
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     onSave({
@@ -33,7 +42,14 @@ export function RecursiveScheduleModal({
   }
 
   return (
-    <div className="sprint-modal-backdrop" role="dialog" aria-labelledby="recursive-title">
+    <div
+      className="sprint-modal-backdrop"
+      role="dialog"
+      aria-labelledby="recursive-title"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
       <div className="sprint-modal-card">
         <header className="sprint-modal-head">
           <div className="title-with-badge">
@@ -50,15 +66,16 @@ export function RecursiveScheduleModal({
         <form onSubmit={handleSubmit} className="sprint-form">
           <label className="field-group">
             <span className="field-label">Tipe Perulangan</span>
-            <select
+            <Select
               value={repeatType}
-              onChange={(e) => setRepeatType(e.target.value)}
-              className="select-input"
-            >
-              <option value="harian">Setiap Hari (Harian)</option>
-              <option value="mingguan">Setiap Minggu (Mingguan)</option>
-              <option value="bulanan">Setiap Bulan (Bulanan)</option>
-            </select>
+              onChange={setRepeatType}
+              options={[
+                { value: 'harian', label: 'Setiap Hari (Harian)' },
+                { value: 'mingguan', label: 'Setiap Minggu (Mingguan)' },
+                { value: 'bulanan', label: 'Setiap Bulan (Bulanan)' },
+              ]}
+              ariaLabel="Tipe Perulangan"
+            />
           </label>
 
           <label className="field-group">

@@ -13,6 +13,8 @@ beforeAll(async () => {
   await database.exec(readFileSync('supabase/migrations/20260930000001_manager_hub.sql', 'utf8'));
   await database.exec(readFileSync('supabase/migrations/20261001000002_operations.sql', 'utf8'));
   await database.exec(readFileSync('supabase/migrations/20261001000003_cooperative_redesign.sql', 'utf8'));
+  await database.exec(readFileSync('supabase/migrations/20261001000004_interconnected_operations.sql', 'utf8'));
+  await database.exec(readFileSync('supabase/migrations/20261001000005_manager_superapp.sql', 'utf8'));
 }, 60000);
 afterAll(async () => {
   await database?.close();
@@ -234,5 +236,52 @@ describe('Migrasi PostgreSQL nyata di mesin lokal', () => {
       [sprintId],
     );
     expect(result.rows[0].id).toBe(taskId);
+  });
+  it('relasi member_id pada kas divalidasi dan ditolak jika anggota tidak ditemukan', async () => {
+    const memberId = randomUUID();
+    await database.query(
+      "insert into public.hub_records(id,entity,data) values($1,'members',$2::jsonb)",
+      [memberId, JSON.stringify({ title: 'Budi Santoso', member_number: 'A-999' })],
+    );
+    const cashId = randomUUID();
+    await database.query(
+      "insert into public.hub_records(id,entity,data) values($1,'cash-entries',$2::jsonb)",
+      [cashId, JSON.stringify({ title: 'Simpanan pokok', direction: 'masuk', amount: 100000, member_id: memberId })],
+    );
+    const found = await database.query<{ id: string }>(
+      "select id from public.hub_records where id=$1",
+      [cashId],
+    );
+    expect(found.rows[0].id).toBe(cashId);
+    await expect(
+      database.query(
+        "insert into public.hub_records(entity,data) values('cash-entries',$1::jsonb)",
+        [JSON.stringify({ title: 'Kas tak bertuan', direction: 'masuk', amount: 50000, member_id: randomUUID() })],
+      ),
+    ).rejects.toThrow('Missing related record');
+  });
+  it('laporan manajer mendukung kolom status draf/final dan dapat dihapus', async () => {
+    const reportId = randomUUID();
+    await database.query(
+      "insert into public.manager_reports(id,title,period_start,period_end,snapshot,status) values($1,'Laporan Mingguan','2026-10-01','2026-10-07','{}'::jsonb,'draft')",
+      [reportId],
+    );
+    const res = await database.query<{ status: string }>(
+      "select status from public.manager_reports where id=$1",
+      [reportId],
+    );
+    expect(res.rows[0].status).toBe('draft');
+    await database.query(
+      "update public.manager_reports set status='final' where id=$1",
+      [reportId],
+    );
+    const updated = await database.query<{ status: string }>(
+      "select status from public.manager_reports where id=$1",
+      [reportId],
+    );
+    expect(updated.rows[0].status).toBe('final');
+    await database.query("delete from public.manager_reports where id=$1", [reportId]);
+    const afterDelete = await database.query("select id from public.manager_reports where id=$1", [reportId]);
+    expect(afterDelete.rows).toHaveLength(0);
   });
 });

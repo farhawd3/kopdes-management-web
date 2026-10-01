@@ -1,24 +1,25 @@
 'use client';
 import { useState } from 'react';
-import { Plus, Clock, CheckCircle2 } from 'lucide-react';
+import { Plus, AlertCircle } from 'lucide-react';
+import { taskProgress } from '@/lib/progress';
 import { type Item } from './schemas';
 import { type Workspace } from './useWorkspace';
 import { api } from '@/lib/client';
-import { formatDate, today, addDays } from '@/lib/date';
+import { formatDate, today } from '@/lib/date';
 
 type ScrumColumn = {
   id: string;
   key: string;
   title: string;
   subtitle: string;
+  color: string;
 };
 
 const SCRUM_COLUMNS: ScrumColumn[] = [
-  { id: 'rencana', key: 'rencana', title: 'Backlog', subtitle: 'Rencana kerja' },
-  { id: 'siap', key: 'siap', title: 'Ice Box', subtitle: 'Siap dikerjakan' },
-  { id: 'proses', key: 'proses', title: 'To Do', subtitle: 'Sedang berjalan' },
-  { id: 'menunggu', key: 'menunggu', title: 'Impediments', subtitle: 'Terkendala / koordinasi' },
-  { id: 'selesai', key: 'selesai', title: 'Selesai', subtitle: 'Tuntas' },
+  { id: 'rencana', key: 'rencana', title: 'Rencana', subtitle: 'Rencana kerja', color: 'var(--ink-muted)' },
+  { id: 'proses', key: 'proses', title: 'Dikerjakan', subtitle: 'Sedang berjalan', color: 'var(--brand)' },
+  { id: 'dibatalkan', key: 'dibatalkan', title: 'Dibatalkan', subtitle: 'Tidak dilanjutkan', color: 'var(--danger, #ef4444)' },
+  { id: 'selesai', key: 'selesai', title: 'Selesai', subtitle: 'Tuntas', color: 'var(--success, #10b981)' },
 ];
 
 export function ScrumBoardView({
@@ -36,6 +37,7 @@ export function ScrumBoardView({
 }) {
   const [draggedTaskId, setDraggedTaskId] = useState<string | null>(null);
   const [dragOverCol, setDragOverCol] = useState<string | null>(null);
+  const [error, setError] = useState('');
   const [busyId, setBusyId] = useState<string | null>(null);
 
   // Group tasks by status
@@ -45,7 +47,7 @@ export function ScrumBoardView({
       if (colKey === 'rencana') return status === 'rencana' || status === 'draft';
       if (colKey === 'siap') return status === 'siap' || status === 'antrean';
       if (colKey === 'proses') return status === 'proses' || status === 'berjalan';
-      if (colKey === 'menunggu') return status === 'menunggu' || status === 'tertunda';
+      if (colKey === 'dibatalkan') return status === 'dibatalkan' || status === 'menunggu' || status === 'tertunda';
       if (colKey === 'selesai') return status === 'selesai';
       return status === colKey;
     });
@@ -59,9 +61,8 @@ export function ScrumBoardView({
     // Map column key to standard task status
     const statusMap: Record<string, string> = {
       rencana: 'rencana',
-      siap: 'siap',
       proses: 'proses',
-      menunggu: 'menunggu',
+      dibatalkan: 'dibatalkan',
       selesai: 'selesai',
     };
     const nextStatus = statusMap[targetColKey] || targetColKey;
@@ -73,6 +74,7 @@ export function ScrumBoardView({
     }
 
     setBusyId(task.id);
+    setError('');
     try {
       await api('work-items', {
         id: task.id,
@@ -83,6 +85,8 @@ export function ScrumBoardView({
         },
       });
       await onRefresh();
+    } catch (error) {
+      setError((error as Error).message);
     } finally {
       setBusyId(null);
       setDraggedTaskId(null);
@@ -91,7 +95,12 @@ export function ScrumBoardView({
   }
 
   return (
-    <div className="scrum-view-container" aria-label="Tampilan Papan Scrum Koperasi">
+    <div className="scrum-view-container" aria-label="Papan tugas">
+      {error && (
+        <p role="alert" className="notice error">
+          {error}
+        </p>
+      )}
       <div className="scrum-board-columns">
         {SCRUM_COLUMNS.map((col) => {
           const colTasks = getTasksForColumn(col.key);
@@ -115,14 +124,20 @@ export function ScrumBoardView({
             >
               {/* Column Header */}
               <div className="scrum-column-header">
-                <div className="column-title-group">
-                  <h3 className="column-title">{col.title}</h3>
-                  <small className="column-subtitle">{col.subtitle}</small>
+                <div className="scrum-col-title-group">
+                  <span
+                    className="scrum-col-indicator"
+                    style={{ backgroundColor: col.color }}
+                  />
+                  <div className="scrum-col-title-text">
+                    <h3 className="column-title">{col.title}</h3>
+                    <small className="column-subtitle">{col.subtitle}</small>
+                  </div>
                 </div>
-                <span className="column-count-badge">{colTasks.length}</span>
+                <span className="scrum-count-pill">{colTasks.length}</span>
               </div>
 
-              {/* Dashed Add Task Card Dropzone (Behance Ref 4) */}
+              {/* Dashed Add Task Card Dropzone */}
               <button
                 type="button"
                 className="scrum-add-task-card"
@@ -130,132 +145,144 @@ export function ScrumBoardView({
                 aria-label={`Tambah tugas di ${col.title}`}
               >
                 <div className="add-task-icon-circle">
-                  <Plus size={18} strokeWidth={2.5} />
+                  <Plus size={16} strokeWidth={2.5} />
                 </div>
-                <span>Add Task</span>
+                <span>Tambah tugas</span>
               </button>
 
               {/* Task Cards List */}
               <div className="scrum-cards-list">
-                {colTasks.map((task) => {
-                  const data = task.data;
-                  const taskCode = String(data.code || `#${task.id.slice(0, 6).toUpperCase()}`);
-                  const subtasks = Array.isArray(data.subtasks)
-                    ? (data.subtasks as { title: string; done: boolean }[])
-                    : [];
-                  const doneSubtasks = subtasks.filter((s) => s.done).length;
-                  const progressPct =
-                    data.status === 'selesai'
-                      ? 100
-                      : subtasks.length > 0
-                        ? Math.round((doneSubtasks / subtasks.length) * 100)
-                        : data.status === 'proses'
-                          ? 50
-                          : 0;
+                {colTasks.length === 0 ? (
+                  <div className="scrum-empty-column-placeholder">
+                    <span>Belum ada tugas</span>
+                  </div>
+                ) : (
+                  colTasks.map((task) => {
+                    const data = task.data;
+                    const taskCode = String(data.code || `#KD-${task.id.slice(0, 5).toUpperCase()}`);
+                    const subtasks = Array.isArray(data.subtasks)
+                      ? (data.subtasks as { title: string; done: boolean }[])
+                      : [];
+                    const doneSubtasks = subtasks.filter((s) => s.done).length;
+                    const progressPct = taskProgress({
+                      status: data.status as 'rencana' | 'proses' | 'selesai' | 'dibatalkan',
+                      subtasks,
+                    });
 
-                  // Determine date range or deadline display (Behance Ref 4 pill)
-                  const dueDate = String(data.due_date || today());
-                  const datePill = `${formatDate(dueDate).slice(0, 6)} - ${formatDate(addDays(dueDate, 4)).slice(0, 6)}`;
+                    // Determine date range or deadline display
+                    const dueDate = String(data.due_date || today());
+                    const datePill = data.start_date
+                      ? `${formatDate(String(data.start_date))} – ${formatDate(dueDate)}`
+                      : formatDate(dueDate);
 
-                  // Calculate time / deadline text
-                  const isLate = dueDate < today() && data.status !== 'selesai';
-                  const deadlineText =
-                    data.status === 'selesai'
-                      ? 'Selesai'
-                      : isLate
-                        ? 'Terlambat'
-                        : subtasks.length > 0
-                          ? `${doneSubtasks}/${subtasks.length} selesai`
-                          : 'Tenggat terdekat';
+                    // Calculate time / deadline text
+                    const isLate = dueDate < today() && data.status !== 'selesai' && data.status !== 'dibatalkan';
+                    const deadlineText =
+                      data.status === 'selesai'
+                        ? 'Selesai'
+                        : isLate
+                          ? 'Terlambat'
+                          : subtasks.length > 0
+                            ? `${doneSubtasks}/${subtasks.length} selesai`
+                            : 'Tenggat terdekat';
 
-                  const assignee = String(data.assignee || 'Manajer Koperasi');
-                  const initials = assignee
-                    .split(' ')
-                    .map((n) => n[0])
-                    .slice(0, 2)
-                    .join('')
-                    .toUpperCase();
+                    const managerName = String(workspace.organization?.[0]?.data?.manager || 'Manajer');
+                    const assignee = String(data.assignee || managerName);
+                    const initials = assignee
+                      .split(' ')
+                      .map((n) => n[0])
+                      .slice(0, 2)
+                      .join('')
+                      .toUpperCase();
 
-                  const project = (workspace.workstreams || []).find(
-                    (w) => w.id === data.workstream_id,
-                  );
+                    const project = (workspace.workstreams || []).find(
+                      (w) => w.id === data.workstream_id,
+                    );
 
-                  return (
-                    <article
-                      key={task.id}
-                      className={`scrum-task-card ${busyId === task.id ? 'card-busy' : ''}`}
-                      draggable
-                      onDragStart={() => setDraggedTaskId(task.id)}
-                      onClick={() => onOpenTask(task)}
-                      role="button"
-                      tabIndex={0}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault();
-                          onOpenTask(task);
-                        }
-                      }}
-                    >
-                      {/* Top Date Badge Pill */}
-                      <div className="card-top-row">
-                        <span className="card-date-pill">{datePill}</span>
-                        {project && (
-                          <span
-                            className="card-project-pill"
-                            style={{
-                              borderColor: String(project.data.color || '#d5f935'),
-                              color: String(project.data.color || 'var(--ink)'),
-                            }}
-                          >
-                            {String(project.data.title)}
+                    return (
+                      <article
+                        key={task.id}
+                        className={`scrum-task-card ${busyId === task.id ? 'card-busy' : ''}`}
+                        draggable
+                        onDragStart={() => setDraggedTaskId(task.id)}
+                        onClick={() => onOpenTask(task)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            onOpenTask(task);
+                          }
+                        }}
+                      >
+                        {/* Top Date Badge Pill & Meta */}
+                        <div className="card-top-row">
+                          <span className={`card-date-pill ${isLate ? 'is-late' : ''}`}>
+                            {isLate && <AlertCircle size={11} className="inline-icon" />}
+                            {datePill}
                           </span>
+                          {project && (
+                            <span
+                              className="card-project-pill"
+                              style={{
+                                borderColor: String(project.data.color || 'var(--line-strong)'),
+                              }}
+                            >
+                              <span
+                                className="project-dot"
+                                style={{ backgroundColor: String(project.data.color || 'var(--brand)') }}
+                              />
+                              {String(project.data.title)}
+                            </span>
+                          )}
+                          {Boolean(data.priority) && data.priority !== 'normal' && (
+                            <span className={`card-priority-pill priority-${data.priority}`}>
+                              {String(data.priority)}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Card Title & Code */}
+                        <div className="card-title-wrap">
+                          <span className="card-task-code">{taskCode}</span>
+                          <h4 className="card-task-title">{String(data.title)}</h4>
+                        </div>
+
+                        {/* Snippet Description */}
+                        {Boolean(data.description) && (
+                          <p className="card-description-snippet">
+                            {String(data.description).slice(0, 85)}
+                            {String(data.description).length > 85 ? '…' : ''}
+                          </p>
                         )}
-                      </div>
 
-                      {/* Card Title & Code */}
-                      <div className="card-title-wrap">
-                        <span className="card-task-code">{taskCode}</span>
-                        <h4 className="card-task-title">{String(data.title)}</h4>
-                      </div>
-
-                      {/* Snippet Description */}
-                      {Boolean(data.description) && (
-                        <p className="card-description-snippet">
-                          {String(data.description).slice(0, 85)}
-                          {String(data.description).length > 85 ? '…' : ''}
-                        </p>
-                      )}
-
-                      {/* Card Bottom Row: Avatars & Progress Bar (Behance Ref 4) */}
-                      <div className="card-bottom-section">
-                        <div className="card-avatars-row">
-                          <span className="scrum-user-avatar" title={assignee}>
-                            {initials}
-                          </span>
-                          <span
-                            className="scrum-user-avatar avatar-secondary"
-                            title="KDMP Puntukrejo"
-                          >
-                            KD
-                          </span>
-                        </div>
-
-                        <div className="card-progress-section">
-                          <div className="progress-labels-row">
-                            <span className="progress-percent-text">{progressPct}%</span>
-                            <span className="progress-time-text">{deadlineText}</span>
+                        {/* Card Bottom Row: Avatars & Progress Bar */}
+                        <div className="card-bottom-section">
+                          <div className="card-avatars-row">
+                            <span className="scrum-user-avatar" title={assignee}>
+                              {initials}
+                            </span>
                           </div>
-                          <div className="scrum-progress-bar-track">
-                            <div
-                              className="scrum-progress-bar-fill"
-                              style={{ width: `${progressPct}%` }}
-                            />
+
+                          <div className="card-progress-section">
+                            <div className="progress-labels-row">
+                              <span className="progress-percent-text">{progressPct}%</span>
+                              <span className={`progress-time-text ${isLate ? 'late-text' : ''}`}>
+                                {deadlineText}
+                              </span>
+                            </div>
+                            <div className="scrum-progress-bar-track">
+                              <div
+                                className="scrum-progress-bar-fill"
+                                style={{ width: `${progressPct}%` }}
+                              />
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </article>
-                  );
-                })}
+                      </article>
+                    );
+                  })
+                )}
               </div>
             </div>
           );

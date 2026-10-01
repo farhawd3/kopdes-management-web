@@ -62,6 +62,10 @@ export function DateField({
           type="date"
           required={required}
           value={value}
+          onClick={() => {
+            setMonth((value || today()).slice(0, 7));
+            setOpen(true);
+          }}
           onChange={(event) => {
             setValue(event.target.value);
             if (event.target.value) setMonth(event.target.value.slice(0, 7));

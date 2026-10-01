@@ -11,6 +11,9 @@
 - [x] Beranda berdasarkan tugas/proyek aktual dan riwayat penyelesaian delapan minggu bergulir.
 - [x] Modul koordinasi manajer, snapshot laporan, backup/restore, keamanan PIN dan database.
 - [x] Penyegaran tema, lapisan kartu, form, tabel, papan, dan navigasi.
+- [x] Alur laporan eksekutif lengkap: simpan sebagai draf, terbitkan resmi, filter arsip, dan tombol hapus draf.
+- [x] Pusat Aksi Cepat Manajer (Superapp Action Center) dengan pintasan keyboard 1-9 untuk seluruh operasional dan perencanaan.
+- [x] Dasbor beranda multifungsi: pintasan aksi cepat harian, peringatan otomatis stok persediaan kritis, dan rekapitulasi data riil.
 
 ## Penerimaan berikutnya
 - [ ] UAT dengan data nyata selama beberapa hari.
@@ -33,3 +36,40 @@ Hasil tes dan pemeriksaan viewport di [STATUS](STATUS.md). Rencana historis bera
 - [x] Validasi dan migrasi domain pencatatan disiapkan.
 - [x] Pemilik mengonfirmasi pemasangan migrasi kedua; aktivasi terverifikasi melalui aplikasi lokal.
 - [ ] Uji simpan data pencatatan nyata setelah aktivasi.
+
+## Referensi HP pribadi
+- [x] Shell seluruh rute, navigasi mengambang HP dan menu semua halaman.
+- [x] Beranda pribadi dengan angka aktual, filter tugas, rapat berikutnya, dan akses buku koperasi.
+- [x] Kalender lingkaran HP serta agenda bulan/minggu/hari.
+- [x] Papan status sah, progres dari subtugas, dan detail tanpa pengikut tiruan.
+
+## Penyempurnaan Tampilan & Pembersihan Desain
+- [x] Mengganti tampilan flat dengan estetika clean design dan soft elevation shadows.
+- [x] Palet warna pastel terkurasi (Lime awal, Peach terakota, Lavender, Sage, Sky) dengan pemilih gaya interaktif di Pengaturan.
+- [x] Kalender interaktif berdimensi: sel terpilih memiliki latar pastel, border aksen, dan soft glow saat diklik.
+- [x] Icon tombol "+" kalender dibuat simetris presisi sejajar dengan nomor tanggal (28px x 28px lingkaran).
+- [x] Tombol tambah tugas pada agenda kalender diselaraskan dengan ikon Plus dan typography rapi.
+- [x] Seluruh modal pop-up dan drawer menutup saat mengklik area backdrop transparan atau menekan tombol Escape.
+- [x] Penataan jarak (spacing), border, dan komposisi warna kontras tinggi pada papan scrum, kartu tugas, dan kartu sprint.
+- [x] Mengganti pengulangan teks "+ Tugas" pada kalender dengan alternatif mini-plus elegan dan tombol agenda.
+- [x] Menyatukan pemilih tanggal kalender tanpa dobel klik / duplikasi indikator browser di DateField.
+- [x] Merapikan skeleton loading menjadi wireframe shimmer yang selaras dengan halaman kerja.
+- [x] Mendesain ulang menu samping (sidebar) dengan ikon representatif per modul, emblem brand, dan profil manajer.
+- [x] Membersihkan kalimat AI slop, istilah asing janggal, dan slogan motivasi fiktif.
+- [x] Perbaikan persentase ProgressRing di Beranda tepat di tengah dan persentase proyek rapi dalam pill badge.
+- [x] Perapian tampilan Tugas Harian (DailyTasksView) dengan kartu harian collapsible dan konektor pohon subtugas.
+- [x] Keterbacaan nomor tanggal "Hari ini" pada kalender tugas dengan kontras tajam.
+- [x] Penutupan otomatis menu pop-up/dropdown (Lainnya, Opsi) saat mengklik luar area transparan atau menekan Escape.
+- [x] Penyelarasan grid dan interaksi Pemilih Rentang Tanggal (DateRangePicker) & Kalender Popover (DateField).
+- [x] Pembuatan komponen TodayView untuk merapikan halaman /hari-ini (fokus tugas hari ini, rapat, terlambat, dan menyusul 7 hari).
+- [x] Desain ulang pop-up tambah tugas/editor modal dengan header berikon, tombol tutup X, dan input teratur berjarak rapi.
+- [x] Perapihan papan scrum (ScrumBoardView): pembersihan latar lavender kolom kedua, dot warna status, placeholder kolom kosong, dan lencana prioritas/tenggat.
+- [x] Perapihan tugas harian (DailyTasksView): penanganan tugas terlewat/sebelum pekan ini dan navigasi keyboard.
+- [x] Perbaikan aksesibilitas kartu TodayView dan SprintCard (menghilangkan tombol bersarang dan menambah kontrol keyboard).
+
+
+- [x] Audit kode: pengurutan tugas, pembaruan detail Hari Ini, galat aksi harian, dan perhitungan grafik.
+- [x] Verifikasi audit terbaru: 108 tes, lint, typecheck, dan build produksi.
+- [ ] Periksa ulang UI terbaru pada 360/768/1024/1440 px setelah login browser.
+- [x] Grafik dashboard dan daftar tugas terhubung melalui proyek, status, serta tanggal penyelesaian.
+- [x] Perbaiki kartu ringkasan HP dan kartu pencatatan/diagram tablet; periksa dashboard pada empat ukuran target.

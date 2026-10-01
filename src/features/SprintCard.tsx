@@ -1,5 +1,5 @@
 'use client';
-import { Target, Calendar, CheckCircle2, MoreVertical, Edit2, Trash2 } from 'lucide-react';
+import { Calendar, Edit2, Trash2 } from 'lucide-react';
 import { type Item } from './schemas';
 import { formatDate } from '@/lib/date';
 import { api } from '@/lib/client';
@@ -19,9 +19,7 @@ export function SprintCard({
   const sprintTasks = tasks.filter((t) => t.data.sprint_id === sprint.id);
   const doneTasks = sprintTasks.filter((t) => t.data.status === 'selesai');
   const percent =
-    sprintTasks.length > 0
-      ? Math.round((doneTasks.length / sprintTasks.length) * 100)
-      : 0;
+    sprintTasks.length > 0 ? Math.round((doneTasks.length / sprintTasks.length) * 100) : 0;
 
   async function handleDelete(e: React.MouseEvent) {
     e.stopPropagation();
@@ -35,10 +33,21 @@ export function SprintCard({
   }
 
   return (
-    <article className="sprint-summary-card" onClick={() => onEdit(sprint)}>
+    <article
+      className="sprint-summary-card"
+      role="button"
+      tabIndex={0}
+      onClick={() => onEdit(sprint)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onEdit(sprint);
+        }
+      }}
+    >
       <header className="sprint-card-head">
         <div className="sprint-card-title-group">
-          <span className="sprint-chip">Sprint</span>
+          <span className="sprint-chip">Periode</span>
           <h3>{String(data.title)}</h3>
         </div>
         <div className="sprint-card-actions">
@@ -67,9 +76,7 @@ export function SprintCard({
         </div>
       </header>
 
-      {Boolean(data.goal) && (
-        <p className="sprint-goal-text">{String(data.goal)}</p>
-      )}
+      {Boolean(data.goal) && <p className="sprint-goal-text">{String(data.goal)}</p>}
 
       <div className="sprint-timeline-row">
         <Calendar size={14} />
@@ -82,7 +89,7 @@ export function SprintCard({
 
       <div className="sprint-progress-wrap">
         <div className="progress-labels">
-          <span>Progres Sprint</span>
+          <span>Progres target</span>
           <strong>{percent}%</strong>
         </div>
         <div className="sprint-progress-bar">

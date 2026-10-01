@@ -1,8 +1,15 @@
-'use client';
 import { useState } from 'react';
 import { api, resetAuthNavigation } from '@/lib/client';
 import Link from 'next/link';
+import { useTheme, COLOR_STYLES } from '@/lib/ThemeContext';
+import { usePreference } from '@/lib/usePreference';
+import { Check } from 'lucide-react';
+
 export function Settings({ refresh }: { refresh: () => Promise<void> }) {
+  const { colorStyle, setColorStyle, preference, setTheme } = useTheme();
+  const [density, setDensity] = usePreference('hub-density', 'comfortable');
+  const [motion, setMotion] = usePreference('hub-motion', 'system');
+  const [navStyle, setNavStyle] = usePreference('hub-nav-style', 'soft');
   const [message, setMessage] = useState(''),
     [busy, setBusy] = useState(false);
   const run = async (action: () => Promise<unknown>, success: string) => {
@@ -20,13 +27,88 @@ export function Settings({ refresh }: { refresh: () => Promise<void> }) {
   };
   return (
     <div className="dashboard-grid">
+      <section className="card appearance-settings">
+        <h2>Tampilan</h2>
+        <p>Sesuaikan warna, jarak, dan gerakan di layar.</p>
+        <label>
+          Mode layar
+          <select
+            value={preference}
+            onChange={(e) => setTheme(e.target.value as 'light' | 'dark' | 'system')}
+          >
+            <option value="system">Ikuti perangkat</option>
+            <option value="light">Terang</option>
+            <option value="dark">Gelap</option>
+          </select>
+        </label>
+        <label>
+          Jarak isi
+          <select value={density} onChange={(e) => setDensity(e.target.value)}>
+            <option value="comfortable">Nyaman</option>
+            <option value="compact">Ringkas untuk tabel desktop</option>
+          </select>
+        </label>
+        <label>
+          Animasi
+          <select value={motion} onChange={(e) => setMotion(e.target.value)}>
+            <option value="system">Ikuti perangkat</option>
+            <option value="minimal">Minimal</option>
+          </select>
+        </label>
+        <label>
+          Warna menu samping
+          <select value={navStyle} onChange={(e) => setNavStyle(e.target.value)}>
+            <option value="soft">Lembut</option>
+            <option value="ink">Arang</option>
+          </select>
+        </label>
+        <button
+          onClick={() => {
+            setTheme('system');
+            setColorStyle('lime');
+            setDensity('comfortable');
+            setMotion('system');
+            setNavStyle('soft');
+          }}
+        >
+          Kembalikan tampilan awal
+        </button>
+      </section>
+      <section className="card color-style-card">
+        <span className="eyebrow">TEMA & TAMPILAN</span>
+        <h2>Warna ruang kerja</h2>
+        <p>Pilih warna yang nyaman. Pengaturan tampilan disimpan di browser ini.</p>
+        <div className="color-swatches-grid">
+          {COLOR_STYLES.map((c) => {
+            const isSelected = colorStyle === c.id;
+            return (
+              <button
+                key={c.id}
+                type="button"
+                className={`color-swatch-item ${isSelected ? 'is-selected' : ''}`}
+                onClick={() => setColorStyle(c.id)}
+                aria-pressed={isSelected}
+              >
+                <div className="swatch-preview" style={{ background: c.soft, color: '#29312d' }}>
+                  <span className="swatch-demo-line" style={{ background: c.primary }}>
+                    Tugas hari ini
+                  </span>
+                  {isSelected && <Check size={14} className="swatch-check" />}
+                </div>
+                <div className="swatch-info">
+                  <strong>{c.name}</strong>
+                  <small>{c.desc}</small>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
       <section className="card">
-        <span className="eyebrow">WORKSPACE FLEKSIBEL</span>
+        <span className="eyebrow">RUANG KERJA</span>
         <h2>Pengaturan</h2>
-        <p>
-          Buat proyek dengan tujuan, tanggal, dan catatan sendiri. Kelola pekerjaan melalui daftar,
-          papan, kalender, atau Gantt.
-        </p>
+        <p>Kelola proyek, jadwal kerja, dan data koperasi.</p>
         <Link className="primary" href="/proyek">
           Buka proyek
         </Link>

@@ -32,3 +32,6 @@ Pemilik mengganti konsep program 90 hari menjadi workspace proyek fleksibel. End
 ## 1 Oktober 2026 — perluasan oleh pemilik
 
 Larangan lingkup anggota/stok pada rancangan sebelumnya dicabut sesuai permintaan terbaru. Empat domain pencatatan ditambahkan (total 20) pada enam tabel fisik. Migrasi kedua disiapkan dan diuji lokal; pemasangan cloud menunggu persetujuan. Desain aktif memakai tema studio, menggantikan rose/lavender. Pencatatan dipisahkan dari proyek/tugas agar mudah dijangkau. Kas sederhana dan opname manual; bukan POS atau akuntansi penuh.
+
+## Referensi HP terakhir
+Palet oranye sebelumnya diganti oleh referensi terbaru pemilik: arang, hijau lembut, lavender. Aplikasi tetap satu pengguna. Data tim adalah catatan koordinasi, bukan akun/kolaborasi. Tata letak bersama berlaku ke semua rute; grafik hanya memakai data tersimpan. Tidak menambahkan jam tugas yang tidak ada pada skema.

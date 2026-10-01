@@ -1,9 +1,10 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Target, Calendar, Clock } from 'lucide-react';
 import { addDays, today } from '@/lib/date';
 import { api } from '@/lib/client';
 import { schemas, type Item } from './schemas';
+import { Select } from '@/components/ui/Select';
 
 export function SprintModal({
   sprint,
@@ -29,6 +30,14 @@ export function SprintModal({
   const [notes, setNotes] = useState(String(sprint?.data.notes || ''));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') onClose();
+    }
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
 
   function handleDurationChange(val: '1 minggu' | '2 minggu' | '1 bulan' | 'kustom') {
     setDuration(val);
@@ -66,7 +75,14 @@ export function SprintModal({
   }
 
   return (
-    <div className="sprint-modal-backdrop" role="dialog" aria-labelledby="sprint-modal-title">
+    <div
+      className="sprint-modal-backdrop"
+      role="dialog"
+      aria-labelledby="sprint-modal-title"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
       <div className="sprint-modal-card">
         <header className="sprint-modal-head">
           <div className="title-with-badge">
@@ -74,7 +90,7 @@ export function SprintModal({
               <Target size={18} />
             </span>
             <h2 id="sprint-modal-title">
-              {sprint?.id ? 'Ubah Target Periode' : 'Target Periode (Sprint)'}
+              {sprint?.id ? 'Ubah Target Periode' : 'Target Periode'}
             </h2>
           </div>
           <button type="button" className="close-btn" onClick={onClose} aria-label="Tutup modal">
@@ -84,19 +100,19 @@ export function SprintModal({
 
         <form onSubmit={handleSubmit} className="sprint-form">
           <label className="field-group">
-            <span className="field-label">Nama Periode / Sprint *</span>
+            <span className="field-label">Nama Target Periode *</span>
             <input
               type="text"
               required
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Contoh: Sprint 1 — Persiapan Operasional Gerai"
+              placeholder="Contoh: Periode 1 — Persiapan Operasional Gerai"
               className="text-input"
             />
           </label>
 
           <label className="field-group">
-            <span className="field-label">Tujuan / Goal Sprint</span>
+            <span className="field-label">Tujuan Target</span>
             <input
               type="text"
               value={goal}
@@ -111,35 +127,37 @@ export function SprintModal({
               <span className="field-label">
                 <Clock size={14} /> Durasi
               </span>
-              <select
+              <Select
                 value={duration}
-                onChange={(e) =>
+                onChange={(val) =>
                   handleDurationChange(
-                    e.target.value as '1 minggu' | '2 minggu' | '1 bulan' | 'kustom',
+                    val as '1 minggu' | '2 minggu' | '1 bulan' | 'kustom',
                   )
                 }
-                className="select-input"
-              >
-                <option value="1 minggu">01 Minggu</option>
-                <option value="2 minggu">02 Minggu</option>
-                <option value="1 bulan">01 Bulan</option>
-                <option value="kustom">Kustom</option>
-              </select>
+                options={[
+                  { value: '1 minggu', label: '1 Minggu' },
+                  { value: '2 minggu', label: '2 Minggu' },
+                  { value: '1 bulan', label: '1 Bulan' },
+                  { value: 'kustom', label: 'Kustom' },
+                ]}
+                ariaLabel="Durasi"
+              />
             </label>
 
             <label className="field-group">
               <span className="field-label">Status</span>
-              <select
+              <Select
                 value={status}
-                onChange={(e) =>
-                  setStatus(e.target.value as 'aktif' | 'rencana' | 'selesai')
+                onChange={(val) =>
+                  setStatus(val as 'aktif' | 'rencana' | 'selesai')
                 }
-                className="select-input"
-              >
-                <option value="aktif">Aktif</option>
-                <option value="rencana">Rencana</option>
-                <option value="selesai">Selesai</option>
-              </select>
+                options={[
+                  { value: 'aktif', label: 'Aktif' },
+                  { value: 'rencana', label: 'Rencana' },
+                  { value: 'selesai', label: 'Selesai' },
+                ]}
+                ariaLabel="Status"
+              />
             </label>
           </div>
 
@@ -180,7 +198,7 @@ export function SprintModal({
               rows={2}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Catatan koordinasi sprint..."
+              placeholder="Catatan target periode..."
               className="text-input"
             />
           </label>

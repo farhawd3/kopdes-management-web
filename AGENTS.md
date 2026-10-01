@@ -33,7 +33,7 @@
 - Periksa 360, 768, 1024, 1440 px; navigasi bawah ponsel, rel tablet, sidebar desktop.
 - Area sentuh minimal 44 px, fokus keyboard, label form, status memakai teks selain warna.
 - Tabel/Gantt bergulir dalam kontainer; hormati reduced-motion dan safe area.
-- Tema aktif: sidebar netral, aksen indigo, daftar dokumen dan panel edit samping; hindari kartu promosi besar dan slogan. Tema gelap tetap tersedia. Token visual di studio.css.
+- Tema aktif mengikuti referensi HP terbaru: arang, hijau lembut, lavender, kartu membulat, navigasi mengambang HP dan sidebar tablet/desktop. Tema gelap tetap tersedia. Lapisan visual aktif di personal.css; hindari angka ilustrasi, avatar tim palsu, tombol dekoratif dan slogan.
 
 ## Proses
 1. Periksa Git dan pertahankan perubahan pengguna.

@@ -11,10 +11,10 @@ export default async function Layout({ children }: { children: React.ReactNode }
     return (
       <main className="auth">
         <section className="card">
-          <h1>Konfigurasi diperlukan</h1>
+          <h1>Sesi belum dapat diperiksa</h1>
           <p>
-            Supabase baru belum siap. Periksa variabel HUB_SUPABASE_URL, HUB_SUPABASE_SERVICE_KEY,
-            dan migrasi baru di server.
+            Server belum dapat memeriksa sesi di Supabase. Muat ulang halaman untuk mencoba
+            kembali. Jika masih gagal, periksa koneksi server, konfigurasi Supabase, dan tabel sesi.
           </p>
           <Link href="/pin">Kembali ke PIN</Link>
         </section>

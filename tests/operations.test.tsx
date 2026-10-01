@@ -17,7 +17,8 @@ beforeAll(() => {
   };
 });
 beforeEach(() => vi.clearAllMocks());
-vi.mock('next/navigation', () => ({ useSearchParams: () => new URLSearchParams() }));
+vi.mock('next/navigation', () => ({ useRouter: () => ({ replace: vi.fn() }),
+  useSearchParams: () => new URLSearchParams() }));
 afterEach(cleanup);
 const item = (data: Record<string, unknown>): Item => ({
   id: 'test',

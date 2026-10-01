@@ -1,9 +1,7 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Check,
-  CheckCircle2,
-  Clock,
   Repeat,
   ChevronLeft,
   ChevronRight,
@@ -11,16 +9,9 @@ import {
   Edit2,
   Plus,
   Send,
-  Bold,
-  Italic,
-  Underline,
-  List,
-  ListOrdered,
-  Paperclip,
   Trash2,
   Calendar,
   Flag,
-  User,
   ExternalLink,
 } from 'lucide-react';
 import { schemas, type Item } from './schemas';
@@ -53,6 +44,12 @@ export function TaskDetailDrawer({
   onPrev?: () => void;
   onNext?: () => void;
 }) {
+  const dialog = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    const node = dialog.current;
+    node?.showModal();
+    return () => node?.close();
+  }, []);
   const data = task.data;
   const isComplete = data.status === 'selesai';
   const taskCode = String(data.code || `#KD-${task.id.slice(0, 5).toUpperCase()}`);
@@ -72,36 +69,27 @@ export function TaskDetailDrawer({
     : [];
 
   const completedSubtasks = subtasks.filter((s) => s.done).length;
-  const subtasksPercent = subtasks.length > 0 ? Math.round((completedSubtasks / subtasks.length) * 100) : 0;
+  const subtasksPercent =
+    subtasks.length > 0 ? Math.round((completedSubtasks / subtasks.length) * 100) : 0;
 
   // Activities & coordination comments
-  const activities: ActivityItem[] = Array.isArray(data.activities) && data.activities.length > 0
-    ? (data.activities as ActivityItem[])
-    : [
-        {
-          id: 'init-1',
-          user: String(data.assignee || 'Manajer Koperasi'),
-          role: 'KDMP Puntukrejo',
-          text: 'telah membuat tugas ini',
-          created_at: task.created_at || new Date().toISOString(),
-          type: 'creation',
-        },
-      ];
+  const activities: ActivityItem[] =
+    Array.isArray(data.activities) && data.activities.length > 0
+      ? (data.activities as ActivityItem[])
+      : [];
 
   const project = workspace.workstreams?.find((w) => w.id === data.workstream_id);
-  const managerName = String(
-    workspace.organization?.[0]?.data?.manager || 'Manajer Koperasi (KDMP Puntukrejo)',
-  );
+  const managerName = String(workspace.organization?.[0]?.data?.manager || 'Manajer');
 
   async function saveChanges(changes: Record<string, unknown>, activityMsg?: string) {
     if (busy) return;
     setBusy(true);
     setError('');
     try {
-      let updatedActivities = [...activities];
+      const updatedActivities = [...activities];
       if (activityMsg) {
         updatedActivities.push({
-          id: 'act-' + Date.now(),
+          id: crypto.randomUUID(),
           user: managerName,
           role: 'Pelaksana Utama',
           text: activityMsg,
@@ -119,8 +107,10 @@ export function TaskDetailDrawer({
       const parsed = schemas['work-items'].parse(updatedPayload);
       await api('work-items', { id: task.id, data: parsed });
       await onUpdated();
+      return true;
     } catch (err) {
       setError((err as Error).message || 'Gagal memperbarui tugas.');
+      return false;
     } finally {
       setBusy(false);
     }
@@ -133,7 +123,9 @@ export function TaskDetailDrawer({
         status: nextStatus,
         completed_at: nextStatus === 'selesai' ? today() : '',
       },
-      nextStatus === 'selesai' ? 'telah menandai tugas ini selesai' : 'membuka kembali status tugas',
+      nextStatus === 'selesai'
+        ? 'telah menandai tugas ini selesai'
+        : 'membuka kembali status tugas',
     );
   }
 
@@ -146,13 +138,14 @@ export function TaskDetailDrawer({
       { title: newSubtaskTitle.trim(), done: false, code: subtaskCode },
     ];
     setNewSubtaskTitle('');
-    await saveChanges({ subtasks: nextSubtasks }, `menambahkan subtugas: "${newSubtaskTitle.trim()}"`);
+    await saveChanges(
+      { subtasks: nextSubtasks },
+      `menambahkan subtugas: "${newSubtaskTitle.trim()}"`,
+    );
   }
 
   async function toggleSubtask(index: number) {
-    const nextSubtasks = subtasks.map((s, idx) =>
-      idx === index ? { ...s, done: !s.done } : s,
-    );
+    const nextSubtasks = subtasks.map((s, idx) => (idx === index ? { ...s, done: !s.done } : s));
     await saveChanges({ subtasks: nextSubtasks });
   }
 
@@ -165,13 +158,19 @@ export function TaskDetailDrawer({
     e.preventDefault();
     if (!newCommentText.trim()) return;
     const msg = `menambahkan catatan: "${newCommentText.trim()}"`;
-    const textToSave = newCommentText.trim();
-    setNewCommentText('');
-    await saveChanges({}, msg);
+    if (await saveChanges({}, msg)) setNewCommentText('');
   }
 
   return (
-    <aside className="task-detail-drawer" aria-label="Detail Tugas">
+    <dialog
+      ref={dialog}
+      className="task-detail-drawer"
+      aria-label="Detail Tugas"
+      onCancel={onClose}
+      onClick={(e) => {
+        if (e.target === dialog.current) onClose();
+      }}
+    >
       <div className="task-detail-backdrop" onClick={onClose} />
       <div className="task-detail-panel">
         {/* Top Control Bar */}
@@ -207,7 +206,12 @@ export function TaskDetailDrawer({
                 <ChevronRight size={18} />
               </button>
             )}
-            <button type="button" className="btn-icon close-drawer-btn" title="Tutup" onClick={onClose}>
+            <button
+              type="button"
+              className="btn-icon close-drawer-btn"
+              title="Tutup"
+              onClick={onClose}
+            >
               <X size={18} />
             </button>
           </div>
@@ -224,7 +228,10 @@ export function TaskDetailDrawer({
           <div className="header-meta-row">
             <span className="task-code-badge">{taskCode}</span>
             {project && (
-              <span className="project-badge" style={{ borderColor: String(project.data.color || '#d5f935') }}>
+              <span
+                className="project-badge"
+                style={{ borderColor: String(project.data.color || '#d5f935') }}
+              >
                 {String(project.data.title)}
               </span>
             )}
@@ -326,10 +333,7 @@ export function TaskDetailDrawer({
                 </div>
               </div>
             ) : (
-              <p
-                className="task-desc-text"
-                onClick={() => setIsEditingDesc(true)}
-              >
+              <p className="task-desc-text" onClick={() => setIsEditingDesc(true)}>
                 {String(data.description || 'Klik di sini untuk menambahkan deskripsi tugas.')}
               </p>
             )}
@@ -344,7 +348,7 @@ export function TaskDetailDrawer({
               <span className="meta-avatar manager-avatar">M</span>
               <div className="user-info">
                 <strong>{managerName}</strong>
-                <small>KDMP Puntukrejo</small>
+                <small>Catatan pribadi</small>
               </div>
             </div>
           </div>
@@ -353,21 +357,14 @@ export function TaskDetailDrawer({
             <span className="meta-label">PENANGGUNG JAWAB</span>
             <div className="user-profile-row">
               <span className="meta-avatar assignee-avatar">
-                {String(data.assignee || managerName).charAt(0).toUpperCase()}
+                {String(data.assignee || managerName)
+                  .charAt(0)
+                  .toUpperCase()}
               </span>
               <div className="user-info">
                 <strong>{String(data.assignee || managerName)}</strong>
                 <small>Pelaksana Utama</small>
               </div>
-            </div>
-          </div>
-
-          <div className="meta-card">
-            <span className="meta-label">PEMANGKU / TIM</span>
-            <div className="followers-avatar-list">
-              <span className="follower-circle" title="Pengurus Koperasi">PK</span>
-              <span className="follower-circle" title="Pengawas">PW</span>
-              <span className="follower-circle" title="Dinas Koperasi">DK</span>
             </div>
           </div>
         </div>
@@ -376,17 +373,21 @@ export function TaskDetailDrawer({
         <div className="date-properties-strip">
           <div className="prop-item">
             <Calendar size={15} />
-            <span>Tenggat: <strong>{formatDate(String(data.due_date))}</strong></span>
+            <span>
+              Tenggat: <strong>{formatDate(String(data.due_date))}</strong>
+            </span>
           </div>
           {Boolean(data.recurrence && data.recurrence !== 'tidak') && (
             <div className="prop-item">
               <Repeat size={15} />
-              <span>Perulangan: <strong>{String(data.recurrence)}</strong></span>
+              <span>
+                Perulangan: <strong>{String(data.recurrence)}</strong>
+              </span>
             </div>
           )}
           {Boolean(data.link) && (
             <a href={String(data.link)} target="_blank" rel="noreferrer" className="prop-link">
-              <ExternalLink size={14} /> Bukti Berkas
+              <ExternalLink size={14} /> Tautan berkas
             </a>
           )}
         </div>
@@ -454,19 +455,22 @@ export function TaskDetailDrawer({
 
         {/* Summary & Activity Timeline */}
         <div className="activity-summary-section">
-          <h4>Ringkasan Aktivitas & Catatan</h4>
+          <h4>Catatan dan riwayat tugas</h4>
           <div className="timeline-feed">
             {activities.map((act) => (
               <div key={act.id} className="timeline-event">
-                <span className="event-avatar">
-                  {act.user.charAt(0).toUpperCase()}
-                </span>
+                <span className="event-avatar">{act.user.charAt(0).toUpperCase()}</span>
                 <div className="event-content">
                   <p className="event-text">
                     <strong>{act.user}</strong> {act.text}
                   </p>
                   <span className="event-time">
-                    {formatDate(act.created_at.slice(0, 10))} · {act.created_at.slice(11, 16) || '09:00'} WIB
+                    {new Intl.DateTimeFormat('id-ID', {
+                      dateStyle: 'medium',
+                      timeStyle: 'short',
+                      timeZone: 'Asia/Jakarta',
+                    }).format(new Date(act.created_at))}{' '}
+                    WIB
                   </span>
                 </div>
               </div>
@@ -476,34 +480,13 @@ export function TaskDetailDrawer({
 
         {/* Bottom Rich Message / Comment Editor */}
         <div className="comment-composer-box">
-          <div className="composer-toolbar">
-            <button type="button" className="tool-btn" title="Tebal (Bold)">
-              <Bold size={14} />
-            </button>
-            <button type="button" className="tool-btn" title="Miring (Italic)">
-              <Italic size={14} />
-            </button>
-            <button type="button" className="tool-btn" title="Garis Bawah (Underline)">
-              <Underline size={14} />
-            </button>
-            <span className="toolbar-sep" />
-            <button type="button" className="tool-btn" title="Daftar Poin">
-              <List size={14} />
-            </button>
-            <button type="button" className="tool-btn" title="Daftar Angka">
-              <ListOrdered size={14} />
-            </button>
-          </div>
-
           <form onSubmit={handleAddComment} className="composer-input-row">
-            <button type="button" className="btn-attach" title="Lampirkan berkas">
-              <Paperclip size={16} />
-            </button>
             <input
+              aria-label="Catatan tugas"
               type="text"
               value={newCommentText}
               onChange={(e) => setNewCommentText(e.target.value)}
-              placeholder="Ketik catatan atau pembaruan tugas..."
+              placeholder="Tulis catatan tugas…"
               className="composer-input-field"
             />
             <button
@@ -512,7 +495,7 @@ export function TaskDetailDrawer({
               className="btn-send-comment"
             >
               <Send size={15} />
-              <span>Kirim</span>
+              <span>Simpan catatan</span>
             </button>
           </form>
         </div>
@@ -529,6 +512,6 @@ export function TaskDetailDrawer({
           }}
         />
       )}
-    </aside>
+    </dialog>
   );
 }

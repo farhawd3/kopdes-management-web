@@ -1,6 +1,122 @@
 # Changelog
 
-### Perbaikan origin Vercel
+### Superapp Manajer, Alur Laporan & Hapus Draf, dan Pusat Aksi Terpadu (1 Oktober 2026)
+
+- **Alur Laporan Lengkap & Tombol Hapus Draf (`/laporan`)**:
+  - Menyediakan tombol **Hapus Draf** merah yang jelas dan aman dengan dialog konfirmasi agar manajer dapat membuang draf sementara yang tidak dibutuhkan.
+  - Membedakan status dokumen secara visual: **Draf Kerja** (kuning/amber) vs **Dokumen Resmi** (hijau resmi) berkop KDMP.
+  - Opsi simpan ganda: tombol `Simpan sebagai Draf` untuk catatan kerja fleksibel, dan tombol `Terbitkan Laporan Resmi` untuk laporan final berkop.
+  - Tombol aksi instan pada draf: `Terbitkan Resmi` dan `Hapus Draf`.
+  - Filter arsip laporan: `Semua Arsip`, `Draf Kerja`, dan `Dokumen Resmi`.
+  - Integrasi ringkasan arus kas riil periode (kas masuk, kas keluar, selisih) ke dalam snapshot lembar laporan resmi.
+- **Pusat Aksi Cepat Manajer (Superapp Command Center)**:
+  - Menyediakan modal aksi cepat (`ManagerActionModal`) yang dapat dipanggil dari mana saja via tombol `+ Aksi` di topbar, dock tengah ponsel, atau pintasan keyboard.
+  - Memuat 9 formulir aksi instan: Catat Kas Masuk, Catat Kas Keluar, Tambah Anggota, Input/Beli Barang, Hitung Stok (Opname), Buat Tugas, Jadwalkan Rapat, Susun Laporan, dan Catat Risiko.
+  - Navigasi instan dengan penekanan angka `1` s.d. `9` pada keyboard.
+- **Dasbor Superapp Manajer (`/` Beranda)**:
+  - Menambahkan strip pintasan operasional cepat (*Quick Action Strip*) di bawah tajuk beranda.
+  - Menambahkan *Smart Alert* persediaan kritis jika terdapat barang toko yang habis atau di bawah batas minimum gerai.
+  - Memperkaya kartu catatan koperasi dengan angka riil kas dan inventaris toko.
+- **Migrasi Database Supabase Baru**:
+  - Menyiapkan berkas migrasi `supabase/migrations/20261001000005_manager_superapp.sql` dengan kolom status laporan, indeks pencarian cepat, dan izin akses aman.
+
+### Desain Ulang Kartu Pencatatan & Polish Komponen (1 Oktober 2026)
+
+- **Penyelarasan & Desain Ulang Kartu Buku Pencatatan (`/pencatatan`)**:
+  - Menghilangkan artefak garis tebal asimetris warisan CSS pada sisi kiri ikon (`border-left: 4px solid` & radius tidak seimbang) menjadi ikon squircle modern simetris (radius 13px) dengan warna pastel elegan dan kontras nyaman.
+  - Merapikan susunan tombol aksi di sisi kanan: mengelompokkan tombol `+ Tambah` dan tombol navigasi buka `↗` ke dalam kontainer `.notebook-actions` yang presisi.
+  - Memasangkan lencana jumlah data (`0 data`) langsung berdampingan dengan judul buku di dalam `.notebook-title-wrap`, sehingga kartu terlihat proporsional tanpa rongga kosong yang canggung.
+  - Memperbarui sudut lengkung kartu dari bentuk lonjong kapsul berlebih menjadi sudut modern 16px dengan bayangan bertingkat lembut dan efek hover responsif.
+  - Mendukung tema gelap (`data-theme="dark"` / `.dark`) secara konsisten.
+
+### Keterhubungan Pencatatan, Pemilih Bulan, Laporan Eksekutif & Risiko (1 Oktober 2026)
+
+- **Pemilih Bulan Indonesia & Dropdown Rapi**:
+  - Menggantikan input bulan native `<input type="month">` peramban dengan komponen `Select` kustom berbahasa Indonesia ("Semua Bulan", "Oktober 2026 (Bulan Ini)", "September 2026", dst.). Menghilangkan popover kalender bahasa Inggris bawaan Windows yang kaku dan tidak serasi.
+- **Keterhubungan Silang Buku Pencatatan Operasional**:
+  - Buku Kas terhubung ke Anggota (`member_id`) dan Barang (`item_id`), dengan lencana terkait dan subtitle pada judul transaksi.
+  - Buku Anggota menampilkan rekapitulasi transaksi kas anggota (jumlah transaksi dan total nominal simpanan) serta tombol aksi instan `+ Kas` untuk langsung membuka form setoran kas dengan identitas anggota terisi otomatis.
+  - Buku Barang menampilkan harga satuan (`price`), kondisi stok (Aman / Menipis / Habis) berdasarkan batas minimum, info hasil opname terakhir, serta tombol aksi cepat `+ Beli` (mencatat pengeluaran kas pengadaan stok) dan `Opname` (menghitung fisik).
+  - Buku Stok Opname secara otomatis menyalin stok buku saat barang dipilih pada form isian.
+- **Template Laporan Eksekutif Resmi Manajer (`/laporan`)**:
+  - Mengubah tampilan laporan manajer menjadi lembar dokumen resmi Koperasi Desa Merdeka Puntukrejo (KDMP) yang siap cetak / PDF dan ekspor WhatsApp.
+  - Memuat Kop Surat Resmi KDMP, nomor dokumen resmi, periode evaluasi, dan badge keaslian dokumen.
+  - 4 Kartu KPI Eksekutif: Tugas Rampung, Milestone Tercapai, Kendala/Tugas Terlambat, dan Risiko Terbuka.
+  - Kotak Catatan Pengantar Manajer bergaya memo eksekutif dengan kutipan elegan.
+  - Bagian terstruktur dengan ikon dan badge jumlah item.
+  - Kolom Tanda Tangan Resmi (Kiri: Pengurus / Badan Pengawas, Kanan: Manajer Operasional) dengan optimasi cetak `@media print`.
+- **Dasbor Pemantauan Risiko Manusiawi & Sederhana**:
+  - Menggantikan matriks matematis 5x5 (`5x1 -` s.d. `5x5 -`) dengan 3 kartu tingkat bahaya operasional yang jelas (🔴 Kritis, 🟡 Waspada, 🟢 Terkendali), matriks sebaran 3x3 yang ramah dengan judul risiko nyata, dan kartu mitigasi tindakan yang siap tindak lanjut.
+- **Bahasa Pemangku Kepentingan yang Membumi & Santun**:
+  - Menyederhanakan istilah manajemen teoretis menjadi bahasa koordinasi desa yang santun: Tokoh Penentu & Pengurus Inti, Aparat Keamanan & Pembina, Anggota Koperasi & Warga Desa, serta Mitra Usaha & Pemasok.
+- **Migrasi Supabase**:
+  - Menyiapkan berkas migrasi `supabase/migrations/20261001000004_interconnected_operations.sql` untuk dijalankan pengguna.
+
+
+- **Komponen Dropdown Kustom (`src/components/ui/Select.tsx`)**:
+  - Menggantikan menu popover bawaan peramban Windows/Chrome yang kaku dan berwarna biru tua dengan komponen dropdown kustom yang elegan.
+  - Kartu popover menu melayang dengan sudut membulat (`border-radius: 12px;`), bayangan mengambang lembut, dan animasi transisi halus saat dibuka.
+  - Indikator centang (`<Check size={14} />`) untuk opsi yang sedang dipilih, serta efek sorot hover pastel lembut (`var(--brand-soft)`).
+  - Aksesibilitas penuh: navigasi keyboard (panah atas/bawah, Enter/Spasi, Escape, Tab) dan penutupan otomatis saat klik di luar area.
+  - Dukungan mode gelap penuh dengan latar obsidian `#181922`.
+- **Implementasi Terpadu**:
+  - `src/features/Records.tsx`: Filter Status, Proyek, Target Periode Sprint, Prioritas, dan Urutan.
+  - `src/features/Operations.tsx`: Filter Status/Transaksi kas dan Filter Gerai.
+  - `src/features/Dashboard.tsx` & `src/features/Roadmap.tsx`: Filter Proyek.
+  - `src/features/SprintModal.tsx` & `src/features/RecursiveScheduleModal.tsx`: Durasi target periode, status, dan perulangan jadwal.
+
+### Perapihan Tampilan Papan Scrum, Tugas Harian & Kartu Kerja (1 Oktober 2026)
+
+- **Papan Scrum (`ScrumBoardView`)**:
+  - Hapus aturan CSS lawas yang menimbulkan benturan warna lavender pada kolom kedua ("Dikerjakan") dan duplikasi border-radius.
+  - Tambah indikator dot warna status pada header kolom: Rencana (Abu netral), Dikerjakan (Aksen utama), Dibatalkan (Merah peringatan), dan Selesai (Hijau tuntas).
+  - Tampilkan placeholder kolom kosong (`.scrum-empty-column-placeholder`) saat kolom belum memiliki tugas agar tampilan tidak bolong atau timpang.
+  - Kartu tugas dilengkapi lencana prioritas (`.card-priority-pill`), penanda visual tenggat terlewat (`.card-date-pill.is-late` dengan ikon peringatan), dan perapihan progress bar subtugas.
+  - Petakan status 'dibatalkan' secara eksplisit pada aksi drop kartu antar kolom.
+- **Tugas Harian (`DailyTasksView`)**:
+  - Tambah kelompok lipat tugas terlewat/sebelum pekan ini (`.overdue-group-card`) agar tugas tertunda dari minggu lalu tidak hilang dari pandangan manajer.
+  - Lengkapi navigasi keyboard (`role="button"`, `tabIndex={0}`, `onKeyDown`) pada setiap baris tugas harian.
+- **Hari Ini (`TodayView`) & Kartu Sprint (`SprintCard`)**:
+  - Bersihkan tombol bersarang (`button` di dalam `div` interaktif) pada daftar tugas terlambat `TodayView` agar mematuhi standar aksesibilitas HTML dan tidak memicu perilaku klik ganda.
+  - Lengkapi kartu sprint dan tugas menyusul dengan fokus keyboard dan penanganan tombol Enter/Spasi.
+
+- Rapikan kartu dashboard/proyek/catatan serta tata letak pencatatan tablet. Hubungkan filter proyek, legenda diagram status, tanggal penyelesaian, dan daftar tugas di dashboard.
+- Perbaiki hitungan status yang tumpang tindih dan proporsi grafik; tambahkan transisi diagram serta dukungan reduced-motion.
+
+- Perjelas pesan kegagalan pemeriksaan sesi agar gangguan koneksi tidak disalahartikan sebagai migrasi belum terpasang.
+
+### Audit tugas dan dashboard (1 Oktober 2026)
+
+- Perbaiki pengurutan tugas dan detail yang tertinggal setelah penyimpanan pada Hari Ini.
+- Tampilkan galat aksi tugas harian dan aktifkan pembukaan detail melalui keyboard.
+- Tampilkan nilai dashboard langsung, sertakan tanggal pada label grafik, dan perbaiki perhitungan diagram saat render.
+- Validasi: 108 tes, lint, typecheck, dan build produksi lulus. Pemeriksaan browser terbaru memerlukan login ulang.
+
+### Perapihan Tabel, Input Rapat Kondisional & Penyempurnaan Bahasa (1 Oktober 2026)
+
+- **Input Rapat Kondisional (`Editor` & `Records`)**:
+  - Pilihan format rapat (`mode`): Tatap Muka, Online Penuh, dan Hybrid.
+  - Form menyesuaikan secara dinamis: hanya menampilkan ruangan/lokasi fisik pada pilihan tatap muka, hanya menampilkan tautan online pada pilihan online, dan menampilkan keduanya pada format hybrid.
+  - Tampilan kartu rapat di Beranda dan Riwayat hanya menampilkan detail lokasi dan tombol tautan bergabung sesuai format yang dipilih.
+- **Perapihan & Konsistensi Tabel**:
+  - `.ledger-table` (Buku Kas, Anggota, Barang, Opname): perataan kolom rapi (angka rata kanan tabular, lencana status/arah di tengah, kode monospace, tanggal rapi), lencana status berwarna, nominal kas tegas, tombol aksi rapi, dan *empty state* yang informatif.
+  - `.task-table` (Daftar Tugas): kolom rapi dengan label proyek, dropdown status berwarna per status, lencana prioritas, tanda peringatan keterlambatan, dan tombol `✓ Selesai`.
+  - `.filters`: diseragamkan dengan `<span className="field-caption">`, tinggi seragam 38px, dan tombol reset filter yang konsisten.
+- **Penyempurnaan Bahasa**:
+  - Istilah formulir dan keterangan direvisi agar sederhana, alami, dan mudah dipahami pengelola KDMP Puntukrejo.
+
+### Penyempurnaan Kartu Pencatatan & Pemangku Kepentingan Desa (1 Oktober 2026)
+
+- **Kartu Pencatatan Modern**:
+  - Transformasi baris buku pada `/pencatatan` menjadi kartu mandiri yang rapi dengan spine icon beraksen pastel (hijau, biru, ungu, amber), live count badge, deskripsi yang nyaman dibaca, dan tombol "+ Tambah" bertema dengan touch target 44px.
+  - Kartu catatan terakhir (`.recent-note`) dipercantik dengan ikon modul, badge kategori, dan format tanggal yang jelas.
+  - Metrik ringkasan (`.recording-metrics`) diperbarui dari grid terpotong menjadi kartu KPI individual dengan indikator warna sesuai tipe transaksi (pemasukan hijau, pengeluaran merah, selisih biru, stok rendah oranye).
+- **Pemangku Kepentingan Desa (`/pemangku`)**:
+  - Dukungan penuh peran mitra desa Indonesia: Babinsa (TNI), Bhabinkamtibmas (Polri), Kepala Desa/BPD/Perangkat, Badan Pengawas Koperasi, Pengurus Koperasi, Dinas Koperasi & UKM, Kelompok Tani (Gapoktan), dan Mitra Usaha.
+  - Pilihan cepat (preset) pada formulir tambah pemangku: sekali klik langsung mengisi kategori, rentang wewenang, dan panduan tindak lanjut.
+  - Input pengaruh dan kepentingan dilengkapi pilihan deskriptif Bahasa Indonesia (1–5) dengan penjelasan wewenang dan frekuensi koordinasi.
+  - Kartu pemangku menampilkan lencana peran dengan ikon dan warna khas, label kuadran strategi koordinasi (*Libatkan Erat*, *Jaga Dukungan*, *Beri Informasi*, *Pantau*), tombol langsung WhatsApp dan Telepon, status riwayat kontak, dan peringatan jika belum dihubungi lebih dari 14 hari.
+  - Peta Pengaruh–Minat (`InfluenceMap`) diperbarui dengan arahan taktis kemitraan koperasi desa dan visualisasi chip pemangku per kuadran.
 
 - Normalisasi konfigurasi origin dan kenali domain deployment resmi dari metadata server Vercel.
 - Tetap tolak origin asing/kosong, domain Vercel lain, downgrade HTTP, serta pemalsuan Host/Forwarded.
@@ -38,3 +154,30 @@ Implementasi awal belum berarti seluruh target PRD atau UAT selesai. Batas dan h
 - Ganti kartu promosi dengan daftar buku dan akses tambah langsung.
 - Tambah catatan terakhir, pencarian, input tugas dengan Enter, serta editor samping.
 - Referensi: Linear (display options) dan Things (scheduling/organization); tema netral dengan aksen indigo.
+
+## 2026-10-01 — ruang manajer pribadi
+- Desain arang, hijau lembut dan lavender; navigasi HP mengambang serta sidebar tablet/desktop.
+- Beranda, kalender, papan, detail tugas dan komponen pencatatan diselaraskan.
+- Hapus grafik/progres contoh, nama default fiktif, avatar pengikut dan tombol tanpa aksi.
+- Perbaiki status papan, penanganan galat, pembaruan detail dan catatan pribadi.
+
+## 2026-10-01 — penyempurnaan clean design, palet pastel, kalender, dan pembersihan AI slop
+- Ganti tampilan datar dengan clean design, soft elevation shadows (`var(--shadow-card)`), border lembut dan palet terkurasi.
+- Tambah 5 palet warna pastel (Lime Pastel warna awal, Peach Pastel hangat, Lavender Pastel, Sage Pastel, Sky Pastel) dengan pemilih gaya interaktif di Pengaturan.
+- Tingkatkan interaktivitas kalender: sel terpilih memiliki highlight pastel lembut, aksen border tegas, dan glow bayangan berdimensi saat diklik.
+- Simetriskan presisi tombol icon "+" di kalender sejajar dengan nomor tanggal (lingkaran 28px x 28px rata tengah).
+- Selaraskan tombol tambah tugas pada agenda kalender dengan ikon Plus dan typography tegas.
+- Perbaiki seluruh modal pop-up (`SprintModal`, `RecursiveScheduleModal`, `DateRangePicker`, `TaskDetailDrawer`, `Editor`, dan impor CSV) agar otomatis menutup saat area transparan/backdrop diklik atau tombol Escape ditekan.
+- Lengkapi penataan jarak, layout card, dan komposisi warna kontras tinggi pada papan scrum, kartu tugas, dan kartu sprint (memperbaiki keterbacaan teks judul proyek dan indikator status).
+- Hapus 42 pengulangan teks "+ Tugas" pada kalender; gunakan tombol mini plus terpadu dan tombol agenda terpilih.
+- Selesaikan duplikasi klik buka kalender pada DateField dengan menyembunyikan pemilih bawaan browser dan menyatukan aksi trigger.
+- Rapikan skeleton loading menjadi wireframe shimmer yang selaras dengan layout halaman kerja nyata.
+- Desain ulang menu samping dengan emblem KDMP Puntukrejo, ikon per modul, pencarian cepat ⌘K, dan profil manajer.
+- Bersihkan bahasa AI slop di seluruh modul menjadi bahasa Indonesia lugas, ringkas, dan profesional.
+- Perbaiki penataan jarak di Beranda: letak angka persentase ProgressRing presisi di titik pusat tanpa terpotong, persentase proyek rapi dalam pill badge dengan jarak napas lega.
+- Selesaikan perapian visual Tugas Harian (`DailyTasksView`) dengan kartu accordion hari, badge hari ini, kode tugas `#KD-XXXX`, visualisasi pohon subtugas (`├──` dan `└──`), dan aksi cepat.
+- Perbaiki keterbacaan nomor tanggal "Hari ini" pada kalender dengan teks kontras tinggi `var(--ink-heading)` di atas latar pastel lembut `var(--brand-soft)`.
+- Perbaiki perilaku penutupan otomatis menu pop-up/dropdown ("Lainnya", "Opsi lainnya") saat area luar transparan diklik atau tombol Escape ditekan.
+- Sempurnakan grid 7-kolom dan kontras tanggal pada pemilih rentang tanggal (`DateRangePicker`) dan pemilih tanggal inline (`DateField`).
+- Rancang ulang halaman `/hari-ini` dengan komponen `TodayView` terdedikasi: agenda tugas hari ini, seksi tugas terlambat dengan 1-klik reschedule, agenda rapat hari ini, dan tugas 7 hari ke depan.
+- Rombak total pop-up tambah tugas/editor (`Editor.tsx`): modal melayang di tengah dengan backdrop blur, animasi halus, ikon kategori, tombol tutup X bulat, struktur label-input yang lapang, dan tombol aksi tegas.

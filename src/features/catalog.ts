@@ -15,6 +15,8 @@ export const catalog: Record<Entity, { title: string; description: string; field
       'amount',
       'category',
       'account',
+      'member_id',
+      'item_id',
       'unit_id',
       'reference_number',
       'link',
@@ -27,6 +29,7 @@ export const catalog: Record<Entity, { title: string; description: string; field
     fields: [
       'title',
       'sku',
+      'price',
       'unit_id',
       'measurement',
       'book_quantity',
@@ -41,7 +44,7 @@ export const catalog: Record<Entity, { title: string; description: string; field
   },
   organization: {
     title: 'Profil koperasi',
-    description: 'Identitas dan awal rencana kerja Anda.',
+    description: 'Identitas dan profil koperasi.',
     fields: [
       'title',
       'village',
@@ -55,7 +58,7 @@ export const catalog: Record<Entity, { title: string; description: string; field
   },
   workstreams: {
     title: 'Proyek & bidang kerja',
-    description: 'Satu tempat untuk tujuan, catatan, dan tugas setiap proyek.',
+    description: 'Daftar proyek, tujuan, dan tugas terkait.',
     fields: [
       'title',
       'code',
@@ -102,7 +105,7 @@ export const catalog: Record<Entity, { title: string; description: string; field
   },
   sprints: {
     title: 'Target periode',
-    description: 'Fokus target kerja fleksibel koperasi untuk periode 1–2 minggu atau bulanan.',
+    description: 'Target kerja koperasi untuk periode mingguan atau bulanan.',
     fields: ['title', 'goal', 'duration', 'start_date', 'end_date', 'status', 'notes'],
   },
   units: {
@@ -124,7 +127,7 @@ export const catalog: Record<Entity, { title: string; description: string; field
   },
   checklist: {
     title: 'Kesiapan',
-    description: 'Periksa kelengkapan dan simpan bukti pekerjaan.',
+    description: 'Pemeriksaan kelengkapan dan bukti pekerjaan.',
     fields: [
       'title',
       'workstream_id',
@@ -138,12 +141,12 @@ export const catalog: Record<Entity, { title: string; description: string; field
   },
   stakeholders: {
     title: 'Pemangku kepentingan',
-    description: 'Jaga koordinasi dengan pengurus, dinas, dan mitra.',
+    description: 'Daftar kontak pengurus, dinas, dan mitra.',
     fields: ['title', 'category', 'contact', 'influence', 'interest', 'last_contact', 'follow_up'],
   },
   interactions: {
     title: 'Riwayat interaksi',
-    description: 'Catat hasil kontak dan tindak lanjut.',
+    description: 'Riwayat komunikasi dan tindak lanjut.',
     fields: ['title', 'stakeholder_id', 'date', 'notes', 'follow_up'],
   },
   meetings: {
@@ -164,7 +167,7 @@ export const catalog: Record<Entity, { title: string; description: string; field
   },
   decisions: {
     title: 'Keputusan',
-    description: 'Jejak keputusan beserta alasan dan sumbernya.',
+    description: 'Risalah keputusan dan keterangannya.',
     fields: ['title', 'meeting_id', 'date', 'reason', 'link'],
   },
   documents: {
@@ -174,12 +177,12 @@ export const catalog: Record<Entity, { title: string; description: string; field
   },
   risks: {
     title: 'Risiko',
-    description: 'Catat risiko dan rencana penanganannya.',
+    description: 'Daftar risiko dan rencana mitigasi.',
     fields: ['title', 'probability', 'impact', 'mitigation', 'assignee', 'review_date', 'status'],
   },
   issues: {
     title: 'Isu lapangan',
-    description: 'Catat masalah nyata dan langkah penyelesaiannya.',
+    description: 'Kendala operasional dan tindakan penyelesaian.',
     fields: ['title', 'description', 'assignee', 'due_date', 'status'],
   },
   staff: {
@@ -189,12 +192,12 @@ export const catalog: Record<Entity, { title: string; description: string; field
   },
   trainings: {
     title: 'Pelatihan',
-    description: 'Pantau kesiapan petugas dan pelatihan wajib.',
+    description: 'Jadwal dan status pelatihan petugas.',
     fields: ['title', 'staff_id', 'date', 'required', 'status', 'notes'],
   },
   journal: {
     title: 'Jurnal kerja',
-    description: 'Catatan harian dan kunjungan lapangan.',
+    description: 'Catatan kegiatan harian dan kunjungan lapangan.',
     fields: ['title', 'date', 'notes', 'unit_id', 'work_item_id', 'stakeholder_id'],
   },
 };
@@ -276,9 +279,15 @@ export const labels: Record<string, string> = {
   sprint_id: 'Target periode',
   recurrence_time: 'Jam perulangan',
   recurrence_end_date: 'Selesai berulang',
+  member_id: 'Anggota terkait (opsional)',
+  price: 'Harga satuan (Rp)',
+  cash_summary: 'Transaksi Kas',
+  relation: 'Terkait',
+  stock_status: 'Kondisi Stok',
 };
 export const references: Record<string, Entity> = {
   item_id: 'inventory-items',
+  member_id: 'members',
   issue_id: 'issues',
   workstream_id: 'workstreams',
   milestone_id: 'milestones',
@@ -308,9 +317,97 @@ export const options: Record<string, string[]> = {
   poac: ['planning', 'organizing', 'actuating', 'controlling'],
   recurrence: ['tidak', 'harian', 'mingguan', 'bulanan'],
   dimension: ['legalitas', 'fisik', 'sdm', 'sop', 'sistem'],
+  'stakeholders.category': [
+    'Pemerintah Desa (Kepala Desa / BPD / Perangkat)',
+    'Keamanan Desa (Babinsa / Bhabinkamtibmas)',
+    'Badan Pengawas Koperasi',
+    'Pengurus & Pengelola Koperasi',
+    'Dinas Koperasi & UKM / Pembina',
+    'Masyarakat Desa & Kelompok Tani',
+    'Mitra Usaha & Pemasok',
+    'Lainnya / Eksternal',
+  ],
 };
+export const choiceLabels: Record<string, string> = {
+  // Status
+  rencana: 'Rencana',
+  proses: 'Dikerjakan',
+  selesai: 'Selesai',
+  dibatalkan: 'Dibatalkan',
+  aktif: 'Aktif',
+  ditunda: 'Ditunda',
+  diarsipkan: 'Diarsipkan',
+  draft: 'Draf',
+  siap: 'Siap',
+  antrean: 'Antrean',
+  menunggu: 'Menunggu',
+  persiapan: 'Persiapan',
+  'siap uji': 'Siap Uji',
+  'siap buka': 'Siap Buka',
+  'belum ada': 'Belum Ada',
+  diproses: 'Sedang Diproses',
+  tersedia: 'Tersedia',
+  terbuka: 'Terbuka',
+  ditangani: 'Sedang Ditangani',
+  ditutup: 'Ditutup',
+  direncanakan: 'Direncanakan',
+  ditunjuk: 'Ditunjuk',
+  nonaktif: 'Nonaktif',
+  terlambat: 'Terlambat',
+
+  // Prioritas
+  rendah: 'Rendah',
+  normal: 'Normal',
+  tinggi: 'Tinggi',
+  mendesak: 'Mendesak',
+
+  // Jenis Kas
+  masuk: 'Uang Masuk (+)',
+  keluar: 'Uang Keluar (-)',
+
+  // Mode Rapat
+  'tatap muka': 'Tatap Muka',
+  online: 'Online',
+  hybrid: 'Hybrid',
+
+  // Durasi Target Periode
+  '1 minggu': '1 Minggu',
+  '2 minggu': '2 Minggu',
+  '1 bulan': '1 Bulan',
+  kustom: 'Kustom',
+
+  // POAC
+  planning: 'Planning (Perencanaan)',
+  organizing: 'Organizing (Pengorganisasian)',
+  actuating: 'Actuating (Pelaksanaan)',
+  controlling: 'Controlling (Pengawasan)',
+
+  // Perulangan
+  tidak: 'Tidak Berulang',
+  harian: 'Harian (Setiap Hari)',
+  mingguan: 'Mingguan (Setiap Minggu)',
+  bulanan: 'Bulanan (Setiap Bulan)',
+
+  // Dimensi Kesiapan
+  legalitas: 'Legalitas',
+  fisik: 'Fisik',
+  sdm: 'SDM / Petugas',
+  sop: 'SOP / Tata Kelola',
+  sistem: 'Sistem & Peralatan',
+};
+
+export function formatChoiceLabel(value: string): string {
+  if (!value) return '';
+  if (choiceLabels[value]) return choiceLabels[value];
+  return value
+    .split(' ')
+    .map((word) => (word ? word.charAt(0).toUpperCase() + word.slice(1).toLowerCase() : ''))
+    .join(' ');
+}
+
 export const navigation = [
   ['/beranda', 'Beranda', '◉'],
+  ['/tindak-lanjut', 'Tindak lanjut', '→'],
   ['/hari-ini', 'Hari Ini', '☀'],
   ['/tugas', 'Tugas', '✓'],
   ['/proyek', 'Proyek', '▣'],

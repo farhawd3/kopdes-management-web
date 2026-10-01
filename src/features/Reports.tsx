@@ -1,56 +1,205 @@
 'use client';
 import { useEffect, useState } from 'react';
+import {
+  Printer,
+  Share2,
+  CheckCircle2,
+  Flag,
+  AlertTriangle,
+  Lightbulb,
+  ShieldAlert,
+  Calendar,
+  FileText,
+  Check,
+  Building2,
+  Trash2,
+  FilePenLine,
+  Sparkles,
+  Wallet,
+  ArrowRight,
+  Info,
+} from 'lucide-react';
 import { api } from '@/lib/client';
 import { today, addDays, formatDate } from '@/lib/date';
+import { rupiah } from './ledger';
 import type { ReportSnapshot } from './report-snapshot';
-type Report = {
+
+export type Report = {
   id: string;
   title: string;
   period_start: string;
   period_end: string;
   snapshot: ReportSnapshot;
+  created_at?: string;
 };
-const sections = {
-  completed: 'Capaian',
-  milestones: 'Milestone tercapai',
-  overdue: 'Tugas terlambat',
-  decisions: 'Keputusan',
-  risks: 'Risiko terbuka',
-  next: 'Rencana 7 hari berikutnya',
+
+const sectionMeta = {
+  completed: {
+    title: 'Pekerjaan selesai',
+    Icon: CheckCircle2,
+    color: 'section-success',
+    emptyText: 'Belum ada tugas yang diselesaikan pada periode ini.',
+  },
+  milestones: {
+    title: 'Target penting',
+    Icon: Flag,
+    color: 'section-primary',
+    emptyText: 'Tidak ada milestone yang ditargetkan selesai pada periode ini.',
+  },
+  decisions: {
+    title: 'Keputusan rapat',
+    Icon: Lightbulb,
+    color: 'section-warning',
+    emptyText: 'Tidak ada keputusan strategis baru yang dicatat pada periode ini.',
+  },
+  next: {
+    title: 'Rencana Kerja 7 Hari Mendatang',
+    Icon: Calendar,
+    color: 'section-info',
+    emptyText: 'Belum ada rencana tindak lanjut yang dijadwalkan dalam 7 hari ke depan.',
+  },
+  overdue: {
+    title: 'Kendala & Tugas Terlambat',
+    Icon: AlertTriangle,
+    color: 'section-danger',
+    emptyText: 'Tidak ada tugas terlambat dalam data ini.',
+  },
+  risks: {
+    title: 'Risiko yang belum ditutup',
+    Icon: ShieldAlert,
+    color: 'section-danger',
+    emptyText: 'Tidak ada risiko terbuka dalam data ini.',
+  },
 } as const;
+
 export function Reports() {
-  const [reports, setReports] = useState<Report[]>([]),
-    [selected, setSelected] = useState<Report>(),
-    [error, setError] = useState(''),
-    [busy, setBusy] = useState(false);
+  const [reports, setReports] = useState<Report[]>([]);
+  const [selected, setSelected] = useState<Report | null>(null);
+  const [filterTab, setFilterTab] = useState<'all' | 'draft' | 'final'>('all');
+  const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
+  const [copied, setCopied] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+
+  const loadReports = async () => {
+    try {
+      const data = await api<Report[]>('reports', undefined, 'GET', { bypassCache: true });
+      setReports(data);
+      if (data.length > 0) {
+        setSelected((prev) => {
+          if (prev && data.some((r) => r.id === prev.id)) {
+            return data.find((r) => r.id === prev.id) || data[0];
+          }
+          return data[0];
+        });
+      } else {
+        setSelected(null);
+      }
+    } catch (e) {
+      setError((e as Error).message);
+    }
+  };
+
   useEffect(() => {
-    api<Report[]>('reports')
-      .then(setReports)
-      .catch((e) => setError(e.message));
+    // Initial synchronization with the reports API completes asynchronously.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void loadReports();
   }, []);
+
+  const handleDelete = async (id: string) => {
+    setBusy(true);
+    setError('');
+    try {
+      await api('reports?id=' + encodeURIComponent(id), { id }, 'DELETE');
+      setReports((prev) => prev.filter((r) => r.id !== id));
+      if (selected?.id === id) {
+        const remaining = reports.filter((r) => r.id !== id);
+        setSelected(remaining.length ? remaining[0] : null);
+      }
+      setDeleteConfirmId(null);
+      setNotice('Laporan berhasil dihapus.');
+      setTimeout(() => setNotice(''), 3000);
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handlePublishDraft = async (report: Report) => {
+    setBusy(true);
+    setError('');
+    try {
+      const updated = await api<Report>('reports', {
+        id: report.id,
+        status: 'final',
+      }, 'PATCH');
+      setReports((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
+      setSelected(updated);
+      setNotice('Draf berhasil diterbitkan menjadi Laporan Resmi.');
+      setTimeout(() => setNotice(''), 3000);
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const draftReports = reports.filter((r) => r.snapshot?.status === 'draft');
+  const finalReports = reports.filter((r) => r.snapshot?.status !== 'draft');
+  const displayedReports =
+    filterTab === 'draft' ? draftReports : filterTab === 'final' ? finalReports : reports;
+
+  const isCurrentDraft = selected?.snapshot?.status === 'draft';
+
   return (
     <>
-      <section className="card no-print">
-        <h2>Susun laporan manajer</h2>
-        <p>
-          Snapshot memakai kondisi data saat laporan disimpan, dengan capaian sesuai tanggal
-          penyelesaian. Laporan lama tetap sama ketika tugas berubah.
-        </p>
+      {/* ── Workflow Guide & Creation Card ────────────────────────── */}
+      <section className="card report-creator-card no-print">
+        <div className="section-head">
+          <div>
+            <div className="report-badge-head">
+              <span className="report-badge-pill">Alur Kerja Manajer</span>
+              <span className="report-flow-crumb">
+                Pilih Periode <ArrowRight size={12} /> Tinjau Data <ArrowRight size={12} /> Simpan Draf / Terbitkan
+              </span>
+            </div>
+            <h2>Susun Laporan Eksekutif Manajer</h2>
+            <p>
+              Laporan merekam kondisi nyata koperasi secara utuh saat disimpan (*snapshot*). Anda dapat menyimpannya
+              terlebih dahulu sebagai <strong>Draf</strong> untuk ditinjau, atau langsung menerbitkannya sebagai <strong>Laporan final</strong> berkop KDMP.
+            </p>
+          </div>
+        </div>
+
         <form
+          className="report-form"
           onSubmit={async (e) => {
             e.preventDefault();
             setBusy(true);
             setError('');
+            setNotice('');
             const form = new FormData(e.currentTarget);
+            const submitter = (e.nativeEvent as SubmitEvent).submitter as HTMLButtonElement | null;
+            const targetStatus = submitter?.value === 'draft' ? 'draft' : 'final';
+
             try {
-              const report = await api<Report>('reports', {
+              const newReport = await api<Report>('reports', {
                 title: form.get('title'),
                 start: form.get('start'),
                 end: form.get('end'),
                 notes: form.get('notes'),
+                status: targetStatus,
               });
-              setReports([report, ...reports]);
-              setSelected(report);
+              setReports([newReport, ...reports]);
+              setSelected(newReport);
+              setNotice(
+                targetStatus === 'draft'
+                  ? 'Draf laporan berhasil disimpan. Anda dapat meninjau atau menghapusnya kapan saja.'
+                  : 'Laporan resmi berhasil diterbitkan.',
+              );
+              setTimeout(() => setNotice(''), 4000);
             } catch (e) {
               setError((e as Error).message);
             } finally {
@@ -59,89 +208,480 @@ export function Reports() {
           }}
         >
           <div className="form-grid">
-            <label>
-              Judul
-              <input name="title" defaultValue="Laporan mingguan manajer" required />
+            <label className="field-item">
+              <span className="field-caption">Judul Laporan</span>
+              <input
+                className="field-input"
+                name="title"
+                defaultValue="Laporan Perkembangan & Operasional Mingguan"
+                required
+              />
             </label>
-            <label>
-              Dari
-              <input name="start" type="date" defaultValue={addDays(today(), -6)} required />
+            <label className="field-item">
+              <span className="field-caption">Dari Tanggal</span>
+              <input
+                className="field-input"
+                name="start"
+                type="date"
+                defaultValue={addDays(today(), -6)}
+                required
+              />
             </label>
-            <label>
-              Sampai
-              <input name="end" type="date" defaultValue={today()} required />
+            <label className="field-item">
+              <span className="field-caption">Sampai Tanggal</span>
+              <input
+                className="field-input"
+                name="end"
+                type="date"
+                defaultValue={today()}
+                required
+              />
             </label>
-            <label>
-              Catatan manajer
-              <textarea name="notes" />
+            <label className="field-item field-wide wide">
+              <span className="field-caption">Catatan manajer</span>
+              <textarea
+                className="field-textarea"
+                name="notes"
+                rows={3}
+                placeholder="Tulis hasil kerja, kendala, dan bantuan yang dibutuhkan…"
+              />
             </label>
           </div>
-          <button className="primary" disabled={busy}>
-            {busy ? 'Menyimpan…' : 'Simpan snapshot laporan'}
-          </button>
+
+          <div className="report-form-actions-split">
+            <div className="action-hint">
+              <Info size={14} />
+              <small>Pilih <strong>Simpan Draf</strong> untuk draf sementara, atau <strong>Jadikan final</strong> untuk dokumen berkop.</small>
+            </div>
+            <div className="action-buttons-group">
+              <button
+                type="submit"
+                name="action"
+                value="draft"
+                className="btn-draft-action"
+                disabled={busy}
+                title="Simpan sebagai draf sementara (bisa diedit/dihapus kapan saja)"
+              >
+                <FilePenLine size={15} />
+                <span>{busy ? 'Menyimpan…' : 'Simpan sebagai Draf'}</span>
+              </button>
+              <button
+                type="submit"
+                name="action"
+                value="final"
+                className="primary btn-publish-action"
+                disabled={busy}
+                title="Terbitkan sebagai dokumen resmi berkop KDMP"
+              >
+                <Sparkles size={15} />
+                <span>{busy ? 'Menerbitkan…' : 'Simpan laporan final'}</span>
+              </button>
+            </div>
+          </div>
         </form>
-        {error && <p role="alert">{error}</p>}
+
+        {notice && <p className="notice success mt-3" role="status">{notice}</p>}
+        {error && <p className="notice error mt-3" role="alert">{error}</p>}
       </section>
-      <div className="actions no-print">
-        {reports.map((report) => (
-          <button key={report.id} onClick={() => setSelected(report)}>
-            {report.title} · {formatDate(report.period_end)}
-          </button>
-        ))}
-      </div>
+
+      {/* ── Report Archive Tabs & Filters ────────────────────────── */}
+      {reports.length > 0 && (
+        <section className="report-history-container no-print">
+          <div className="history-filter-bar">
+            <div className="history-filter-tabs">
+              <button
+                type="button"
+                className={`filter-tab ${filterTab === 'all' ? 'active' : ''}`}
+                onClick={() => setFilterTab('all')}
+              >
+                Semua Arsip <span className="tab-count">{reports.length}</span>
+              </button>
+              <button
+                type="button"
+                className={`filter-tab ${filterTab === 'draft' ? 'active' : ''}`}
+                onClick={() => setFilterTab('draft')}
+              >
+                Draf <span className="tab-count count-draft">{draftReports.length}</span>
+              </button>
+              <button
+                type="button"
+                className={`filter-tab ${filterTab === 'final' ? 'active' : ''}`}
+                onClick={() => setFilterTab('final')}
+              >
+                Laporan final <span className="tab-count count-final">{finalReports.length}</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="history-chips-scroll">
+            {displayedReports.map((report) => {
+              const isDraft = report.snapshot?.status === 'draft';
+              const isCurrent = selected?.id === report.id;
+              return (
+                <div
+                  key={report.id}
+                  className={`history-card-item ${isCurrent ? 'active' : ''} ${isDraft ? 'is-draft-card' : ''}`}
+                  onClick={() => setSelected(report)}
+                  role="button"
+                  tabIndex={0}
+                >
+                  <div className="chip-head">
+                    <span className={`chip-status-tag ${isDraft ? 'tag-draft' : 'tag-final'}`}>
+                      {isDraft ? 'Draf' : 'Resmi'}
+                    </span>
+                    <small className="chip-date">{formatDate(report.period_end)}</small>
+                  </div>
+                  <strong className="chip-title">{report.title}</strong>
+                  <div className="chip-sub">
+                    <span>
+                      {formatDate(report.period_start)} — {formatDate(report.period_end)}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* ── Document View Sheet ──────────────────────────────────── */}
       {selected && (
-        <article className="card report">
-          <div className="no-print actions">
-            <button onClick={() => window.print()}>Cetak / simpan PDF</button>
+        <article className="official-report-sheet">
+          {/* Status Alert Banner */}
+          {isCurrentDraft ? (
+            <div className="draft-banner no-print">
+              <div className="draft-banner-text">
+                <FilePenLine size={18} />
+                <div>
+                  <strong>Status: Draf Manajer</strong>
+                  <p>
+                    Dokumen ini masih berstatus draf sementara. Anda dapat memperbarui data, menerbitkannya sebagai dokumen resmi berkop, atau menghapusnya jika tidak dibutuhkan.
+                  </p>
+                </div>
+              </div>
+              <div className="draft-banner-actions">
+                <button
+                  type="button"
+                  className="btn-banner-publish"
+                  onClick={() => handlePublishDraft(selected)}
+                  disabled={busy}
+                  title="Jadikan laporan ini resmi"
+                >
+                  <Sparkles size={14} />
+                  <span>Jadikan final</span>
+                </button>
+                <button
+                  type="button"
+                  className="btn-banner-delete"
+                  onClick={() => setDeleteConfirmId(selected.id)}
+                  disabled={busy}
+                  title="Hapus draf ini dari arsip"
+                >
+                  <Trash2 size={14} />
+                  <span>Hapus Draf</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="official-verified-banner no-print">
+              <div className="verified-text">
+                <Building2 size={16} />
+                <span>Laporan final Manajer KDMP — Telah Diterbitkan</span>
+              </div>
+              <button
+                type="button"
+                className="btn-delete-report-subtle"
+                onClick={() => setDeleteConfirmId(selected.id)}
+                disabled={busy}
+                title="Hapus laporan ini dari arsip"
+              >
+                <Trash2 size={13} />
+                <span>Hapus Laporan</span>
+              </button>
+            </div>
+          )}
+
+          {/* Action Toolbar */}
+          <div className="report-toolbar no-print">
+            <button className="btn-toolbar-print" onClick={() => window.print()}>
+              <Printer size={16} />
+              <span>Cetak / PDF Resmi</span>
+            </button>
             <button
+              className="btn-toolbar-wa"
               onClick={async () => {
                 try {
-                  await navigator.clipboard.writeText(
-                    `${selected.title}\n${selected.snapshot.organization}\n${selected.period_start} — ${selected.period_end}\n\n${Object.entries(
-                      sections,
-                    )
-                      .map(
-                        ([key, title]) =>
-                          title +
-                          ':\n' +
-                          selected.snapshot[key as keyof typeof sections]
-                            .map((line) => '• ' + line)
-                            .join('\n'),
-                      )
-                      .join('\n\n')}\n\n${selected.snapshot.notes}`,
-                  );
-                  setError('Teks laporan disalin.');
+                  const text = [
+                    `*${selected.title.toUpperCase()}*`,
+                    `Koperasi: *${selected.snapshot.organization}*`,
+                    `Status: *${isCurrentDraft ? 'DRAF KERJA' : 'DOKUMEN RESMI'}*`,
+                    `Periode: ${formatDate(selected.period_start)} — ${formatDate(selected.period_end)}`,
+                    ``,
+                    `📊 *RINGKASAN EKSEKUTIF*`,
+                    `• Capaian Tugas Selesai: ${selected.snapshot.completed.length}`,
+                    `• Milestone Tercapai: ${selected.snapshot.milestones.length}`,
+                    `• Tugas Terlambat/Kendala: ${selected.snapshot.overdue.length}`,
+                    `• Risiko Terbuka Dipantau: ${selected.snapshot.risks.length}`,
+                    ...(selected.snapshot.cash && selected.snapshot.cash.count > 0
+                      ? [
+                          `• Arus Kas Periode: Masuk ${rupiah(selected.snapshot.cash.in)} | Keluar ${rupiah(selected.snapshot.cash.out)}`,
+                        ]
+                      : []),
+                    ``,
+                    ...(selected.snapshot.notes
+                      ? [`📝 *CATATAN MANAJER:*\n${selected.snapshot.notes}`, ``]
+                      : []),
+                    `✅ *CAPAIAN SELESAI:*`,
+                    ...(selected.snapshot.completed.length
+                      ? selected.snapshot.completed.map((line) => `• ${line}`)
+                      : ['(Nihil)']),
+                    ``,
+                    `🚩 *MILESTONE TERCAPAI:*`,
+                    ...(selected.snapshot.milestones.length
+                      ? selected.snapshot.milestones.map((line) => `• ${line}`)
+                      : ['(Nihil)']),
+                    ``,
+                    `📅 *RENCANA 7 HARI MENDATANG:*`,
+                    ...(selected.snapshot.next.length
+                      ? selected.snapshot.next.map((line) => `• ${line}`)
+                      : ['(Nihil)']),
+                    ``,
+                    `⚠️ *KENDALA / TUGAS TERLAMBAT:*`,
+                    ...(selected.snapshot.overdue.length
+                      ? selected.snapshot.overdue.map((line) => `• ${line}`)
+                      : ['(Nihil - aman)']),
+                  ].join('\n');
+
+                  await navigator.clipboard.writeText(text);
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 3000);
                 } catch {
-                  setError(
-                    'Tidak dapat mengakses papan klip. Gunakan cetak atau pilih teks laporan.',
-                  );
+                  setError('Tidak dapat mengakses clipboard. Silakan gunakan tombol cetak.');
                 }
               }}
             >
-              Salin teks WhatsApp
+              {copied ? <Check size={16} className="text-green" /> : <Share2 size={16} />}
+              <span>{copied ? 'Format WhatsApp Tersalin!' : 'Salin Teks Ringkas (WhatsApp)'}</span>
             </button>
           </div>
-          <span className="eyebrow">{String(selected.snapshot.organization)}</span>
-          <h1>{selected.title}</h1>
-          <p>
-            {formatDate(selected.period_start)} — {formatDate(selected.period_end)}
-          </p>
-          {Object.entries(sections).map(([key, title]) => (
-            <section key={key}>
-              <h2>{title}</h2>
-              {selected.snapshot[key as keyof typeof sections].length ? (
-                <ul>
-                  {selected.snapshot[key as keyof typeof sections].map((line, index) => (
-                    <li key={index}>{line}</li>
-                  ))}
-                </ul>
-              ) : (
-                <p>Belum ada catatan pada bagian ini.</p>
-              )}
-            </section>
-          ))}
-          <h2>Catatan manajer</h2>
-          <p>{selected.snapshot.notes || '—'}</p>
+
+          {/* Delete Confirmation Modal / Banner */}
+          {deleteConfirmId && (
+            <div className="delete-confirm-box no-print" role="dialog" aria-modal="true">
+              <div className="confirm-icon-wrap">
+                <AlertTriangle size={24} />
+              </div>
+              <div className="confirm-content">
+                <strong>Hapus {isCurrentDraft ? 'Draf Laporan' : 'Laporan'} Ini?</strong>
+                <p>
+                  Tindakan ini akan menghapus laporan {selected.title} secara permanen dari basis data. Data tugas, buku kas, dan catatan koperasi tidak akan terpengaruh.
+                </p>
+                <div className="confirm-actions">
+                  <button
+                    type="button"
+                    className="btn-danger-confirm"
+                    onClick={() => handleDelete(deleteConfirmId)}
+                    disabled={busy}
+                  >
+                    <Trash2 size={14} />
+                    <span>Ya, Hapus {isCurrentDraft ? 'Draf' : 'Laporan'}</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-cancel"
+                    onClick={() => setDeleteConfirmId(null)}
+                    disabled={busy}
+                  >
+                    Batal
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Official Kop Surat Koperasi */}
+          <header className="report-official-kop">
+            <div className="kop-emblem">
+              <Building2 size={36} />
+            </div>
+            <div className="kop-text">
+              <span className="kop-instansi">KOPERASI DESA MERDEKA PUNTUKREJO (KDMP)</span>
+              <span className="kop-address">
+                Desa Puntukrejo, Kec. Ngargoyoso, Kab. Karanganyar, Jawa Tengah 57793
+              </span>
+              <div className="kop-divider" />
+              <h1 className="kop-doc-title">
+                {isCurrentDraft
+                  ? 'LEMBAR DRAF LAPORAN OPERASIONAL & PERKEMBANGAN'
+                  : 'LEMBAR LAPORAN PERKEMBANGAN & OPERASIONAL'}
+              </h1>
+            </div>
+          </header>
+
+          {/* Document Metadata Bar */}
+          <div className="report-meta-banner">
+            <div className="meta-item">
+              <span className="meta-label">Nomor Dokumen:</span>
+              <strong className="meta-val">
+                KDMP/{isCurrentDraft ? 'DRAF-MGR' : 'LAP-MGR'}/{selected.period_end.replace(/-/g, '')}
+              </strong>
+            </div>
+            <div className="meta-item">
+              <span className="meta-label">Periode Evaluasi:</span>
+              <strong className="meta-val">
+                {formatDate(selected.period_start)} — {formatDate(selected.period_end)}
+              </strong>
+            </div>
+            <div className="meta-item">
+              <span className="meta-label">Sifat Dokumen:</span>
+              <span className={isCurrentDraft ? 'meta-badge-draft' : 'meta-badge-official'}>
+                {isCurrentDraft ? 'Draf Internal' : 'Laporan final Manajer'}
+              </span>
+            </div>
+            <div className="meta-item">
+              <span className="meta-label">Diterbitkan:</span>
+              <strong className="meta-val">{formatDate(selected.period_end)}</strong>
+            </div>
+          </div>
+
+          {/* Executive Financial & Operations Snapshot (If Available) */}
+          {selected.snapshot.cash && selected.snapshot.cash.count > 0 && (
+            <div className="report-cash-summary-card">
+              <div className="cash-head">
+                <Wallet size={18} />
+                <strong>Rekapitulasi Arus Kas Tercatat ({selected.snapshot.cash.count} transaksi)</strong>
+              </div>
+              <div className="cash-grid">
+                <div className="cash-item item-in">
+                  <small>Kas Masuk</small>
+                  <strong>{rupiah(selected.snapshot.cash.in)}</strong>
+                </div>
+                <div className="cash-item item-out">
+                  <small>Kas Keluar</small>
+                  <strong>{rupiah(selected.snapshot.cash.out)}</strong>
+                </div>
+                <div className="cash-item item-net">
+                  <small>Selisih Arus Kas</small>
+                  <strong className={selected.snapshot.cash.net >= 0 ? 'text-green' : 'text-danger'}>
+                    {rupiah(selected.snapshot.cash.net)}
+                  </strong>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Executive KPI Summary Cards */}
+          <div className="report-kpi-grid">
+            <div className="report-kpi-card kpi-success">
+              <div className="kpi-icon-wrap">
+                <CheckCircle2 size={24} />
+              </div>
+              <div className="kpi-info">
+                <span className="kpi-count">{selected.snapshot.completed.length}</span>
+                <span className="kpi-name">Tugas Rampung</span>
+              </div>
+            </div>
+
+            <div className="report-kpi-card kpi-primary">
+              <div className="kpi-icon-wrap">
+                <Flag size={24} />
+              </div>
+              <div className="kpi-info">
+                <span className="kpi-count">{selected.snapshot.milestones.length}</span>
+                <span className="kpi-name">Milestone Tercapai</span>
+              </div>
+            </div>
+
+            <div className="report-kpi-card kpi-warning">
+              <div className="kpi-icon-wrap">
+                <AlertTriangle size={24} />
+              </div>
+              <div className="kpi-info">
+                <span className="kpi-count">{selected.snapshot.overdue.length}</span>
+                <span className="kpi-name">Perlu Perhatian</span>
+              </div>
+            </div>
+
+            <div className="report-kpi-card kpi-danger">
+              <div className="kpi-icon-wrap">
+                <ShieldAlert size={24} />
+              </div>
+              <div className="kpi-info">
+                <span className="kpi-count">{selected.snapshot.risks.length}</span>
+                <span className="kpi-name">Risiko Terbuka</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Manager's Executive Memo */}
+          {selected.snapshot.notes && (
+            <div className="report-memo-box">
+              <div className="memo-header">
+                <FileText size={18} />
+                <strong>Catatan & Pernyataan Manajer Operasional:</strong>
+              </div>
+              <blockquote className="memo-content">{selected.snapshot.notes}</blockquote>
+            </div>
+          )}
+
+          {/* Structured Detailed Sections */}
+          <div className="report-sections-grid">
+            {(
+              Object.entries(sectionMeta) as [
+                keyof typeof sectionMeta,
+                (typeof sectionMeta)[keyof typeof sectionMeta],
+              ][]
+            ).map(([key, meta]) => {
+              const list = selected.snapshot[key] || [];
+              return (
+                <section key={key} className={`report-section-card ${meta.color}`}>
+                  <div className="section-card-head">
+                    <div className="section-card-title">
+                      <meta.Icon size={18} />
+                      <h3>{meta.title}</h3>
+                    </div>
+                    <span className="section-count-badge">{list.length} item</span>
+                  </div>
+
+                  <div className="section-card-body">
+                    {list.length > 0 ? (
+                      <ul className="report-item-list">
+                        {list.map((item, index) => (
+                          <li key={index} className="report-item-row">
+                            <span className="bullet-dot" />
+                            <span className="item-text">{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="report-empty-notice">{meta.emptyText}</p>
+                    )}
+                  </div>
+                </section>
+              );
+            })}
+          </div>
+
+          {/* Formal Cooperative Signatures Block */}
+          <footer className="report-signature-block">
+            <div className="signature-col">
+              <p className="sig-pre">Mengetahui,</p>
+              <strong className="sig-role">Pengurus & Badan Pengawas</strong>
+              <span className="sig-org">Koperasi Desa Merdeka Puntukrejo</span>
+              <div className="sig-space" />
+              <div className="sig-line">( ..................................................................... )</div>
+              <span className="sig-desc">Ketua Pengurus / Pengawas</span>
+            </div>
+
+            <div className="signature-col">
+              <p className="sig-pre">Puntukrejo, {formatDate(selected.period_end)}</p>
+              <strong className="sig-role">Disusun & Dilaporkan Oleh,</strong>
+              <span className="sig-org">Manajer Operasional Koperasi</span>
+              <div className="sig-space" />
+              <div className="sig-line">( ..................................................................... )</div>
+              <span className="sig-desc">Manajer KDMP Puntukrejo</span>
+            </div>
+          </footer>
         </article>
       )}
     </>

@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { CalendarDays, ChevronLeft, ChevronRight } from 'lucide-react';
+import { CalendarDays, ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { addDays, formatDate, today } from '@/lib/date';
 import type { Item } from './schemas';
-import { DateRangePicker } from '@/components/ui/DateRangePicker';
 export function TaskCalendar({
   items,
   render,
@@ -18,7 +17,6 @@ export function TaskCalendar({
   const [selected, setSelected] = useState<string | null>(null);
   const [mode, setMode] = useState<'month' | 'week' | 'day'>('month');
   const [anchor, setAnchor] = useState(today());
-  const [showRangePicker, setShowRangePicker] = useState(false);
   const monthItems = items.filter((item) => String(item.data.due_date).startsWith(month));
   const monthLabel = new Intl.DateTimeFormat('id-ID', {
     month: 'long',
@@ -125,15 +123,7 @@ export function TaskCalendar({
             </button>
           ))}
         </div>
-        <button
-          type="button"
-          className="calendar-range-btn"
-          onClick={() => setShowRangePicker(true)}
-          title="Buka Pemilih Rentang Tanggal"
-        >
-          <CalendarDays size={16} />
-          <span>Rentang Tanggal</span>
-        </button>
+
         <label className="calendar-month">
           Bulan
           <input
@@ -150,20 +140,7 @@ export function TaskCalendar({
           />
         </label>
       </header>
-      {showRangePicker && (
-        <DateRangePicker
-          startDate={anchor}
-          endDate={addDays(anchor, 14)}
-          onClose={() => setShowRangePicker(false)}
-          onChange={(start) => {
-            if (start) {
-              setMonth(start.slice(0, 7));
-              setAnchor(start);
-              setSelected(start);
-            }
-          }}
-        />
-      )}
+
       <div className="calendar-grid">
         <div className="calendar-week">
           {['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'].map((day) => (
@@ -171,57 +148,78 @@ export function TaskCalendar({
           ))}
         </div>
         <div className="calendar-days">
-          {visibleDays.map((date) => (
-            <section
-              key={date}
-              className={`${date === today() ? 'calendar-today' : ''} ${date.slice(0, 7) !== month ? 'calendar-outside' : ''}`}
-            >
-              <button
-                type="button"
-                className="calendar-day-number"
-                aria-label={formatDate(date)}
-                aria-pressed={selected === date}
-                aria-current={date === today() ? 'date' : undefined}
+          {visibleDays.map((date) => {
+            const isSelected = selected === date;
+            const isToday = date === today();
+            const isOutside = date.slice(0, 7) !== month;
+            const dayTasks = items.filter((item) => item.data.due_date === date);
+            const hasTasks = dayTasks.length > 0;
+
+            return (
+              <section
+                key={date}
+                className={`calendar-day-cell ${hasTasks ? 'calendar-has-tasks' : ''} ${isToday ? 'calendar-today' : ''} ${isOutside ? 'calendar-outside' : ''} ${isSelected ? 'calendar-selected' : ''}`}
                 onClick={() => {
                   setMonth(date.slice(0, 7));
                   setSelected(date);
                   setAnchor(date);
                 }}
               >
-                {Number(date.slice(-2))}
-              </button>
-              {items
-                .filter((item) => item.data.due_date === date)
-                .map((item) => (
+                <div className="calendar-day-header">
                   <button
                     type="button"
-                    className="calendar-event"
-                    data-status={String(item.data.status)}
-                    key={item.id}
-                    onClick={() => {
+                    className="calendar-day-number"
+                    aria-label={formatDate(date)}
+                    aria-pressed={isSelected}
+                    aria-current={isToday ? 'date' : undefined}
+                    onClick={(e) => {
+                      e.stopPropagation();
                       setMonth(date.slice(0, 7));
                       setSelected(date);
-                      onEdit?.(item);
+                      setAnchor(date);
                     }}
                   >
-                    <span className="cal-task-code">
-                      {String(item.data.code || `#KD-${item.id.slice(0, 4).toUpperCase()}`)}
-                    </span>
-                    <span className="cal-task-title">{String(item.data.title)}</span>
+                    {Number(date.slice(-2))}
                   </button>
-                ))}
-              {onCreate && (
-                <button
-                  className="calendar-add"
-                  type="button"
-                  aria-label={`Tambah tugas ${formatDate(date)}`}
-                  onClick={() => onCreate(date)}
-                >
-                  + Tugas
-                </button>
-              )}
-            </section>
-          ))}
+                  {onCreate && (
+                    <button
+                      className="calendar-add"
+                      type="button"
+                      title={`Tambah tugas ${formatDate(date)}`}
+                      aria-label={`Tambah tugas ${formatDate(date)}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onCreate(date);
+                      }}
+                    >
+                      <Plus size={14} strokeWidth={2} />
+                    </button>
+                  )}
+                </div>
+                <div className="calendar-events-wrap">
+                  {dayTasks.map((item) => (
+                    <button
+                      type="button"
+                      className="calendar-event"
+                      data-status={String(item.data.status)}
+                      key={item.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setMonth(date.slice(0, 7));
+                        setSelected(date);
+                        onEdit?.(item);
+                      }}
+                    >
+                      <span className="cal-task-code">
+                        {String(item.data.code || `#KD-${item.id.slice(0, 4).toUpperCase()}`)}
+                      </span>
+                      <span className="cal-task-title">{String(item.data.title)}</span>
+                    </button>
+                  ))}
+                </div>
+              </section>
+            );
+          })}
         </div>
       </div>
       <div className="calendar-agenda">
@@ -235,6 +233,16 @@ export function TaskCalendar({
                   ? 'Agenda minggu ini'
                   : 'Agenda hari ini'}
           </h3>
+          {onCreate && (
+            <button
+              type="button"
+              className="calendar-agenda-add-btn"
+              onClick={() => onCreate(selected || anchor)}
+            >
+              <Plus size={15} strokeWidth={2.2} />
+              <span>Tambah tugas</span>
+            </button>
+          )}
           {selected && (
             <button type="button" onClick={() => setSelected(null)}>
               Semua tanggal

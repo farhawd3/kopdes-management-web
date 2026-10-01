@@ -79,7 +79,7 @@ describe('Alur kerja dasar UI', () => {
   it('dashboard kosong mengajak membuat proyek tanpa mengarang capaian', () => {
     render(<Dashboard data={{}} />);
     expect(screen.getByText('Belum ada proyek')).toBeTruthy();
-    expect(screen.getByRole('img', { name: 'Penyelesaian tugas: 0%' })).toBeTruthy();
+    expect(screen.getByRole('link', { name: /Penyelesaian tugas 0%/ })).toBeTruthy();
   });
   it('aksi selesai mengirim status dan tanggal penyelesaian yang valid', async () => {
     mocks.api.mockResolvedValue({});
@@ -96,7 +96,7 @@ describe('Alur kerja dasar UI', () => {
         refresh={refresh}
       />,
     );
-    fireEvent.click(screen.getByRole('button', { name: '✓ Selesai' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Selesai' }));
     await waitFor(() =>
       expect(mocks.api).toHaveBeenCalledWith(
         'work-items',
@@ -125,7 +125,7 @@ describe('Alur kerja dasar UI', () => {
         refresh={refresh}
       />,
     );
-    fireEvent.click(screen.getByRole('button', { name: '✓ Selesai' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Selesai' }));
     await waitFor(() => expect(screen.getByRole('alert').textContent).toBe('Koneksi terputus'));
     expect(refresh).not.toHaveBeenCalled();
   });

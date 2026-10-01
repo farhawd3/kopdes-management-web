@@ -1,323 +1,490 @@
 'use client';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { ThemeProvider, useTheme } from '@/lib/ThemeContext';
 import { api, resetAuthNavigation } from '@/lib/client';
+import { navigation } from '@/features/catalog';
 import type { Workspace } from '@/features/useWorkspace';
 import {
-  Sparkles,
+  House,
+  CheckCheck,
+  BookOpen,
+  Menu,
   Search,
-  Sun,
-  Moon,
-  Paperclip,
-  FolderKanban,
-  FileText,
-  PhoneCall,
-  HelpCircle,
   Plus,
-  ArrowUpRight,
-  LogOut,
+  Moon,
+  Sun,
+  LockKeyhole,
   X,
-  Command,
+  ArrowUpRight,
+  FolderKanban,
+  Milestone,
+  Users,
+  FileText,
+  Briefcase,
+  Store,
+  CheckCircle2,
+  ShieldAlert,
+  BarChart3,
+  Landmark,
+  UserCheck,
+  Wallet,
+  Boxes,
+  ClipboardList,
+  Settings,
+  HelpCircle,
+  SunMedium,
+  Sparkles,
 } from 'lucide-react';
+import { usePreference } from '@/lib/usePreference';
+import { searchWorkspace } from '@/features/workspace-navigation';
+import { Star, ChevronDown } from 'lucide-react';
+import { ManagerActionModal } from './ManagerActionModal';
 
-const TOP_NAV_LINKS = [
-  { name: 'Dashboard', path: '/beranda' },
-  { name: 'Tasks', path: '/tugas' },
-  { name: 'Pencatatan', path: '/pencatatan' },
-  { name: 'Projects', path: '/proyek' },
-  { name: 'Settings', path: '/pengaturan' },
-];
+const navIcons: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+  '/beranda': House,
+  '/hari-ini': SunMedium,
+  '/tugas': CheckCheck,
+  '/proyek': FolderKanban,
+  '/roadmap': Milestone,
+  '/jurnal': BookOpen,
+  '/rapat': Users,
+  '/dokumen': FileText,
+  '/pemangku': Briefcase,
+  '/tim': UserCheck,
+  '/gerai': Store,
+  '/kesiapan': CheckCircle2,
+  '/risiko': ShieldAlert,
+  '/laporan': BarChart3,
+  '/pencatatan': Landmark,
+  '/anggota': Users,
+  '/keuangan': Wallet,
+  '/barang': Boxes,
+  '/stok-opname': ClipboardList,
+  '/pengaturan': Settings,
+  '/panduan': HelpCircle,
+};
 
+const sections = [
+  [
+    'Pekerjaan',
+    ['/beranda', '/tindak-lanjut', '/hari-ini', '/tugas', '/proyek', '/roadmap', '/jurnal'],
+  ],
+  ['Koordinasi', ['/rapat', '/dokumen', '/pemangku', '/tim']],
+  ['Operasional', ['/gerai', '/kesiapan', '/risiko', '/laporan']],
+  ['Pencatatan', ['/pencatatan', '/anggota', '/keuangan', '/barang', '/stok-opname']],
+  ['Lainnya', ['/pengaturan', '/panduan']],
+] as const;
 function ShellFrame({ children }: { children: React.ReactNode }) {
-  const path = usePathname();
+  const path = usePathname(),
+    query = useSearchParams();
+  const [favoriteText, setFavoriteText] = usePreference('hub-favorites', '/hari-ini|/tugas');
+  const [collapsedText, setCollapsedText] = usePreference('hub-nav-collapsed', '');
+  const favorites = favoriteText
+    .split('|')
+    .filter((href) => navigation.some(([url]) => url === href));
+  const collapsed = collapsedText.split('|').filter(Boolean);
   const { preference, setTheme } = useTheme();
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
-  const [projectSearch, setProjectSearch] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
-  const searchDialog = useRef<HTMLDialogElement>(null);
-
+  const [menu, setMenu] = useState(false),
+    [search, setSearch] = useState(''),
+    [error, setError] = useState(''),
+    [actionModalOpen, setActionModalOpen] = useState(false);
+  const dialog = useRef<HTMLDialogElement>(null);
   useEffect(() => {
-    const receive = (event: Event) =>
-      setWorkspace((event as CustomEvent<Workspace | null>).detail);
-    window.addEventListener('hub-workspace', receive);
-    return () => window.removeEventListener('hub-workspace', receive);
-  }, []);
-
-  useEffect(() => {
+    const receive = (event: Event) => setWorkspace((event as CustomEvent<Workspace | null>).detail);
     const key = (event: KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault();
-        searchDialog.current?.showModal();
+        dialog.current?.showModal();
       }
-      if (event.key === 'Escape') searchDialog.current?.close();
+      if (event.key === 'Escape') {
+        setMenu(false);
+        document.querySelectorAll('details[open]').forEach((el) => el.removeAttribute('open'));
+      }
     };
+    const clickOutside = (event: MouseEvent) => {
+      document.querySelectorAll('details[open]').forEach((el) => {
+        if (!el.contains(event.target as Node)) {
+          el.removeAttribute('open');
+        }
+      });
+    };
+    window.addEventListener('hub-workspace', receive);
     window.addEventListener('keydown', key);
-    return () => window.removeEventListener('keydown', key);
+    document.addEventListener('click', clickOutside);
+    return () => {
+      window.removeEventListener('hub-workspace', receive);
+      window.removeEventListener('keydown', key);
+      document.removeEventListener('click', clickOutside);
+    };
   }, []);
-
-  const managerName = String(
-    workspace?.organization?.[0]?.data?.manager || 'Nicki',
-  );
-
-  const projects = (workspace?.workstreams || []).filter(
-    (item) =>
-      item.data.status !== 'diarsipkan' &&
-      String(item.data.title)
-        .toLocaleLowerCase('id')
-        .includes(projectSearch.toLocaleLowerCase('id')),
-  );
-
+  const name = String(workspace?.organization?.[0]?.data.manager || 'Manajer');
+  const current = navigation.find(([href]) => href === path)?.[1] || 'Beranda';
   return (
-    <div className="hub-outer-shell">
-      {/* 1. TOP NAVIGATION BAR */}
-      <header className="hub-topbar" role="banner">
-        {/* Brand Pill (Reference Image top left) */}
-        <Link href="/beranda" className="hub-brand-pill" aria-label="Task Hub Kopdes">
-          <span className="hub-brand-icon">
-            <Sparkles size={13} strokeWidth={3} />
-          </span>
-          <span>Task Hub</span>
+    <div className="manager-shell">
+      <a className="skip" href="#main">
+        Lewati navigasi
+      </a>
+      <header className="manager-topbar">
+        <Link href="/pengaturan" className="manager-profile" aria-label={`Profil ${name}`}>
+          <span>{name[0]}</span>
+          <div>
+            <small>Ruang kerja pribadi</small>
+            <strong>{name}</strong>
+          </div>
         </Link>
-
-        {/* Center Navigation Pills (Reference Image top center) */}
-        <nav className="hub-nav-pills" aria-label="Navigasi Utama">
-          {TOP_NAV_LINKS.map((link) => {
-            const isActive =
-              link.path === '/beranda'
-                ? path === '/beranda' || path === '/'
-                : path.startsWith(link.path);
-
-            return (
-              <Link
-                key={link.path}
-                href={link.path}
-                className={`hub-nav-pill ${isActive ? 'active' : ''}`}
-                aria-current={isActive ? 'page' : undefined}
-              >
-                {link.name}
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* Right Action Circle Buttons (Reference Image top right) */}
-        <div className="hub-topbar-actions">
+        <span className="manager-location">{current}</span>
+        <div className="manager-actions">
           <button
             type="button"
-            className="hub-circle-btn"
-            onClick={() => searchDialog.current?.showModal()}
-            title="Cari (⌘K)"
-            aria-label="Cari fitur atau data"
+            className="quick-action-hub-btn"
+            onClick={() => setActionModalOpen(true)}
+            title="Tambah catatan atau tugas"
+            aria-label="Pusat Aksi Manajer"
           >
-            <Search size={17} />
+            <Sparkles size={15} />
+            <span className="hub-btn-label">Tambah</span>
+          </button>
+          <button aria-label="Cari halaman" onClick={() => dialog.current?.showModal()}>
+            <Search size={19} />
           </button>
 
           <button
-            type="button"
-            className="hub-circle-btn"
+            aria-label="Ganti tema"
             onClick={() => setTheme(preference === 'dark' ? 'light' : 'dark')}
-            title="Ganti Tema"
-            aria-label="Ganti Tema"
           >
-            {preference === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+            {preference === 'dark' ? <Sun size={19} /> : <Moon size={19} />}
           </button>
-
           <button
-            type="button"
-            className="hub-circle-btn"
+            className="desktop-lock"
+            aria-label="Kunci aplikasi"
             onClick={async () => {
-              if (!confirm('Kunci aplikasi dan keluar dari sesi manajer?')) return;
               try {
-                await api('auth/pin', {}, 'DELETE');
-              } finally {
+                await api('auth/pin', { action: 'logout' });
                 resetAuthNavigation('/pin');
+              } catch (e) {
+                setError((e as Error).message);
               }
             }}
-            title="Kunci & Keluar"
-            aria-label="Kunci sesi manajer"
           >
-            <LogOut size={16} />
+            <LockKeyhole size={18} />
           </button>
-
-          {/* Profile Circle with Manager Initials */}
-          <Link href="/pengaturan" className="hub-user-avatar" title={`Manajer: ${managerName}`}>
-            {managerName[0]?.toUpperCase() || 'M'}
-          </Link>
         </div>
       </header>
-
-      {/* 2. MAIN TWO-COLUMN CONTAINER */}
-      <div className="hub-main-container">
-        {/* Left Sidebar */}
-        <aside className="hub-sidebar" aria-label="Navigasi Sisi Kiri">
-          {/* Manager Greeting */}
-          <div className="hub-greeting">
-            <h2>
-              Welcome
-              <br />
-              Back, {managerName}!
-            </h2>
-          </div>
-
-          {/* Projects Section (Reference Image: Projects with paperclip icons) */}
-          <div className="hub-sidebar-section">
-            <span className="hub-section-label">Projects</span>
-            <div className="hub-sidebar-list">
-              {projects.length > 0 ? (
-                projects.slice(0, 5).map((project) => {
-                  const isCurrent = path.includes(project.id);
-                  const taskCount = (workspace?.['work-items'] || []).filter(
-                    (t) =>
-                      t.data.workstream_id === project.id &&
-                      !['selesai', 'dibatalkan'].includes(String(t.data.status)),
-                  ).length;
-
-                  return (
-                    <Link
-                      key={project.id}
-                      href={`/proyek?id=${encodeURIComponent(project.id)}`}
-                      className={`hub-sidebar-item ${isCurrent ? 'active' : ''}`}
-                    >
-                      <span className="hub-item-icon">
-                        <Paperclip size={15} />
-                      </span>
-                      <span className="truncate">{String(project.data.title)}</span>
-                      {taskCount > 0 && (
-                        <span className="hub-count-pill">
-                          {taskCount.toString().padStart(2, '0')}
-                        </span>
-                      )}
-                    </Link>
-                  );
-                })
-              ) : (
-                <Link href="/proyek" className="hub-sidebar-item">
-                  <span className="hub-item-icon">
-                    <Plus size={15} />
-                  </span>
-                  <span>Tambah Proyek</span>
-                </Link>
-              )}
+      <nav className="tablet-rail" aria-label="Navigasi tablet">
+        <Link href="/beranda" aria-label="Beranda" title="Beranda">
+          <House size={21} />
+        </Link>
+        <Link href="/hari-ini" aria-label="Hari Ini" title="Hari Ini">
+          <SunMedium size={21} />
+        </Link>
+        <Link href="/tugas" aria-label="Tugas" title="Tugas">
+          <CheckCheck size={21} />
+        </Link>
+        <Link href="/pencatatan" aria-label="Pencatatan" title="Pencatatan">
+          <BookOpen size={21} />
+        </Link>
+        <button aria-label="Buka semua halaman" aria-expanded={menu} onClick={() => setMenu(!menu)}>
+          <Menu size={21} />
+        </button>
+      </nav>
+      <aside className={`manager-sidebar ${menu ? 'is-open' : ''}`} aria-label="Semua halaman">
+        <div className="manager-sidebar-brand">
+          <Link href="/beranda" className="sidebar-brand-link" onClick={() => setMenu(false)}>
+            <div className="sidebar-brand-emblem">
+              <span>KD</span>
             </div>
-          </div>
-
-          {/* Reports Section (Reference Image) */}
-          <div className="hub-sidebar-section">
-            <span className="hub-section-label">Reports</span>
-            <div className="hub-sidebar-list">
-              <Link
-                href="/laporan"
-                className={`hub-sidebar-item ${path === '/laporan' ? 'active' : ''}`}
-              >
-                <span className="hub-item-icon">
-                  <FileText size={15} />
-                </span>
-                <span>Project Reports</span>
-              </Link>
+            <div className="sidebar-brand-info">
+              <strong>{String(workspace?.organization?.[0]?.data.title || 'Koperasi')}</strong>
+              <small>Ruang Kerja Manajer</small>
             </div>
-          </div>
-
-          {/* Other Section (Reference Image: Contact us & Help and Support) */}
-          <div className="hub-sidebar-section">
-            <span className="hub-section-label">Other</span>
-            <div className="hub-sidebar-list">
-              <Link
-                href="/pemangku"
-                className={`hub-sidebar-item ${path === '/pemangku' ? 'active' : ''}`}
-              >
-                <span className="hub-item-icon">
-                  <PhoneCall size={15} />
-                </span>
-                <span>Contact us</span>
-              </Link>
-              <Link
-                href="/panduan"
-                className={`hub-sidebar-item ${path === '/panduan' ? 'active' : ''}`}
-              >
-                <span className="hub-item-icon">
-                  <HelpCircle size={15} />
-                </span>
-                <span>Help and Support</span>
-              </Link>
-            </div>
-          </div>
-
-          {/* Bottom Card (Reference Image bottom left with lime gradient) */}
-          <div className="hub-coop-card">
-            <span className="hub-brand-icon" style={{ width: 28, height: 28, fontSize: 13 }}>
-              KD
-            </span>
-            <div>
-              <h4>KDMP Puntukrejo</h4>
-              <p>Ruang Kerja Pribadi Manajer Koperasi Desa Merdeka.</p>
-            </div>
-            <Link href="/pencatatan" className="hub-coop-pill-btn">
-              <span>Operasional Aktif</span>
-              <ArrowUpRight size={14} />
-            </Link>
-          </div>
-        </aside>
-
-        {/* Right Main Content Canvas */}
-        <main className="hub-canvas-area" id="main">
-          {children}
-        </main>
-      </div>
-
-      {/* Quick Search Dialog (⌘K) */}
-      <dialog ref={searchDialog} className="modal-dialog-box" style={{ maxWidth: 520, borderRadius: 24, padding: 24 }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-          <h3 style={{ margin: 0, fontSize: 16, fontWeight: 750 }}>Cari Cepat (⌘K)</h3>
+          </Link>
           <button
-            type="button"
-            onClick={() => searchDialog.current?.close()}
-            style={{ background: 'none', border: 0, cursor: 'pointer' }}
+            className="close-navigation"
+            aria-label="Tutup navigasi"
+            onClick={() => setMenu(false)}
           >
             <X size={18} />
           </button>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', background: 'var(--canvas)', borderRadius: 9999 }}>
-          <Search size={16} />
-          <input
-            type="search"
-            placeholder="Ketik tujuan: tugas, kas, anggota, proyek..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{ border: 0, background: 'transparent', outline: 'none', width: '100%', fontSize: 13 }}
-            autoFocus
-          />
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 14 }}>
-          {[
-            ['/beranda', 'Dashboard', 'Ringkasan operasional dan jadwal'],
-            ['/tugas', 'Tugas & Jadwal', 'Daftar, papan scrum, dan harian'],
-            ['/pencatatan', 'Pencatatan Koperasi', 'Buku kas, anggota, barang, opname'],
-            ['/proyek', 'Proyek & Bidang Kerja', 'Tujuan dan target kerja koperasi'],
-            ['/laporan', 'Laporan Kinerja', 'Rekap mingguan & bulanan manajer'],
-          ]
-            .filter(([, title, desc]) =>
-              `${title} ${desc}`.toLowerCase().includes(searchQuery.toLowerCase()),
-            )
-            .map(([link, title, desc]) => (
+
+        <button
+          type="button"
+          className="sidebar-search-trigger"
+          onClick={() => {
+            setMenu(false);
+            dialog.current?.showModal();
+          }}
+        >
+          <Search size={14} />
+          <span>Cari cepat...</span>
+          <kbd>⌘K</kbd>
+        </button>
+
+        <div className="manager-sidebar-nav-scroll">
+          <section className="sidebar-favorites" aria-label="Halaman favorit">
+            <div className="sidebar-section-head-row">
+              <h2>Favorit</h2>
+              <button
+                aria-label={
+                  favorites.includes(path)
+                    ? 'Hapus halaman ini dari favorit'
+                    : 'Simpan halaman ini ke favorit'
+                }
+                aria-pressed={favorites.includes(path)}
+                onClick={() =>
+                  setFavoriteText(
+                    (favorites.includes(path)
+                      ? favorites.filter((href) => href !== path)
+                      : [...favorites, path]
+                    ).join('|'),
+                  )
+                }
+              >
+                <Star size={16} />
+              </button>
+            </div>
+            {favorites.map((href) => (
               <Link
-                key={link}
-                href={link}
-                onClick={() => searchDialog.current?.close()}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  padding: '10px 14px',
-                  borderRadius: 14,
-                  textDecoration: 'none',
-                  color: 'inherit',
-                  background: 'var(--surface)',
-                  border: '1px solid var(--line)',
+                key={href}
+                href={href}
+                aria-current={path === href ? 'page' : undefined}
+                onClick={() => setMenu(false)}
+              >
+                <Star size={14} />
+                <span>{navigation.find(([url]) => url === href)?.[1] || href}</span>
+              </Link>
+            ))}
+            {!favorites.length && <small>Gunakan bintang untuk menyimpan halaman ini.</small>}
+          </section>
+          {sections.map(([label, paths]) => (
+            <section key={label} className="manager-sidebar-section">
+              <h2 className="sidebar-section-title">
+                <button
+                  className="sidebar-group-toggle"
+                  aria-expanded={!collapsed.includes(label)}
+                  onClick={() =>
+                    setCollapsedText(
+                      (collapsed.includes(label)
+                        ? collapsed.filter((value) => value !== label)
+                        : [...collapsed, label]
+                      ).join('|'),
+                    )
+                  }
+                >
+                  {label}
+                  <ChevronDown size={14} />
+                </button>
+              </h2>
+              <nav className="sidebar-nav-list" hidden={collapsed.includes(label)}>
+                {paths.map((href) => {
+                  const Icon = navIcons[href] || ArrowUpRight;
+                  const isActive = path === href;
+                  return (
+                    <Link
+                      key={href}
+                      href={href}
+                      aria-current={isActive ? 'page' : undefined}
+                      className={`sidebar-nav-item ${isActive ? 'is-active' : ''}`}
+                      onClick={() => setMenu(false)}
+                    >
+                      <span className="sidebar-item-icon">
+                        <Icon size={16} />
+                      </span>
+                      <span className="sidebar-item-label">
+                        {navigation.find(([url]) => url === href)?.[1]}
+                      </span>
+                      {isActive && <span className="sidebar-item-dot" />}
+                    </Link>
+                  );
+                })}
+              </nav>
+            </section>
+          ))}
+          <section className="manager-sidebar-section">
+            <div className="sidebar-section-head-row">
+              <h2 className="sidebar-section-title">Proyek Saya</h2>
+              <Link
+                href="/proyek"
+                className="sidebar-section-add"
+                onClick={() => setMenu(false)}
+                title="Buka Proyek"
+                aria-label="Buka proyek"
+              >
+                <Plus size={14} />
+              </Link>
+            </div>
+            {workspace ? (
+              <div className="sidebar-projects-list">
+                {(workspace.workstreams || [])
+                  .filter((p) => p.data.status !== 'diarsipkan')
+                  .map((p) => (
+                    <Link
+                      className="manager-project-link"
+                      key={p.id}
+                      href={`/proyek?id=${encodeURIComponent(p.id)}`}
+                      onClick={() => setMenu(false)}
+                    >
+                      <span
+                        className="project-dot"
+                        style={{ backgroundColor: String(p.data.color || 'var(--brand)') }}
+                      />
+                      <span className="project-title">{String(p.data.title)}</span>
+                    </Link>
+                  ))}
+              </div>
+            ) : (
+              <small className="sidebar-empty-note">Proyek belum dimuat.</small>
+            )}
+            {workspace && !workspace.workstreams?.length && (
+              <small className="sidebar-empty-note">Belum ada proyek.</small>
+            )}
+          </section>
+        </div>
+
+        <div className="sidebar-footer-card">
+          <div className="sidebar-profile-row">
+            <span className="sidebar-avatar">{name[0]}</span>
+            <div className="sidebar-profile-info">
+              <strong>{name}</strong>
+              <small>Manajer Koperasi</small>
+            </div>
+          </div>
+        </div>
+      </aside>
+      {menu && (
+        <button className="manager-shade" aria-label="Tutup menu" onClick={() => setMenu(false)} />
+      )}
+      <main className="manager-main" id="main" tabIndex={-1}>
+        {error && (
+          <p role="alert" className="notice error">
+            {error}
+          </p>
+        )}
+        {children}
+      </main>
+      <nav className="manager-dock" aria-label="Navigasi cepat">
+        <Link
+          href="/beranda"
+          aria-label="Beranda"
+          aria-current={path === '/beranda' ? 'page' : undefined}
+        >
+          <House size={19} />
+          <span>Beranda</span>
+        </Link>
+        <Link
+          href="/tugas"
+          aria-label="Tugas"
+          aria-current={path === '/tugas' && query.get('view') !== 'kalender' ? 'page' : undefined}
+        >
+          <CheckCheck size={19} />
+          <span>Tugas</span>
+        </Link>
+        <button
+          type="button"
+          className="dock-center-action"
+          onClick={() => setActionModalOpen(true)}
+          aria-label="Aksi Manajer"
+        >
+          <span className="dock-center-circle">
+            <Plus size={22} />
+          </span>
+          <span>Aksi</span>
+        </button>
+        <Link
+          href="/pencatatan"
+          aria-label="Buku Catatan"
+          aria-current={path === '/pencatatan' ? 'page' : undefined}
+        >
+          <BookOpen size={19} />
+          <span>Catat</span>
+        </Link>
+        <button aria-label="Semua halaman" aria-expanded={menu} onClick={() => setMenu(!menu)}>
+          <Menu size={19} />
+          <span>Menu</span>
+        </button>
+      </nav>
+      <ManagerActionModal open={actionModalOpen} onClose={() => setActionModalOpen(false)} />
+      <dialog
+        ref={dialog}
+        className="command-dialog"
+        aria-labelledby="search-heading"
+        onClick={(e) => {
+          if (e.target === dialog.current) dialog.current?.close();
+        }}
+      >
+        <div className="section-head">
+          <h2 id="search-heading">Cari di ruang kerja</h2>
+          <button aria-label="Tutup pencarian" onClick={() => dialog.current?.close()}>
+            <X size={18} />
+          </button>
+        </div>
+        <div className="command-quick-actions-bar">
+          <button
+            type="button"
+            className="command-open-hub-btn"
+            onClick={() => {
+              dialog.current?.close();
+              setActionModalOpen(true);
+            }}
+          >
+            <Sparkles size={14} />
+            <span>Tambah tugas, rapat, atau catatan</span>
+            <ArrowUpRight size={14} />
+          </button>
+        </div>
+        <input
+          autoFocus
+          aria-label="Cari halaman atau isi catatan"
+          type="search"
+          placeholder="Cari tugas, anggota, dokumen, atau halaman…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <div className="command-results">
+          {search.trim() && workspace && (
+            <>
+              <small className="search-group-label">Catatan</small>
+              {searchWorkspace(workspace, search).map((result) => (
+                <Link
+                  key={result.id}
+                  href={result.href}
+                  onClick={() => {
+                    dialog.current?.close();
+                    setMenu(false);
+                  }}
+                >
+                  <span>
+                    <strong>{result.title}</strong>
+                    <small>{result.kind}</small>
+                  </span>
+                  <ArrowUpRight size={16} />
+                </Link>
+              ))}
+              {!searchWorkspace(workspace, search).length && <p>Tidak ada catatan yang cocok.</p>}
+            </>
+          )}
+          {search.trim() && !workspace && (
+            <p>Catatan belum dimuat. Pencarian halaman tetap tersedia.</p>
+          )}
+          <small className="search-group-label">Halaman</small>
+          {navigation
+            .filter(([, label]) =>
+              label.toLocaleLowerCase('id').includes(search.toLocaleLowerCase('id')),
+            )
+            .map(([href, label]) => (
+              <Link
+                key={href}
+                href={href}
+                onClick={() => {
+                  dialog.current?.close();
+                  setMenu(false);
                 }}
               >
-                <strong style={{ fontSize: 13.5 }}>{title}</strong>
-                <small style={{ color: 'var(--ink-muted)', fontSize: 11.5 }}>{desc}</small>
+                {label}
+                <ArrowUpRight size={16} />
               </Link>
             ))}
         </div>
@@ -325,7 +492,6 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
-
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider>

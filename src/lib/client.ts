@@ -8,7 +8,11 @@ export function invalidateCache(pathPrefix?: string) {
     clientCache.clear();
   } else {
     for (const key of clientCache.keys()) {
-      if (key === pathPrefix || key.startsWith(pathPrefix + '/') || key.startsWith(pathPrefix + '?')) {
+      if (
+        key === pathPrefix ||
+        key.startsWith(pathPrefix + '/') ||
+        key.startsWith(pathPrefix + '?')
+      ) {
         clientCache.delete(key);
       }
     }
@@ -18,7 +22,7 @@ export function invalidateCache(pathPrefix?: string) {
 export async function api<T>(
   path: string,
   body?: unknown,
-  method = 'POST',
+  method = body === undefined ? 'GET' : 'POST',
   options?: { bypassCache?: boolean; ttlMs?: number },
 ): Promise<T> {
   const isRead = body === undefined && method === 'GET';
@@ -35,7 +39,7 @@ export async function api<T>(
   const response = await fetch(
     '/api/' + path,
     body === undefined
-      ? { cache: 'no-store' }
+      ? { method, cache: 'no-store' }
       : { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) },
   );
 
@@ -62,5 +66,14 @@ export async function api<T>(
 // Muat ulang penuh setelah perubahan sesi agar cache halaman privat ikut dibuang.
 export function resetAuthNavigation(path: '/pin' | '/beranda') {
   invalidateCache();
+  if (path === '/pin') {
+    try {
+      Object.keys(sessionStorage)
+        .filter((key) => key.startsWith('hub-draft:'))
+        .forEach((key) => sessionStorage.removeItem(key));
+    } catch {
+      /* Storage may be disabled. */
+    }
+  }
   window.location.assign(path);
 }

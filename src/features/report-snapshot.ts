@@ -3,6 +3,16 @@ import { schemas } from './schemas';
 import { addDays } from '@/lib/date';
 export function reportSnapshot(data: Workspace, start: string, end: string) {
   const tasks = (data['work-items'] || []).map((row) => schemas['work-items'].parse(row.data));
+  const cashEntries = (data['cash-entries'] || []).filter(
+    (row) => String(row.data.date) >= start && String(row.data.date) <= end,
+  );
+  const cashIn = cashEntries
+    .filter((row) => row.data.direction === 'masuk')
+    .reduce((sum, row) => sum + Number(row.data.amount || 0), 0);
+  const cashOut = cashEntries
+    .filter((row) => row.data.direction === 'keluar')
+    .reduce((sum, row) => sum + Number(row.data.amount || 0), 0);
+
   return {
     organization: data.organization?.[0]?.data.title || 'Koperasi',
     completed: tasks
@@ -35,6 +45,15 @@ export function reportSnapshot(data: Workspace, start: string, end: string) {
           String(row.data.actual_date) <= end,
       )
       .map((row) => String(row.data.title)),
+    cash: {
+      in: cashIn,
+      out: cashOut,
+      net: cashIn - cashOut,
+      count: cashEntries.length,
+    },
   };
 }
-export type ReportSnapshot = ReturnType<typeof reportSnapshot> & { notes: string };
+export type ReportSnapshot = ReturnType<typeof reportSnapshot> & {
+  notes: string;
+  status?: 'draft' | 'final';
+};

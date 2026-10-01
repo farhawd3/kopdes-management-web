@@ -1,6 +1,6 @@
 'use client';
 import { useState, useRef } from 'react';
-import { UploadCloud, CheckCircle2, AlertCircle, FileSpreadsheet } from 'lucide-react';
+import { UploadCloud, CheckCircle2, AlertCircle } from 'lucide-react';
 
 export function CsvDropzone({
   onDataParsed,

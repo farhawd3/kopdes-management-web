@@ -1,31 +1,12 @@
 'use client';
 import { useState } from 'react';
-import {
-  Check,
-  ChevronDown,
-  ChevronRight,
-  Plus,
-  Clock,
-  Repeat,
-  Edit2,
-  Trash2,
-  Calendar,
-  AlertCircle,
-} from 'lucide-react';
+import { Check, ChevronDown, ChevronRight, Plus, Edit2, Trash2 } from 'lucide-react';
 import { type Item } from './schemas';
 import type { Workspace } from './useWorkspace';
 import { addDays, formatDate, today } from '@/lib/date';
 import { api } from '@/lib/client';
 
-const DAY_LABELS = [
-  'Senin',
-  'Selasa',
-  'Rabu',
-  'Kamis',
-  'Jumat',
-  'Sabtu',
-  'Minggu',
-] as const;
+const DAY_LABELS = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'] as const;
 
 export function DailyTasksView({
   tasks,
@@ -45,10 +26,10 @@ export function DailyTasksView({
   const dayOfWeek = (new Date(currentDate + 'T12:00:00Z').getUTCDay() + 6) % 7;
   const monday = addDays(currentDate, -dayOfWeek);
 
-  // Expanded days state: default Tuesday and Today expanded
+  // Expanded days state: default Tuesday, Today, and Overdue expanded
   const [expandedDays, setExpandedDays] = useState<Record<string, boolean>>(() => {
-    const init: Record<string, boolean> = { upcoming: true };
-    // Expand today and Tuesday by default as in Behance demo
+    const init: Record<string, boolean> = { upcoming: true, overdue: true };
+    // Expand today and Tuesday by default
     for (let i = 0; i < 7; i++) {
       const date = addDays(monday, i);
       init[date] = date === currentDate || i === 1; // 1 is Tuesday
@@ -56,6 +37,7 @@ export function DailyTasksView({
     return init;
   });
 
+  const [error, setError] = useState('');
   const [busyId, setBusyId] = useState<string | null>(null);
 
   function toggleDay(key: string) {
@@ -66,6 +48,7 @@ export function DailyTasksView({
     e.stopPropagation();
     if (busyId) return;
     setBusyId(task.id);
+    setError('');
     try {
       const isDone = task.data.status === 'selesai';
       const nextStatus = isDone ? 'rencana' : 'selesai';
@@ -78,6 +61,8 @@ export function DailyTasksView({
         },
       });
       await onRefresh();
+    } catch (error) {
+      setError((error as Error).message);
     } finally {
       setBusyId(null);
     }
@@ -87,18 +72,19 @@ export function DailyTasksView({
     e.stopPropagation();
     if (busyId) return;
     setBusyId(task.id);
+    setError('');
     try {
       const subtasks = Array.isArray(task.data.subtasks)
         ? (task.data.subtasks as { title: string; done: boolean; code?: string }[])
         : [];
-      const updated = subtasks.map((s, idx) =>
-        idx === subIndex ? { ...s, done: !s.done } : s,
-      );
+      const updated = subtasks.map((s, idx) => (idx === subIndex ? { ...s, done: !s.done } : s));
       await api('work-items', {
         id: task.id,
         data: { ...task.data, subtasks: updated },
       });
       await onRefresh();
+    } catch (error) {
+      setError((error as Error).message);
     } finally {
       setBusyId(null);
     }
@@ -108,9 +94,12 @@ export function DailyTasksView({
     e.stopPropagation();
     if (!confirm(`Hapus tugas "${task.data.title}"?`)) return;
     setBusyId(task.id);
+    setError('');
     try {
       await api('work-items', { id: task.id }, 'DELETE');
       await onRefresh();
+    } catch (error) {
+      setError((error as Error).message);
     } finally {
       setBusyId(null);
     }
@@ -124,20 +113,144 @@ export function DailyTasksView({
     return { date, dayName, items, isToday: date === currentDate };
   });
 
+  // Overdue / past tasks (due before Monday of this week and not yet completed)
+  const pastOverdueTasks = tasks.filter(
+    (t) =>
+      !['selesai', 'dibatalkan'].includes(String(t.data.status)) &&
+      String(t.data.due_date) < monday,
+  );
+
   // Upcoming tasks (after this week)
   const sunday = addDays(monday, 6);
   const upcomingTasks = tasks.filter((t) => String(t.data.due_date) > sunday);
 
   return (
     <div className="daily-tasks-container">
+      {error && (
+        <p role="alert" className="notice error">
+          {error}
+        </p>
+      )}
+
+      {/* Past Overdue Tasks (If Any) */}
+      {pastOverdueTasks.length > 0 && (
+        <section className="daily-group-card overdue-group-card">
+          <header className="daily-group-header" onClick={() => toggleDay('overdue')}>
+            <button
+              type="button"
+              className="toggle-collapse-btn"
+              aria-expanded={!!expandedDays['overdue']}
+              aria-label="Buka tutup tugas terlambat sebelumnya"
+            >
+              {expandedDays['overdue'] ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
+            </button>
+            <div className="day-title-wrap">
+              <span className="day-name alert-text">Terlewat / Perlu Tindak Lanjut</span>
+              <small className="day-date">Jatuh tempo sebelum pekan ini</small>
+            </div>
+            <div className="day-count-badge alert-count-badge">
+              <span>{pastOverdueTasks.length.toString().padStart(2, '0')}</span>
+            </div>
+          </header>
+
+          {expandedDays['overdue'] && (
+            <div className="daily-task-items-list">
+              {pastOverdueTasks.map((task) => {
+                const isDone = task.data.status === 'selesai';
+                const taskCode = String(
+                  task.data.code || `#KD-${task.id.slice(0, 5).toUpperCase()}`,
+                );
+                const subtasks = Array.isArray(task.data.subtasks)
+                  ? (task.data.subtasks as { title: string; done: boolean; code?: string }[])
+                  : [];
+                const project = workspace.workstreams?.find(
+                  (w) => w.id === task.data.workstream_id,
+                );
+
+                return (
+                  <div
+                    key={task.id}
+                    className={`daily-task-row-wrap ${isDone ? 'is-completed' : ''}`}
+                  >
+                    <div
+                      className="daily-task-item"
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => onOpenTask(task)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          onOpenTask(task);
+                        }
+                      }}
+                    >
+                      <button
+                        type="button"
+                        className={`task-round-check ${isDone ? 'checked' : ''}`}
+                        onClick={(e) => toggleComplete(task, e)}
+                        title={isDone ? 'Tandai belum selesai' : 'Tandai selesai'}
+                      >
+                        {isDone && <Check size={13} />}
+                      </button>
+
+                      <span className="task-code-tag">{taskCode}</span>
+                      <span className="task-title-text">{String(task.data.title)}</span>
+                      <span className="task-due-tag is-overdue">
+                        {formatDate(String(task.data.due_date))}
+                      </span>
+
+                      {project && (
+                        <span
+                          className="task-project-pill"
+                          style={{
+                            borderColor: String(project.data.color || 'var(--line)'),
+                          }}
+                        >
+                          {String(project.data.title)}
+                        </span>
+                      )}
+
+                      {subtasks.length > 0 && (
+                        <span className="subtasks-count-pill">
+                          {subtasks.filter((s) => s.done).length}/{subtasks.length}
+                        </span>
+                      )}
+
+                      <div className="task-row-actions">
+                        <button
+                          type="button"
+                          className="action-icon-btn"
+                          title="Ubah / Buka detail"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onOpenTask(task);
+                          }}
+                        >
+                          <Edit2 size={15} />
+                        </button>
+                        <button
+                          type="button"
+                          className="action-icon-btn delete-action"
+                          title="Hapus tugas"
+                          onClick={(e) => deleteTask(task, e)}
+                        >
+                          <Trash2 size={15} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </section>
+      )}
+
       {/* 7 Days of the Week */}
       {weekDays.map(({ date, dayName, items, isToday }) => {
         const isExpanded = !!expandedDays[date];
         return (
-          <section
-            key={date}
-            className={`daily-group-card ${isToday ? 'current-day-group' : ''}`}
-          >
+          <section key={date} className={`daily-group-card ${isToday ? 'current-day-group' : ''}`}>
             <header className="daily-group-header" onClick={() => toggleDay(date)}>
               <button
                 type="button"
@@ -193,7 +306,15 @@ export function DailyTasksView({
                         {/* Parent Task Row */}
                         <div
                           className="daily-task-item"
+                          role="button"
+                          tabIndex={0}
                           onClick={() => onOpenTask(task)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              onOpenTask(task);
+                            }
+                          }}
                         >
                           <button
                             type="button"
@@ -206,9 +327,7 @@ export function DailyTasksView({
 
                           <span className="task-code-tag">{taskCode}</span>
 
-                          <span className="task-title-text">
-                            {String(task.data.title)}
-                          </span>
+                          <span className="task-title-text">{String(task.data.title)}</span>
 
                           {project && (
                             <span
@@ -263,9 +382,7 @@ export function DailyTasksView({
                                   className={`tree-subtask-item ${sub.done ? 'sub-done' : ''}`}
                                   onClick={(e) => toggleSubtask(task, sIdx, e)}
                                 >
-                                  <span className="tree-connector">
-                                    {isLast ? '└──' : '├──'}
-                                  </span>
+                                  <span className="tree-connector">{isLast ? '└──' : '├──'}</span>
                                   <button
                                     type="button"
                                     className={`subtask-round-check ${sub.done ? 'checked' : ''}`}
@@ -292,10 +409,7 @@ export function DailyTasksView({
 
       {/* Up Coming Section */}
       <section className="daily-group-card upcoming-group">
-        <header
-          className="daily-group-header"
-          onClick={() => toggleDay('upcoming')}
-        >
+        <header className="daily-group-header" onClick={() => toggleDay('upcoming')}>
           <button
             type="button"
             className="toggle-collapse-btn"
@@ -323,11 +437,7 @@ export function DailyTasksView({
                   task.data.code || `#KD-${task.id.slice(0, 5).toUpperCase()}`,
                 );
                 return (
-                  <div
-                    key={task.id}
-                    className="daily-task-item"
-                    onClick={() => onOpenTask(task)}
-                  >
+                  <div key={task.id} className="daily-task-item" onClick={() => onOpenTask(task)}>
                     <button
                       type="button"
                       className={`task-round-check ${isDone ? 'checked' : ''}`}
@@ -337,9 +447,7 @@ export function DailyTasksView({
                     </button>
                     <span className="task-code-tag">{taskCode}</span>
                     <span className="task-title-text">{String(task.data.title)}</span>
-                    <span className="task-due-badge">
-                      {formatDate(String(task.data.due_date))}
-                    </span>
+                    <span className="task-due-badge">{formatDate(String(task.data.due_date))}</span>
                     <div className="task-row-actions">
                       <button
                         type="button"
