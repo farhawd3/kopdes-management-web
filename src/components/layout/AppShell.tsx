@@ -36,7 +36,6 @@ import {
   HelpCircle,
   SunMedium,
   Sparkles,
-  Clock,
   ArrowRightCircle,
 } from 'lucide-react';
 import { usePreference } from '@/lib/usePreference';
@@ -270,28 +269,31 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
 
         <div className="manager-sidebar-nav-scroll">
           {recents.length > 0 && (
-            <div className="sidebar-recents-strip" aria-label="Terakhir dibuka">
-              <span className="recents-strip-label">
-                <Clock size={11} /> Terakhir:
-              </span>
-              <div className="recents-strip-chips">
+            <section className="manager-sidebar-section sidebar-recents-section" aria-label="Terakhir dibuka">
+              <h2 className="sidebar-section-title">Terakhir</h2>
+              <nav className="sidebar-nav-list">
                 {recents.slice(0, 3).map((href) => {
+                  const RecentIcon = navIcons[href] || ArrowUpRight;
                   const label = navigation.find(([url]) => url === href)?.[1] || href;
-                  const isCurrent = path === href;
+                  const isActive = path === href;
                   return (
                     <Link
                       key={href}
                       href={href}
-                      className={`recents-chip ${isCurrent ? 'is-active' : ''}`}
+                      aria-current={isActive ? 'page' : undefined}
+                      className={`sidebar-nav-item ${isActive ? 'is-active' : ''}`}
                       onClick={() => setMenu(false)}
                       title={label}
                     >
-                      {label}
+                      <span className="sidebar-item-icon">
+                        <RecentIcon size={15} />
+                      </span>
+                      <span className="sidebar-item-label">{label}</span>
                     </Link>
                   );
                 })}
-              </div>
-            </div>
+              </nav>
+            </section>
           )}
 
           {favorites.length > 0 && (

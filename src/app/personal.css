@@ -2098,22 +2098,31 @@ dialog.editor .form-grid {
 .manager-sidebar-section {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
+}
+/* Recents section: lebih tipis, tidak ada divider kuat */
+.sidebar-recents-section {
+  padding-bottom: 8px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--line);
+}
+.sidebar-recents-section .sidebar-nav-item {
+  opacity: 0.85;
 }
 .sidebar-section-title {
   font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.8px;
+  letter-spacing: 0.75px;
   text-transform: uppercase;
   color: var(--ink-muted);
-  padding: 2px 8px;
+  padding: 6px 12px 3px;
   margin: 0;
 }
 .sidebar-section-head-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 2px 8px;
+  padding: 6px 12px 3px;
 }
 .sidebar-section-add {
   display: grid;
@@ -2122,30 +2131,29 @@ dialog.editor .form-grid {
   height: 20px;
   border-radius: 6px;
   color: var(--ink-muted);
-  background: var(--canvas);
   transition: all 0.15s ease;
 }
 .sidebar-section-add:hover {
-  background: var(--brand);
-  color: var(--brand-text);
+  background: var(--brand-soft);
+  color: var(--brand);
 }
 .sidebar-nav-list {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 .sidebar-nav-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-height: 36px;
-  padding: 6px 10px;
+  gap: 9px;
+  min-height: 34px;
+  padding: 5px 10px 5px 12px;
   border-radius: 8px;
-  font-size: 12.5px;
-  font-weight: 550;
+  font-size: 13px;
+  font-weight: 500;
   color: var(--ink);
   text-decoration: none;
-  transition: all 0.15s ease;
+  transition: background 0.12s ease, color 0.12s ease;
   position: relative;
 }
 .sidebar-nav-item:hover {
@@ -2155,60 +2163,78 @@ dialog.editor .form-grid {
 .sidebar-item-icon {
   display: grid;
   place-items: center;
+  width: 18px;
+  flex-shrink: 0;
   color: var(--ink-muted);
-  transition: color 0.15s ease;
+  transition: color 0.12s ease;
 }
 .sidebar-nav-item:hover .sidebar-item-icon {
-  color: var(--ink-heading);
+  color: var(--ink);
 }
+.sidebar-item-label {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Active: left bar accent + soft brand bg */
 .sidebar-nav-item.is-active,
 .sidebar-nav-item[aria-current='page'] {
   background: var(--brand-soft);
   color: var(--brand);
-  font-weight: 700;
+  font-weight: 650;
+}
+.sidebar-nav-item.is-active::before,
+.sidebar-nav-item[aria-current='page']::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  border-radius: 0 2px 2px 0;
+  background: var(--brand);
 }
 .sidebar-nav-item.is-active .sidebar-item-icon,
 .sidebar-nav-item[aria-current='page'] .sidebar-item-icon {
   color: var(--brand);
 }
 .sidebar-item-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--brand);
-  margin-left: auto;
+  display: none; /* replaced by ::before accent */
 }
 .sidebar-projects-list {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 .manager-project-link {
   display: flex;
   align-items: center;
   gap: 8px;
-  min-height: 34px;
-  padding: 6px 10px;
+  min-height: 32px;
+  padding: 4px 10px 4px 12px;
   border-radius: 8px;
-  font-size: 12px;
+  font-size: 12.5px;
+  font-weight: 450;
   color: var(--ink);
   text-decoration: none;
-  transition: background 0.15s ease;
+  transition: background 0.12s ease;
 }
 .manager-project-link:hover {
   background: var(--canvas);
 }
 .project-dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: var(--brand);
   flex-shrink: 0;
 }
 .project-title {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 12.5px;
 }
 .sidebar-empty-note {
   font-size: 11px;
@@ -2532,7 +2558,8 @@ dialog.editor .form-grid {
 .manager-main {
   margin-left: 244px;
   padding: 30px 32px 48px;
-  max-width: 1800px;
+  width: calc(100% - 244px);
+  box-sizing: border-box;
   min-width: 0;
 }
 .manager-dock,
@@ -10337,89 +10364,8 @@ dialog.editor {
   transform: scale(1.08) !important;
 }
 
-/* Sidebar Recents Strip */
-.sidebar-recents-strip {
-  display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  padding: 4px 6px 10px !important;
-  margin-bottom: 6px !important;
-  border-bottom: 1px solid var(--line) !important;
-  overflow-x: auto !important;
-  scrollbar-width: none !important;
-}
+/* sidebar-recents-section: gunakan .manager-sidebar-section + .sidebar-recents-section */
 
-.recents-strip-label {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 4px !important;
-  font-size: 10px !important;
-  font-weight: 750 !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.06em !important;
-  color: var(--ink-muted) !important;
-  white-space: nowrap !important;
-  flex-shrink: 0 !important;
-}
-
-.recents-strip-chips {
-  display: flex !important;
-  align-items: center !important;
-  gap: 4px !important;
-  overflow-x: auto !important;
-}
-
-.recents-chip {
-  display: inline-flex !important;
-  align-items: center !important;
-  padding: 2px 8px !important;
-  min-height: 22px !important;
-  border-radius: 6px !important;
-  background: var(--canvas) !important;
-  border: 1px solid var(--line) !important;
-  color: var(--ink-muted) !important;
-  font-size: 11px !important;
-  font-weight: 600 !important;
-  text-decoration: none !important;
-  white-space: nowrap !important;
-  transition: all 0.15s ease !important;
-}
-
-.recents-chip:hover {
-  background: var(--brand-soft) !important;
-  color: var(--brand-text, var(--ink-heading)) !important;
-  border-color: var(--brand-soft-border, var(--line-strong)) !important;
-}
-
-.recents-chip.is-active {
-  background: var(--brand-soft) !important;
-  border-color: var(--brand) !important;
-  color: var(--brand-text, var(--ink-heading)) !important;
-  font-weight: 700 !important;
-}
-
-.sidebar-favorites-group {
-  margin-bottom: 4px !important;
-}
-
-.sidebar-item-star-badge {
-  margin-left: auto !important;
-  flex-shrink: 0 !important;
-}
-
-.manager-sidebar-nav-scroll {
-  scrollbar-width: thin !important;
-  scrollbar-color: var(--line) transparent !important;
-}
-
-.manager-sidebar-nav-scroll::-webkit-scrollbar {
-  width: 4px !important;
-}
-
-.manager-sidebar-nav-scroll::-webkit-scrollbar-thumb {
-  background: var(--line) !important;
-  border-radius: 4px !important;
-}
 
 /* ── 5.3. High-Contrast Modal Containers & Borders ───────────────────────── */
 dialog.editor,
@@ -11297,8 +11243,9 @@ dialog.editor textarea:focus,
 .manager-main {
   margin-left: 256px !important;
   padding: 28px 36px 48px !important;
-  min-width: 0 !important;
+  width: calc(100% - 256px) !important;
   box-sizing: border-box !important;
+  min-width: 0 !important;
 }
 
 @media (max-width: 1023px) {
@@ -11307,6 +11254,7 @@ dialog.editor textarea:focus,
   }
   .manager-main {
     margin-left: 0 !important;
+    width: 100% !important;
     padding: 20px 20px 80px !important;
   }
 }
@@ -11335,15 +11283,46 @@ dialog.editor textarea:focus,
 .manager-sidebar-nav-scroll::-webkit-scrollbar-track {
   background: transparent !important;
 }
-
+/* ── 6.6. Sidebar Group Toggle — label only, no button frame ─────────── */
 .sidebar-group-toggle {
-  min-height: 32px !important;
-  padding: 4px 8px !important;
-  font-size: 11px !important;
-  font-weight: 750 !important;
+  all: unset !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 6px 12px 3px !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
   text-transform: uppercase !important;
-  letter-spacing: 0.08em !important;
+  letter-spacing: 0.75px !important;
+  color: var(--ink-muted) !important;
+  cursor: pointer !important;
+  transition: color 0.12s !important;
+}
+.sidebar-group-toggle:hover {
+  color: var(--ink) !important;
+}
+.sidebar-group-toggle svg {
+  opacity: 0.45 !important;
+  transition: transform 0.15s ease, opacity 0.12s !important;
+}
+.sidebar-group-toggle:hover svg {
+  opacity: 0.75 !important;
+}
+[aria-expanded='false'].sidebar-group-toggle svg {
+  transform: rotate(-90deg) !important;
 }
 
-
+/* ── 6.7. Sidebar Favorites — seamless with main nav ─────────────────── */
+.sidebar-favorites-group {
+  padding-bottom: 8px !important;
+  margin-bottom: 2px !important;
+  border-bottom: 1px solid var(--line) !important;
+}
+.sidebar-item-star-badge {
+  margin-left: auto !important;
+  flex-shrink: 0 !important;
+  opacity: 0.9 !important;
+}
 
