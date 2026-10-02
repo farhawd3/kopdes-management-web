@@ -1,22 +1,23 @@
 # Status proyek — 2 Oktober 2026
 
-## Desain Ulang Tabel Tugas (`task-table-wrap`) Clean & Modern
+## Penyederhanaan & Harmonisasi Tabel Tugas (`task-table-wrap`) Clean Design
 
-- **Peningkatan Visual & Ergonomi Tabel Tugas**:
-  - Menghilangkan padding kaku `24px 28px !important` pada kontainer `.task-table-wrap` agar garis tabel menempel rapi ke tepi kartu dengan radius `18px`, bayangan halus, dan batas tepi `1.5px solid var(--line)`.
-  - Menambahkan **lingkaran centang cepat (quick-check circle)** di sebelah kiri judul tugas untuk menyelesaikan atau membatalkan tugas dalam 1 klik tanpa harus menggeser ke tombol ujung.
-  - Memperkaya hierarki baris: chip kode tugas monospasi (misal `KD-01`), judul dengan teks dicoret saat selesai, pill proyek dengan ikon folder, indikator subtugas (`2/4 subtugas`), dan penanda tugas berulang (`RotateCw`).
-  - Desain ulang pemilih status: kontainer pill modern dengan titik indikator warna semantik (hijau selesai, kuning proses, abu-abu rencana, merah batal).
-  - Badge prioritas modern dengan ikon (`Flame` untuk mendesak, `AlertCircle` untuk tinggi).
-  - Badge tenggat kontekstual: merah `AlertTriangle` untuk tugas terlambat, hijau untuk `Hari Ini`, dan tanggal kalender reguler.
-  - Avatar inisial penanggung jawab (PIC) dengan badge lingkaran terstruktur.
-  - Menambahkan tombol aksi rincian (`ArrowUpRight`) untuk membuka laci detail tugas secara instan.
-  - Menambahkan **footer status bar** di bagian bawah tabel yang menampilkan metrik langsung: total tugas, jumlah selesai, sedang dikerjakan, dan jumlah terlambat.
+- **Pembersihan Elemen Membingungkan & Harmonisasi Visual**:
+  - **Menghapus lingkaran di sisi paling kiri (`task-row-checkbox`)**: Menghilangkan lingkaran/checkbox tak berlabel yang membingungkan pengguna. Penyelesaian tugas tetap mudah dan eksplisit via tombol "Selesai" di kolom aksi dan selektor status.
+  - **Menghilangkan tabrakan warna & badge berlebihan**:
+    - Menghilangkan badge berwarna mencolok dengan border ganda (`task-code-badge`, `task-project-pill`, `task-subtasks-pill`, `task-recurrence-pill`) dan tumpukan ikon kecil yang saling bertabrakan.
+    - Judul tugas kini bersih dan dominan; konteks proyek, jumlah subtugas, dan penanda perulangan ditampilkan sebagai teks sekunder yang tenang (`--ink-muted`) di bawah judul tugas.
+    - Selektor status disederhanakan menjadi kontrol form native yang rapi tanpa kontainer pill tebal dan titik neon bercahaya.
+    - Badge prioritas distandarisasi dengan warna pastel lembut sistem tanpa ikon api atau seruan yang berisik.
+    - Kolom tenggat menggunakan teks tipografis yang jelas tanpa tumpukan ikon kalender/peringatan.
+    - Kolom penanggung jawab ditampilkan dalam format teks yang bersih tanpa avatar inisial berwarna-warni yang bersaing dengan kolom lain.
+    - Menghapus tombol kotak `ArrowUpRight` yang redundan karena judul tugas sudah berfungsi langsung membuka laci detail tugas.
+    - Menghapus bilah footer statistik tabel yang berisik di dalam kartu tabel agar tampilan tetap fokus dan minimalis.
 - **Verifikasi Kualitas**:
-  - `npm test`: **129/129 tes lulus**.
+  - `npm test`: **129/129 tes lulus (16 file pengujian)**.
   - `npm run typecheck`: **0 kesalahan**.
   - `npm run lint`: **0 kesalahan / 0 peringatan**.
-  - `npm run build`: **Next.js Turbopack build sukses** (9/9 rute teroptimasi).
+  - `npm run build`: **Next.js Turbopack build sukses** (9/9 rute teroptimasi penuh).
 
 ## Perapian Menu, Eliminasi Redundansi & Relasi Database Dokumen
 
