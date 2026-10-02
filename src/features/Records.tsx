@@ -19,6 +19,7 @@ import {
   ListTodo,
   Columns3,
   CalendarDays,
+  Calendar,
   Search,
   Plus,
   ChartGantt,
@@ -1158,24 +1159,34 @@ export function Records({
                       </span>
                     </td>
                     <td className="col-task-due">
-                      {isLate ? (
-                        <span className="task-due task-due-late" title="Tenggat terlewat">
-                          {formatDate(String(row.data.due_date))}
-                        </span>
-                      ) : isToday ? (
-                        <span className="task-due task-due-today" title="Jatuh tempo hari ini">
-                          Hari Ini
-                        </span>
-                      ) : (
-                        <span className="task-due task-due-normal">
-                          {formatDate(String(row.data.due_date))}
-                        </span>
-                      )}
+                      <div className="task-due-wrap">
+                        <Calendar size={12} className="task-due-icon" />
+                        {isLate ? (
+                          <span className="task-due task-due-late" title="Tenggat terlewat">
+                            {formatDate(String(row.data.due_date))}
+                          </span>
+                        ) : isToday ? (
+                          <span className="task-due task-due-today" title="Jatuh tempo hari ini">
+                            Hari Ini
+                          </span>
+                        ) : (
+                          <span className="task-due task-due-normal">
+                            {row.data.due_date ? formatDate(String(row.data.due_date)) : '—'}
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className="col-task-assignee">
-                      <span className={assigneeName ? 'task-assignee-name' : 'task-assignee-empty'}>
-                        {assigneeName || '—'}
-                      </span>
+                      {assigneeName ? (
+                        <div className="task-assignee-cell">
+                          <span className="task-assignee-avatar">
+                            {assigneeName[0].toUpperCase()}
+                          </span>
+                          <span className="task-assignee-name">{assigneeName}</span>
+                        </div>
+                      ) : (
+                        <span className="task-assignee-empty">—</span>
+                      )}
                     </td>
                     <td className="col-task-action">
                       {!isDone ? (
