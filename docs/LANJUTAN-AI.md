@@ -40,6 +40,17 @@ Tentukan satu kebijakan hapus: tampilkan aksi **Hapus** di detail tugas sebagai 
 
 Cari sumber glow merah pada keadaan hover/fokus/aktif tombol, terutama aturan `box-shadow`, filter, dan pseudo-element di `personal.css`, `polish.css`, `workspace.css`, `studio.css`, `globals.css`. Jangan menebak selector dari warna yang terlihat: reproduksi dan periksa computed style. Gunakan satu sistem tombol dan status: merah hanya untuk aksi berbahaya atau galat, tanpa halo mencolok; fokus keyboard tetap terlihat dengan outline yang tenang. Selaraskan jarak, radius, ikon, teks, badge, kartu, dan tab pada tiap halaman. Hormati tema gelap dan `prefers-reduced-motion`.
 
+### 6. Detail visual tugas dan kalender dari pemilik
+
+- **Kalender menonjolkan ID:** `TaskCalendar.tsx` saat ini merender `.cal-task-code` sebelum `.cal-task-title`. Judul kegiatan harus paling mudah dibaca; kode otomatis menjadi metadata kecil atau hanya ada di detail. Jangan tampilkan UUID mentah. Audit juga `.task-code-badge`, `.card-task-code`, `.task-code-tag` agar kode konsisten, rapi, dan tidak bersambung dengan judul.
+- **Checklist/subtugas:** rapikan baris di `TaskDetailDrawer.tsx` dan `DailyTasksView.tsx`: lingkar centang `.subtask-check-circle` harus jelas kosong/selesai, pusat ikon simetris, area sentuh 44 px, teks sejajar, fokus terlihat, dan status dapat dibaca tanpa warna. Cek keadaan teks panjang pada ponsel.
+- **Tautan bergabung rapat dari kegiatan:** tugas sudah memiliki `meeting_id`, sedangkan rapat memiliki `meeting_url` (`schemas.ts`). Jika tugas terhubung ke rapat online/hybrid dengan URL yang sah, tampilkan tindakan **Gabung rapat** di detail tugas dan, jika relevan, kartu agenda. Ambil URL dari rapat terkait, jangan menyalin atau membuat tautan baru di tugas. Jika rapat belum bertautan, tatap muka, atau URL tidak sah, jangan tampilkan tombol kosong. Uji relasi hilang dan keamanan URL.
+- **Pill proyek di papan:** `.card-project-pill` pada `ScrumBoardView.tsx` perlu hierarki dan kontras yang lebih tenang, teks panjang terpotong dengan judul penuh dapat diakses, serta gaya konsisten dengan badge proyek di detail tugas. Warna proyek boleh menjadi penanda kecil, bukan seluruh permukaan kartu.
+- **Navigasi tugas sebelum/sesudah dan item setara:** periksa tombol pada detail tugas dan rangkaian terkait. Bentuk oval hanya pantas untuk chip/label singkat; tombol navigasi berisi teks/ikon harus punya ukuran, jarak, dan arah panah yang jelas. Jangan mengubah bentuk tanpa memastikan fungsi dan urutan keyboard.
+- **Animasi membuka form tugas dan dialog sejenis:** tentukan arah yang mengikuti asal tindakan: dialog tengah memakai fade + scale ringan di pusat; drawer masuk dari sisi yang sama dengan posisi akhirnya. Hindari gerak diagonal/loncatan dari kiri akibat aturan posisi yang bertabrakan. Durasi pendek, tidak menggeser halaman, dan nonaktif saat reduced-motion. Uji buka/tutup berulang pada 360 dan 1024 px.
+
+Terima bila kalender menampilkan judul sebagai informasi utama, semua kode hanya metadata yang dapat dipahami, checklist bisa disentuh/dibaca, tautan rapat hanya muncul untuk relasi valid, dan animasi/modal tidak meloncat atau menyembunyikan isi.
+
 ## Verifikasi sebelum menyatakan selesai
 
 1. Periksa Git, pisahkan perubahan yang sudah ada, dan gunakan cabang kerja `codex/` atau worktree terpisah agar tidak mengganggu checkout aktif.

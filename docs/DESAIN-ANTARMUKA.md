@@ -40,3 +40,5 @@ Topbar menunjukkan lokasi halaman dan aksi yang benar-benar dipakai. Judul halam
 Uji 360, 768, 1024, 1440 px pada tema terang dan gelap untuk Beranda, Tugas, detail/modal, Harian, Proyek, kalender, Gantt, dan Pencatatan. Periksa ruang kosong, tumpang tindih, scroll, fokus, tombol, dan teks terpotong. Bandingkan keadaan kosong, memuat, galat, dan berisi data. Catat apa yang benar-benar diuji di `STATUS.md`; jangan menandai semua perangkat selesai hanya karena build lulus.
 
 Perbaikan yang masih terbuka ada di `LANJUTAN-AI.md`: navigasi ponsel, sidebar ciut, modal sempit, konsistensi status/aksi tugas, serta sumber glow merah. Jangan mengubah acuan ini menjadi klaim bahwa masalah tersebut telah selesai.
+
+Masukan visual terbaru pemilik juga tercatat di bagian **Detail visual tugas dan kalender** pada `LANJUTAN-AI.md`: judul lebih utama dari kode, checklist simetris, pill proyek tenang, tombol navigasi jelas, tautan rapat dari kegiatan, dan animasi dialog dengan arah yang dapat dipahami.
