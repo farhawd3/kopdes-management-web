@@ -77,6 +77,7 @@ export const schemas = {
       meeting_id: ref,
       issue_id: ref,
       stakeholder_id: ref,
+      document_id: ref,
       assignee: text,
       start_date: optionalDate,
       due_date: date,

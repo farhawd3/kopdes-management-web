@@ -39,12 +39,16 @@ it('form tugas menawarkan mitra tanpa mewajibkan kode tugas', () => {
   const contactId = 'c0a80101-7a10-4fc2-8ad5-20406e11f110';
   const projectId = 'c0a80101-7a10-4fc2-8ad5-20406e11f111';
   const milestoneId = 'c0a80101-7a10-4fc2-8ad5-20406e11f112';
+  const documentId = 'c0a80101-7a10-4fc2-8ad5-20406e11f113';
   render(
     <Editor
       entity="work-items"
       workspace={{
         stakeholders: [
           { id: contactId, created_at: '', updated_at: '', data: { title: 'Agrinas' } },
+        ],
+        documents: [
+          { id: documentId, created_at: '', updated_at: '', data: { title: 'Kontrak Agrinas' } },
         ],
         workstreams: [
           { id: projectId, created_at: '', updated_at: '', data: { title: 'Onboarding' } },
@@ -64,6 +68,11 @@ it('form tugas menawarkan mitra tanpa mewajibkan kode tugas', () => {
   );
   const contact = screen.getByRole('combobox', { name: 'Mitra atau kontak' }) as HTMLSelectElement;
   expect(contact.querySelector(`option[value="${contactId}"]`)?.textContent).toBe('Agrinas');
+  expect(
+    screen
+      .getByRole('combobox', { name: 'Dokumen atau kontrak' })
+      .querySelector(`option[value="${documentId}"]`)?.textContent,
+  ).toBe('Kontrak Agrinas');
   expect(screen.queryByRole('textbox', { name: /kode tugas/i })).toBeNull();
   const milestone = screen.getByRole('combobox', { name: 'Milestone' }) as HTMLSelectElement;
   expect(milestone.disabled).toBe(true);

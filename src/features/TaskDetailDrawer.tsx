@@ -79,6 +79,7 @@ export function TaskDetailDrawer({
 
   const project = workspace.workstreams?.find((w) => w.id === data.workstream_id);
   const stakeholder = workspace.stakeholders?.find((row) => row.id === data.stakeholder_id);
+  const document = workspace.documents?.find((row) => row.id === data.document_id);
   const managerName = String(workspace.organization?.[0]?.data?.manager || 'Manajer');
 
   async function saveChanges(changes: Record<string, unknown>, activityMsg?: string) {
@@ -222,7 +223,14 @@ export function TaskDetailDrawer({
         {/* Task Title & Code Header */}
         <div className="drawer-header-section">
           <div className="header-meta-row">
-            {Boolean(data.code) && <span className="task-code-badge">{String(data.code)}</span>}
+            {Boolean(data.code) && (
+              <span
+                className="task-code-badge"
+                title="Kode tugas dibuat otomatis saat tugas disimpan"
+              >
+                {String(data.code)}
+              </span>
+            )}
             {project && (
               <span
                 className="project-badge"
@@ -387,6 +395,11 @@ export function TaskDetailDrawer({
                 Mitra atau kontak: <strong>{String(stakeholder.data.title)}</strong>
               </span>
             </div>
+          )}
+          {document && (
+            <a href={`/dokumen?record=${encodeURIComponent(document.id)}`} className="prop-link">
+              <ExternalLink size={14} /> Dokumen: {String(document.data.title)}
+            </a>
           )}
           {Boolean(data.link) && (
             <a href={String(data.link)} target="_blank" rel="noreferrer" className="prop-link">

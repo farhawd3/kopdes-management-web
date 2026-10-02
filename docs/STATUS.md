@@ -1,5 +1,13 @@
 # Status proyek — 2 Oktober 2026
 
+## Perbaikan dari anotasi tampilan
+
+- Riwayat tugas mendapat kartu per peristiwa; tombol tutup pusat aksi dan centang Hari Ini diperjelas. Tajuk lokasi, pilihan status, metadata tugas, pintasan tindak lanjut, input cepat, dan grafik tujuh hari dirapikan.
+- Warna prioritas pada kartu Beranda memakai empat warna semantik tetap. Grafik kosong menyebutkan bahwa belum ada tugas selesai, tanpa mengarang jumlah.
+- Tugas baru mendapat kode otomatis dari kata pertama judul dan 12 karakter UUID; kode historis tetap. Tugas dapat menunjuk satu Mitra atau kontak serta satu Dokumen atau kontrak yang sudah dicatat. Tidak ada migrasi SQL untuk tambahan referensi JSONB ini.
+- Tampilan Beranda, Tugas, dan Hari Ini diperiksa di browser lokal pada desktop; Hari Ini diukur pada 360 px tanpa luapan halaman. Pemeriksaan fisik tablet/ponsel dan semua keadaan interaksi belum lengkap.
+- Pemeriksaan kode paket anotasi: 128 tes lulus, typecheck, lint, dan build produksi lulus.
+
 ## Login lokal setelah pesan migrasi keamanan
 
 - Pemeriksaan baca saja ke proyek `mqycnhebhzqaziouipet`: tabel `manager_security` dan `hub_records` tersedia, kunci server dapat membacanya, dan metadata serta satu panggilan diagnostik fungsi `reserve_pin_attempt` berhasil. **Migrasi keamanan tidak hilang**.

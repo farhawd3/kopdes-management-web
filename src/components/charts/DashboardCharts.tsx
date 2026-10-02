@@ -21,6 +21,7 @@ export function WeekBarChart({
   onSelect?: (date: string) => void;
 }) {
   const max = Math.max(1, ...data.map((d) => d.value));
+  const total = data.reduce((sum, day) => sum + day.value, 0);
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 60);
@@ -28,37 +29,44 @@ export function WeekBarChart({
   }, []);
 
   return (
-    <div
-      className="dash-bar-chart"
-      role="group"
-      aria-label={data.map((d) => `${d.dateLabel || d.label}: ${d.value} selesai`).join(', ')}
-    >
-      {data.map((d, i) => {
-        const pct = (d.value / max) * 100;
-        return (
-          <button
-            type="button"
-            aria-pressed={!!d.date && selectedDate === d.date}
-            aria-label={(d.dateLabel || d.label) + ': ' + d.value + ' selesai'}
-            onClick={() => d.date && onSelect?.(d.date)}
-            key={d.date || d.label}
-            className={`dash-bar-col${d.isToday ? ' bar-today' : ''}`}
-            title={`${d.label}: ${d.value} tugas selesai`}
-          >
-            <span className="dash-bar-count">{d.value > 0 ? d.value : ''}</span>
-            <div className="dash-bar-track">
-              <div
-                className="dash-bar-fill"
-                style={{
-                  height: mounted ? `${pct}%` : '0%',
-                  transitionDelay: `${i * 55}ms`,
-                }}
-              />
-            </div>
-            <span className="dash-bar-label">{d.label}</span>
-          </button>
-        );
-      })}
+    <div className="dash-chart-wrap">
+      <div
+        className="dash-bar-chart"
+        role="group"
+        aria-label={data.map((d) => `${d.dateLabel || d.label}: ${d.value} selesai`).join(', ')}
+      >
+        {data.map((d, i) => {
+          const pct = (d.value / max) * 100;
+          return (
+            <button
+              type="button"
+              aria-pressed={!!d.date && selectedDate === d.date}
+              aria-label={(d.dateLabel || d.label) + ': ' + d.value + ' selesai'}
+              onClick={() => d.date && onSelect?.(d.date)}
+              key={d.date || d.label}
+              className={`dash-bar-col${d.isToday ? ' bar-today' : ''}`}
+              title={`${d.label}: ${d.value} tugas selesai`}
+            >
+              <span className="dash-bar-count">{d.value > 0 ? d.value : ''}</span>
+              <div className="dash-bar-track">
+                <div
+                  className="dash-bar-fill"
+                  style={{
+                    height: mounted ? `${pct}%` : '0%',
+                    transitionDelay: `${i * 55}ms`,
+                  }}
+                />
+              </div>
+              <span className="dash-bar-label">{d.label}</span>
+            </button>
+          );
+        })}
+      </div>
+      <p className="dash-chart-caption">
+        {total === 0
+          ? 'Belum ada tugas selesai dalam 7 hari.'
+          : `${total} tugas selesai dalam 7 hari.`}
+      </p>
     </div>
   );
 }
@@ -306,8 +314,7 @@ export function StatCard({
 }) {
   const isPercent = percentage !== undefined || (typeof value === 'string' && value.endsWith('%'));
   const pctVal =
-    percentage ??
-    (typeof value === 'string' && value.endsWith('%') ? parseInt(value, 10) || 0 : 0);
+    percentage ?? (typeof value === 'string' && value.endsWith('%') ? parseInt(value, 10) || 0 : 0);
 
   const Inner = (
     <div className={`dash-stat-card${accent ? ' dash-stat-accent' : ''}`}>

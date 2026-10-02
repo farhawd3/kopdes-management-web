@@ -46,7 +46,9 @@ Di **Mitra & kontak**, tambahkan **Agrinas** sebagai lembaga dan PIC/Babinsa bil
 
 Saat membuat tugas, pilih **Mitra atau kontak** bila tugas memang melibatkan orang/lembaga itu. Pilihan ini mengambil data dari halaman Mitra & kontak; nama kontak tidak perlu diketik ulang di judul. Anda juga bisa mengaitkan **Rapat** atau **Kendala terkait** jika sudah ada catatannya. Hubungan ini adalah penanda pada tugas, bukan pengiriman pesan otomatis.
 
-**Kode tugas tidak perlu dibuat.** Cukup tulis judul yang jelas, pilih proyek, lalu pilih milestone bila tugas itu membantu mencapai hasil tersebut. Milestone baru dapat dipilih sesudah proyek dipilih, dan hanya milestone proyek itu yang muncul. Tugas tanpa proyek tetap boleh disimpan.
+**Kode tugas dibuat otomatis** saat tugas baru disimpan, dari kata pertama judul kegiatan dan penanda unik, misalnya `RAPAT-ABCDEF010000`. Kode tugas lama tetap seperti semula. Cukup tulis judul yang jelas, pilih proyek, lalu pilih milestone bila tugas itu membantu mencapai hasil tersebut. Milestone baru dapat dipilih sesudah proyek dipilih, dan hanya milestone proyek itu yang muncul. Tugas tanpa proyek tetap boleh disimpan.
+
+Jika ada kontrak, catat dahulu di **Dokumen** dengan jenis **Kontrak**, nomor, masa berlaku, dan tautan berkas yang Anda miliki. Pada formulir tugas, pilih **Dokumen atau kontrak** yang terkait. Kontrak tetap catatan dokumen; aplikasi belum membuat persetujuan atau tanda tangan digital.
 
 Form tugas baru menampilkan isian pokok lebih dulu. Pilih **Detail lainnya** bila perlu mengaitkan rapat/kendala, mengatur pengulangan, menulis subtugas, atau menambahkan bukti dan catatan.
 

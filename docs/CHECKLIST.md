@@ -1,6 +1,8 @@
 # Checklist produk aktif
 
 ## Perapian 2 Oktober
+- [x] Anotasi tugas: riwayat, kode otomatis, dokumen/kontrak, label daftar, status, dan tombol tutup dirapikan.
+- [x] Anotasi Beranda/Hari Ini: tindak lanjut, grafik kosong, warna prioritas, input cepat, dan ikon selesai dirapikan.
 - [x] Login PIN lokal kembali berhasil setelah server dapat menjangkau Supabase; pesan galat koneksi dibedakan dari migrasi hilang.
 - [x] Tombol Tugas baru tidak menimpa pilihan rentang pada ponsel; tabel tugas bergulir di dalam kontainernya.
 - [x] Form tugas mengunci milestone sebelum proyek dipilih dan membatasi pilihan ke proyek itu.

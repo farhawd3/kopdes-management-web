@@ -1,5 +1,11 @@
 # Changelog
 
+### Perapian dari anotasi halaman (2 Oktober 2026)
+
+- Menata riwayat tugas, tombol tutup menu aksi, tajuk, status tabel, kode pada papan, dan metadata daftar.
+- Membuat kode tugas baru otomatis dari judul kegiatan; menautkan dokumen atau kontrak yang sudah dicatat ke tugas, berdampingan dengan Mitra atau kontak.
+- Memperjelas pintasan tindak lanjut, keadaan kosong grafik tujuh hari, warna prioritas, input cepat Hari Ini, dan tombol centang tugas.
+
 ### Diagnosis login lokal (2 Oktober 2026)
 
 - Memastikan migrasi keamanan Supabase terpasang; sumber pesan yang salah adalah koneksi server pengembangan yang terbatasi jaringan.

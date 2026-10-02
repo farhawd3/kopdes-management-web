@@ -58,6 +58,7 @@ const BASIC_TASK_FIELDS = [
   'workstream_id',
   'milestone_id',
   'stakeholder_id',
+  'document_id',
   'assignee',
   'due_date',
   'status',
@@ -805,6 +806,12 @@ export function Editor({
                 {entity === 'stakeholders' && field === 'follow_up' && (
                   <small className="field-helper">
                     Rencana koordinasi berikutnya atau catatan penting.
+                  </small>
+                )}
+                {entity === 'work-items' && field === 'document_id' && (
+                  <small className="field-helper">
+                    Pilih kontrak yang sudah dicatat di Dokumen. Kode tugas dibuat otomatis saat
+                    disimpan.
                   </small>
                 )}
                 {entity === 'work-items' && field === 'recurrence_time' && (

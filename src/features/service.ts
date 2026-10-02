@@ -4,6 +4,7 @@ import { schemas, type Entity, type Item } from './schemas';
 import { references } from './catalog';
 import { today, nextOccurrence, addDays } from '@/lib/date';
 import type { ListQuery } from './query';
+import { makeTaskCode } from './task-code';
 
 export async function listPage(entity: Entity, input: ListQuery) {
   let query = db().from('hub_records').select('*').eq('entity', entity);
@@ -73,6 +74,7 @@ export async function save(entity: Entity, input: unknown, id?: string) {
   }
   if (entity === 'work-items') {
     const task = schemas['work-items'].parse(data);
+    if (!id && !task.code) task.code = makeTaskCode(task.title, crypto.randomUUID());
     task.completed_at = task.status === 'selesai' ? task.completed_at || today() : '';
     if (task.start_date && task.start_date > task.due_date)
       throw new Error('Tanggal mulai harus sebelum atau sama dengan tenggat.');

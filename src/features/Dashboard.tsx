@@ -292,7 +292,9 @@ export function Dashboard({ data }: { data: Workspace }) {
                     <CalendarDays size={14} />
                     {formatDate(task.due_date)}
                   </span>
-                  <span>{task.priority}</span>
+                  <span className={`focus-priority priority-${task.priority}`}>
+                    {task.priority}
+                  </span>
                 </div>
                 {task.subtasks.length > 0 && (
                   <div className="focus-progress">

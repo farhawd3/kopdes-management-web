@@ -258,15 +258,14 @@ export function TodayView({
                         className="today-check-circle"
                         onClick={(e) => toggleComplete(task, e)}
                         title="Tandai selesai"
+                        aria-label={`Tandai ${String(task.data.title)} selesai`}
                       >
                         <Check size={14} className="check-mark" />
                       </button>
 
                       <div className="task-info-content">
                         <div className="task-title-row">
-                          <strong className="task-title-text">
-                            {String(task.data.title)}
-                          </strong>
+                          <strong className="task-title-text">{String(task.data.title)}</strong>
                           <span className="late-date-pill">
                             Lewat: {formatDate(String(task.data.due_date))}
                           </span>
@@ -368,8 +367,9 @@ export function TodayView({
                         className={`today-check-circle ${isDone ? 'checked' : ''}`}
                         onClick={(e) => toggleComplete(task, e)}
                         title={isDone ? 'Tandai belum selesai' : 'Tandai selesai'}
+                        aria-label={`${isDone ? 'Tandai belum selesai' : 'Tandai selesai'}: ${String(task.data.title)}`}
                       >
-                        {isDone && <Check size={14} className="check-mark" />}
+                        <Check size={17} className="check-mark" />
                       </button>
 
                       <div className="task-info-content">

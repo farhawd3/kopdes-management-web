@@ -1045,10 +1045,8 @@ export function Records({
                         <span className="task-title-text">{String(row.data.title)}</span>
                       </button>
                       <small className="task-project-label">
-                        <FolderOpen size={11} /> {String(project?.data.title || 'Tanpa proyek')}
-                        {Boolean(row.data.code) && (
-                          <span className="task-code-meta"> · {String(row.data.code)}</span>
-                        )}
+                        <FolderOpen size={13} aria-hidden="true" />
+                        <span>{String(project?.data.title || 'Tanpa proyek')}</span>
                       </small>
                     </td>
                     <td className="col-task-status">
