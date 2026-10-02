@@ -1,6 +1,7 @@
 # Checklist produk aktif
 
 ## Perapian 2 Oktober
+- [x] Desain ulang tabel tugas (task-table-wrap): padding flush, quick check circle, pill status dengan dot warna, avatar PIC, footer status bar.
 - [x] Eliminasi menu redundant: pelabelan unik dan pembedaan peran Hari Ini (kokpit harian), Daftar Tugas (backlog master), Perlu Perhatian (audit anomali), Linimasa Gantt, dan Ringkasan Buku.
 - [x] Migrasi SQL 7: validasi ketat referensi dokumen (document_id) pada tabel tugas (hub_check_relations) dan indeks pencarian dokumen.
 - [x] Detail tugas tidak kembali terbuka setelah ditutup dan tampilan horizontal diganti.

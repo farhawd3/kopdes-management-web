@@ -47,6 +47,12 @@ import {
   AlertCircle,
   ShieldCheck,
   FolderArchive,
+  Check,
+  CheckSquare,
+  RotateCw,
+  Flame,
+  ArrowUpRight,
+  Calendar,
 } from 'lucide-react';
 import { TaskTimeline } from './TaskTimeline';
 import { downloadMeeting } from './meeting';
@@ -1082,79 +1088,216 @@ export function Records({
             </thead>
             <tbody>
               {rows.map((row) => {
+                const isDone = row.data.status === 'selesai';
                 const isLate =
                   String(row.data.due_date) < today() &&
                   !['selesai', 'dibatalkan'].includes(String(row.data.status));
+                const isToday =
+                  String(row.data.due_date) === today() &&
+                  !['selesai', 'dibatalkan'].includes(String(row.data.status));
                 const project = workspace.workstreams?.find((p) => p.id === row.data.workstream_id);
+                const subtasks = Array.isArray(row.data.subtasks) ? row.data.subtasks : [];
+                const doneSubtasks = subtasks.filter((s: { done?: boolean }) => s.done).length;
+                const assigneeName = String(row.data.assignee || '').trim();
+
                 return (
-                  <tr key={row.id}>
+                  <tr key={row.id} className={isDone ? 'row-completed' : ''}>
                     <td className="col-task-title">
-                      <button className="task-title" onClick={() => setDetailTask(row)}>
-                        <span className="task-title-text">{String(row.data.title)}</span>
-                      </button>
-                      <small className="task-project-label">
-                        <FolderOpen size={13} aria-hidden="true" />
-                        <span>{String(project?.data.title || 'Tanpa proyek')}</span>
-                      </small>
+                      <div className="task-title-cell-wrap">
+                        <button
+                          type="button"
+                          className={`task-row-checkbox ${isDone ? 'is-checked' : ''}`}
+                          disabled={busy}
+                          onClick={() =>
+                            void update(row, {
+                              status: isDone ? 'proses' : 'selesai',
+                              completed_at: isDone ? '' : today(),
+                            })
+                          }
+                          title={isDone ? 'Tandai belum selesai' : 'Tandai tugas selesai'}
+                          aria-label={
+                            isDone
+                              ? `Tandai belum selesai: ${row.data.title}`
+                              : `Tandai selesai: ${row.data.title}`
+                          }
+                        >
+                          {isDone ? (
+                            <Check size={13} strokeWidth={3} />
+                          ) : (
+                            <span className="check-ring" />
+                          )}
+                        </button>
+                        <div className="task-title-content">
+                          <div className="task-title-main-row">
+                            {Boolean(row.data.code) && (
+                              <span className="task-code-badge">{String(row.data.code)}</span>
+                            )}
+                            <button
+                              type="button"
+                              className={`task-title-btn ${isDone ? 'is-done-text' : ''}`}
+                              onClick={() => setDetailTask(row)}
+                            >
+                              <span>{String(row.data.title)}</span>
+                            </button>
+                          </div>
+                          <div className="task-meta-pills-row">
+                            <span className="task-project-pill">
+                              <FolderOpen size={12} aria-hidden="true" />
+                              <span>{String(project?.data.title || 'Tanpa proyek')}</span>
+                            </span>
+                            {subtasks.length > 0 && (
+                              <span
+                                className="task-subtasks-pill"
+                                title={`${doneSubtasks} dari ${subtasks.length} subtugas selesai`}
+                              >
+                                <CheckSquare size={11} aria-hidden="true" />
+                                <span>
+                                  {doneSubtasks}/{subtasks.length}
+                                </span>
+                              </span>
+                            )}
+                            {Boolean(row.data.recurrence && row.data.recurrence !== 'tidak') && (
+                              <span
+                                className="task-recurrence-pill"
+                                title={`Berulang: ${formatChoiceLabel(String(row.data.recurrence))}`}
+                              >
+                                <RotateCw size={11} aria-hidden="true" />
+                                <span>{formatChoiceLabel(String(row.data.recurrence))}</span>
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
                     </td>
                     <td className="col-task-status">
                       <label className="task-status-label">
                         <span className="sr-only">Status {String(row.data.title)}</span>
-                        <select
-                          disabled={busy}
-                          className={`task-table-status-select status-${row.data.status}`}
-                          value={String(row.data.status)}
-                          onChange={(event) =>
-                            void update(row, {
-                              status: event.target.value,
-                              completed_at: event.target.value === 'selesai' ? today() : '',
-                            })
-                          }
-                        >
-                          {options['work-items.status'].map((value) => (
-                            <option key={value} value={value}>
-                              {formatChoiceLabel(value)}
-                            </option>
-                          ))}
-                        </select>
+                        <div className={`status-pill-wrap status-${row.data.status}`}>
+                          <span className="status-indicator-dot" />
+                          <select
+                            disabled={busy}
+                            className={`task-table-status-select status-${row.data.status}`}
+                            value={String(row.data.status)}
+                            onChange={(event) =>
+                              void update(row, {
+                                status: event.target.value,
+                                completed_at: event.target.value === 'selesai' ? today() : '',
+                              })
+                            }
+                          >
+                            {options['work-items.status'].map((value) => (
+                              <option key={value} value={value}>
+                                {formatChoiceLabel(value)}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
                       </label>
                     </td>
                     <td className="col-task-priority">
-                      <span className={`badge priority-${row.data.priority}`}>
-                        {String(row.data.priority)}
+                      <span className={`table-badge priority-pill priority-${row.data.priority}`}>
+                        {row.data.priority === 'mendesak' && <Flame size={12} />}
+                        {row.data.priority === 'tinggi' && <AlertCircle size={12} />}
+                        <span>{formatChoiceLabel(String(row.data.priority))}</span>
                       </span>
                     </td>
                     <td className="col-task-due">
                       {isLate ? (
                         <span className="table-badge badge-late" title="Tenggat sudah terlewati">
-                          <AlertTriangle size={11} /> {formatDate(String(row.data.due_date))}
+                          <AlertTriangle size={12} />
+                          <span>{formatDate(String(row.data.due_date))}</span>
+                        </span>
+                      ) : isToday ? (
+                        <span className="table-badge badge-today" title="Jatuh tempo hari ini">
+                          <CalendarDays size={12} />
+                          <span>Hari Ini</span>
                         </span>
                       ) : (
-                        <span className="table-date">{formatDate(String(row.data.due_date))}</span>
+                        <span className="table-date">
+                          <Calendar size={12} />
+                          <span>{formatDate(String(row.data.due_date))}</span>
+                        </span>
                       )}
                     </td>
                     <td className="col-task-assignee">
-                      <span className="task-assignee-text">{String(row.data.assignee || '—')}</span>
+                      {assigneeName ? (
+                        <div className="task-assignee-pill" title={`PIC: ${assigneeName}`}>
+                          <span className="assignee-avatar">
+                            {assigneeName.charAt(0).toUpperCase()}
+                          </span>
+                          <span className="task-assignee-text">{assigneeName}</span>
+                        </div>
+                      ) : (
+                        <span className="task-assignee-empty">—</span>
+                      )}
                     </td>
                     <td className="col-task-action">
-                      {!['selesai', 'dibatalkan'].includes(String(row.data.status)) && (
+                      <div className="task-row-actions">
+                        {!isDone && (
+                          <button
+                            type="button"
+                            className="table-btn-done"
+                            disabled={busy}
+                            onClick={() =>
+                              void update(row, { status: 'selesai', completed_at: today() })
+                            }
+                            title="Tandai tugas selesai"
+                          >
+                            <Check size={13} strokeWidth={2.5} />
+                            <span>Selesai</span>
+                          </button>
+                        )}
                         <button
-                          className="table-btn-done"
-                          disabled={busy}
-                          onClick={() =>
-                            void update(row, { status: 'selesai', completed_at: today() })
-                          }
-                          title="Tandai tugas selesai"
+                          type="button"
+                          className="table-btn-open"
+                          onClick={() => setDetailTask(row)}
+                          title="Buka rincian tugas"
+                          aria-label={`Buka detail ${String(row.data.title)}`}
                         >
-                          Selesai
+                          <ArrowUpRight size={15} />
                         </button>
-                      )}
+                      </div>
                     </td>
                   </tr>
                 );
               })}
             </tbody>
           </table>
+          <div className="task-table-footer">
+            <span className="table-footer-stat">
+              Menampilkan <strong>{rows.length}</strong> tugas
+            </span>
+            <span className="table-footer-sep">·</span>
+            <span className="table-footer-stat">
+              <strong>{rows.filter((r) => r.data.status === 'selesai').length}</strong> selesai
+            </span>
+            <span className="table-footer-sep">·</span>
+            <span className="table-footer-stat">
+              <strong>{rows.filter((r) => r.data.status === 'proses').length}</strong> sedang
+              dikerjakan
+            </span>
+            {rows.filter(
+              (r) =>
+                String(r.data.due_date) < today() &&
+                !['selesai', 'dibatalkan'].includes(String(r.data.status)),
+            ).length > 0 && (
+              <>
+                <span className="table-footer-sep">·</span>
+                <span className="table-footer-stat text-late">
+                  <strong>
+                    {
+                      rows.filter(
+                        (r) =>
+                          String(r.data.due_date) < today() &&
+                          !['selesai', 'dibatalkan'].includes(String(r.data.status)),
+                      ).length
+                    }
+                  </strong>{' '}
+                  terlambat
+                </span>
+              </>
+            )}
+          </div>
         </div>
       ) : entity === 'meetings' ? (
         <div className="meetings-container">

@@ -1,5 +1,23 @@
 # Status proyek — 2 Oktober 2026
 
+## Desain Ulang Tabel Tugas (`task-table-wrap`) Clean & Modern
+
+- **Peningkatan Visual & Ergonomi Tabel Tugas**:
+  - Menghilangkan padding kaku `24px 28px !important` pada kontainer `.task-table-wrap` agar garis tabel menempel rapi ke tepi kartu dengan radius `18px`, bayangan halus, dan batas tepi `1.5px solid var(--line)`.
+  - Menambahkan **lingkaran centang cepat (quick-check circle)** di sebelah kiri judul tugas untuk menyelesaikan atau membatalkan tugas dalam 1 klik tanpa harus menggeser ke tombol ujung.
+  - Memperkaya hierarki baris: chip kode tugas monospasi (misal `KD-01`), judul dengan teks dicoret saat selesai, pill proyek dengan ikon folder, indikator subtugas (`2/4 subtugas`), dan penanda tugas berulang (`RotateCw`).
+  - Desain ulang pemilih status: kontainer pill modern dengan titik indikator warna semantik (hijau selesai, kuning proses, abu-abu rencana, merah batal).
+  - Badge prioritas modern dengan ikon (`Flame` untuk mendesak, `AlertCircle` untuk tinggi).
+  - Badge tenggat kontekstual: merah `AlertTriangle` untuk tugas terlambat, hijau untuk `Hari Ini`, dan tanggal kalender reguler.
+  - Avatar inisial penanggung jawab (PIC) dengan badge lingkaran terstruktur.
+  - Menambahkan tombol aksi rincian (`ArrowUpRight`) untuk membuka laci detail tugas secara instan.
+  - Menambahkan **footer status bar** di bagian bawah tabel yang menampilkan metrik langsung: total tugas, jumlah selesai, sedang dikerjakan, dan jumlah terlambat.
+- **Verifikasi Kualitas**:
+  - `npm test`: **129/129 tes lulus**.
+  - `npm run typecheck`: **0 kesalahan**.
+  - `npm run lint`: **0 kesalahan / 0 peringatan**.
+  - `npm run build`: **Next.js Turbopack build sukses** (9/9 rute teroptimasi).
+
 ## Perapian Menu, Eliminasi Redundansi & Relasi Database Dokumen
 
 - **Eliminasi Redundansi Menu & Navigasi**:
