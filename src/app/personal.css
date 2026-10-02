@@ -1592,8 +1592,10 @@ tr:last-child td {
    ========================================================================== */
 dialog.editor {
   position: fixed;
-  inset: 0;
-  margin: auto;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  margin: 0;
   width: min(640px, calc(100vw - 32px));
   max-height: min(90dvh, 840px);
   border-radius: 24px;
@@ -1605,7 +1607,8 @@ dialog.editor {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  animation: modalCardScale 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: modalCardScale 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: center center;
   z-index: 1250;
   overflow: hidden;
 }
@@ -2379,12 +2382,12 @@ dialog.editor .form-grid {
 .manager-project-link {
   display: flex;
   align-items: center;
-  gap: 8px;
-  min-height: 32px;
-  padding: 4px 10px 4px 12px;
-  border-radius: 8px;
-  font-size: 12.5px;
-  font-weight: 450;
+  gap: 10px;
+  min-height: 42px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
   color: var(--ink);
   text-decoration: none;
   transition: background 0.12s ease;
@@ -4770,18 +4773,19 @@ dialog.task-detail-drawer::backdrop {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  animation: modalCardScale 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: modalCardScale 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: center center;
   color: var(--ink);
   box-sizing: border-box;
 }
 
 @keyframes modalCardScale {
   from {
-    transform: scale(0.95) translateY(8px);
+    transform: scale(0.97);
     opacity: 0;
   }
   to {
-    transform: scale(1) translateY(0);
+    transform: scale(1);
     opacity: 1;
   }
 }
@@ -7446,29 +7450,46 @@ textarea.text-input {
 .task-title-cell {
   display: flex;
   flex-direction: column;
-  gap: 3px;
   min-width: 240px;
+  width: 100%;
 }
 
 .task-title-btn {
   background: none;
   border: none;
-  padding: 0;
-  margin: 0;
+  padding: 6px 10px;
+  margin: -4px -8px;
+  border-radius: var(--radius-sm);
   text-align: left;
   font-family: var(--font-sans);
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-semibold);
-  color: var(--ink-heading);
   cursor: pointer;
   line-height: 1.35;
-  display: inline-flex;
-  align-items: baseline;
-  gap: 6px;
-  transition: color 0.12s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  min-height: 48px;
+  gap: 3px;
+  width: calc(100% + 16px);
+  box-sizing: border-box;
+  transition: background 0.15s ease, color 0.12s ease;
 }
 
 .task-title-btn:hover {
+  background: color-mix(in srgb, var(--brand-soft) 30%, transparent);
+}
+
+.task-title-primary {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--ink-heading);
+  transition: color 0.12s ease;
+}
+
+.task-title-btn:hover .task-title-text {
   color: var(--brand);
 }
 
@@ -7498,7 +7519,15 @@ textarea.text-input {
   flex-wrap: wrap;
 }
 
-.task-project-name,
+.task-project-name {
+  color: var(--ink-muted);
+  font-weight: 500;
+}
+
+.task-project-name.has-project {
+  color: var(--ink);
+}
+
 .task-subtasks-count,
 .task-recurrence-text {
   color: var(--ink-muted);
@@ -9497,20 +9526,22 @@ button.dash-bar-col { flex: 1 0 44px; }
 
 /* Manager Action Modal Dialog */
 .manager-action-dialog {
-  border: 0;
-  border-radius: 24px;
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  translate: -50% -50% !important;
+  margin: 0 !important;
+  transform-origin: center center !important;
+  border: 1.5px solid var(--line-strong, #c8cfdc);
+  border-radius: 20px;
   padding: 0;
-  background: transparent;
+  background: var(--surface);
   max-width: 860px;
   width: min(840px, 94vw);
   max-height: min(88vh, 800px);
   box-shadow: 0 24px 64px -12px rgba(15, 23, 42, 0.28), 0 0 0 1px rgba(0, 0, 0, 0.06);
-  margin: auto;
-  border-radius: 20px;
-  border: 1.5px solid var(--line-strong, #c8cfdc);
-  background: var(--surface);
   overflow: hidden;
-  padding: 0;
+  animation: modalCardScale 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .manager-action-dialog::backdrop {
   background: rgba(15, 23, 42, 0.65);
@@ -10325,7 +10356,7 @@ button.dash-bar-col { flex: 1 0 44px; }
 .sidebar-group-toggle[aria-expanded=false] svg { transform:rotate(-90deg); }
 .sidebar-nav-list[hidden] { display:none; }
 /* sidebar-nav-item: single active style with left-bar accent */
-.sidebar-nav-item { min-height:34px; border-radius:8px; }
+.sidebar-nav-item { min-height: 42px; border-radius: 10px; }
 .sidebar-nav-item.is-active,.sidebar-nav-item[aria-current='page'] { background:var(--brand-soft); color:var(--brand); box-shadow:none; border:none; }
 .sidebar-favorites { padding:8px; margin:4px 0 18px; background:var(--surface); border:1px solid var(--line); border-radius:16px; }
 .sidebar-favorites h2 { font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-muted); margin:0; }
@@ -10509,8 +10540,11 @@ button.dash-bar-col { flex: 1 0 44px; }
 /* 1. Modal & Editor: Bulletproof header & close button visibility */
 dialog.editor {
   position: fixed !important;
-  inset: 0 !important;
-  margin: auto !important;
+  top: 50% !important;
+  left: 50% !important;
+  translate: -50% -50% !important;
+  margin: 0 !important;
+  transform-origin: center center !important;
   width: min(640px, calc(100vw - 32px)) !important;
   max-height: min(90dvh, 840px) !important;
   border-radius: var(--radius-xl) !important;
@@ -10522,6 +10556,7 @@ dialog.editor {
   display: flex !important;
   flex-direction: column !important;
   box-sizing: border-box !important;
+  animation: modalCardScale 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
   z-index: 1250 !important;
   overflow: hidden !important;
 }
@@ -10932,9 +10967,16 @@ dialog.editor,
 .manager-action-dialog,
 dialog.command-dialog,
 dialog.export-dialog {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  translate: -50% -50% !important;
+  margin: 0 !important;
+  transform-origin: center center !important;
   border: 1.5px solid var(--line-strong, #c8cfdc) !important;
   box-shadow: 0 24px 64px -12px rgba(15, 23, 42, 0.28), 0 0 0 1px rgba(0, 0, 0, 0.06) !important;
   border-radius: 20px !important;
+  animation: modalCardScale 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .dark dialog.editor,
@@ -11901,5 +11943,167 @@ dialog.editor textarea:focus,
   margin-left: auto !important;
   flex-shrink: 0 !important;
   opacity: 0.9 !important;
+}
+
+/* ── 7. Page & Component Entry Animations ─────────────────────────────── */
+/* Hari Ini, Perlu Perhatian, Lini Masa Gantt, Pencatatan, dan Pengaturan */
+@keyframes pageSectionFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hari Ini (/hari-ini) */
+.today-view-wrapper {
+  animation: pageSectionFadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.today-header-card {
+  animation: pageSectionFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.today-quick-add-card {
+  animation: pageSectionFadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) 0.04s both;
+}
+.today-grid-layout {
+  animation: pageSectionFadeIn 0.34s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both;
+}
+.daily-tasks-container {
+  animation: pageSectionFadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.daily-group-card {
+  animation: pageSectionFadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Perlu Perhatian (/tindak-lanjut) */
+.follow-up-wrapper {
+  animation: pageSectionFadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.follow-up-panel {
+  animation: pageSectionFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.follow-up-card {
+  animation: pageSectionFadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Lini Masa Gantt (/roadmap) */
+.module-intro {
+  animation: pageSectionFadeIn 0.26s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.task-timeline {
+  animation: pageSectionFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.04s both;
+}
+.timeline-card,
+.timeline-container {
+  animation: pageSectionFadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Semua di Pencatatan (/pencatatan, /buku-kas, /barang, /stok-opname, /buku-anggota) */
+.recording-tabs {
+  animation: pageSectionFadeIn 0.24s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.notebook-toolbar,
+.ledger-head {
+  animation: pageSectionFadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.notebook-layout {
+  animation: pageSectionFadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) 0.04s both;
+}
+.notebook-index .notebook-row {
+  animation: pageSectionFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.recent-notes {
+  animation: pageSectionFadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) 0.06s both;
+}
+.ledger-metrics .metric-card {
+  animation: pageSectionFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.ledger-wrap {
+  animation: pageSectionFadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both;
+}
+
+/* Pengaturan (/pengaturan) */
+.settings-container {
+  animation: pageSectionFadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.settings-tabs-row {
+  animation: pageSectionFadeIn 0.26s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.settings-panel-wrap,
+.settings-card {
+  animation: pageSectionFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.04s both;
+}
+
+/* ── 7.1. Generous Interactive Hit-Targets for Tasks and Projects ─────── */
+.project-badge-link {
+  text-decoration: none !important;
+  cursor: pointer !important;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  min-height: 28px !important;
+  padding: 3px 10px !important;
+}
+.project-badge-link:hover {
+  background: var(--brand-soft) !important;
+  transform: translateY(-1px) !important;
+}
+
+.task-project-pill {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 24px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+.task-project-pill:hover {
+  background: var(--brand-soft);
+}
+
+.task-round-check {
+  position: relative;
+}
+.task-round-check::after {
+  content: '';
+  position: absolute;
+  inset: -10px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .today-view-wrapper,
+  .today-header-card,
+  .today-quick-add-card,
+  .today-grid-layout,
+  .daily-tasks-container,
+  .daily-group-card,
+  .follow-up-wrapper,
+  .follow-up-panel,
+  .follow-up-card,
+  .module-intro,
+  .task-timeline,
+  .timeline-card,
+  .timeline-container,
+  .recording-tabs,
+  .notebook-toolbar,
+  .ledger-head,
+  .notebook-layout,
+  .notebook-index .notebook-row,
+  .recent-notes,
+  .ledger-metrics .metric-card,
+  .ledger-wrap,
+  .settings-container,
+  .settings-tabs-row,
+  .settings-panel-wrap,
+  .settings-card {
+    animation: none !important;
+    transform: none !important;
+    transition: none !important;
+  }
 }
 

@@ -1,5 +1,34 @@
 # Status proyek — 2 Oktober 2026
 
+## Animasi Halaman Lengkap, Area Klik Luas (Tugas & Proyek), dan Perbaikan Pop-up Modal
+
+- **Animasi Kedatangan & Transisi Halus Halaman**:
+  - Menambahkan animasi kedatangan halus (`workspace-arrive` & `pageSectionFadeIn`) ke seluruh halaman yang sebelumnya belum memiliki animasi:
+    - **Hari Ini (`/hari-ini` & Tab Harian `/tugas`)**: Animasi masuk untuk `.today-view-wrapper`, `.today-header-card`, `.today-quick-add-card`, `.today-grid-layout`, dan kartu tugas harian `.daily-tasks-container`.
+    - **Perlu Perhatian (`/tindak-lanjut`)**: Animasi masuk untuk `.follow-up-wrapper`, `.follow-up-panel`, dan kartu-kartu evaluasi `.follow-up-card`.
+    - **Linimasa Gantt (`/roadmap`)**: Animasi masuk untuk `.module-intro`, `.task-timeline`, dan kontainer grid kalender `.timeline-container`.
+    - **Pencatatan (`/pencatatan`, `/buku-kas`, `/barang`, `/stok-opname`, `/buku-anggota`)**: Animasi masuk untuk tab navigasi `.recording-tabs`, toolbar, indeks buku `.notebook-layout`, kartu metrik keuangan/stok `.ledger-metrics`, dan tabel pencatatan `.ledger-wrap`.
+    - **Pengaturan (`/pengaturan`)**: Animasi masuk untuk `.settings-container`, bilah tab `.settings-tabs-row`, dan panel kartu pengaturan `.settings-card`.
+  - Tetap mendukung dan mematuhi `@media (prefers-reduced-motion: reduce)` dan preferensi pengguna (`data-motion='minimal'`).
+- **Perluasan Area Klik (Hit-Target) Tugas dan Proyek**:
+  - **Tabel Tugas (`Records.tsx`)**: Mengubah tombol `.task-title-btn` menjadi tombol blok fleksibel mencakup seluruh sel judul dan sub-konteks proyek (`width: 100%`, `min-height: 48px`, padding `6px 10px`, margin kompensasi `-4px -8px`). Mengklik di mana saja pada judul tugas, kode, maupun nama proyek di dalam sel langsung membuka detail tugas secara responsif tanpa perlu mengarahkan kursor ke teks kecil.
+  - **Tautan Proyek Sidebar (`AppShell.tsx`)**: Memperbesar `.manager-project-link` dari `32px` menjadi `42px` (`min-height: 42px`, padding `8px 12px`, radius `10px`) agar mudah diklik dan disentuh pada ponsel maupun desktop.
+  - **Item Navigasi Sidebar (`.sidebar-nav-item`)**: Memastikan tinggi sentuh nyaman minimal 42px di seluruh layar.
+  - **Laci Detail Tugas (`TaskDetailDrawer.tsx`)**: Mengubah badge proyek menjadi tautan interaktif (`.project-badge-link`) yang langsung mengarahkan ke halaman proyek terkait dengan area sentuh nyaman.
+  - **Area Centang Tugas Harian (`.task-round-check`)**: Menambahkan zona sentuh diperluas (pseudo-element hit area) agar centang tugas harian mudah diklik tanpa presisi milimeter.
+- **Perbaikan Bug Efek Pop-up Modal (Kejutan Kiri ke Kanan)**:
+  - Mengidentifikasi akar masalah Chromium / WebKit layout pass pada elemen `<dialog>` dengan `margin: auto`: browser awalnya merender dialog pada koordinat `left: 0` sebelum `margin: auto` menghitung perataan tengah, sehingga saat animasi `scale()` dijalankan, modal tampak meluncur/melompat dari kiri ke kanan ("efek kejutan").
+  - Memperbaiki seluruh modal dialog (`dialog.editor`, `.manager-action-dialog`, `dialog.command-dialog`, `dialog.export-dialog`, `.sprint-modal-card`):
+    - Mengunci posisi tengah menggunakan koordinat deterministik: `position: fixed !important; top: 50% !important; left: 50% !important; translate: -50% -50% !important; margin: 0 !important;`.
+    - Menetapkan `transform-origin: center center !important;`.
+    - Menyempurnakan `@keyframes modalCardScale` agar tumbuh halus dan simetris dari titik pusat (`scale: 0.97` ke `1`) tanpa pergeseran horizontal maupun lonjakan sumbu Y.
+    - Hasil: Modal terbuka tepat di tengah layar dengan transisi pudar dan perbesaran mikro yang lembut tanpa jeda visual atau lompatan horizontal.
+- **Verifikasi Kualitas**:
+  - `npm test`: **129/129 tes lulus (16 file pengujian)**.
+  - `npm run typecheck`: **0 kesalahan**.
+  - `npm run lint`: **0 kesalahan / 0 peringatan**.
+  - `npm run build`: **Next.js Turbopack build sukses** (9/9 rute teroptimasi penuh).
+
 ## Sistem Variabel Global (Design Tokens) & Harmonisasi Simetri Komponen
 
 - **Design System Global Variables (`personal.css`)**:

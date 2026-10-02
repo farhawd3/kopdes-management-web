@@ -204,8 +204,29 @@
   cursor: wait;
 }
 .workspace-page
-  > :is(.card, .home-panel, .follow-up-panel, .domain-records, .task-database, .project-card) {
-  animation: workspace-arrive 0.28s ease both;
+  > :is(
+    .card,
+    .home-panel,
+    .follow-up-wrapper,
+    .follow-up-panel,
+    .domain-records,
+    .task-database,
+    .project-card,
+    .today-view-wrapper,
+    .daily-tasks-container,
+    .module-intro,
+    .task-timeline,
+    .recording-tabs,
+    .notebook-toolbar,
+    .notebook-layout,
+    .ledger-head,
+    .ledger-metrics,
+    .ledger-wrap,
+    .activation-notice,
+    .settings-container,
+    .page-heading
+  ) {
+  animation: workspace-arrive 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 @keyframes workspace-arrive {
   from {
@@ -243,7 +264,28 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .workspace-page
-    > :is(.card, .home-panel, .follow-up-panel, .domain-records, .task-database, .project-card) {
+    > :is(
+      .card,
+      .home-panel,
+      .follow-up-wrapper,
+      .follow-up-panel,
+      .domain-records,
+      .task-database,
+      .project-card,
+      .today-view-wrapper,
+      .daily-tasks-container,
+      .module-intro,
+      .task-timeline,
+      .recording-tabs,
+      .notebook-toolbar,
+      .notebook-layout,
+      .ledger-head,
+      .ledger-metrics,
+      .ledger-wrap,
+      .activation-notice,
+      .settings-container,
+      .page-heading
+    ) {
     animation: none;
   }
   .sidebar-nav-item {
@@ -252,7 +294,28 @@
 }
 :root[data-motion='minimal']
   .workspace-page
-  > :is(.card, .home-panel, .follow-up-panel, .domain-records, .task-database, .project-card) {
+  > :is(
+    .card,
+    .home-panel,
+    .follow-up-wrapper,
+    .follow-up-panel,
+    .domain-records,
+    .task-database,
+    .project-card,
+    .today-view-wrapper,
+    .daily-tasks-container,
+    .module-intro,
+    .task-timeline,
+    .recording-tabs,
+    .notebook-toolbar,
+    .notebook-layout,
+    .ledger-head,
+    .ledger-metrics,
+    .ledger-wrap,
+    .activation-notice,
+    .settings-container,
+    .page-heading
+  ) {
   animation: none;
 }
 

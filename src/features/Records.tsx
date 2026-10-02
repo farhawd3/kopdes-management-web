@@ -1102,26 +1102,30 @@ export function Records({
                           onClick={() => setDetailTask(row)}
                           title="Buka rincian tugas"
                         >
-                          {Boolean(row.data.code) && (
-                            <span className="task-code-tag">{String(row.data.code)}</span>
-                          )}
-                          <span className="task-title-text">{String(row.data.title)}</span>
-                        </button>
-                        <div className="task-title-sub">
-                          <span className="task-project-name">
-                            {String(project?.data.title || 'Tanpa proyek')}
+                          <span className="task-title-primary">
+                            {Boolean(row.data.code) && (
+                              <span className="task-code-tag">{String(row.data.code)}</span>
+                            )}
+                            <span className="task-title-text">{String(row.data.title)}</span>
                           </span>
-                          {subtasks.length > 0 && (
-                            <span className="task-subtasks-count">
-                              · {doneSubtasks}/{subtasks.length} subtugas
+                          <span className="task-title-sub">
+                            <span
+                              className={`task-project-name ${project ? 'has-project' : ''}`}
+                            >
+                              {String(project?.data.title || 'Tanpa proyek')}
                             </span>
-                          )}
-                          {Boolean(row.data.recurrence && row.data.recurrence !== 'tidak') && (
-                            <span className="task-recurrence-text">
-                              · {formatChoiceLabel(String(row.data.recurrence))}
-                            </span>
-                          )}
-                        </div>
+                            {subtasks.length > 0 && (
+                              <span className="task-subtasks-count">
+                                · {doneSubtasks}/{subtasks.length} subtugas
+                              </span>
+                            )}
+                            {Boolean(row.data.recurrence && row.data.recurrence !== 'tidak') && (
+                              <span className="task-recurrence-text">
+                                · {formatChoiceLabel(String(row.data.recurrence))}
+                              </span>
+                            )}
+                          </span>
+                        </button>
                       </div>
                     </td>
                     <td className="col-task-status">

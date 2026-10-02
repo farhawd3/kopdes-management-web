@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import {
   Check,
@@ -232,12 +233,14 @@ export function TaskDetailDrawer({
               </span>
             )}
             {project && (
-              <span
-                className="project-badge"
+              <Link
+                href={`/proyek?id=${project.id}`}
+                className="project-badge project-badge-link"
                 style={{ borderColor: String(project.data.color || '#d5f935') }}
+                title={`Buka proyek ${String(project.data.title)}`}
               >
                 {String(project.data.title)}
-              </span>
+              </Link>
             )}
             <span className={`priority-badge priority-${data.priority || 'normal'}`}>
               <Flag size={12} /> {String(data.priority || 'normal')}
