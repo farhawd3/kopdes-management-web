@@ -1,5 +1,10 @@
 # Status proyek — 2 Oktober 2026
 
+## Pemeriksaan ponsel terbaru
+
+- Input cepat tugas pada lebar 360 px kini memakai dua baris sehingga judul dan tombol tidak saling menekan.
+- Beranda, Hari Ini, dan Tugas diperiksa pada viewport 360 px tanpa luapan horizontal halaman. Pemeriksaan tablet dan desktop menyeluruh masih perlu dilakukan; jangan anggap semua alur selesai hanya dari pemeriksaan ini.
+
 ## Perapian Priority Badge & Toggle Menu Samping Layar Lebar (Desktop)
 
 - **Perapian Lencana Prioritas (`.priority-badge.priority-normal`)**:

@@ -1,5 +1,10 @@
 # Changelog
 
+### Input cepat ponsel (2 Oktober 2026)
+
+- Memisahkan kolom judul dan tombol input cepat tugas pada layar sempit agar petunjuk lengkap terbaca dan tombol mudah disentuh.
+- Memeriksa tampilan awal Tugas, Beranda, dan Hari Ini pada lebar 360 px; tidak ditemukan gulir horizontal halaman.
+
 ### Perbaikan detail tugas (2 Oktober 2026)
 
 - Menghapus parameter tugas dari URL saat dialog ditutup agar pergantian Daftar/Papan/Kalender/Gantt tidak membukanya kembali. Menambah tes regresi untuk alur tutup dan pindah tampilan.
