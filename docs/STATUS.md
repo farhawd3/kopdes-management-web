@@ -1,5 +1,26 @@
 # Status proyek — 2 Oktober 2026
 
+## Perapian Priority Badge & Toggle Menu Samping Layar Lebar (Desktop)
+
+- **Perapian Lencana Prioritas (`.priority-badge.priority-normal`)**:
+  - Mengatasi tampilan tidak rapi pada lencana prioritas normal dan kosong:
+    - Memberikan fallback aman `row.data.priority || 'normal'` di tabel tugas (`Records.tsx`) sehingga tidak pernah merender badge kosong atau `priority-undefined`.
+    - Menetapkan tinggi presisi `height: 22px; padding: 0 9px; line-height: 1; border-radius: var(--radius-pill); font-size: 11px; font-weight: 600;` dengan `display: inline-flex; align-items: center; justify-content: center;` untuk perataan vertikal sempurna di sel tabel maupun detail drawer.
+    - Menyelaraskan warna latar dan border lencana `priority-normal`: warna slate halus yang bersih (`rgba(100, 116, 139, 0.08)` dengan border `rgba(100, 116, 139, 0.2)` di mode terang, dan `rgba(148, 163, 184, 0.14)` di mode gelap).
+    - Menetapkan lebar kolom tabel eksplisit (`col-task-title`, `col-task-status`, `col-task-priority: 105px`, `col-task-due: 130px`, `col-task-assignee: 145px`, `col-task-action: 44px`) agar tabel tugas simetris dan stabil tanpa pergeseran kolom saat prioritas berubah.
+- **Toggle Bilah Samping untuk Tampilan Layar Lebar (`min-width: 1024px`)**:
+  - Menyediakan kemampuan menutup dan membuka menu samping pada desktop untuk memaksimalkan ruang kerja horizontal (misal saat membaca tabel tugas lebar, linimasa Gantt, atau buku kas pencatatan):
+    - **Tombol Toggle Topbar (`.desktop-sidebar-toggle`)**: Ditempatkan di sisi kiri atas topbar dengan ikon `PanelLeftClose` (saat terbuka) dan `PanelLeftOpen` (saat tertutup), memudahkan buka/tutup kapan saja.
+    - **Tombol Ciutkan di Header Sidebar (`.desktop-sidebar-collapse-btn`)**: Ditempatkan di samping emblem brand koperasi dalam sidebar.
+    - **Pintasan Keyboard (`Ctrl+B` / `Cmd+B`)**: Pengguna dapat menekan kombinasi tombol `Ctrl+B` untuk beralih antara tampilan menu samping penuh atau ruang kerja maksimal.
+    - **Penyimpanan Preferensi Persisten**: Status ciut/buka disimpan di `localStorage` melalui hook `usePreference('hub-sidebar-desktop-collapsed')`, sehingga preferensi pengguna tetap terjaga saat beralih halaman atau memuat ulang.
+    - **Transisi Halus & Kompatibilitas Multiplatform**: Animasi transisi pergeseran `0.22s cubic-bezier(0.16, 1, 0.3, 1)` untuk sidebar, topbar, dan area utama. Navigasi tablet (`tablet-rail`) dan ponsel (`drawer/floating dock`) tetap bekerja independen tanpa terganggu.
+- **Verifikasi Kualitas**:
+  - `npm test`: **129/129 tes lulus (16 file pengujian)**.
+  - `npm run typecheck`: **0 kesalahan**.
+  - `npm run lint`: **0 kesalahan / 0 peringatan**.
+  - `npm run build`: **Next.js Turbopack build sukses** (9/9 rute teroptimasi penuh).
+
 ## Animasi Halaman Lengkap, Area Klik Luas (Tugas & Proyek), dan Perbaikan Pop-up Modal
 
 - **Animasi Kedatangan & Transisi Halus Halaman**:

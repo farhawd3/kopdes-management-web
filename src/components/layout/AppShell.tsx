@@ -40,7 +40,7 @@ import {
 } from 'lucide-react';
 import { usePreference } from '@/lib/usePreference';
 import { searchWorkspace } from '@/features/workspace-navigation';
-import { Star, ChevronDown } from 'lucide-react';
+import { Star, ChevronDown, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { ManagerActionModal } from './ManagerActionModal';
 
 const navIcons: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
@@ -83,6 +83,10 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
     query = useSearchParams();
   const [favoriteText, setFavoriteText] = usePreference('hub-favorites', '/hari-ini|/tugas');
   const [collapsedText, setCollapsedText] = usePreference('hub-nav-collapsed', '');
+  const [desktopSidebarHidden, setDesktopSidebarHidden] = usePreference(
+    'hub-sidebar-desktop-collapsed',
+    'false',
+  );
   const favorites = favoriteText
     .split('|')
     .filter((href) => navigation.some(([url]) => url === href));
@@ -101,6 +105,13 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault();
         dialog.current?.showModal();
+      }
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'b') {
+        const target = event.target as HTMLElement | null;
+        if (target && ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) return;
+        event.preventDefault();
+        const currentHidden = localStorage.getItem('hub-sidebar-desktop-collapsed') === 'true';
+        setDesktopSidebarHidden(currentHidden ? 'false' : 'true');
       }
       if (event.key === 'Escape') {
         setMenu(false);
@@ -122,15 +133,40 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
       window.removeEventListener('keydown', key);
       document.removeEventListener('click', clickOutside);
     };
-  }, []);
+  }, [setDesktopSidebarHidden]);
   const name = String(workspace?.organization?.[0]?.data.manager || 'Manajer');
   const current = navigation.find(([href]) => href === path)?.[1] || 'Beranda';
   return (
-    <div className="manager-shell">
+    <div
+      className={`manager-shell ${desktopSidebarHidden === 'true' ? 'sidebar-collapsed' : ''}`}
+    >
       <a className="skip" href="#main">
         Lewati navigasi
       </a>
       <header className="manager-topbar">
+        <button
+          type="button"
+          className="desktop-sidebar-toggle"
+          aria-label={
+            desktopSidebarHidden === 'true'
+              ? 'Tampilkan menu samping (Ctrl+B)'
+              : 'Sembunyikan menu samping (Ctrl+B)'
+          }
+          title={
+            desktopSidebarHidden === 'true'
+              ? 'Tampilkan menu samping (Ctrl+B)'
+              : 'Sembunyikan menu samping (Ctrl+B)'
+          }
+          onClick={() =>
+            setDesktopSidebarHidden(desktopSidebarHidden === 'true' ? 'false' : 'true')
+          }
+        >
+          {desktopSidebarHidden === 'true' ? (
+            <PanelLeftOpen size={18} />
+          ) : (
+            <PanelLeftClose size={18} />
+          )}
+        </button>
         <Link href="/pengaturan" className="manager-profile" aria-label={`Profil ${name}`}>
           <span>{name[0]}</span>
           <div>
@@ -230,13 +266,24 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
               <small>Ruang Kerja Manajer</small>
             </div>
           </Link>
-          <button
-            className="close-navigation"
-            aria-label="Tutup navigasi"
-            onClick={() => setMenu(false)}
-          >
-            <X size={18} />
-          </button>
+          <div className="sidebar-brand-actions">
+            <button
+              type="button"
+              className="desktop-sidebar-collapse-btn"
+              aria-label="Sembunyikan menu samping (Ctrl+B)"
+              title="Sembunyikan menu samping (Ctrl+B)"
+              onClick={() => setDesktopSidebarHidden('true')}
+            >
+              <PanelLeftClose size={18} />
+            </button>
+            <button
+              className="close-navigation"
+              aria-label="Tutup navigasi"
+              onClick={() => setMenu(false)}
+            >
+              <X size={18} />
+            </button>
+          </div>
         </div>
 
         <button

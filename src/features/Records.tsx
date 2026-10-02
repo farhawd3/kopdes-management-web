@@ -1151,8 +1151,10 @@ export function Records({
                       </label>
                     </td>
                     <td className="col-task-priority">
-                      <span className={`priority-badge priority-${row.data.priority}`}>
-                        {formatChoiceLabel(String(row.data.priority))}
+                      <span
+                        className={`priority-badge priority-${row.data.priority || 'normal'}`}
+                      >
+                        {formatChoiceLabel(String(row.data.priority || 'normal'))}
                       </span>
                     </td>
                     <td className="col-task-due">

@@ -7429,6 +7429,32 @@ textarea.text-input {
   box-sizing: border-box;
 }
 
+/* Column widths for clean symmetry in Task Table */
+.task-table .col-task-title {
+  width: auto;
+  min-width: 260px;
+}
+.task-table .col-task-status {
+  width: 135px;
+  min-width: 125px;
+}
+.task-table .col-task-priority {
+  width: 105px;
+  min-width: 95px;
+}
+.task-table .col-task-due {
+  width: 130px;
+  min-width: 120px;
+}
+.task-table .col-task-assignee {
+  width: 145px;
+  min-width: 125px;
+}
+.task-table .col-task-action {
+  width: 44px;
+  text-align: right;
+}
+
 .task-table tbody tr:last-child td {
   border-bottom: none;
 }
@@ -7620,49 +7646,75 @@ textarea.text-input {
 /* ── Priority Badges ────────────────────────────────────────────────────── */
 .priority-badge {
   font-family: var(--font-sans);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  height: 22px;
+  padding: 0 9px;
   border-radius: var(--radius-pill);
-  line-height: 1.3;
-  display: inline-block;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
   white-space: nowrap;
+  vertical-align: middle;
+  box-sizing: border-box;
+  text-transform: capitalize;
+  letter-spacing: 0.15px;
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
 }
 
 .priority-badge.priority-mendesak {
-  background: rgba(220, 38, 38, 0.08);
-  color: #dc2626;
-  border: 1px solid rgba(220, 38, 38, 0.2);
+  background: rgba(220, 38, 38, 0.08) !important;
+  color: #dc2626 !important;
+  border: 1px solid rgba(220, 38, 38, 0.22) !important;
 }
 
 .priority-badge.priority-tinggi {
-  background: rgba(217, 119, 6, 0.08);
-  color: #d97706;
-  border: 1px solid rgba(217, 119, 6, 0.2);
+  background: rgba(217, 119, 6, 0.08) !important;
+  color: #d97706 !important;
+  border: 1px solid rgba(217, 119, 6, 0.22) !important;
 }
 
 .priority-badge.priority-normal {
-  background: var(--canvas);
-  color: var(--ink-muted);
-  border: 1px solid var(--line);
+  background: rgba(100, 116, 139, 0.08) !important;
+  color: #475569 !important;
+  border: 1px solid rgba(100, 116, 139, 0.2) !important;
 }
 
 .priority-badge.priority-rendah {
-  background: transparent;
-  color: var(--ink-muted);
-  border: 1px solid var(--line);
+  background: rgba(148, 163, 184, 0.05) !important;
+  color: #64748b !important;
+  border: 1px solid rgba(148, 163, 184, 0.18) !important;
 }
 
-[data-theme='dark'] .priority-badge.priority-mendesak {
-  background: rgba(220, 38, 38, 0.18);
-  color: #fca5a5;
-  border-color: rgba(220, 38, 38, 0.3);
+[data-theme='dark'] .priority-badge.priority-mendesak,
+.dark .priority-badge.priority-mendesak {
+  background: rgba(220, 38, 38, 0.18) !important;
+  color: #fca5a5 !important;
+  border-color: rgba(220, 38, 38, 0.35) !important;
 }
 
-[data-theme='dark'] .priority-badge.priority-tinggi {
-  background: rgba(217, 119, 6, 0.18);
-  color: #fcd34d;
-  border-color: rgba(217, 119, 6, 0.3);
+[data-theme='dark'] .priority-badge.priority-tinggi,
+.dark .priority-badge.priority-tinggi {
+  background: rgba(217, 119, 6, 0.18) !important;
+  color: #fcd34d !important;
+  border-color: rgba(217, 119, 6, 0.35) !important;
+}
+
+[data-theme='dark'] .priority-badge.priority-normal,
+.dark .priority-badge.priority-normal {
+  background: rgba(148, 163, 184, 0.14) !important;
+  color: #cbd5e1 !important;
+  border-color: rgba(148, 163, 184, 0.25) !important;
+}
+
+[data-theme='dark'] .priority-badge.priority-rendah,
+.dark .priority-badge.priority-rendah {
+  background: rgba(100, 116, 139, 0.1) !important;
+  color: #94a3b8 !important;
+  border-color: rgba(100, 116, 139, 0.2) !important;
 }
 
 /* ── Due Dates ──────────────────────────────────────────────────────────── */
@@ -11875,6 +11927,97 @@ dialog.editor textarea:focus,
     margin-left: 0 !important;
     width: 100% !important;
     padding: 20px 20px 80px !important;
+  }
+}
+
+/* ── 6.5.1. Desktop Sidebar Toggle & Collapsed State ────────── */
+.desktop-sidebar-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-sm, 6px);
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink-muted);
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.desktop-sidebar-toggle:hover {
+  background: var(--brand-soft);
+  border-color: var(--line-strong, var(--line));
+  color: var(--ink-heading);
+}
+
+.sidebar-brand-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.desktop-sidebar-collapse-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm, 6px);
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--ink-muted);
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.desktop-sidebar-collapse-btn:hover {
+  background: var(--brand-soft);
+  border-color: var(--line);
+  color: var(--ink-heading);
+}
+
+@media (min-width: 1024px) {
+  .desktop-sidebar-toggle {
+    display: inline-flex;
+  }
+  .desktop-sidebar-collapse-btn {
+    display: inline-flex;
+  }
+
+  .manager-topbar {
+    margin-left: 256px !important;
+    width: calc(100% - 256px) !important;
+    transition: margin-left 0.22s cubic-bezier(0.16, 1, 0.3, 1), width 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+
+  .manager-main {
+    transition: margin-left 0.22s cubic-bezier(0.16, 1, 0.3, 1), width 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+
+  .manager-sidebar {
+    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+
+  .manager-shell.sidebar-collapsed .manager-sidebar {
+    transform: translateX(-100%) !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  .manager-shell.sidebar-collapsed .manager-topbar {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+
+  .manager-shell.sidebar-collapsed .manager-main {
+    margin-left: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
 }
 
