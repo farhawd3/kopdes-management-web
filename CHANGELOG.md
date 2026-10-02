@@ -1,5 +1,11 @@
 # Changelog
 
+### Diagnosis login lokal (2 Oktober 2026)
+
+- Memastikan migrasi keamanan Supabase terpasang; sumber pesan yang salah adalah koneksi server pengembangan yang terbatasi jaringan.
+- Mengganti pesan galat PIN agar fungsi hilang, izin, dan koneksi dapat dibedakan. Server lokal dijalankan ulang dengan jaringan; pemilik mengonfirmasi berhasil masuk memakai PIN.
+- Merapikan tombol Tugas baru pada ponsel dan mengurung tabel panjang di area gulirnya agar halaman Tugas, Kalender, dan Gantt tidak meluap ke samping.
+
 ### Alur tugas, jadwal berulang, dan tampilan ponsel (2 Oktober 2026)
 
 - Menjelaskan bahwa tugas berulang berikutnya dibuat setelah tugas saat ini selesai; jam hanya catatan. Input terkait terkunci sampai pengulangan dipilih, dan batas tanggal kini dihormati.

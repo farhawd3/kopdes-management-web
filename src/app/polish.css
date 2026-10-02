@@ -221,6 +221,16 @@
   .manager-main {
     padding: 16px 14px 110px !important;
   }
+  .task-database {
+    overflow-x: clip;
+  }
+  .task-database > .section-head {
+    margin-top: 0;
+    justify-content: flex-start;
+  }
+  .task-database > .section-head .primary {
+    min-height: 44px;
+  }
   .manager-main :is(.tabs, .database-views, .project-status-tabs, .recording-tabs) {
     width: 100%;
   }

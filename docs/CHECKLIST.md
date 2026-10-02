@@ -1,6 +1,8 @@
 # Checklist produk aktif
 
 ## Perapian 2 Oktober
+- [x] Login PIN lokal kembali berhasil setelah server dapat menjangkau Supabase; pesan galat koneksi dibedakan dari migrasi hilang.
+- [x] Tombol Tugas baru tidak menimpa pilihan rentang pada ponsel; tabel tugas bergulir di dalam kontainernya.
 - [x] Form tugas mengunci milestone sebelum proyek dipilih dan membatasi pilihan ke proyek itu.
 - [x] Tugas dapat menautkan Mitra atau kontak, Rapat, dan Kendala tanpa kode tugas wajib.
 - [x] Input jam/batas pengulangan terkunci saat tidak berulang; pembuatan tugas berikutnya menghormati batas tanggal.
