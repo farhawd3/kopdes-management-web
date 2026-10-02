@@ -1,5 +1,13 @@
 # Changelog
 
+### Alur tugas, jadwal berulang, dan tampilan ponsel (2 Oktober 2026)
+
+- Menjelaskan bahwa tugas berulang berikutnya dibuat setelah tugas saat ini selesai; jam hanya catatan. Input terkait terkunci sampai pengulangan dipilih, dan batas tanggal kini dihormati.
+- Menambahkan tautan Mitra atau kontak, Rapat, dan Kendala di tugas. Milestone hanya dapat dipilih setelah proyek dan harus berasal dari proyek itu.
+- Form opname meminta barang sebelum jumlah diisi dan mengunci stok buku yang disalin dari daftar barang.
+- Menghilangkan kewajiban kode tugas, memisahkan judul dari metadata lama, dan meringkas form tugas baru dengan tombol Detail lainnya. Kalender serta Gantt ponsel dibuat lebih terbaca; navigasi bawah ditempatkan di tepi layar.
+- Memperbarui panduan onboarding dan menambah tes untuk kondisi formulir. Pemeriksaan perangkat setelah login masih terbuka.
+
 ### Navigasi, tugas, dan panduan onboarding (2 Oktober 2026)
 
 - Menyatukan tampilan tab, tombol, ikon, kartu, dan gerak masuk halaman; memperkuat warna Lime.

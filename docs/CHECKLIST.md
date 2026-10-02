@@ -1,6 +1,12 @@
 # Checklist produk aktif
 
 ## Perapian 2 Oktober
+- [x] Form tugas mengunci milestone sebelum proyek dipilih dan membatasi pilihan ke proyek itu.
+- [x] Tugas dapat menautkan Mitra atau kontak, Rapat, dan Kendala tanpa kode tugas wajib.
+- [x] Input jam/batas pengulangan terkunci saat tidak berulang; pembuatan tugas berikutnya menghormati batas tanggal.
+- [x] Form opname meminta barang terlebih dulu; stok buku menjadi salinan terkunci dan hasil hitung baru aktif setelah barang dipilih.
+- [x] Kalender ponsel diringkas dan Gantt ponsel menyediakan daftar tanggal serta bagan pilihan.
+- [ ] Pemeriksaan visual dan interaksi nyata di ponsel/tablet setelah masuk dengan PIN.
 - [x] Panduan onboarding berbasis rundown, termasuk proyek, milestone, tugas, rapat, dan kontak.
 - [x] Label Mitra & kontak serta pilihan Agrinas tanpa identitas palsu.
 - [x] Daftar tugas dan catatan per 50 baris, riwayat selesai, cache bacaan, dan penanda ringkasan parsial.

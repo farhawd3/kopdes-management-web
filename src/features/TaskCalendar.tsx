@@ -210,9 +210,9 @@ export function TaskCalendar({
                         onEdit?.(item);
                       }}
                     >
-                      <span className="cal-task-code">
-                        {String(item.data.code || `#KD-${item.id.slice(0, 4).toUpperCase()}`)}
-                      </span>
+                      {Boolean(item.data.code) && (
+                        <span className="cal-task-code">{String(item.data.code)}</span>
+                      )}
                       <span className="cal-task-title">{String(item.data.title)}</span>
                     </button>
                   ))}

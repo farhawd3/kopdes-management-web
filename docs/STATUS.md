@@ -1,5 +1,13 @@
 # Status proyek — 2 Oktober 2026
 
+## Alur tugas dan ponsel
+
+- Form tugas baru menampilkan isian pokok lebih dulu, dengan **Detail lainnya** untuk isian lanjutan. Tugas menautkan Mitra atau kontak, Rapat, dan Kendala; milestone terkunci sampai proyek dipilih dan hanya menampilkan milestone proyek itu. Kode tugas tidak wajib diisi dan tidak ditampilkan bila kosong.
+- Jadwal berulang dimulai dari **Tidak berulang**. Jam dan batas tanggal terkunci sampai pola dipilih; tugas berikutnya hanya dibuat saat tugas sekarang diselesaikan dan batas tanggal belum lewat. Jam tidak mengirim pengingat otomatis.
+- Pada stok opname, jumlah buku diambil dari barang terpilih dan tidak bisa diketik ulang; kolom hitung baru aktif setelah barang dipilih.
+- Kalender ponsel memakai sel tanggal ringkas agar tujuh hari muat dalam lebar layar; Gantt ponsel mulai dari daftar tanggal, dengan bagan mendatar sebagai pilihan. Navigasi bawah dipindah ke tepi layar dan ruang konten ditambah.
+- Tes baru mencakup penguncian input, pilihan mitra, dan milestone. Pemeriksaan kode terbaru: **125 tes lulus**, typecheck, lint, dan build lulus. Pemeriksaan visual pada 360/768/1024/1440 setelah login **masih diperlukan**; jangan menganggap hasil unit test sebagai bukti tampilan perangkat.
+
 ## Navigasi, kontak, dan data bertahap
 
 - Pemeriksaan kode: 123 tes lulus, typecheck, lint, dan build lulus. Kueri daftar tugas dibaca langsung dari Supabase setelah reset. Pemeriksaan visual halaman pribadi pada semua ukuran belum dilakukan karena sesi browser pemeriksaan kedaluwarsa.
@@ -15,7 +23,7 @@
 - Berkas manual: `supabase/reset/RESET_DATABASE_KOSONG.sql`; panduan: `docs/RESET-DATABASE.md`. Versi terbaru menggabungkan migrasi 1–6 dalam satu transaksi, menghapus PIN/sesi, dan menolak reset jika catatan atau laporan sudah ada. Saat reset cloud sebelumnya dijalankan, berkas mencakup migrasi 1–5.
 - Pengujian PostgreSQL lokal lulus: pemasangan bersih, reset ulang, RLS/izin anonim, tabel lain tetap ada, serta pembatalan ketika catatan/laporan ditemukan.
 - Pemilik mengonfirmasi SQL reset berhasil dijalankan di cloud. Tidak ada perubahan URL/kunci Supabase. Pembuatan ulang PIN dan uji simpan setelah reset belum dikonfirmasi.
-- Perubahan paginasi pada working tree masih perlu integrasi UI dan verifikasi ringkasan; reset database bukan bukti data besar sudah ditangani.
+- Reset database bukan bukti performa data besar; migrasi indeks cloud belum dikonfirmasi.
 
 ## Paket Perapian Detail Kecil (2 Oktober 2026)
 

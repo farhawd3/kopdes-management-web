@@ -1042,13 +1042,13 @@ export function Records({
                   <tr key={row.id}>
                     <td className="col-task-title">
                       <button className="task-title" onClick={() => setDetailTask(row)}>
-                        <span className="task-code-badge-inline">
-                          {String(row.data.code || `#KD-${row.id.slice(0, 4).toUpperCase()}`)}
-                        </span>
                         <span className="task-title-text">{String(row.data.title)}</span>
                       </button>
                       <small className="task-project-label">
                         <FolderOpen size={11} /> {String(project?.data.title || 'Tanpa proyek')}
+                        {Boolean(row.data.code) && (
+                          <span className="task-code-meta"> · {String(row.data.code)}</span>
+                        )}
                       </small>
                     </td>
                     <td className="col-task-status">

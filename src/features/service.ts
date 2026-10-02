@@ -76,6 +76,22 @@ export async function save(entity: Entity, input: unknown, id?: string) {
     task.completed_at = task.status === 'selesai' ? task.completed_at || today() : '';
     if (task.start_date && task.start_date > task.due_date)
       throw new Error('Tanggal mulai harus sebelum atau sama dengan tenggat.');
+    if (
+      task.recurrence !== 'tidak' &&
+      task.recurrence_end_date &&
+      task.recurrence_end_date < task.due_date
+    )
+      throw new Error('Batas pengulangan tidak boleh sebelum tenggat tugas.');
+    if (task.milestone_id) {
+      const { data: milestone, error: milestoneError } = await db()
+        .from('hub_records')
+        .select('data')
+        .eq('entity', 'milestones')
+        .eq('id', task.milestone_id)
+        .maybeSingle();
+      if (milestoneError || !milestone || milestone.data.workstream_id !== task.workstream_id)
+        throw new Error('Milestone harus berasal dari proyek yang dipilih.');
+    }
     if (id && task.dependencies.includes(id))
       throw new Error('Tugas tidak boleh bergantung pada dirinya sendiri.');
     if (task.dependencies.length) {
@@ -88,13 +104,17 @@ export async function save(entity: Entity, input: unknown, id?: string) {
         throw new Error('Prasyarat tugas tidak ditemukan.');
       // Pemicu transaksi di database memeriksa rantai dependensi dan siklus.
     }
+    const nextDueDate =
+      task.recurrence !== 'tidak' ? nextOccurrence(task.due_date, task.recurrence) : '';
     const next =
-      task.status === 'selesai' && task.recurrence !== 'tidak'
+      task.status === 'selesai' &&
+      task.recurrence !== 'tidak' &&
+      (!task.recurrence_end_date || nextDueDate <= task.recurrence_end_date)
         ? {
             ...task,
             status: 'rencana',
             completed_at: '',
-            due_date: nextOccurrence(task.due_date, task.recurrence),
+            due_date: nextDueDate,
             start_date: task.start_date ? nextOccurrence(task.start_date, task.recurrence) : '',
             subtasks: task.subtasks.map((item) => ({ ...item, done: false })),
             dependencies: [],

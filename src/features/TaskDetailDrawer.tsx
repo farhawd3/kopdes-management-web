@@ -52,7 +52,6 @@ export function TaskDetailDrawer({
   }, []);
   const data = task.data;
   const isComplete = data.status === 'selesai';
-  const taskCode = String(data.code || `#KD-${task.id.slice(0, 5).toUpperCase()}`);
 
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [title, setTitle] = useState(String(data.title || ''));
@@ -79,6 +78,7 @@ export function TaskDetailDrawer({
       : [];
 
   const project = workspace.workstreams?.find((w) => w.id === data.workstream_id);
+  const stakeholder = workspace.stakeholders?.find((row) => row.id === data.stakeholder_id);
   const managerName = String(workspace.organization?.[0]?.data?.manager || 'Manajer');
 
   async function saveChanges(changes: Record<string, unknown>, activityMsg?: string) {
@@ -132,11 +132,7 @@ export function TaskDetailDrawer({
   async function handleAddSubtask(e: React.FormEvent) {
     e.preventDefault();
     if (!newSubtaskTitle.trim()) return;
-    const subtaskCode = `${taskCode}-${subtasks.length + 1}`;
-    const nextSubtasks = [
-      ...subtasks,
-      { title: newSubtaskTitle.trim(), done: false, code: subtaskCode },
-    ];
+    const nextSubtasks = [...subtasks, { title: newSubtaskTitle.trim(), done: false }];
     setNewSubtaskTitle('');
     await saveChanges(
       { subtasks: nextSubtasks },
@@ -226,7 +222,7 @@ export function TaskDetailDrawer({
         {/* Task Title & Code Header */}
         <div className="drawer-header-section">
           <div className="header-meta-row">
-            <span className="task-code-badge">{taskCode}</span>
+            {Boolean(data.code) && <span className="task-code-badge">{String(data.code)}</span>}
             {project && (
               <span
                 className="project-badge"
@@ -382,6 +378,13 @@ export function TaskDetailDrawer({
               <Repeat size={15} />
               <span>
                 Perulangan: <strong>{String(data.recurrence)}</strong>
+              </span>
+            </div>
+          )}
+          {stakeholder && (
+            <div className="prop-item">
+              <span>
+                Mitra atau kontak: <strong>{String(stakeholder.data.title)}</strong>
               </span>
             </div>
           )}

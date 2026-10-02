@@ -7,11 +7,13 @@ export function DateField({
   label,
   defaultValue = '',
   required = false,
+  disabled = false,
 }: {
   name: string;
   label: string;
   defaultValue?: string;
   required?: boolean;
+  disabled?: boolean;
 }) {
   const id = useId(),
     root = useRef<HTMLDivElement>(null),
@@ -20,13 +22,13 @@ export function DateField({
     [open, setOpen] = useState(false),
     [month, setMonth] = useState((defaultValue || today()).slice(0, 7));
   useEffect(() => {
-    if (!open) return;
+    if (!open || disabled) return;
     const close = (event: PointerEvent) => {
       if (!root.current?.contains(event.target as Node)) setOpen(false);
     };
     document.addEventListener('pointerdown', close);
     return () => document.removeEventListener('pointerdown', close);
-  }, [open]);
+  }, [open, disabled]);
   const first = month + '-01';
   const offset = (new Date(first + 'T12:00:00Z').getUTCDay() + 6) % 7;
   const days = Array.from({ length: 42 }, (_, index) => addDays(first, index - offset));
@@ -61,6 +63,7 @@ export function DateField({
           name={name}
           type="date"
           required={required}
+          disabled={disabled}
           value={value}
           onClick={() => {
             setMonth((value || today()).slice(0, 7));
@@ -73,6 +76,7 @@ export function DateField({
         />
         <button
           type="button"
+          disabled={disabled}
           ref={trigger}
           aria-label={`Pilih ${label.toLowerCase()}`}
           aria-expanded={open}
@@ -85,7 +89,7 @@ export function DateField({
           <CalendarDays size={18} />
         </button>
       </div>
-      {open && (
+      {open && !disabled && (
         <div
           id={id + '-picker'}
           className="date-picker"

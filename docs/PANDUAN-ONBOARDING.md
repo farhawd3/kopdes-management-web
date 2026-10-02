@@ -44,6 +44,18 @@ Tugas memakai tanggal, bukan jam. Untuk sesi **5 Oktober 09.00–12.00** dan **1
 
 Di **Mitra & kontak**, tambahkan **Agrinas** sebagai lembaga dan PIC/Babinsa bila nama serta kontaknya benar-benar sudah diketahui. Catatan kontak tidak otomatis menjadi akun pengguna atau peserta rapat.
 
+Saat membuat tugas, pilih **Mitra atau kontak** bila tugas memang melibatkan orang/lembaga itu. Pilihan ini mengambil data dari halaman Mitra & kontak; nama kontak tidak perlu diketik ulang di judul. Anda juga bisa mengaitkan **Rapat** atau **Kendala terkait** jika sudah ada catatannya. Hubungan ini adalah penanda pada tugas, bukan pengiriman pesan otomatis.
+
+**Kode tugas tidak perlu dibuat.** Cukup tulis judul yang jelas, pilih proyek, lalu pilih milestone bila tugas itu membantu mencapai hasil tersebut. Milestone baru dapat dipilih sesudah proyek dipilih, dan hanya milestone proyek itu yang muncul. Tugas tanpa proyek tetap boleh disimpan.
+
+Form tugas baru menampilkan isian pokok lebih dulu. Pilih **Detail lainnya** bila perlu mengaitkan rapat/kendala, mengatur pengulangan, menulis subtugas, atau menambahkan bukti dan catatan.
+
+## Bila pekerjaan perlu diulang
+
+Pada tugas, pilih **Pengulangan**: tidak, harian, mingguan, atau bulanan. Jam dan batas tanggal baru aktif setelah pola selain “tidak” dipilih. Tugas berikutnya dibuat ketika tugas sekarang ditandai **Selesai**, selama tanggal berikutnya belum melewati batas. Jam hanya catatan; sistem belum mengirim pengingat berdasarkan jam tersebut. Untuk rundown onboarding satu kali, biarkan **Tidak berulang**.
+
 ## Saat memakai tampilan
 
 Daftar, papan, kalender, dan Gantt menampilkan tugas yang sama. Gantt berguna untuk melihat urutan tanggal; kalender untuk acara per hari. Status tugas diubah saat pekerjaan benar-benar selesai. Jika data lama tidak terlihat, buka **Riwayat selesai** atau **Muat 50 tugas lagi**; jangan menganggap angka pada halaman parsial sebagai jumlah seluruh database.
+
+Di ponsel, Gantt mula-mula menampilkan daftar tanggal agar mudah dibaca. Tekan **Lihat bagan Gantt** bila ingin menggeser bagan mendatar. Kalender ponsel menampilkan tanggal ringkas dan rincian pada agenda di bawahnya.

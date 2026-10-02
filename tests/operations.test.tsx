@@ -17,8 +17,10 @@ beforeAll(() => {
   };
 });
 beforeEach(() => vi.clearAllMocks());
-vi.mock('next/navigation', () => ({ useRouter: () => ({ replace: vi.fn() }),
-  useSearchParams: () => new URLSearchParams() }));
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ replace: vi.fn() }),
+  useSearchParams: () => new URLSearchParams(),
+}));
 afterEach(cleanup);
 const item = (data: Record<string, unknown>): Item => ({
   id: 'test',
@@ -171,8 +173,11 @@ it('memilih barang menyalin stok buku, tetapi hasil hitung wajib diisi sendiri',
       onSaved={vi.fn().mockResolvedValue(undefined)}
     />,
   );
+  expect((screen.getByLabelText('Hasil hitung fisik') as HTMLInputElement).disabled).toBe(true);
   fireEvent.change(screen.getByLabelText('Barang'), { target: { value: product.id } });
   expect((screen.getByLabelText(/Stok buku/) as HTMLInputElement).value).toBe('10');
+  expect((screen.getByLabelText(/Stok buku/) as HTMLInputElement).readOnly).toBe(true);
+  expect((screen.getByLabelText('Hasil hitung fisik') as HTMLInputElement).disabled).toBe(false);
   expect((screen.getByLabelText('Hasil hitung fisik') as HTMLInputElement).value).toBe('');
   fireEvent.change(screen.getByLabelText('Nama / judul'), { target: { value: 'Opname Oktober' } });
   fireEvent.change(screen.getByLabelText('Hasil hitung fisik'), { target: { value: '8' } });

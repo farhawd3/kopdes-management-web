@@ -1,11 +1,10 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { X, Repeat, Clock, Calendar } from 'lucide-react';
-import { addDays, today } from '@/lib/date';
 import { Select } from '@/components/ui/Select';
 
 export function RecursiveScheduleModal({
-  currentType = 'mingguan',
+  currentType = 'tidak',
   currentTime = '09:00',
   currentEndDate = '',
   onClose,
@@ -15,13 +14,18 @@ export function RecursiveScheduleModal({
   currentTime?: string;
   currentEndDate?: string;
   onClose: () => void;
-  onSave: (schedule: { recurrence: string; recurrence_time: string; recurrence_end_date: string }) => void;
+  onSave: (schedule: {
+    recurrence: string;
+    recurrence_time: string;
+    recurrence_end_date: string;
+  }) => void;
 }) {
   const [repeatType, setRepeatType] = useState(
-    ['harian', 'mingguan', 'bulanan'].includes(currentType) ? currentType : 'mingguan',
+    ['harian', 'mingguan', 'bulanan'].includes(currentType) ? currentType : 'tidak',
   );
   const [time, setTime] = useState(currentTime || '09:00');
-  const [endDate, setEndDate] = useState(currentEndDate || addDays(today(), 60));
+  const [endDate, setEndDate] = useState(currentEndDate);
+  const enabled = repeatType !== 'tidak';
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -35,8 +39,8 @@ export function RecursiveScheduleModal({
     e.preventDefault();
     onSave({
       recurrence: repeatType,
-      recurrence_time: time,
-      recurrence_end_date: endDate,
+      recurrence_time: enabled ? time : '09:00',
+      recurrence_end_date: enabled ? endDate : '',
     });
     onClose();
   }
@@ -56,7 +60,7 @@ export function RecursiveScheduleModal({
             <span className="sprint-icon-pill">
               <Repeat size={18} />
             </span>
-            <h2 id="recursive-title">Jadwal Berkala (Recursive)</h2>
+            <h2 id="recursive-title">Jadwal berulang</h2>
           </div>
           <button type="button" className="close-btn" onClick={onClose} aria-label="Tutup">
             <X size={18} />
@@ -65,14 +69,15 @@ export function RecursiveScheduleModal({
 
         <form onSubmit={handleSubmit} className="sprint-form">
           <label className="field-group">
-            <span className="field-label">Tipe Perulangan</span>
+            <span className="field-label">Ulangi tugas</span>
             <Select
               value={repeatType}
               onChange={setRepeatType}
               options={[
-                { value: 'harian', label: 'Setiap Hari (Harian)' },
-                { value: 'mingguan', label: 'Setiap Minggu (Mingguan)' },
-                { value: 'bulanan', label: 'Setiap Bulan (Bulanan)' },
+                { value: 'tidak', label: 'Tidak berulang' },
+                { value: 'harian', label: 'Setiap hari' },
+                { value: 'mingguan', label: 'Setiap minggu' },
+                { value: 'bulanan', label: 'Setiap bulan' },
               ]}
               ariaLabel="Tipe Perulangan"
             />
@@ -80,41 +85,42 @@ export function RecursiveScheduleModal({
 
           <label className="field-group">
             <span className="field-label">
-              <Clock size={14} /> Jam Eksekusi (WIB)
+              <Clock size={16} aria-hidden="true" /> Jam catatan (WIB)
             </span>
             <input
               type="time"
               value={time}
               onChange={(e) => setTime(e.target.value)}
               className="text-input"
+              disabled={!enabled}
+              required={enabled}
             />
           </label>
 
           <label className="field-group">
             <span className="field-label">
-              <Calendar size={14} /> Berakhir Pada Tanggal (Opsional)
+              <Calendar size={16} aria-hidden="true" /> Batas pengulangan (opsional)
             </span>
             <input
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
               className="text-input"
+              disabled={!enabled}
             />
           </label>
 
+          <p className="recurrence-explanation">
+            {enabled
+              ? 'Tugas berikutnya dibuat saat tugas ini ditandai selesai. Jam hanya catatan, bukan pengingat otomatis.'
+              : 'Pilih pola pengulangan untuk mengatur jam dan batas tanggal.'}
+          </p>
           <div className="sprint-form-actions">
-            <button
-              type="button"
-              className="btn-cancel"
-              onClick={() => {
-                onSave({ recurrence: 'tidak', recurrence_time: '09:00', recurrence_end_date: '' });
-                onClose();
-              }}
-            >
-              Nonaktifkan
+            <button type="button" className="btn-cancel" onClick={onClose}>
+              Batal
             </button>
             <button type="submit" className="btn-save-sprint">
-              Simpan Jadwal
+              Simpan pengulangan
             </button>
           </div>
         </form>
