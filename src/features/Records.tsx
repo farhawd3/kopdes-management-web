@@ -804,9 +804,9 @@ export function Records({
             ))}
         </div>
       )}
-      {entity === 'work-items' && (
+      {entity === 'work-items' && view !== 'kalender' && view !== 'gantt' && (
         <form
-          className="inline-task"
+          className="today-quick-add-card"
           onSubmit={async (event) => {
             event.preventDefault();
             if (busy || !quickTitle.trim()) return;
@@ -829,18 +829,58 @@ export function Records({
             }
           }}
         >
-          <Plus size={17} />
-          <input
-            aria-label="Tulis tugas baru"
-            value={quickTitle}
-            maxLength={200}
-            onChange={(event) => setQuickTitle(event.target.value)}
-            placeholder="Tulis tugas, lalu Enter…"
-          />
-          <small>Tenggat hari ini</small>
-          <button disabled={busy || !quickTitle.trim()} type="submit">
-            Tambah
-          </button>
+          <div className="quick-add-input-wrap">
+            <Plus size={18} className="quick-add-icon" />
+            <input
+              type="text"
+              aria-label="Tulis tugas baru"
+              value={quickTitle}
+              maxLength={200}
+              onChange={(event) => setQuickTitle(event.target.value)}
+              placeholder="Tambah tugas baru, lalu tekan Enter…"
+              disabled={busy}
+            />
+          </div>
+          <div className="quick-add-actions">
+            <button
+              type="submit"
+              className="btn-quick-submit"
+              disabled={busy || !quickTitle.trim()}
+            >
+              {busy ? 'Menyimpan…' : 'Tambah'}
+            </button>
+            <button
+              type="button"
+              className="btn-full-task-modal"
+              onClick={() => {
+                setEdit(
+                  scopeId
+                    ? {
+                        id: '',
+                        created_at: '',
+                        updated_at: '',
+                        data: schemas[entity].parse({
+                          title: 'Tugas baru',
+                          due_date: today(),
+                          workstream_id: scopeId,
+                        }),
+                      }
+                    : {
+                        id: '',
+                        created_at: '',
+                        updated_at: '',
+                        data: schemas[entity].parse({
+                          title: 'Tugas baru',
+                          due_date: today(),
+                        }),
+                      },
+                );
+              }}
+              title="Buka formulir lengkap dengan rincian"
+            >
+              + Form lengkap
+            </button>
+          </div>
         </form>
       )}
       <button

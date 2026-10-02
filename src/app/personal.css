@@ -11148,6 +11148,24 @@ dialog.editor textarea:focus,
   color: var(--ink-heading) !important;
 }
 
+.follow-up-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.follow-up-row {
+  animation: dashFadeUp 0.35s ease both;
+}
+
+.follow-up-list > .follow-up-row:nth-child(1) { animation-delay: 0ms; }
+.follow-up-list > .follow-up-row:nth-child(2) { animation-delay: 50ms; }
+.follow-up-list > .follow-up-row:nth-child(3) { animation-delay: 100ms; }
+.follow-up-list > .follow-up-row:nth-child(4) { animation-delay: 150ms; }
+.follow-up-list > .follow-up-row:nth-child(5) { animation-delay: 200ms; }
+.follow-up-list > .follow-up-row:nth-child(6) { animation-delay: 250ms; }
+
+
 /* Follow-up Clean Empty State */
 .follow-up-empty-card {
   display: flex !important;
