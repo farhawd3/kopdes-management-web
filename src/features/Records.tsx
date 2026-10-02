@@ -165,6 +165,14 @@ export function Records({
     else setView('daftar');
   }, [requestedView]);
   const quickAdd = query.get('baru') === '1';
+  function closeTaskDetail() {
+    setDetailTask(null);
+    if (query.get('task')) {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('task');
+      router.replace(`${url.pathname}${url.search}${url.hash}`, { scroll: false });
+    }
+  }
   const effectiveFilter = filter ?? (entity === 'work-items' ? query.get('status') || '' : '');
   const all = (workspace[entity] || []).filter(
       (row) => !scopeId || row.data.workstream_id === scopeId,
@@ -1180,7 +1188,7 @@ export function Records({
             (workspace['work-items'] || []).find((item) => item.id === detailTask.id) || detailTask
           }
           workspace={workspace}
-          onClose={() => setDetailTask(null)}
+          onClose={closeTaskDetail}
           onUpdated={refresh}
           onPrev={() => {
             const idx = rows.findIndex((t) => t.id === detailTask.id);

@@ -1,6 +1,7 @@
 # Checklist produk aktif
 
 ## Perapian 2 Oktober
+- [x] Detail tugas tidak kembali terbuka setelah ditutup dan tampilan horizontal diganti.
 - [x] Anotasi tugas: riwayat, kode otomatis, dokumen/kontrak, label daftar, status, dan tombol tutup dirapikan.
 - [x] Anotasi Beranda/Hari Ini: tindak lanjut, grafik kosong, warna prioritas, input cepat, dan ikon selesai dirapikan.
 - [x] Login PIN lokal kembali berhasil setelah server dapat menjangkau Supabase; pesan galat koneksi dibedakan dari migrasi hilang.

@@ -1,5 +1,9 @@
 # Changelog
 
+### Perbaikan detail tugas (2 Oktober 2026)
+
+- Menghapus parameter tugas dari URL saat dialog ditutup agar pergantian Daftar/Papan/Kalender/Gantt tidak membukanya kembali. Menambah tes regresi untuk alur tutup dan pindah tampilan.
+
 ### Perapian dari anotasi halaman (2 Oktober 2026)
 
 - Menata riwayat tugas, tombol tutup menu aksi, tajuk, status tabel, kode pada papan, dan metadata daftar.

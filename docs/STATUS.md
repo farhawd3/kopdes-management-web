@@ -1,5 +1,11 @@
 # Status proyek — 2 Oktober 2026
 
+## Detail tugas kembali terbuka setelah pindah tampilan
+
+- Parameter `task` pada URL sebelumnya tertinggal saat detail tugas ditutup. Ketika halaman dipasang ulang, parameter itu membuka tugas yang sama. Penutupan kini menghapus parameter sambil mempertahankan filter URL lain.
+- Alur URL tugas → tutup lewat Escape/tombol → pindah ke Papan diperiksa di browser lokal; dialog tetap tertutup. Tes regresi menutup lalu memasang ulang tampilan lulus.
+- Verifikasi paket: 129 tes, typecheck, lint, dan build lulus.
+
 ## Perbaikan dari anotasi tampilan
 
 - Riwayat tugas mendapat kartu per peristiwa; tombol tutup pusat aksi dan centang Hari Ini diperjelas. Tajuk lokasi, pilihan status, metadata tugas, pintasan tindak lanjut, input cepat, dan grafik tujuh hari dirapikan.
