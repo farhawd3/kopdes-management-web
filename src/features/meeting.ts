@@ -1,4 +1,16 @@
 import { schemas, type Item } from './schemas';
+
+/** Tautan rapat online yang sah, atau null bila tidak layak ditampilkan. */
+export function meetingJoinUrl(meeting: Item | undefined): string | null {
+  if (!meeting) return null;
+  const data = meeting.data;
+  const mode = String(data.mode || 'tatap muka');
+  if (mode !== 'online' && mode !== 'hybrid') return null;
+  const url = String(data.meeting_url || '').trim();
+  if (!/^https?:\/\/\S+$/i.test(url)) return null;
+  return url;
+}
+
 const escape = (value: string) =>
   value
     .replaceAll('\\', '\\\\')

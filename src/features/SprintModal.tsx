@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Target, Calendar, Clock } from 'lucide-react';
 import { addDays, today } from '@/lib/date';
 import { api } from '@/lib/client';
@@ -15,6 +16,7 @@ export function SprintModal({
   onClose: () => void;
   onSaved: () => Promise<void>;
 }) {
+  const [mounted, setMounted] = useState(false);
   const [title, setTitle] = useState(String(sprint?.data.title || 'Sprint 1'));
   const [goal, setGoal] = useState(String(sprint?.data.goal || ''));
   const [duration, setDuration] = useState(
@@ -30,6 +32,10 @@ export function SprintModal({
   const [notes, setNotes] = useState(String(sprint?.data.notes || ''));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -74,7 +80,7 @@ export function SprintModal({
     }
   }
 
-  return (
+  const modalContent = (
     <div
       className="sprint-modal-backdrop"
       role="dialog"
@@ -221,4 +227,7 @@ export function SprintModal({
       </div>
     </div>
   );
+
+  if (!mounted) return null;
+  return createPortal(modalContent, document.body);
 }

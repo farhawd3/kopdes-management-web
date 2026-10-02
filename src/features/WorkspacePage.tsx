@@ -10,7 +10,7 @@ import { Reports } from './Reports';
 import { Editor } from './Editor';
 import { Projects } from './Projects';
 import { Operations, recordingPaths } from './Operations';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { FollowUps } from './FollowUps';
 import { TodayView } from './TodayView';
 import type { Entity, Item } from './schemas';
@@ -20,10 +20,20 @@ import { SkeletonLoading } from '@/components/ui/SkeletonLoading';
 import { pageEntities } from './workspace-scope';
 export function WorkspacePage({ slug }: { slug: string }) {
   const query = useSearchParams();
+  const router = useRouter();
   const requestedSection = query.get('bagian');
   const [taskScope, setTaskScope] = useState<'current' | 'history'>(() =>
     ['selesai', 'dibatalkan'].includes(query.get('status') || '') ? 'history' : 'current',
   );
+
+  useEffect(() => {
+    const statusParam = query.get('status') || '';
+    if (['selesai', 'dibatalkan'].includes(statusParam)) {
+      if (taskScope !== 'history') setTaskScope('history');
+    } else if (taskScope === 'history' && !statusParam) {
+      setTaskScope('current');
+    }
+  }, [query, taskScope]);
   const requestedRecord =
     query.get('record') || query.get('task') || (slug === 'proyek' ? query.get('id') : null);
   const selectedEntity = (
@@ -65,7 +75,7 @@ export function WorkspacePage({ slug }: { slug: string }) {
   const title =
     navigation.find(([path]) => path === `/${slug}`)?.[1] ||
     (slug === 'pemangku' ? 'Mitra & kontak' : 'Ruang kerja');
-  if (loading) return <SkeletonLoading />;
+  if (loading) return <SkeletonLoading slug={slug} />;
   if (error)
     return (
       <section className="card empty">
@@ -79,27 +89,30 @@ export function WorkspacePage({ slug }: { slug: string }) {
     );
   return (
     <div className={`workspace-page page-${slug}`}>
-      {slug !== 'beranda' && (
-        <div className="page-heading">
-          <span className="eyebrow">
-            {recordingPaths.includes(slug) ? 'PENCATATAN' : 'RUANG KERJA'} / {title.toUpperCase()}
-          </span>
-          <h1>{title}</h1>
-        </div>
-      )}
+
       {slug === 'tugas' && (
         <div className="workspace-scope-control" role="group" aria-label="Rentang tugas">
           <button
             type="button"
             aria-pressed={taskScope === 'current'}
-            onClick={() => setTaskScope('current')}
+            onClick={() => {
+              setTaskScope('current');
+              const next = new URLSearchParams(query.toString());
+              next.delete('status');
+              router.replace(`/tugas${next.size ? '?' + next.toString() : ''}`);
+            }}
           >
             Aktif dan terbaru
           </button>
           <button
             type="button"
             aria-pressed={taskScope === 'history'}
-            onClick={() => setTaskScope('history')}
+            onClick={() => {
+              setTaskScope('history');
+              const next = new URLSearchParams(query.toString());
+              next.set('status', 'selesai');
+              router.replace(`/tugas?${next.toString()}`);
+            }}
           >
             Riwayat selesai
           </button>

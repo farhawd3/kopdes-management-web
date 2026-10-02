@@ -12,6 +12,7 @@ export function pageEntities(slug: string): Entity[] {
       'stock-counts',
       'members',
       'cash-entries',
+      'journal',
     ],
     'tindak-lanjut': [
       'work-items',
@@ -56,6 +57,7 @@ export function pageEntities(slug: string): Entity[] {
     barang: ['inventory-items', 'cash-entries', 'units'],
     'stok-opname': ['stock-counts', 'inventory-items', 'units'],
     risiko: ['risks', 'issues', 'work-items'],
+    jurnal: ['journal', 'work-items', 'stakeholders', 'units', 'meetings'],
   };
   return [
     ...new Set<Entity>(['organization', 'workstreams', ...(related[slug] || pages[slug] || [])]),

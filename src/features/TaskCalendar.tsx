@@ -17,7 +17,12 @@ export function TaskCalendar({
   const [selected, setSelected] = useState<string | null>(null);
   const [mode, setMode] = useState<'month' | 'week' | 'day'>('month');
   const [anchor, setAnchor] = useState(today());
-  const monthItems = items.filter((item) => String(item.data.due_date).startsWith(month));
+  const getItemDate = (item: Item) => {
+    const d = item.data.due_date || item.data.date;
+    if (!d || d === 'undefined' || d === 'null') return '';
+    return String(d);
+  };
+  const monthItems = items.filter((item) => getItemDate(item).startsWith(month));
   const monthLabel = new Intl.DateTimeFormat('id-ID', {
     month: 'long',
     year: 'numeric',
@@ -51,7 +56,7 @@ export function TaskCalendar({
   const periodItems =
     mode === 'month'
       ? monthItems
-      : items.filter((item) => visibleDays.includes(String(item.data.due_date)));
+      : items.filter((item) => visibleDays.includes(getItemDate(item)));
   return (
     <section className={`task-calendar calendar-mode-${mode}`}>
       <header className="calendar-toolbar">
@@ -152,7 +157,7 @@ export function TaskCalendar({
             const isSelected = selected === date;
             const isToday = date === today();
             const isOutside = date.slice(0, 7) !== month;
-            const dayTasks = items.filter((item) => item.data.due_date === date);
+            const dayTasks = items.filter((item) => getItemDate(item) === date);
             const hasTasks = dayTasks.length > 0;
 
             return (
@@ -210,9 +215,7 @@ export function TaskCalendar({
                         onEdit?.(item);
                       }}
                     >
-                      {Boolean(item.data.code) && (
-                        <span className="cal-task-code">{String(item.data.code)}</span>
-                      )}
+                      <span className="cal-task-dot" aria-hidden="true" />
                       <span className="cal-task-title">{String(item.data.title)}</span>
                     </button>
                   ))}
@@ -250,7 +253,7 @@ export function TaskCalendar({
           )}
         </div>
         {(selected
-          ? !items.some((item) => item.data.due_date === selected)
+          ? !items.some((item) => getItemDate(item) === selected)
           : !periodItems.length) && (
           <p className="calendar-empty">
             {selected
@@ -263,16 +266,29 @@ export function TaskCalendar({
         {Array.from(
           new Set(
             periodItems
-              .filter((item) => (selected ? item.data.due_date === selected : true))
-              .map((item) => String(item.data.due_date)),
+              .map((item) => getItemDate(item))
+              .filter(
+                (date) =>
+                  Boolean(date) &&
+                  date !== 'undefined' &&
+                  date !== 'null' &&
+                  (selected ? date === selected : true),
+              ),
           ),
         )
           .sort()
           .map((date) => (
-            <section key={date}>
-              <h3>{formatDate(date)}</h3>
-              <div className="records">
-                {items.filter((item) => item.data.due_date === date).map(render)}
+            <section key={date} className="calendar-agenda-day-group">
+              <div className="calendar-agenda-day-head">
+                <span className="agenda-day-pill">{formatDate(date)}</span>
+                <span className="agenda-day-count">
+                  {items.filter((item) => getItemDate(item) === date).length} catatan
+                </span>
+              </div>
+              <div className="calendar-agenda-compact-list records">
+                {items
+                  .filter((item) => getItemDate(item) === date)
+                  .map((item) => render(item))}
               </div>
             </section>
           ))}

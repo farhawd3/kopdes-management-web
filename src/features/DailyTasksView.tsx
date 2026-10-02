@@ -4,7 +4,9 @@ import { Check, ChevronDown, ChevronRight, Plus, Edit2, Trash2 } from 'lucide-re
 import { type Item } from './schemas';
 import type { Workspace } from './useWorkspace';
 import { addDays, formatDate, today } from '@/lib/date';
+import { toggleTaskStatus } from '@/lib/task-status';
 import { api } from '@/lib/client';
+import { formatDisplayCode } from './task-code';
 
 const DAY_LABELS = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'] as const;
 
@@ -49,14 +51,12 @@ export function DailyTasksView({
     setBusyId(task.id);
     setError('');
     try {
-      const isDone = task.data.status === 'selesai';
-      const nextStatus = isDone ? 'rencana' : 'selesai';
+      const change = toggleTaskStatus(task.data.status);
       await api('work-items', {
         id: task.id,
         data: {
           ...task.data,
-          status: nextStatus,
-          completed_at: nextStatus === 'selesai' ? today() : '',
+          ...change,
         },
       });
       await onRefresh();
@@ -145,11 +145,23 @@ export function DailyTasksView({
             </button>
             <div className="day-title-wrap">
               <span className="day-name alert-text">Terlewat / Perlu Tindak Lanjut</span>
-              <small className="day-date">Jatuh tempo sebelum pekan ini</small>
+              <small className="day-date">
+                {pastOverdueTasks.length} tugas jatuh tempo sebelum pekan ini
+              </small>
             </div>
             <div className="day-count-badge alert-count-badge">
               <span>{pastOverdueTasks.length.toString().padStart(2, '0')}</span>
             </div>
+            <button
+              type="button"
+              className="btn-open-overdue"
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleDay('overdue');
+              }}
+            >
+              {expandedDays['overdue'] ? 'Tutup' : 'Buka'}
+            </button>
           </header>
 
           {expandedDays['overdue'] && (
@@ -189,9 +201,9 @@ export function DailyTasksView({
                         {isDone && <Check size={13} />}
                       </button>
 
-                      {Boolean(task.data.code) && (
-                        <span className="task-code-tag">{String(task.data.code)}</span>
-                      )}
+                      <span className="task-code-tag">
+                        {formatDisplayCode(String(task.data.code), 'work-items', task.id)}
+                      </span>
                       <span className="task-title-text">{String(task.data.title)}</span>
                       <span className="task-due-tag is-overdue">
                         {formatDate(String(task.data.due_date))}
@@ -320,9 +332,9 @@ export function DailyTasksView({
                             {isDone && <Check size={13} />}
                           </button>
 
-                          {Boolean(task.data.code) && (
-                            <span className="task-code-tag">{String(task.data.code)}</span>
-                          )}
+                          <span className="task-code-tag">
+                            {formatDisplayCode(String(task.data.code), 'work-items', task.id)}
+                          </span>
 
                           <span className="task-title-text">{String(task.data.title)}</span>
 
@@ -378,13 +390,14 @@ export function DailyTasksView({
                                   className={`tree-subtask-item ${sub.done ? 'sub-done' : ''}`}
                                   onClick={(e) => toggleSubtask(task, sIdx, e)}
                                 >
-                                  <span className="tree-connector">{isLast ? '└──' : '├──'}</span>
                                   <button
                                     type="button"
                                     className={`subtask-round-check ${sub.done ? 'checked' : ''}`}
                                     onClick={(e) => toggleSubtask(task, sIdx, e)}
+                                    aria-label={sub.done ? `Tandai belum selesai: ${sub.title}` : `Tandai selesai: ${sub.title}`}
+                                    aria-pressed={Boolean(sub.done)}
                                   >
-                                    {sub.done && <Check size={11} />}
+                                    {sub.done && <Check size={11} strokeWidth={2.5} />}
                                   </button>
                                   {sub.code && <span className="subtask-code-tag">{sub.code}</span>}
                                   <span className="subtask-title-text">{sub.title}</span>
@@ -438,9 +451,9 @@ export function DailyTasksView({
                     >
                       {isDone && <Check size={13} />}
                     </button>
-                    {Boolean(task.data.code) && (
-                      <span className="task-code-tag">{String(task.data.code)}</span>
-                    )}
+                    <span className="task-code-tag">
+                      {formatDisplayCode(String(task.data.code), 'work-items', task.id)}
+                    </span>
                     <span className="task-title-text">{String(task.data.title)}</span>
                     <span className="task-due-badge">{formatDate(String(task.data.due_date))}</span>
                     <div className="task-row-actions">

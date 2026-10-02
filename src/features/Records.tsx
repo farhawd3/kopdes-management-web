@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { catalog, labels, options, formatChoiceLabel } from './catalog';
@@ -10,6 +11,7 @@ import { TaskBatchActions } from './TaskBatchActions';
 import { Editor } from './Editor';
 import { api } from '@/lib/client';
 import { today, addDays, formatDate } from '@/lib/date';
+import { selectTaskStatus, taskStatusChange, isActiveTask, type TaskStatus } from '@/lib/task-status';
 import { readiness } from '@/lib/progress';
 import { Meter, RiskMatrix } from '@/components/charts/Charts';
 import { TaskCalendar } from './TaskCalendar';
@@ -26,6 +28,7 @@ import {
   CalendarClock,
   UploadCloud,
   Target,
+  ChevronDown,
   X,
   Shield,
   Landmark,
@@ -46,15 +49,20 @@ import {
   AlertCircle,
   ShieldCheck,
   FolderArchive,
+  User,
+  CheckSquare,
+  Flag,
 } from 'lucide-react';
 import { TaskTimeline } from './TaskTimeline';
-import { downloadMeeting } from './meeting';
+import { downloadMeeting, meetingJoinUrl } from './meeting';
 import { DailyTasksView } from './DailyTasksView';
 import { TaskDetailDrawer } from './TaskDetailDrawer';
 import { SprintModal } from './SprintModal';
 import { SprintCard } from './SprintCard';
 import { CsvDropzone } from '@/components/ui/CsvDropzone';
 import { ScrumBoardView } from './ScrumBoardView';
+import { formatDisplayCode } from './task-code';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 function getStakeholderCategoryClass(category: string) {
   const cat = category.toLowerCase();
@@ -96,6 +104,603 @@ function getStakeholderCategoryIcon(category: string): React.ReactElement {
   return <CircleDot size={13} />;
 }
 
+function CompletedTimelineView({
+  items,
+  workspace,
+  onOpenTask,
+  onReopenTask,
+}: {
+  items: Item[];
+  workspace: Workspace;
+  onOpenTask: (task: Item) => void;
+  onReopenTask: (task: Item) => void;
+}) {
+  if (items.length === 0) {
+    return (
+      <EmptyState
+        title="Belum Ada Tugas yang Selesai"
+        description="Tugas yang telah Anda tuntaskan akan tersusun rapi secara kronologis di linimasa ini."
+        tone="blue"
+        compact
+      />
+    );
+  }
+
+  const todayStr = today();
+  const weekAgo = addDays(todayStr, -7);
+  const twoWeeksAgo = addDays(todayStr, -14);
+
+  const groups = [
+    {
+      id: 'pekan-ini',
+      title: 'Pekan Ini',
+      subtitle: '7 hari terakhir',
+      items: items.filter((r) => {
+        if (r.data.status !== 'selesai') return false;
+        const d = String(r.data.completed_at || r.data.due_date || r.updated_at.slice(0, 10));
+        return d >= weekAgo;
+      }),
+    },
+    {
+      id: 'pekan-lalu',
+      title: 'Pekan Lalu',
+      subtitle: '8–14 hari lalu',
+      items: items.filter((r) => {
+        if (r.data.status !== 'selesai') return false;
+        const d = String(r.data.completed_at || r.data.due_date || r.updated_at.slice(0, 10));
+        return d >= twoWeeksAgo && d < weekAgo;
+      }),
+    },
+    {
+      id: 'arsip-lama',
+      title: 'Arsip Sebelumnya',
+      subtitle: 'Lebih dari 2 pekan lalu',
+      items: items.filter((r) => {
+        if (r.data.status !== 'selesai') return false;
+        const d = String(r.data.completed_at || r.data.due_date || r.updated_at.slice(0, 10));
+        return d < twoWeeksAgo;
+      }),
+    },
+  ].filter((g) => g.items.length > 0);
+
+  return (
+    <div className="completed-github-timeline" aria-label="Linimasa riwayat tugas selesai">
+      {groups.map((group) => (
+        <section key={group.id} className="timeline-group-section">
+          <div className="timeline-group-header">
+            <div className="timeline-group-badge">
+              <CheckCircle2 size={13} />
+              <span>{group.title}</span>
+            </div>
+            <span className="timeline-group-sub">
+              · {group.subtitle} ({group.items.length} tugas)
+            </span>
+            <div className="timeline-group-divider-line" />
+          </div>
+          <div className="timeline-group-stream">
+            <div className="timeline-vertical-spine" aria-hidden="true" />
+            {group.items.map((row) => {
+              const project = workspace.workstreams?.find((p) => p.id === row.data.workstream_id);
+              const subtasks = Array.isArray(row.data.subtasks) ? row.data.subtasks : [];
+              const doneSubtasks = subtasks.filter((s: { done?: boolean }) => s.done).length;
+              const assigneeName = String(row.data.assignee || '').trim();
+              const completedDate = String(
+                row.data.completed_at || row.data.due_date || row.updated_at.slice(0, 10),
+              );
+
+              return (
+                <article key={row.id} className="timeline-task-row">
+                  <div className="timeline-node" aria-hidden="true">
+                    <CheckCircle2 size={15} />
+                  </div>
+                  <div className="timeline-task-bubble">
+                    <div className="timeline-bubble-head">
+                      <div className="timeline-title-wrap">
+                        <span className="task-code-tag">
+                          {formatDisplayCode(String(row.data.code), 'work-items', row.id)}
+                        </span>
+                        <button
+                          type="button"
+                          className="timeline-task-title-btn"
+                          onClick={() => onOpenTask(row)}
+                          title="Buka rincian tugas"
+                        >
+                          {String(row.data.title)}
+                        </button>
+                        {project && (
+                          <span className="task-project-name has-project">
+                            {String(project.data.title)}
+                          </span>
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        className="table-btn-reopen"
+                        title="Buka kembali tugas ini ke daftar tugas aktif"
+                        onClick={() => onReopenTask(row)}
+                      >
+                        Buka Kembali ↩
+                      </button>
+                    </div>
+                    <div className="timeline-bubble-meta">
+                      <span className="meta-chip meta-chip-date" title="Tanggal diselesaikan">
+                        <Calendar size={12} />
+                        <span>Selesai {formatDate(completedDate)}</span>
+                      </span>
+                      {assigneeName && (
+                        <span className="meta-chip meta-chip-assignee">
+                          <User size={12} />
+                          <span>{assigneeName}</span>
+                        </span>
+                      )}
+                      {subtasks.length > 0 && (
+                        <span className="meta-chip meta-chip-subtasks">
+                          <CheckSquare size={12} />
+                          <span>
+                            {doneSubtasks}/{subtasks.length} subtugas tuntas
+                          </span>
+                        </span>
+                      )}
+                      {Boolean(row.data.priority && row.data.priority !== 'normal') && (
+                        <span className={`priority-badge priority-${row.data.priority}`}>
+                          <Flag size={11} /> {formatChoiceLabel(String(row.data.priority))}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+      ))}
+    </div>
+  );
+}
+
+function JournalBoardView({
+  activities,
+  workspace,
+  onOpenItem,
+  onCreateItem,
+  onRefresh,
+}: {
+  activities: Item[];
+  workspace: Workspace;
+  onOpenItem: (item: Item) => void;
+  onCreateItem: (date: string) => void;
+  onRefresh: () => Promise<void>;
+}) {
+  const [draggedId, setDraggedId] = useState<string | null>(null);
+  const [dragOverCol, setDragOverCol] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const todayStr = today();
+
+  const cols = [
+    {
+      id: 'mendatang',
+      title: 'Terjadwal / Rencana',
+      subtitle: 'Aktivitas mendatang',
+      color: 'var(--brand)',
+      filter: (a: Item) => String(a.data.date || '') > todayStr,
+      defaultDate: addDays(todayStr, 1),
+    },
+    {
+      id: 'hari-ini',
+      title: 'Hari Ini',
+      subtitle: 'Aktivitas lapangan hari ini',
+      color: '#10b981',
+      filter: (a: Item) => String(a.data.date || '') === todayStr,
+      defaultDate: todayStr,
+    },
+    {
+      id: 'terlaksana',
+      title: 'Terdokumentasi',
+      subtitle: 'Riwayat catatan lapangan',
+      color: 'var(--ink-muted)',
+      filter: (a: Item) => String(a.data.date || '') < todayStr,
+      defaultDate: addDays(todayStr, -1),
+    },
+  ];
+
+  async function handleDrop(targetColId: string) {
+    if (!draggedId || busy) return;
+    const item = activities.find((a) => a.id === draggedId);
+    if (!item) return;
+
+    let targetDate = String(item.data.date || todayStr);
+    if (targetColId === 'hari-ini') targetDate = todayStr;
+    else if (targetColId === 'mendatang' && String(item.data.date) <= todayStr) {
+      targetDate = addDays(todayStr, 1);
+    } else if (targetColId === 'terlaksana' && String(item.data.date) >= todayStr) {
+      targetDate = addDays(todayStr, -1);
+    }
+
+    if (targetDate === item.data.date) {
+      setDraggedId(null);
+      setDragOverCol(null);
+      return;
+    }
+
+    setBusy(true);
+    try {
+      await api('journal', {
+        id: item.id,
+        data: { ...item.data, date: targetDate },
+      });
+      await onRefresh();
+    } finally {
+      setBusy(false);
+      setDraggedId(null);
+      setDragOverCol(null);
+    }
+  }
+
+  return (
+    <div className="journal-board-container" aria-label="Papan alur kegiatan lapangan">
+      <div className="scrum-board-columns cols-3">
+        {cols.map((col) => {
+          const colItems = activities.filter(col.filter);
+          const isOver = dragOverCol === col.id;
+
+          return (
+            <div
+              key={col.id}
+              className={`scrum-column ${isOver ? 'drag-over' : ''}`}
+              onDragOver={(e) => {
+                e.preventDefault();
+                if (dragOverCol !== col.id) setDragOverCol(col.id);
+              }}
+              onDragLeave={() => {
+                if (dragOverCol === col.id) setDragOverCol(null);
+              }}
+              onDrop={(e) => {
+                e.preventDefault();
+                void handleDrop(col.id);
+              }}
+            >
+              <div className="scrum-column-header">
+                <div className="scrum-col-title-group">
+                  <span className="scrum-col-indicator" style={{ backgroundColor: col.color }} />
+                  <div className="scrum-col-title-text">
+                    <h3 className="column-title">{col.title}</h3>
+                    <small className="column-subtitle">{col.subtitle}</small>
+                  </div>
+                </div>
+                <div className="scrum-col-header-actions">
+                  <span className="scrum-count-pill">{colItems.length}</span>
+                  <button
+                    type="button"
+                    className="scrum-col-add-btn"
+                    onClick={() => onCreateItem(col.defaultDate)}
+                    title={`Tambah kegiatan di ${col.title}`}
+                    aria-label={`Tambah kegiatan di ${col.title}`}
+                  >
+                    <Plus size={15} strokeWidth={2.4} />
+                  </button>
+                </div>
+              </div>
+
+              <div className="scrum-cards-list">
+                {colItems.length === 0 ? (
+                  <div className="scrum-empty-column-placeholder">
+                    <span>Belum ada kegiatan</span>
+                  </div>
+                ) : (
+                  colItems.map((item) => {
+                    const unit = (workspace.units || []).find((u) => u.id === item.data.unit_id);
+                    const stakeholder = (workspace.stakeholders || []).find(
+                      (s) => s.id === item.data.stakeholder_id,
+                    );
+                    const linkedMeeting = (workspace.meetings || []).find(
+                      (m) => m.id === item.data.meeting_id,
+                    );
+
+                    return (
+                      <article
+                        key={item.id}
+                        className="scrum-task-card"
+                        draggable
+                        onDragStart={() => setDraggedId(item.id)}
+                        onClick={() => onOpenItem(item)}
+                      >
+                        <div className="card-top-row">
+                          <span className="task-code-tag">
+                            {formatDisplayCode(
+                              item.data.code ? String(item.data.code) : undefined,
+                              'journal',
+                              item.id,
+                            )}
+                          </span>
+                          <span className="task-due-chip task-due-today">
+                            <Calendar size={12} />
+                            <span>{formatDate(String(item.data.date))}</span>
+                          </span>
+                        </div>
+                        <h4 className="card-task-title">{String(item.data.title)}</h4>
+                        {Boolean(item.data.notes) && (
+                          <p className="card-description-snippet">
+                            {String(item.data.notes).slice(0, 90)}
+                            {String(item.data.notes).length > 90 ? '…' : ''}
+                          </p>
+                        )}
+                        <div className="card-bottom-section">
+                          <div className="card-assignee-row">
+                            {unit && (
+                              <span className="scrum-assignee-pill">
+                                Gerai: {String(unit.data.title)}
+                              </span>
+                            )}
+                            {stakeholder && (
+                              <span className="scrum-assignee-pill">
+                                Mitra: {String(stakeholder.data.title)}
+                              </span>
+                            )}
+                            {linkedMeeting && (
+                              <span className="scrum-assignee-pill">
+                                Rapat Terkait
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </article>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function JournalTimelineView({
+  activities,
+  workspace,
+  onOpenItem,
+}: {
+  activities: Item[];
+  workspace: Workspace;
+  onOpenItem: (item: Item) => void;
+}) {
+  if (activities.length === 0) {
+    return (
+      <EmptyState
+        title="Belum ada catatan kegiatan"
+        description="Catatan kegiatan lapangan akan tersusun rapi secara kronologis di linimasa ini."
+        tone="amber"
+        compact
+      />
+    );
+  }
+
+  const sorted = [...activities].sort((a, b) =>
+    String(b.data.date || '').localeCompare(String(a.data.date || '')),
+  );
+
+  return (
+    <div className="journal-timeline-container" aria-label="Linimasa kegiatan lapangan">
+      <div className="timeline-vertical-spine" aria-hidden="true" />
+      <div className="journal-timeline-stream">
+        {sorted.map((item) => {
+          const unit = (workspace.units || []).find((u) => u.id === item.data.unit_id);
+          const stakeholder = (workspace.stakeholders || []).find(
+            (s) => s.id === item.data.stakeholder_id,
+          );
+          const linkedMeeting = (workspace.meetings || []).find(
+            (m) => m.id === item.data.meeting_id,
+          );
+          const joinUrl = meetingJoinUrl(linkedMeeting);
+
+          return (
+            <article key={item.id} className="timeline-task-row">
+              <div className="timeline-node timeline-node-journal" aria-hidden="true">
+                <BookOpen size={14} />
+              </div>
+              <div className="timeline-task-bubble">
+                <div className="timeline-bubble-head">
+                  <div className="timeline-title-wrap">
+                    <span className="task-code-tag">
+                      {formatDisplayCode(
+                        item.data.code ? String(item.data.code) : undefined,
+                        'journal',
+                        item.id,
+                      )}
+                    </span>
+                    <button
+                      type="button"
+                      className="timeline-task-title-btn"
+                      onClick={() => onOpenItem(item)}
+                      title="Lihat / ubah rincian kegiatan"
+                    >
+                      {String(item.data.title)}
+                    </button>
+                    {unit && (
+                      <span className="task-project-name has-project">
+                        {String(unit.data.title)}
+                      </span>
+                    )}
+                  </div>
+                  <span className="task-due-chip task-due-today">
+                    <Calendar size={12} />
+                    <span>{formatDate(String(item.data.date))}</span>
+                  </span>
+                </div>
+                {Boolean(item.data.notes) && (
+                  <p className="timeline-notes-snippet">{String(item.data.notes)}</p>
+                )}
+                <div className="timeline-bubble-meta">
+                  {stakeholder && (
+                    <span className="meta-chip meta-chip-assignee">
+                      <Handshake size={12} />
+                      <span>{String(stakeholder.data.title)}</span>
+                    </span>
+                  )}
+                  {joinUrl && (
+                    <a
+                      href={joinUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="journal-join-chip"
+                      title="Gabung rapat daring"
+                    >
+                      <Video size={11} />
+                      <span>Rapat Daring ↗</span>
+                    </a>
+                  )}
+                </div>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function JournalTableView({
+  activities,
+  workspace,
+  onOpenItem,
+}: {
+  activities: Item[];
+  workspace: Workspace;
+  onOpenItem: (item: Item) => void;
+}) {
+  return (
+    <div className="task-table-wrap journal-table-wrap">
+      <table className="task-table journal-table">
+        <thead>
+          <tr>
+            <th className="col-journal-date">Tanggal</th>
+            <th className="col-journal-main">Kegiatan Lapangan & Uraian</th>
+            <th className="col-journal-relation">Terkait</th>
+            <th className="col-journal-action">
+              <span className="sr-only">Aksi</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {activities.map((row) => {
+            const unit = workspace.units?.find((u) => u.id === row.data.unit_id);
+            const task = workspace['work-items']?.find((t) => t.id === row.data.work_item_id);
+            const stakeholder = workspace.stakeholders?.find(
+              (s) => s.id === row.data.stakeholder_id,
+            );
+            const meeting = workspace.meetings?.find((m) => m.id === row.data.meeting_id);
+            const joinUrl = meetingJoinUrl(meeting);
+
+            return (
+              <tr key={row.id} className="journal-table-row">
+                <td className="col-journal-date">
+                  <span className="journal-date-badge">
+                    <Calendar size={12} />
+                    <span>{formatDate(String(row.data.date))}</span>
+                  </span>
+                </td>
+                <td className="col-journal-main">
+                  <div className="journal-main-cell">
+                    <button
+                      type="button"
+                      className="journal-title-btn"
+                      onClick={() => onOpenItem(row)}
+                      title="Lihat atau ubah rincian kegiatan"
+                    >
+                      <span className="task-code-tag">
+                        {formatDisplayCode(
+                          row.data.code ? String(row.data.code) : undefined,
+                          'journal',
+                          row.id,
+                        )}
+                      </span>
+                      <strong className="journal-title-text">{String(row.data.title)}</strong>
+                    </button>
+                    {Boolean(row.data.notes) && (
+                      <p className="journal-notes-preview">{String(row.data.notes)}</p>
+                    )}
+                  </div>
+                </td>
+                <td className="col-journal-relation">
+                  <div className="journal-relation-chips">
+                    {unit && (
+                      <span className="relation-pill pill-unit" title={`Gerai: ${String(unit.data.title)}`}>
+                        <Building2 size={11} />
+                        <span>{String(unit.data.title)}</span>
+                      </span>
+                    )}
+                    {task ? (
+                      <Link
+                        href={`/tugas?task=${encodeURIComponent(task.id)}`}
+                        className="relation-pill pill-task has-link"
+                        title={`Buka tugas: ${String(task.data.title)}`}
+                      >
+                        <CheckSquare size={11} />
+                        <span>{String(task.data.title)}</span>
+                        <span className={`task-status-mini status-${String(task.data.status || 'rencana')}`}>
+                          {String(task.data.status || 'rencana')}
+                        </span>
+                      </Link>
+                    ) : (
+                      <button
+                        type="button"
+                        className="relation-pill-btn-add"
+                        title="Buat tugas tindak lanjut langsung dari kegiatan ini"
+                        onClick={() => {
+                          window.dispatchEvent(
+                            new CustomEvent('hub-task', {
+                              detail: {
+                                title: `Tindak lanjut: ${row.data.title}`,
+                                description: String(row.data.notes || ''),
+                                notes: `Sumber kegiatan: ${row.id}`,
+                              },
+                            }),
+                          );
+                        }}
+                      >
+                        <Plus size={11} />
+                        <span>+ Tindak Lanjut</span>
+                      </button>
+                    )}
+                    {stakeholder && (
+                      <span className="relation-pill pill-stakeholder" title={`Mitra: ${String(stakeholder.data.title)}`}>
+                        <Handshake size={11} />
+                        <span>{String(stakeholder.data.title)}</span>
+                      </span>
+                    )}
+                    {joinUrl && (
+                      <a
+                        href={joinUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="journal-join-chip"
+                        title="Masuk ruang rapat daring (Google Meet / Zoom)"
+                      >
+                        <Video size={11} />
+                        <span>Gabung rapat ↗</span>
+                      </a>
+                    )}
+                  </div>
+                </td>
+                <td className="col-journal-action">
+                  <button
+                    type="button"
+                    className="table-btn-done btn-journal-open"
+                    onClick={() => onOpenItem(row)}
+                  >
+                    Buka
+                  </button>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 export function Records({
   entity,
   workspace,
@@ -122,6 +727,9 @@ export function Records({
     [showSprintModal, setShowSprintModal] = useState<Item | boolean>(false),
     [showCsvModal, setShowCsvModal] = useState(false),
     [sprintFilter, setSprintFilter] = useState(''),
+    [journalUnit, setJournalUnit] = useState(''),
+    [journalStakeholder, setJournalStakeholder] = useState(''),
+    [journalMeeting, setJournalMeeting] = useState(''),
     [filtersOpen, setFiltersOpen] = useState(false),
     [quickTitle, setQuickTitle] = useState(''),
     [search, setSearch] = useState(''),
@@ -129,15 +737,31 @@ export function Records({
     [workstream, setWorkstream] = useState(''),
     [priority, setPriority] = useState(''),
     [sort, setSort] = useState('due'),
-    [view, setView] = useState(
-      query.get('view') === 'kalender'
-        ? 'kalender'
-        : query.get('view') === 'harian'
-          ? 'harian'
-          : 'daftar',
-    ),
+    [view, setView] = useState<string>(() => {
+      const paramView = query.get('view');
+      if (paramView && ['daftar', 'papan', 'kalender', 'gantt', 'harian'].includes(paramView)) {
+        return paramView;
+      }
+      if (typeof window !== 'undefined') {
+        try {
+          const savedView = localStorage.getItem(`preferred_view_${entity}`);
+          if (savedView && ['daftar', 'papan', 'kalender', 'gantt', 'harian'].includes(savedView)) {
+            return savedView;
+          }
+        } catch {}
+      }
+      return 'daftar';
+    }),
     [error, setError] = useState(''),
     [busy, setBusy] = useState(false);
+  const handleViewChange = (newView: string) => {
+    setView(newView);
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem(`preferred_view_${entity}`, newView);
+      } catch {}
+    }
+  };
   function createTask(date = today(), status = 'rencana') {
     setEdit({
       id: '',
@@ -159,10 +783,21 @@ export function Records({
   useEffect(() => {
     // A sidebar link can change only the query while this page remains mounted.
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (requestedView === 'kalender') setView('kalender');
-    else if (requestedView === 'harian') setView('harian');
-    else setView('daftar');
+    if (requestedView && ['daftar', 'papan', 'kalender', 'gantt', 'harian'].includes(requestedView)) {
+      setView(requestedView);
+    }
   }, [requestedView]);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      const details = document.querySelector('.view-extra-actions[open]');
+      if (details && !details.contains(e.target as Node)) {
+        details.removeAttribute('open');
+      }
+    }
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
   const quickAdd = query.get('baru') === '1';
   function closeTaskDetail() {
     setDetailTask(null);
@@ -173,6 +808,7 @@ export function Records({
     }
   }
   const effectiveFilter = filter ?? (entity === 'work-items' ? query.get('status') || '' : '');
+  const isCompletedArchive = entity === 'work-items' && effectiveFilter === 'selesai';
   const all = (workspace[entity] || []).filter(
       (row) => !scopeId || row.data.workstream_id === scopeId,
     ),
@@ -182,23 +818,34 @@ export function Records({
           JSON.stringify(row.data)
             .toLocaleLowerCase('id')
             .includes(search.toLocaleLowerCase('id')) &&
-          (!effectiveFilter ||
-            (effectiveFilter === 'terlambat'
-              ? String(row.data.due_date) < today() &&
-                !['selesai', 'dibatalkan'].includes(String(row.data.status))
-              : row.data.status === effectiveFilter)) &&
+          (entity !== 'work-items'
+            ? true
+            : isCompletedArchive
+              ? row.data.status === 'selesai'
+              : effectiveFilter === 'terlambat'
+                ? String(row.data.due_date) < today() && isActiveTask(row.data.status)
+                : effectiveFilter
+                  ? row.data.status === effectiveFilter
+                  : isActiveTask(row.data.status)) &&
           (!workstream || row.data.workstream_id === workstream) &&
           (!sprintFilter || row.data.sprint_id === sprintFilter) &&
-          (!priority || row.data.priority === priority),
+          (!priority || row.data.priority === priority) &&
+          (!journalUnit || row.data.unit_id === journalUnit) &&
+          (!journalStakeholder || row.data.stakeholder_id === journalStakeholder) &&
+          (!journalMeeting || row.data.meeting_id === journalMeeting),
       )
       .sort((a, b) =>
         sort === 'title'
           ? String(a.data.title).localeCompare(String(b.data.title), 'id')
           : sort === 'updated'
             ? b.updated_at.localeCompare(a.updated_at)
-            : String(a.data.due_date || a.data.date || '').localeCompare(
-                String(b.data.due_date || b.data.date || ''),
-              ),
+            : isCompletedArchive
+              ? String(b.data.completed_at || b.data.due_date || b.updated_at).localeCompare(
+                  String(a.data.completed_at || a.data.due_date || a.updated_at),
+                )
+              : String(a.data.due_date || a.data.date || '').localeCompare(
+                  String(b.data.due_date || b.data.date || ''),
+                ),
       );
   const update = async (item: Item, changes: Record<string, unknown>) => {
     if (busy) return;
@@ -221,7 +868,14 @@ export function Records({
       onDragStart={(e) => e.dataTransfer.setData('text/plain', row.id)}
     >
       <div className="section-head">
-        <h3>{String(row.data.title)}</h3>
+        <h3>
+          {['work-items', 'journal'].includes(entity) && (
+            <span className="task-code-tag mr-2">
+              {formatDisplayCode(String(row.data.code), entity, row.id)}
+            </span>
+          )}
+          {String(row.data.title)}
+        </h3>
         {Boolean(row.data.status) && (
           <span className={'badge ' + (row.data.status === 'selesai' ? 'ok' : '')}>
             {String(row.data.status)}
@@ -252,15 +906,59 @@ export function Records({
             </span>
           </>
         )}
+        {entity === 'journal' && (
+          <>
+            {Boolean(row.data.work_item_id) && (
+              <span>
+                Tugas:{' '}
+                {String(
+                  workspace['work-items']?.find((t) => t.id === row.data.work_item_id)?.data
+                    .title || 'tidak ditemukan',
+                )}
+              </span>
+            )}
+            {Boolean(row.data.stakeholder_id) && (
+              <span>
+                Mitra:{' '}
+                {String(
+                  workspace.stakeholders?.find((s) => s.id === row.data.stakeholder_id)?.data
+                    .title || 'tidak ditemukan',
+                )}
+              </span>
+            )}
+            {Boolean(row.data.unit_id) && (
+              <span>
+                Gerai:{' '}
+                {String(
+                  workspace.units?.find((u) => u.id === row.data.unit_id)?.data.title ||
+                    'tidak ditemukan',
+                )}
+              </span>
+            )}
+            {(() => {
+              const meeting = workspace.meetings?.find((m) => m.id === row.data.meeting_id);
+              const joinUrl = meetingJoinUrl(meeting);
+              return joinUrl ? (
+                <a
+                  href={joinUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="journal-join-link"
+                  title="Masuk ruang rapat daring (Google Meet / Zoom)"
+                >
+                  <Video size={13} className="inline-icon" />
+                  <span>Gabung rapat ↗</span>
+                </a>
+              ) : null;
+            })()}
+          </>
+        )}
         {Boolean(row.data.assignee) && <span>{String(row.data.assignee)}</span>}
         {Boolean(row.data.priority) && <span>Prioritas {String(row.data.priority)}</span>}
         {Boolean(row.data.due_date || row.data.date) && (
           <span
             className={
-              String(row.data.due_date) < today() &&
-              !['selesai', 'dibatalkan'].includes(String(row.data.status))
-                ? 'late'
-                : ''
+              String(row.data.due_date) < today() && isActiveTask(row.data.status) ? 'late' : ''
             }
           >
             {formatDate(String(row.data.due_date || row.data.date))}
@@ -600,13 +1298,35 @@ export function Records({
         <button onClick={() => (entity === 'work-items' ? setDetailTask(row) : setEdit(row))}>
           Buka catatan
         </button>
+        {entity === 'journal' && (
+          <button
+            type="button"
+            className="btn-journal-followup"
+            onClick={() => {
+              window.dispatchEvent(
+                new CustomEvent('hub-task', {
+                  detail: {
+                    title: `Tindak lanjut: ${row.data.title}`,
+                    description: String(row.data.notes || ''),
+                    notes: `Sumber kegiatan: ${row.id}`,
+                    ...(row.data.work_item_id ? { parent_id: row.data.work_item_id } : {}),
+                  },
+                }),
+              );
+            }}
+            title="Buat tugas tindak lanjut dari kegiatan ini"
+          >
+            + Tindak lanjut
+          </button>
+        )}
         {(entity === 'work-items' || entity === 'checklist') && row.data.status !== 'selesai' && (
           <button
             disabled={busy}
             onClick={() =>
               void update(row, {
-                status: 'selesai',
-                ...(entity === 'work-items' ? { completed_at: today() } : {}),
+                ...(entity === 'work-items'
+                  ? taskStatusChange('complete')
+                  : { status: 'selesai' }),
               })
             }
           >
@@ -641,8 +1361,9 @@ export function Records({
                     disabled={busy}
                     onChange={(e) =>
                       void update(row, {
-                        status: e.target.value,
-                        completed_at: e.target.value === 'selesai' ? today() : '',
+                        ...(entity === 'work-items'
+                          ? selectTaskStatus(e.target.value as TaskStatus)
+                          : { status: e.target.value }),
                       })
                     }
                   >
@@ -709,86 +1430,138 @@ export function Records({
           : `domain-records domain-${entity}`
       }
     >
-      <div className="section-head">
-        <div>
-          <h2>{catalog[entity].title}</h2>
-          <p>{catalog[entity].description}</p>
+      {isCompletedArchive ? (
+        <div className="completed-archive-header">
+          <div className="completed-archive-title-wrap">
+            <div className="completed-archive-icon" aria-hidden="true">
+              <CheckCircle2 size={24} />
+            </div>
+            <div>
+              <h2>Arsip Riwayat Selesai</h2>
+              <p>Rekap tugas yang telah tuntas dikerjakan, diurutkan dan dikelompokkan secara kronologis.</p>
+            </div>
+          </div>
+          <div className="completed-archive-stats">
+            <div className="completed-stat-badge">
+              <span className="stat-label">Total Selesai</span>
+              <strong>{rows.length} tugas</strong>
+            </div>
+            <Link href={scopeId ? `/proyek` : `/tugas`} className="btn-back-to-active-tasks">
+              ← Kembali ke Tugas Aktif
+            </Link>
+          </div>
         </div>
-        <button
-          className="primary"
-          onClick={() =>
-            setEdit(
-              entity === 'organization' && all[0]
-                ? all[0]
-                : scopeId
-                  ? {
-                      id: '',
-                      created_at: '',
-                      updated_at: '',
-                      data: schemas[entity].parse({
-                        title: 'Tugas baru',
-                        due_date: today(),
-                        workstream_id: scopeId,
-                      }),
-                    }
-                  : null,
-            )
-          }
-        >
-          <Plus size={16} />{' '}
-          {entity === 'organization' && all.length
-            ? 'Ubah profil'
-            : entity === 'work-items'
-              ? 'Tugas baru'
-              : 'Tambah'}
-        </button>
-      </div>
-      {entity === 'work-items' && (
-        <div className="database-views" aria-label="Tampilan tugas">
-          {[
-            ['harian', 'Harian', CalendarClock],
-            ['papan', 'Papan', Columns3],
-            ['daftar', 'Daftar', ListTodo],
-            ['kalender', 'Kalender', CalendarDays],
-            ['gantt', 'Gantt', ChartGantt],
-          ].map(([value, label, Icon]) => {
-            const ViewIcon = Icon as typeof ListTodo;
-            return (
-              <button
-                key={String(value)}
-                aria-pressed={view === value}
-                onClick={() => setView(String(value))}
-              >
-                <ViewIcon size={17} />
-                {String(label)}
-              </button>
-            );
-          })}
-          <span>{rows.length} tugas</span>
-          <details className="view-extra-actions">
-            <summary>Lainnya</summary>
-            <button
-              type="button"
-              className="btn-sprint-trigger"
-              title="Kelola Target Periode (Sprint)"
-              onClick={() => setShowSprintModal(true)}
-            >
-              <Target size={15} />
-              <span>Periode kerja</span>
-            </button>
-            <button
-              type="button"
-              className="btn-csv-trigger"
-              title="Tarik & Lepas File CSV"
-              onClick={() => setShowCsvModal(true)}
-            >
-              <UploadCloud size={15} />
-              <span>Impor CSV</span>
-            </button>
-          </details>
+      ) : (
+        <div className="section-head">
+          <div>
+            <h2>{catalog[entity].title}</h2>
+            <p>{catalog[entity].description}</p>
+          </div>
+          <button
+            className="primary"
+            onClick={() =>
+              setEdit(
+                entity === 'organization' && all[0]
+                  ? all[0]
+                  : scopeId
+                    ? {
+                        id: '',
+                        created_at: '',
+                        updated_at: '',
+                        data: schemas[entity].parse({
+                          title: 'Tugas baru',
+                          due_date: today(),
+                          workstream_id: scopeId,
+                        }),
+                      }
+                    : null,
+              )
+            }
+          >
+            <Plus size={16} />{' '}
+            {entity === 'organization' && all.length
+              ? 'Ubah profil'
+              : entity === 'work-items'
+                ? 'Tugas baru'
+                : 'Tambah'}
+          </button>
         </div>
       )}
-      {entity === 'work-items' && (workspace.sprints || []).length > 0 && !sprintFilter && (
+      {(entity === 'work-items' || entity === 'journal') && !isCompletedArchive && (
+        <div className="database-views-bar">
+          <div
+            className="database-views"
+            aria-label={`Tampilan ${entity === 'work-items' ? 'tugas' : 'kegiatan'}`}
+          >
+            {(entity === 'work-items'
+              ? [
+                  ['harian', 'Harian', CalendarClock],
+                  ['papan', 'Papan', Columns3],
+                  ['daftar', 'Daftar', ListTodo],
+                  ['kalender', 'Kalender', CalendarDays],
+                  ['gantt', 'Linimasa', ChartGantt],
+                ]
+              : [
+                  ['daftar', 'Daftar', ListTodo],
+                  ['papan', 'Papan', Columns3],
+                  ['kalender', 'Kalender', CalendarDays],
+                  ['gantt', 'Linimasa', ChartGantt],
+                ]
+            ).map(([value, label, Icon]) => {
+              const ViewIcon = Icon as typeof ListTodo;
+              return (
+                <button
+                  key={String(value)}
+                  aria-pressed={view === value}
+                  onClick={() => handleViewChange(String(value))}
+                >
+                  <ViewIcon size={17} />
+                  {String(label)}
+                </button>
+              );
+            })}
+            <span>
+              {rows.length} {entity === 'work-items' ? 'tugas' : 'kegiatan'}
+            </span>
+          </div>
+
+          {entity === 'work-items' && (
+            <details className="view-extra-actions">
+              <summary className="view-extra-summary">
+                <span>Lainnya</span>
+                <ChevronDown size={13} className="extra-chevron" />
+              </summary>
+              <div className="view-extra-menu">
+                <button
+                  type="button"
+                  className="btn-sprint-trigger"
+                  title="Kelola Target Periode (Sprint)"
+                  onClick={(e) => {
+                    e.currentTarget.closest('details')?.removeAttribute('open');
+                    setShowSprintModal(true);
+                  }}
+                >
+                  <Target size={15} />
+                  <span>Periode kerja</span>
+                </button>
+                <button
+                  type="button"
+                  className="btn-csv-trigger"
+                  title="Tarik & Lepas File CSV"
+                  onClick={(e) => {
+                    e.currentTarget.closest('details')?.removeAttribute('open');
+                    setShowCsvModal(true);
+                  }}
+                >
+                  <UploadCloud size={15} />
+                  <span>Impor CSV</span>
+                </button>
+              </div>
+            </details>
+          )}
+        </div>
+      )}
+      {entity === 'work-items' && (workspace.sprints || []).length > 0 && !sprintFilter && !isCompletedArchive && (
         <div className="active-sprints-row">
           {(workspace.sprints || [])
             .filter((s) => s.data.status === 'aktif')
@@ -803,7 +1576,7 @@ export function Records({
             ))}
         </div>
       )}
-      {entity === 'work-items' && view !== 'kalender' && view !== 'gantt' && (
+      {entity === 'work-items' && !isCompletedArchive && view !== 'kalender' && view !== 'gantt' && (
         <form
           className="today-quick-add-card"
           onSubmit={async (event) => {
@@ -848,37 +1621,6 @@ export function Records({
             >
               {busy ? 'Menyimpan…' : 'Tambah'}
             </button>
-            <button
-              type="button"
-              className="btn-full-task-modal"
-              onClick={() => {
-                setEdit(
-                  scopeId
-                    ? {
-                        id: '',
-                        created_at: '',
-                        updated_at: '',
-                        data: schemas[entity].parse({
-                          title: 'Tugas baru',
-                          due_date: today(),
-                          workstream_id: scopeId,
-                        }),
-                      }
-                    : {
-                        id: '',
-                        created_at: '',
-                        updated_at: '',
-                        data: schemas[entity].parse({
-                          title: 'Tugas baru',
-                          due_date: today(),
-                        }),
-                      },
-                );
-              }}
-              title="Buka formulir lengkap dengan rincian"
-            >
-              + Form lengkap
-            </button>
           </div>
         </form>
       )}
@@ -902,7 +1644,7 @@ export function Records({
             placeholder="Judul, penanggung jawab, catatan…"
           />
         </label>
-        {options[entity + '.status'] && (
+        {options[entity + '.status'] && view !== 'papan' && (
           <label>
             <span className="field-caption">Status</span>
             <Select
@@ -928,6 +1670,55 @@ export function Records({
               ariaLabel="Status"
             />
           </label>
+        )}
+        {entity === 'journal' && (
+          <>
+            <label>
+              <span className="field-caption">Gerai</span>
+              <Select
+                value={journalUnit}
+                onChange={setJournalUnit}
+                options={[
+                  { value: '', label: 'Semua Gerai' },
+                  ...(workspace.units || []).map((row) => ({
+                    value: row.id,
+                    label: String(row.data.title),
+                  })),
+                ]}
+                ariaLabel="Gerai"
+              />
+            </label>
+            <label>
+              <span className="field-caption">Mitra / Pemangku</span>
+              <Select
+                value={journalStakeholder}
+                onChange={setJournalStakeholder}
+                options={[
+                  { value: '', label: 'Semua Mitra' },
+                  ...(workspace.stakeholders || []).map((row) => ({
+                    value: row.id,
+                    label: String(row.data.title),
+                  })),
+                ]}
+                ariaLabel="Mitra"
+              />
+            </label>
+            <label>
+              <span className="field-caption">Rapat Terkait</span>
+              <Select
+                value={journalMeeting}
+                onChange={setJournalMeeting}
+                options={[
+                  { value: '', label: 'Semua Rapat' },
+                  ...(workspace.meetings || []).map((row) => ({
+                    value: row.id,
+                    label: String(row.data.title),
+                  })),
+                ]}
+                ariaLabel="Rapat Terkait"
+              />
+            </label>
+          </>
         )}
         {!scopeId && ['work-items', 'checklist'].includes(entity) && (
           <label>
@@ -996,30 +1787,30 @@ export function Records({
           </>
         )}
       </div>
+      {entity === 'work-items' && !isCompletedArchive && (
+        <SavedTaskViews
+          value={{
+            search,
+            status: effectiveFilter,
+            project: workstream,
+            priority,
+            sort: sort as TaskView['sort'],
+            view: view as TaskView['view'],
+            sprint: sprintFilter,
+          }}
+          onApply={(saved) => {
+            setSearch(saved.search);
+            setFilter(saved.status);
+            setWorkstream(saved.project);
+            setPriority(saved.priority);
+            setSort(saved.sort);
+            setView(saved.view);
+            setSprintFilter(saved.sprint);
+          }}
+        />
+      )}
       {entity === 'work-items' && (
-        <>
-          <SavedTaskViews
-            value={{
-              search,
-              status: effectiveFilter,
-              project: workstream,
-              priority,
-              sort: sort as TaskView['sort'],
-              view: view as TaskView['view'],
-              sprint: sprintFilter,
-            }}
-            onApply={(saved) => {
-              setSearch(saved.search);
-              setFilter(saved.status);
-              setWorkstream(saved.project);
-              setPriority(saved.priority);
-              setSort(saved.sort);
-              setView(saved.view);
-              setSprintFilter(saved.sprint);
-            }}
-          />
-          <TaskBatchActions items={rows} refresh={refresh} />
-        </>
+        <TaskBatchActions items={rows} refresh={refresh} />
       )}
       {error && (
         <p className="notice error" role="alert">
@@ -1027,13 +1818,25 @@ export function Records({
         </p>
       )}
       {entity === 'risks' && <RiskMatrix items={rows} />}
-      {!rows.length && view === 'daftar' && (
-        <div className="empty card">
-          <h3>Belum ada catatan</h3>
-          <p>Mulai dengan menambah {catalog[entity].title.toLowerCase()}, atau ubah filter Anda.</p>
-        </div>
+      {!rows.length && !isCompletedArchive && (
+        <EmptyState
+          title={`Belum ada ${catalog[entity].title.toLowerCase()}`}
+          description={`Mulai dengan menambah ${catalog[entity].title.toLowerCase()} baru atau sesuaikan filter pencarian.`}
+          tone="emerald"
+          action={{
+            label: `Tambah ${catalog[entity].title}`,
+            onClick: () => setEdit(null),
+          }}
+        />
       )}
-      {view === 'harian' && entity === 'work-items' ? (
+      {isCompletedArchive ? (
+        <CompletedTimelineView
+          items={rows}
+          workspace={workspace}
+          onOpenTask={(task) => setDetailTask(task)}
+          onReopenTask={(row) => void update(row, taskStatusChange('reopen'))}
+        />
+      ) : view === 'harian' && entity === 'work-items' ? (
         <DailyTasksView
           tasks={rows}
           workspace={workspace}
@@ -1049,20 +1852,48 @@ export function Records({
           refresh={refresh}
           scopeId={scopeId || workstream || undefined}
         />
+      ) : view === 'gantt' && entity === 'journal' ? (
+        <JournalTimelineView
+          activities={rows}
+          workspace={workspace}
+          onOpenItem={(item) => setEdit(item)}
+        />
       ) : view === 'papan' && entity === 'work-items' ? (
         <ScrumBoardView
-          tasks={rows}
+          tasks={all.filter(
+            (row) =>
+              JSON.stringify(row.data)
+                .toLocaleLowerCase('id')
+                .includes(search.toLocaleLowerCase('id')) &&
+              (!workstream || row.data.workstream_id === workstream) &&
+              (!sprintFilter || row.data.sprint_id === sprintFilter) &&
+              (!priority || row.data.priority === priority),
+          )}
           workspace={workspace}
           onOpenTask={(task) => setDetailTask(task)}
           onCreateTask={(status) => createTask(today(), status)}
           onRefresh={refresh}
         />
-      ) : view === 'kalender' && entity === 'work-items' ? (
+      ) : view === 'papan' && entity === 'journal' ? (
+        <JournalBoardView
+          activities={rows}
+          workspace={workspace}
+          onOpenItem={(item) => setEdit(item)}
+          onCreateItem={(date) => createTask(date)}
+          onRefresh={refresh}
+        />
+      ) : view === 'kalender' && (entity === 'work-items' || entity === 'journal') ? (
         <TaskCalendar
           items={rows}
           render={card}
-          onCreate={createTask}
-          onEdit={(item) => setDetailTask(item)}
+          onCreate={(date) => createTask(date)}
+          onEdit={(item) => (entity === 'work-items' ? setDetailTask(item) : setEdit(item))}
+        />
+      ) : entity === 'journal' && rows.length ? (
+        <JournalTableView
+          activities={rows}
+          workspace={workspace}
+          onOpenItem={(item) => setEdit(item)}
         />
       ) : entity === 'work-items' && rows.length ? (
         <div className="task-table-wrap">
@@ -1072,7 +1903,9 @@ export function Records({
                 <th className="col-task-title">Tugas & Proyek</th>
                 <th className="col-task-status">Status</th>
                 <th className="col-task-priority">Prioritas</th>
-                <th className="col-task-due">Tenggat</th>
+                <th className="col-task-due">
+                  {isCompletedArchive ? 'Diselesaikan' : 'Tenggat'}
+                </th>
                 <th className="col-task-assignee">Penanggung Jawab</th>
                 <th className="col-task-action">
                   <span className="sr-only">Aksi</span>
@@ -1080,134 +1913,145 @@ export function Records({
               </tr>
             </thead>
             <tbody>
-              {rows.map((row) => {
-                const isDone = row.data.status === 'selesai';
-                const isLate =
-                  String(row.data.due_date) < today() &&
-                  !['selesai', 'dibatalkan'].includes(String(row.data.status));
-                const isToday =
-                  String(row.data.due_date) === today() &&
-                  !['selesai', 'dibatalkan'].includes(String(row.data.status));
-                const project = workspace.workstreams?.find((p) => p.id === row.data.workstream_id);
-                const subtasks = Array.isArray(row.data.subtasks) ? row.data.subtasks : [];
-                const doneSubtasks = subtasks.filter((s: { done?: boolean }) => s.done).length;
-                const assigneeName = String(row.data.assignee || '').trim();
+              {(() => {
+                const renderTableRow = (row: Item) => {
+                  const isDone = row.data.status === 'selesai';
+                  const isLate =
+                    String(row.data.due_date) < today() && isActiveTask(row.data.status);
+                  const isToday =
+                    String(row.data.due_date) === today() && isActiveTask(row.data.status);
+                  const project = workspace.workstreams?.find((p) => p.id === row.data.workstream_id);
+                  const subtasks = Array.isArray(row.data.subtasks) ? row.data.subtasks : [];
+                  const doneSubtasks = subtasks.filter((s: { done?: boolean }) => s.done).length;
+                  const assigneeName = String(row.data.assignee || '').trim();
 
-                return (
-                  <tr key={row.id} className={isDone ? 'row-completed' : ''}>
-                    <td className="col-task-title">
-                      <div className="task-title-cell">
-                        <button
-                          type="button"
-                          className={`task-title-btn ${isDone ? 'is-done-text' : ''}`}
-                          onClick={() => setDetailTask(row)}
-                          title="Buka rincian tugas"
-                        >
-                          <span className="task-title-primary">
-                            {Boolean(row.data.code) && (
-                              <span className="task-code-tag">{String(row.data.code)}</span>
-                            )}
-                            <span className="task-title-text">{String(row.data.title)}</span>
-                          </span>
-                          <span className="task-title-sub">
-                            <span
-                              className={`task-project-name ${project ? 'has-project' : ''}`}
-                            >
-                              {String(project?.data.title || 'Tanpa proyek')}
+                  return (
+                    <tr key={row.id} className={isDone ? 'row-completed' : ''}>
+                      <td className="col-task-title">
+                        <div className="task-title-cell">
+                          <button
+                            type="button"
+                            className={`task-title-btn ${isDone ? 'is-done-text' : ''}`}
+                            onClick={() => setDetailTask(row)}
+                            title="Buka rincian tugas"
+                          >
+                            <span className="task-title-primary">
+                              <span className="task-code-tag">
+                                {formatDisplayCode(String(row.data.code), 'work-items', row.id)}
+                              </span>
+                              <span className="task-title-text">{String(row.data.title)}</span>
                             </span>
-                            {subtasks.length > 0 && (
-                              <span className="task-subtasks-count">
-                                · {doneSubtasks}/{subtasks.length} subtugas
+                            <span className="task-title-sub">
+                              <span
+                                className={`task-project-name ${project ? 'has-project' : ''}`}
+                              >
+                                {String(project?.data.title || 'Tanpa proyek')}
                               </span>
-                            )}
-                            {Boolean(row.data.recurrence && row.data.recurrence !== 'tidak') && (
-                              <span className="task-recurrence-text">
-                                · {formatChoiceLabel(String(row.data.recurrence))}
-                              </span>
-                            )}
-                          </span>
-                        </button>
-                      </div>
-                    </td>
-                    <td className="col-task-status">
-                      <label className="task-status-field">
-                        <span className="sr-only">Status {String(row.data.title)}</span>
-                        <select
-                          disabled={busy}
-                          className={`task-status-select status-${row.data.status}`}
-                          value={String(row.data.status)}
-                          onChange={(event) =>
-                            void update(row, {
-                              status: event.target.value,
-                              completed_at: event.target.value === 'selesai' ? today() : '',
-                            })
-                          }
+                              {subtasks.length > 0 && (
+                                <span className="task-subtasks-count">
+                                  · {doneSubtasks}/{subtasks.length} subtugas
+                                </span>
+                              )}
+                              {Boolean(row.data.recurrence && row.data.recurrence !== 'tidak') && (
+                                <span className="task-recurrence-text">
+                                  · {formatChoiceLabel(String(row.data.recurrence))}
+                                </span>
+                              )}
+                            </span>
+                          </button>
+                        </div>
+                      </td>
+                      <td className="col-task-status">
+                        <label className="task-status-field">
+                          <span className="sr-only">Status {String(row.data.title)}</span>
+                          <select
+                            disabled={busy}
+                            className={`task-status-select status-${row.data.status}`}
+                            value={String(row.data.status)}
+                            onChange={(event) =>
+                              void update(row, selectTaskStatus(event.target.value as TaskStatus))
+                            }
+                          >
+                            {options['work-items.status'].map((value) => (
+                              <option key={value} value={value}>
+                                {formatChoiceLabel(value)}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                      </td>
+                      <td className="col-task-priority">
+                        <span
+                          className={`priority-badge priority-${row.data.priority || 'normal'}`}
                         >
-                          {options['work-items.status'].map((value) => (
-                            <option key={value} value={value}>
-                              {formatChoiceLabel(value)}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-                    </td>
-                    <td className="col-task-priority">
-                      <span
-                        className={`priority-badge priority-${row.data.priority || 'normal'}`}
-                      >
-                        {formatChoiceLabel(String(row.data.priority || 'normal'))}
-                      </span>
-                    </td>
-                    <td className="col-task-due">
-                      <div className="task-due-wrap">
-                        <Calendar size={12} className="task-due-icon" />
-                        {isLate ? (
-                          <span className="task-due task-due-late" title="Tenggat terlewat">
-                            {formatDate(String(row.data.due_date))}
+                          {formatChoiceLabel(String(row.data.priority || 'normal'))}
+                        </span>
+                      </td>
+                      <td className="col-task-due">
+                        {isDone && row.data.completed_at ? (
+                          <span className="task-due-chip task-due-done" title="Tanggal diselesaikan">
+                            <Calendar size={12} className="task-due-icon" />
+                            <span>Selesai {formatDate(String(row.data.completed_at))}</span>
+                          </span>
+                        ) : isLate ? (
+                          <span className="task-due-chip task-due-late" title="Tenggat terlewat">
+                            <Calendar size={12} className="task-due-icon" />
+                            <span>{formatDate(String(row.data.due_date))}</span>
                           </span>
                         ) : isToday ? (
-                          <span className="task-due task-due-today" title="Jatuh tempo hari ini">
-                            Hari Ini
+                          <span className="task-due-chip task-due-today" title="Jatuh tempo hari ini">
+                            <Calendar size={12} className="task-due-icon" />
+                            <span>Hari Ini</span>
+                          </span>
+                        ) : row.data.due_date ? (
+                          <span className="task-due-chip task-due-normal" title="Tenggat waktu">
+                            <Calendar size={12} className="task-due-icon" />
+                            <span>{formatDate(String(row.data.due_date))}</span>
                           </span>
                         ) : (
-                          <span className="task-due task-due-normal">
-                            {row.data.due_date ? formatDate(String(row.data.due_date)) : '—'}
-                          </span>
+                          <span className="task-due-empty">—</span>
                         )}
-                      </div>
-                    </td>
-                    <td className="col-task-assignee">
-                      {assigneeName ? (
-                        <div className="task-assignee-cell">
-                          <span className="task-assignee-avatar">
-                            {assigneeName[0].toUpperCase()}
+                      </td>
+                      <td className="col-task-assignee">
+                        {assigneeName ? (
+                          <span className="task-assignee-pill" title={`Penanggung jawab: ${assigneeName}`}>
+                            {assigneeName}
                           </span>
-                          <span className="task-assignee-name">{assigneeName}</span>
-                        </div>
-                      ) : (
-                        <span className="task-assignee-empty">—</span>
-                      )}
-                    </td>
-                    <td className="col-task-action">
-                      {!isDone ? (
-                        <button
-                          type="button"
-                          className="table-btn-done"
-                          disabled={busy}
-                          onClick={() =>
-                            void update(row, { status: 'selesai', completed_at: today() })
-                          }
-                          title="Tandai tugas selesai"
-                        >
-                          Selesai
-                        </button>
-                      ) : (
-                        <span className="task-done-label">Selesai</span>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
+                        ) : (
+                          <span className="task-assignee-empty">—</span>
+                        )}
+                      </td>
+                      <td className="col-task-action">
+                        {!isDone ? (
+                          <button
+                            type="button"
+                            className="table-btn-done"
+                            disabled={busy}
+                            onClick={() => void update(row, taskStatusChange('complete'))}
+                            title="Tandai tugas selesai"
+                          >
+                            Selesai
+                          </button>
+                        ) : isCompletedArchive ? (
+                          <button
+                            type="button"
+                            className="table-btn-reopen"
+                            disabled={busy}
+                            onClick={() => void update(row, taskStatusChange('reopen'))}
+                            title="Buka kembali tugas ini (kembalikan ke rencana)"
+                          >
+                            Buka Kembali ↩
+                          </button>
+                        ) : (
+                          <span className="task-done-label">Selesai</span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                };
+
+                return rows.map(renderTableRow);
+              })()}
             </tbody>
           </table>
         </div>
@@ -1234,9 +2078,12 @@ export function Records({
                   {upcoming.length > 0 ? (
                     <div className="records">{upcoming.map(card)}</div>
                   ) : (
-                    <div className="empty card compact">
-                      <p>Tidak ada rapat yang terjadwal hari ini atau mendatang.</p>
-                    </div>
+                    <EmptyState
+                      title="Tidak ada agenda rapat"
+                      description="Tidak ada rapat yang terjadwal untuk hari ini atau mendatang."
+                      tone="purple"
+                      compact
+                    />
                   )}
                 </section>
 
@@ -1266,12 +2113,11 @@ export function Records({
         <Editor
           entity={entity}
           item={edit || undefined}
-          quick={quickAdd}
+          quick={quickAdd && entity === 'work-items'}
           workspace={workspace}
           onClose={() => {
             setEdit(undefined);
-            if (quickAdd)
-              router.replace(entity === 'work-items' ? '/tugas' : window.location.pathname);
+            if (quickAdd) router.replace(entity === 'work-items' ? '/tugas' : window.location.pathname);
           }}
           onSaved={refresh}
         />
@@ -1285,6 +2131,16 @@ export function Records({
           workspace={workspace}
           onClose={closeTaskDetail}
           onUpdated={refresh}
+          onFullEdit={(task) => {
+            closeTaskDetail();
+            setEdit(task);
+          }}
+          onDelete={async (task) => {
+            if (!window.confirm(`Hapus tugas "${task.data.title || 'ini'}"? Tindakan ini tidak dapat dibatalkan.`)) return;
+            closeTaskDetail();
+            await api('work-items', { id: task.id, data: { ...task.data, status: 'dibatalkan' } });
+            await refresh();
+          }}
           onPrev={() => {
             const idx = rows.findIndex((t) => t.id === detailTask.id);
             if (idx > 0) setDetailTask(rows[idx - 1]);

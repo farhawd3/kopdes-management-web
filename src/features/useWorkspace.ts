@@ -7,20 +7,42 @@ import type { ListQuery } from './query';
 export type Workspace = Partial<Record<Entity, Item[]>>;
 type Page = { items: Item[]; hasMore: boolean; nextOffset: number };
 export type LoadScope = Pick<ListQuery, 'scope' | 'q' | 'from' | 'to' | 'project'>;
+type WorkspaceCacheEntry = {
+  data: Workspace;
+  more: Partial<Record<Entity, number>>;
+  operations: boolean;
+  timestamp: number;
+};
+
+const workspaceCache = new Map<string, WorkspaceCacheEntry>();
+
+export function invalidateWorkspaceCache(pattern?: string) {
+  if (!pattern) {
+    workspaceCache.clear();
+  } else {
+    for (const key of workspaceCache.keys()) {
+      if (key.includes(pattern)) workspaceCache.delete(key);
+    }
+  }
+}
+
 export function useWorkspace(
   slug = 'beranda',
   scope: LoadScope = { scope: 'current' },
   record?: { entity: Entity; id: string },
 ) {
-  const [data, setData] = useState<Workspace>({}),
-    [loading, setLoading] = useState(true),
-    [error, setError] = useState('');
-  const [operations, setOperations] = useState(false);
-  const [more, setMore] = useState<Partial<Record<Entity, number>>>({});
-  const [fetching, setFetching] = useState<Entity | null>(null);
-  const generation = useRef(0);
   const scopeKey = JSON.stringify(scope),
     recordKey = JSON.stringify(record);
+  const cacheKey = `${slug}:${scopeKey}:${recordKey}`;
+  const initialCache = workspaceCache.get(cacheKey);
+
+  const [data, setData] = useState<Workspace>(() => initialCache?.data || {}),
+    [loading, setLoading] = useState(() => !initialCache),
+    [error, setError] = useState('');
+  const [operations, setOperations] = useState(() => initialCache?.operations || false);
+  const [more, setMore] = useState<Partial<Record<Entity, number>>>(() => initialCache?.more || {});
+  const [fetching, setFetching] = useState<Entity | null>(null);
+  const generation = useRef(0);
   const pathFor = useCallback(
     (entity: Entity, offset = 0) => {
       const selection: LoadScope = JSON.parse(scopeKey);
@@ -63,14 +85,19 @@ export function useWorkspace(
         next[selected.entity] = [...(next[selected.entity] || []), ...detail.items];
       }
       if (current !== generation.current) return;
-      setData(next);
-      setMore(
-        Object.fromEntries(
-          entries
-            .filter(([, page]) => page.hasMore)
-            .map(([entity, page]) => [entity, page.nextOffset]),
-        ),
+      const nextMore = Object.fromEntries(
+        entries
+          .filter(([, page]) => page.hasMore)
+          .map(([entity, page]) => [entity, page.nextOffset]),
       );
+      setData(next);
+      setMore(nextMore);
+      workspaceCache.set(cacheKey, {
+        data: next,
+        more: nextMore,
+        operations: capabilities.operations,
+        timestamp: Date.now(),
+      });
       window.dispatchEvent(new CustomEvent('hub-workspace', { detail: next }));
       setOperations(capabilities.operations);
       setError('');
@@ -82,7 +109,7 @@ export function useWorkspace(
     } finally {
       if (current === generation.current) setLoading(false);
     }
-  }, [slug, pathFor, recordKey]);
+  }, [slug, pathFor, recordKey, cacheKey]);
   const loadMore = async (entity: Entity) => {
     if (fetching || more[entity] === undefined) return;
     const current = generation.current;
@@ -118,13 +145,22 @@ export function useWorkspace(
   };
   useEffect(() => {
     // Synchronize requests with the page and explicit archive filters.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setLoading(true);
+    // Stale-while-revalidate: if cached data exists, render immediately without flash
+    const cached = workspaceCache.get(cacheKey);
+    if (cached) {
+      setData(cached.data);
+      setMore(cached.more);
+      setOperations(cached.operations);
+      setLoading(false);
+      window.dispatchEvent(new CustomEvent('hub-workspace', { detail: cached.data }));
+    } else {
+      setLoading(true);
+    }
     void refresh();
     const requestRef = generation;
     return () => {
       requestRef.current++;
     };
-  }, [refresh]);
+  }, [refresh, cacheKey]);
   return { data, loading, error, refresh, operations, more, loadMore, fetching };
 }

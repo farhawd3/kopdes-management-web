@@ -1,5 +1,320 @@
 # Status proyek — 2 Oktober 2026
 
+## Paket Perapihan Menyeluruh, Harmonisasi Judul & Optimalisasi Antarmuka Mobile (2 Oktober 2026)
+
+- **Eliminasi Judul Halaman Redundan (`WorkspacePage.tsx`, `Settings.tsx`, `personal.css`)**:
+  - Menghapus blok `page-heading` dobel di `WorkspacePage.tsx` yang sebelumnya mencetak judul ganda (seperti "Kegiatan" di atas "Kegiatan", atau "Tugas" di atas "Tugas").
+  - Menjadikan `section-head` milik masing-masing fitur (`Records`, `Operations`, `Projects`, `Reports`, `FollowUps`, `Settings`, dsb.) sebagai satu-satunya kepala halaman kanonik lengkap dengan deskripsi dan tombol aksi.
+  - Memberikan `section-head` resmi pada `Settings.tsx` agar selaras dengan seluruh halaman sistem.
+- **Perapihan Banner Form Tugas (`Editor.tsx` & `polish.css`)**:
+  - Membatasi lebar banner intro `.task-form-intro` agar kompak (`max-width: 580px; margin: 4px 0 14px;`) pada desktop dan responsive rapi pada mobile.
+  - Memperpendek redaksi tombol menjadi *"Detail lainnya: opsi lanjutan, kendala & subtugas"*, menghilangkan tombol run-on yang sebelumnya melebar canggung.
+- **Standarisasi Tipografi Dropdown Global (`personal.css`, `globals.css`, `workspace.css`)**:
+  - Menyelaraskan seluruh elemen `select`, `select option`, `select optgroup`, `.custom-select-trigger`, `.custom-select-option`, `.field-select`, dan `.task-status-select` ke `var(--font-sans)` ukuran 13.5px dengan anti-aliasing tajam.
+  - Menghapus rendering font bawaan browser pada Chrome base-select.
+- **Pemberian Gaya Lengkap Input Kalender / Tanggal (`personal.css`, `globals.css`)**:
+  - Memberikan gaya visual konsisten untuk semua `input[type="date"]`, `input[type="month"]`, dan `input[type="time"]` di seluruh modal (`SprintModal`, `Reports`, `TaskTimeline`, `TaskBatchActions`, `Editor`).
+  - Menambahkan border halus, tinggi kontrol standar 42px, radius 10px, font sans serasi, indikator kalender webkit dengan invert gelap otomatis di tema dark mode.
+- **Perbaikan Dropdown Toolbar "Perlu Perhatian" di Mobile (`FollowUps.tsx` & `personal.css`)**:
+  - Menata ulang `.follow-up-toolbar` dan `.follow-up-filter-group` pada layar $\le 768$px menjadi tumpukan vertikal bersih dengan dropdown seleksi selebar 100%, menghilangkan terpotongnya dropdown filter di ponsel.
+- **Penyelarasan Tombol Aksi Dock Ponsel (`AppShell.tsx` & `polish.css`)**:
+  - Menghilangkan bulatan neon mengambang setinggi `-8px` / `-12px` yang mencolok sendiri di bilah bawah.
+  - Menyelaraskan tombol aksi cepat ke tinggi standar 48px dengan aksen pastel lembut `var(--brand-soft)` yang rapi dan serasi dengan 4 tombol dock lainnya (Beranda, Tugas, Kegiatan, Menu).
+- **Perbaikan Penataan "Tugas Baru" & Riwayat Selesai di Mobile (`personal.css`)**:
+  - Menghilangkan hack margin negatif `-52px` pada header `.task-database` di ponsel.
+  - Menata ulang `.task-database > .section-head` di mobile dengan judul, deskripsi, dan tombol `+ Tugas baru` yang tertata proporsional.
+  - Memperbaiki layout `.completed-archive-header` dan linimasa `.completed-github-timeline` di mobile: padding disesuaikan (20px), tombol buka kembali tertata tanpa menabrak judul, dan tombol kembali ke tugas aktif memenuhi lebar ponsel dengan nyaman.
+- **Pemberian Jarak Bawah pada Status "Semua Terkendali" (`FollowUps.tsx` & `personal.css`)**:
+  - Membungkus status bersih dengan `.follow-up-compact-container` dan memberikan `margin-bottom: 20px;` pada `.follow-up-compact-bar.is-clean` agar tidak mepet dengan kartu ringkasan di bawahnya.
+- **Koreksi Tautan Logo Topbar (`AppShell.tsx`)**:
+  - Memperbaiki tautan avatar / emblem profil di bilah navigasi atas dari `/pengaturan` kembali ke `/beranda`.
+- **Verifikasi Kualitas**: 143/143 tes lulus (19 berkas), 0 error TypeScript, Next.js Turbopack build sukses 100%.
+
+## Rombak Navigasi Mobile-First (Mobile App Sheet Hub), Skill Clean Code & Interaktivitas Native Mobile (2 Oktober 2026)
+
+- **Pembentukan Skill Clean Code (`.agents/skills/clean-code/SKILL.md`)**:
+  - Menyimpan panduan rekayasa kode bersih, modular, type-safe, dan efisien untuk agen AI: arsitektur domain (`src/features/<domain>`), standar mobile-first (area sentuh min 44px, safe area insets, pencegahan horizontal overflow), rumus tunggal progres di `lib/progress.ts`, variabel pastel universal, SWR in-memory caching di `useWorkspace.ts`, dan disiplin verifikasi 3 lapis.
+- **Rombak Total Navigasi Mobile ("Mobile App Sheet Hub") (`AppShell.tsx` & `personal.css`)**:
+  - Menggantikan sidebar desktop kaku yang meluncur di layar ponsel dengan **Mobile App Sheet Hub** interaktif yang meluncur halus dari bawah (*slide-up bottom sheet*).
+  - Dilengkapi bilah pegangan sentuh (*drag handle*), chip profil manajer & cabang koperasi, tombol pencarian instan (⌘K), dan tombol tutup 1-ketuk.
+  - Kartu navigasi dikelompokkan ke dalam 4 domain operasional utama dengan aksen warna pastel, ikon cerah, dan deskripsi singkat 1 baris:
+    - **Pekerjaan & Proyek** (Hari Ini, Tugas & Papan, Proyek Strategis, Linimasa Gantt, Perlu Perhatian)
+    - **Pencatatan Buku** (Ringkasan Buku, Buku Kas, Stok Opname, Barang Dagangan, Buku Anggota)
+    - **Operasional Gerai** (Unit Toko, Checklist Kesiapan, Risiko & Isu, Laporan Kerja)
+    - **Koordinasi & Berkas** (Rapat & Notula, Dokumen Resmi, Mitra & Kontak, Petugas & Tim)
+  - Footer utilitas cepat terintegrasi: Ganti Mode Terang/Gelap, Kunci Aplikasi PIN, dan Panduan.
+- **Penyederhanaan Navigasi Desktop**:
+  - Mengelompokkan ulang 22 menu flat menjadi hirarki domain logis yang tidak membingungkan bagi manajer.
+- **Interaktivitas Mikro Ramah Sentuh (Mobile Touch Micro-Interactions)**:
+  - Menerapkan umpan balik sentuhan taktil (*active press scale* `0.96`) pada seluruh kartu menu, tombol dock, tombol aksi cepat, dan empty state.
+  - Memastikan seluruh kontrol interaktif memenuhi area sentuh ergonomis minimal 44×44 px.
+  - Menyesuaikan laci detail tugas (`TaskDetailDrawer`) agar memanfaatkan lebar penuh layar ponsel (`100vw`) dengan bantalan aman `env(safe-area-inset-bottom)`.
+  - Mengubah dialog aksi manajer (`ManagerActionModal`) menjadi bottom-sheet modern pada layar ponsel.
+- **Verifikasi Kualitas**: 143/143 tes lulus (19 berkas), 0 error TypeScript, Next.js Turbopack build sukses 100%.
+
+## Paket Pembaruan Mobile-First, Kecepatan SWR Cache, Form Terpadu & Redesain Visual (2 Oktober 2026)
+
+- **Mobile Rutinitas di Urutan Teratas (`personal.css`)**:
+  - Pada tampilan mobile (`@media (max-width: 768px)`), kartu "Rutinitas Manajer" (`.home-routine-card`) diberi `order: -1` dan kontainer ringkasan `.home-overview` dijadikan `display: contents`.
+  - Rutinitas harian manajer gerai kini langsung muncul di bagian paling atas beranda saat dibuka dari smartphone, tanpa harus menggulir ke bawah.
+- **Pembersihan Redundansi Header & Identitas Sidebar (`AppShell.tsx` & `personal.css`)**:
+  - Menghapus tulisan nama manajer yang redundan di sebelah badge avatar pada topbar desktop & mobile, menyisakan chip profil inisial yang rapi dan elegan.
+  - Mengubah subjudul sidebar dari "KDMP Puntukrejo" yang berulang dengan judul utama menjadi deskripsi peran yang jelas: *"Ruang Kerja Manajer"*.
+  - Mengubah tautan emblem logo di navigasi mobile agar langsung membuka `/pengaturan` untuk kemudahan kustomisasi.
+- **Tombol Tambah Cepat Minimalis (`AppShell.tsx` & `personal.css`)**:
+  - Menghapus label teks "Tambah" dari tombol aksi cepat di topbar (`.quick-action-hub-btn`), mengubahnya menjadi tombol ikon 36×36 px seragam dengan animasi hover dan fokus yang halus.
+- **Redesain Total "Penyelesaian 7 Hari" (`DashboardCharts.tsx` & `personal.css`)**:
+  - Mengubah grafik menjadi kartu eksekutif: metrik total penyelesaian besar dan tebal, indikator kecepatan rata-rata harian (`⌀ X/hari`), pill penanda hari puncak (`Puncak: Sen (X)`), dan chip reset filter interaktif.
+  - Batang grafik dirancang ulang dengan sudut membulat elegan, gradien hijau segar, pill tanggal di bawah nama hari (misal `Jum 02`), dan titik penanda hari ini (*today indicator*).
+- **Pembuatan Rekor Terkait Langsung dari Form Modal (`Editor.tsx` & `personal.css`)**:
+  - Menambahkan pembuat inline pada form:
+    - **Rapat Online**: Manajer dapat langsung membuat jadwal rapat daring lengkap dengan link Google Meet / Zoom tanpa meninggalkan form kegiatan atau tugas.
+    - **Dokumen**: Memungkinkan pembuatan dokumen pendukung baru langsung di tempat.
+    - **Tugas Tindak Lanjut**: Form kegiatan kini menyediakan tombol pembuatan tugas terkait secara inline.
+  - Rekor yang baru dibuat otomatis tersinkronisasi ke daftar opsi referensi dan langsung terpilih.
+- **Perbaikan Bug Latar Belakang Hitam Modal Periode Kerja (`SprintModal.tsx` & `personal.css`)**:
+  - Memperbaiki bug di mana backdrop gelap modal periode kerja (sprint) hanya mencakup kotak konten di layar tertentu.
+  - Menggunakan `createPortal(modalContent, document.body)` dan styling CSS `position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 9999 !important;` sehingga backdrop menjamin penutupan 100% viewport.
+- **Redesain Relasi Tindak Lanjut pada Kegiatan (`Records.tsx`)**:
+  - Pada tampilan tabel kegiatan (`JournalTableView`), relasi tugas tindak lanjut diperbarui: jika ada tugas terkait, tampil sebagai chip status interaktif dengan badge status dan tautan langsung ke detail tugas (`/tugas?task=...`); jika belum ada, tersedia tombol 1-klik `+ Tindak Lanjut` yang ramah jempol.
+- **Skeleton Loading Adaptif Cerdas (`SkeletonLoading.tsx` & `WorkspacePage.tsx`)**:
+  - Menggantikan skeleton statis tunggal dengan skeleton adaptif yang membaca slug halaman aktif:
+    - Halaman Tugas & Kegiatan (`tugas`, `jurnal`): Menampilkan skeleton tabel dengan header kolom dan baris placeholder.
+    - Halaman Proyek (`proyek`): Menampilkan skeleton kartu proyek dengan badge, bilah progres, dan pill meta.
+    - Halaman Beranda (`beranda`): Menampilkan skeleton dasbor lengkap dengan kartu metrik dan grafik.
+- **Peningkatan Kecepatan & Performa Pemuatan (SWR Cache di `useWorkspace.ts`)**:
+  - Mengimplementasikan *in-memory cache* dengan pola *stale-while-revalidate*.
+  - Navigasi antar-halaman utama (`/beranda`, `/tugas`, `/proyek`, `/jurnal`) langsung menyajikan data dari memori dalam 0 ms tanpa kedipan layar (*loading flicker*) atau jeda skeleton kosong, lalu melakukan sinkronisasi latar belakang secara tenang.
+- **Standardisasi Desain Visual & Komponen Empty State (`EmptyState.tsx`, `globals.css`, `personal.css`)**:
+  - Mendefinisikan token warna pastel terpadu pada CSS variabel global (`--pastel-emerald-*`, `--pastel-blue-*`, `--pastel-amber-*`, `--pastel-purple-*`, `--pastel-rose-*`) untuk tema terang dan gelap.
+  - Membuat komponen `EmptyState` standar dengan variasi pastel, ikon bersih, judul ringkas, dan tombol aksi terstruktur.
+  - Menggantikan semua placeholder kosong mentah di `Records.tsx`, `Projects.tsx`, dan `TaskTimeline.tsx` dengan komponen `EmptyState`.
+  - Menerapkan aksen garis pastel pada kartu proyek dan kartu pengaturan.
+- **Papan Tugas Ramah Sentuh & Ponsel (`ScrumBoardView.tsx` & `personal.css`)**:
+  - Menambahkan tombol aksi geser status instan pada setiap kartu Scrum (`Mulai Kerja →`, `← Rencana`, `✓ Selesai`, `↺ Buka Lagi`).
+  - Memudahkan manajer memindahkan tugas antar-tahapan pada layar ponsel/tablet tanpa terganggu oleh gestur geser kolom horizontal atau keterbatasan sentuh drag-and-drop HTML5.
+- **Verifikasi Kualitas**: 143/143 tes lulus (19 berkas), 0 error TypeScript, Next.js Turbopack build sukses 100% (9/9 route).
+
+## Pembaruan UI/UX Komprehensif, Pemisahan Kegiatan & Skrip Reset Database Bersih (2 Oktober 2026)
+
+- **Warna & Visual Tugas Hari Ini (`TodayView.tsx` & `personal.css`)**:
+  - Menambahkan aksen warna prioritas spesifik pada kartu tugas hari ini:
+    - `priority-mendesak`: Garis aksen merah kirmizi dengan latar gradien halus kemerahan.
+    - `priority-tinggi`: Garis aksen kuning amber hangat.
+    - `priority-sedang`: Garis aksen hijau zamrud brand KDMP.
+    - `priority-rendah`: Garis aksen lavender lembut.
+  - Kartu tugas terlambat diberi penanda visual yang jelas tanpa membebani mata.
+- **Tombol Tambah Menarik & Floating Action Button (FAB) Mobile (`TodayView.tsx`)**:
+  - Di layar seluler/ponsel (`max-width: 768px`), ditambahkan tombol aksi mengambang **FAB (+ Tugas Baru)** di sudut kanan bawah dengan elevasi bayangan modern, mudah dijangkau dengan satu ibu jari.
+  - Tombol submit cepat di bagian atas dilengkapi ikon Plus dan gradien tombol yang lebih menarik.
+- **Penyederhanaan Redundansi Nama & Profil Manajer (`AppShell.tsx` & `Dashboard.tsx`)**:
+  - Menghapus tulisan berulang "Ruang kerja pribadi" di topbar. Profil kini berwujud chip ramping: avatar inisial berwarna dan nama manajer.
+  - Mengubah eyebrow dasbor menjadi "Dasbor Manajer — KDMP Puntukrejo".
+- **Penyingkatan Otomatis Nama Koperasi pada Logo Sidebar (`AppShell.tsx`)**:
+  - Menambahkan fungsi `getCoopShortName()`: nama panjang seperti *"Koperasi Desa Mandiri Penuh Puntukrejo"* otomatis diringkas menjadi *"KDMP Puntukrejo"* pada header sidebar, dengan nama lengkap tetap tersedia saat kursor diarahkan (*tooltip title*).
+- **Redesain Grafik Penyelesaian 7 Hari (`DashboardCharts.tsx` & `personal.css`)**:
+  - Menambahkan kartu ringkasan di atas grafik: metrik angka besar penyelesaian 7 hari dan pill reset filter aktif.
+  - Batang grafik dipercantik dengan gradien hijau modern, pill tanggal di bawah nama hari (misal: "Jum 02"), indikator titik khusus untuk hari ini, dan interaksi klik filter yang presisi.
+- **Pembedaan Kegiatan: Daftar vs Linimasa & Perampingan Kalender (`Records.tsx` & `TaskCalendar.tsx`)**:
+  - Mengeliminasi redundansi antara tampilan Daftar dan Linimasa pada Kegiatan (`/jurnal`):
+    - **Daftar**: Menggunakan tabel kompak terstruktur (`JournalTableView`) dengan kolom Tanggal, Uraian Temuan Lapangan, Keterhubungan (Gerai, Tugas, Mitra), Tautan Rapat, dan tombol aksi Buka.
+    - **Linimasa**: Tetap menyajikan alur naratif kronologis garis vertikal (*spine timeline*).
+  - Merampingkan sel kalender dari `min-height: 104px` menjadi `78px` yang lebih proporsional, serta merapikan daftar agenda di bawah kalender.
+- **Pembersihan Teks Berlebih pada Laporan Kerja (`Reports.tsx`)**:
+  - Menghapus paragraf instruksi panjang dan remah roti alur kerja yang membingungkan.
+  - Mengubah status draf menjadi banner ramping.
+  - Mengganti kalimat kosong yang berulang di 6 bagian laporan menjadi indikator ringkas seperti *"Nihil pada periode ini"*.
+- **Evaluasi Form Input Tugas & Kegiatan (`Editor.tsx`)**:
+  - Memasukkan kolom bukti hasil (`link`) langsung ke kolom utama tugas tanpa harus membuka detail lanjutan.
+  - Mempertahankan label aksesibel standar untuk integrasi pengujian dan pembaca layar, sembari menambahkan panduan teks bantuan (*field-helper*) yang jelas pada setiap relasi tugas dan kegiatan.
+- **Alternatif Kompak "Perlu Perhatian" di Dasbor (`FollowUps.tsx` & `personal.css`)**:
+  - Di dasbor, modul tindak lanjut diubah menjadi *compact ticker bar* ramping setinggi ~46 px (menghemat lebih dari 200 px ruang vertikal).
+  - Menampilkan badge jumlah mendesak, ringkasan catatan teratas, tombol Buka/Tutup Rincian, dan tautan langsung ke halaman tindak lanjut.
+- **Link Pengumpulan / Bukti Hasil untuk Tugas (`TaskDetailDrawer.tsx` & `Editor.tsx`)**:
+  - Menambahkan kartu khusus "Bukti Pengumpulan & Tautan Hasil" di laci tugas dengan tombol cepat *Buka Hasil ↗* dan editor tautan instan.
+- **Pemisahan Database & Skrip Reset Bersih (`supabase/reset/RESET_DATABASE_FORCE_CLEAN.sql`)**:
+  - Menyediakan berkas SQL lengkap dan terverifikasi yang menghapus seluruh tabel lama tanpa terhenti oleh data uji sebelumnya, lalu memasang skema bersih dengan pemisahan tegas entitas `work-items` dan `journal`, indeks khusus, trigger integritas relasional, dan proteksi sesi.
+- **Verifikasi Kualitas**: 143/143 tes vitest lulus 100% (19 berkas), 0 error TypeScript, build produksi Next.js Turbopack sukses penuh (9/9 halaman).
+
+## Penyederhanaan Kartu Proyek, Perbaikan Menu Lainnya, Pengaturan Rutinitas & Pemindahan Rutinitas ke Kanan (2 Oktober 2026)
+
+- **Penyederhanaan Kartu Proyek Menjadi Kompak (`Projects.tsx` & `personal.css`)**:
+  - Mengubah kartu proyek yang awalnya sangat besar/tinggi (~380 px dengan margin luas) menjadi format padat horizontal-vertikal yang ringkas (~160 px).
+  - Menyederhanakan header kartu dengan klaster tag kode (`OPS`), badge status, dan panah tautan sudut kanan.
+  - Deskripsi proyek dibatasi 1 baris (*clamped*).
+  - Bilah progres disederhanakan menjadi garis tunggal dengan persentase di sisi kanan.
+  - Statistik meta diubah menjadi pill kecil yang rapi (`{selesai}/{total} tugas`, status kendala, tanggal target) serta indikator tugas berikutnya yang tidak lagi memakan ruang vertikal berlebih.
+- **Perbaikan Dropdown "Lainnya" Tidak Tertutup/Terpotong (`Records.tsx` & `personal.css`)**:
+  - **Penyebab**: Elemen `.database-views` memiliki properti `overflow-x: auto` dengan ketinggian terbatas. Menu popover absolut dari tombol "Lainnya" sebelumnya terpotong oleh batas vertikal kontainer gulir tersebut.
+  - **Solusi**: Memisahkan kontainer horizontal ke dalam `.database-views-bar`. Tombol `<details className="view-extra-actions">` ditempatkan di luar kontainer gulir dengan `z-index: 90` dan menu popover `.view-extra-menu` diberi `z-index: 100`.
+  - Menambahkan *click-outside listener* sehingga popover otomatis tertutup saat pengguna mengklik area luar layar.
+- **Fitur Kustomisasi "Atur Rutinitas" Manajer (`Dashboard.tsx` & `personal.css`)**:
+  - Sebelumnya rutinitas manajer di-hardcode kaku sehingga pengguna tidak dapat menyesuaikan daftar kegiatan harian gerainya.
+  - Menambahkan tombol aksi **"Atur"** berikon slider pada header kartu rutinitas.
+  - Menyediakan modal dialog kustomisasi rutinitas yang memungkinkan manajer untuk:
+    - Menambah rutinitas baru dengan waktu spesifik (misal: `09:00` - *Cek suhu showcase pendingin*).
+    - Menghapus rutinitas yang tidak diperlukan.
+    - Mengembalikan ke 6 rutinitas bawaan operasional gerai KDMP dengan satu klik ("Kembalikan Bawaan").
+    - Persistensi otomatis ke `localStorage` (`kdmp_manager_routine_config`), tersinkronisasi dengan checklist harian per tanggal.
+- **Pemindahan Rutinitas ke Kolom Kanan Dasbor (`Dashboard.tsx`)**:
+  - Sesuai arahan pengguna (*"rutinitas taruh di kanan"*), kartu Rutinitas Manajer dipindahkan dari kolom kiri (`.home-work`) ke kolom kanan (`.home-overview`).
+  - Efek UX: Kolom kiri kini langsung menyajikan **Agenda Rapat** dan **Kartu Tugas Pilihan / Tugas Aktif** di posisi teratas tanpa terdorong ke bawah oleh checklist rutinitas, sehingga kartu tugas lainnya langsung kelihatan di layar tanpa perlu menggulir.
+- **Perampingan Kontrol Dasbor (`.dashboard-controls`)**:
+  - Mengurangi padding dan margin kontrol filter proyek di bagian atas dasbor agar kartu dan statistik di bawahnya langsung terlihat di layar (*above the fold*).
+- **Verifikasi Kualitas**: 143 tes unit & integrasi lulus 100% (19 berkas), 0 error TypeScript, build produksi Next.js Turbopack sukses penuh (9/9 halaman statis/dinamis).
+
+## Redesain Menu Proyek, Jalur Capaian Milestone, Persistensi Tampilan Bawaan & Perbaikan UI Riwayat (2 Oktober 2026)
+
+- **Eliminasi Redundant Empty State pada Riwayat Selesai**:
+  - Memperbaiki tumpang-tindih evaluasi kondisi `!rows.length && !isCompletedArchive` pada `Records.tsx` sehingga tidak lagi merender dua kartu "Belum ada tugas selesai" yang bertumpuk. Riwayat Selesai kini hanya menampilkan kartu linimasa kosong tunggal yang berikon centang elegan.
+- **Perbaikan Ukuran Tombol "Lainnya" yang Melompat (`.view-extra-actions`)**:
+  - **Penyebab**: Elemen `<details>` sebelumnya merender tombol aksi langsung secara inline ketika `[open]`, yang memperluas kontainer horizontal dan mengubah padding serta ukuran tombol `summary`.
+  - **Solusi**: Membungkus menu opsi ke dalam `.view-extra-menu` mengambang (*floating popover*) berposisi absolut dengan bayangan lembut dan z-index tinggi. Tombol `summary` dipatok pada tinggi 32 px sejajar dengan tombol tampilan lainnya sehingga ukurannya tidak pernah bergeser saat diklik.
+- **Pengaturan Tampilan Bawaan (Default View Persistence)**:
+  - Mengintegrasikan persistensi preferensi tampilan bawaan pengguna melalui `localStorage` (`preferred_view_work-items` dan `preferred_view_journal`).
+  - Ketika pengguna memilih tampilan (Daftar, Papan, Kalender, atau Linimasa), sistem otomatis mengingat pilihan tersebut. Navigasi berikutnya ke `/tugas` atau `/jurnal` akan langsung membuka tampilan bawaan yang disukai pengguna.
+- **Redesain Menyeluruh Menu Proyek (`Projects.tsx`)**:
+  - **Ringkasan KPI Inisiatif**: Menambahkan kartu ringkasan di bagian atas yang menampilkan Total Proyek, Proyek Berjalan, Proyek Selesai, dan Tugas Terhubung.
+  - **Bilah Alat Terpadu**: Menggabungkan kotak pencarian proyek (dengan tombol hapus pencarian instan) dan tab filter status dalam satu baris yang rapi.
+  - **Penghapusan Persentase Ganda**: Menghilangkan duplikasi teks `0%` dengan mengganti komponen generik menjadi bilah progres tunggal yang proporsional.
+  - **Kartu Proyek Modern**: Dilengkapi tag kode inisiatif (`OPS`, `DEV`), badge status berwarna tematik, grid statistik tugas ({selesai}/{total}), chip mitigasi kendala, indikator langkah berikutnya, dan tanggal target.
+- **Penjelasan & Redesain UI/UX Milestone (`MilestoneTracker.tsx` & `Roadmap.tsx`)**:
+  - **Fungsi Milestone**: Dijelaskan sebagai tonggak capaian kunci tanpa durasi (checkpoint nol hari) untuk memantau keberhasilan tahapan penting sebuah proyek (misalnya: *Izin Usaha Terbit*, *PKS Agrinas Ditandatangani*, *Grand Opening Gerai*), terpisah dari tugas harian berdurasi.
+  - **Komponen Jalur Capaian Visual (`MilestoneTracker`)**: Menggantikan tampilan tabel mentah `Records` di bawah Linimasa Gantt dengan pelacak capaian checkpoint yang memiliki filter status (Semua, Mendatang, Tercapai), hitung mundur tanggal target (*X hari lagi* / *Terlewat*), indikator tugas terhubung, dan tombol aksi instan satu-klik **"Tandai Tercapai ✓"** atau **"Buka Kembali ↩"**.
+- **Verifikasi Kualitas**: 143 tes unit & integrasi lulus 100% (19 berkas), 0 error TypeScript, build produksi Next.js Turbopack sukses penuh.
+
+
+- **Pemisahan Tegas Tugas (`work-items`) dan Kegiatan (`journal`)**:
+  - Memastikan kedua domain memiliki batas kerja yang terisolasi sepenuhnya: Tugas berfokus pada perencanaan eksekusi target dan status pekerjaan, sedangkan Kegiatan berfokus pada pencatatan peristiwa lapangan, rapat, dan dokumentasi operasional.
+  - Memperbarui sistem navigasi dan perutean agar tidak terjadi tumpang tindih data.
+- **Multi-Tampilan untuk Kegiatan (`/jurnal`)**:
+  - Memperluas pemilih tampilan di halaman kegiatan sehingga mendukung 4 mode visual:
+    - **Daftar**: Tabel dokumentasi kegiatan kronologis dengan ringkasan catatan dan tautan rapat.
+    - **Papan (Kanban Kegiatan)**: 3 kolom status berbasis waktu pelaksanaan (**Terjadwal / Rencana**, **Hari Ini**, **Terdokumentasi**) dengan dukungan seret-lepas (drag-and-drop) tanggal.
+    - **Kalender**: Tampilan grid bulanan yang mendukung pemetaan tanggal kegiatan (`date`). Memperbaiki penanganan tanggal agar tidak menyebabkan `RangeError: Invalid time value` ketika entitas kegiatan (yang tidak memiliki `due_date`) dimuat di tampilan kalender.
+    - **Linimasa (Timeline Kegiatan)**: Rangkaian kronologis kegiatan dengan alur garis vertikal dan tautan pertemuan.
+- **Validasi Tanggal Defensif (`src/lib/date.ts` & `TaskCalendar.tsx`)**:
+  - Menambahkan pengaman `isNaN(parsed.getTime())` dan penolakan nilai `'undefined'` / `'null'` pada fungsi `formatDate` sehingga selalu mengembalikan `'Belum ditentukan'` alih-alih melempar galat runtime waktu.
+  - Memperbarui `TaskCalendar` agar memetakan tanggal agenda menggunakan helper `getItemDate(item)` yang seragam untuk tugas (`due_date`) maupun kegiatan (`date`).
+- **Kerapian Tombol Batal & Simpan Judul & Deskripsi Tugas (`TaskDetailDrawer.tsx`)**:
+  - Memperbaiki tata letak tombol aksi inline pada drawer detail tugas. Tombol **Batal** (sekunder, outline halus) kini diletakkan di sisi kiri dan tombol **Simpan** (primer, aksen hijau brand) di sisi kanan.
+  - Menambahkan dukungan navigasi keyboard: tombol `Enter` untuk menyimpan langsung dan tombol `Escape` untuk membatalkan perubahan.
+  - Menghilangkan ketidaksejajaran ukuran font dan padding pada kontrol pengeditan cepat.
+- **Linimasa Riwayat Selesai ala GitHub (`CompletedTimelineView`)**:
+  - Menghilangkan tab tampilan horizontal (Harian, Papan, Kalender, Linimasa) yang tidak fungsional pada halaman arsip riwayat selesai (`/tugas?status=selesai`).
+  - Menghadirkan tampilan linimasa bergaya GitHub: alur konektor garis vertikal kontinu (*spine*), simpul status centang hijau, pengelompokan tanggal arsip yang jelas, pemisah visual antar-kartu tugas yang bersih, serta tombol aksi cepat **"Buka Kembali ↩"** untuk mengembalikan tugas ke siklus aktif seketika.
+- **Pembersihan Tugas Aktif & Zona Drop Interaktif pada Papan**:
+  - Filter daftar utama tugas (`/tugas`) kini secara ketat hanya menyajikan tugas berstatus `rencana` dan `proses` (`isActiveTask`). Tugas yang sudah selesai maupun dibatalkan tidak lagi muncul di daftar aktif dan terbaru.
+  - Pada Papan Scrum, fokus utama diarahkan pada kolom kerja berjalan (**Rencana** dan **Dikerjakan**).
+  - Menambahkan **Zona Drop Interaktif** di bagian bawah papan:
+    - Target drop **Selesai**: pengguna cukup menyeret kartu tugas ke area ini untuk menandai selesai dan langsung memindahkannya ke arsip riwayat selesai.
+    - Target drop **Dibatalkan**: pengguna dapat menyeret tugas yang tidak jadi dieksekusi.
+    - Opsi toggle "Tampilkan Kolom Selesai di Papan" tetap disediakan bagi pengguna yang ingin melihat kolom arsip di dalam grid papan.
+- **Penyelarasan Istilah "Linimasa Gantt" vs "Gantt"**:
+  - Menghilangkan ambiguitas istilah dengan menyatukan seluruh label menjadi **"Linimasa"** pada katalog rute (`/roadmap`), navigasi, dan tombol pemilih tampilan.
+- **Redesain `@manager-location-wrap` & Solusi Ruang Kosong Kanan (`.workspace-page`)**:
+  - Menghapus pemusatan canggung di tengah bilah atas (`margin: auto`). Lokasi sekarang berpadu elegan di sebelah kiri sebagai breadcrumb modern: `[Profil KDMP] / [Ikon Lokasi + Judul Halaman ⭐]`.
+  - Mengatasi masalah ruang kosong di sisi kanan layar lebar: mengubah batas kaku `max-width: 1400px` menjadi layout fluid `max-width: 100% !important; margin: 0;`. Seluruh lebar layar kini dimanfaatkan secara optimal, dan konten tidak lagi melompat canggung saat sidebar ditutup/dibuka.
+- **Verifikasi**: 143 tes lulus (19 berkas pengujian), typecheck bersih 0 kesalahan, build produksi Next.js Turbopack sukses penuh.
+
+
+- **Masalah Teridentifikasi**:
+  - Pengguna melaporkan tugas yang awalnya ditandai selesai kemudian diubah statusnya (misalnya kembali ke rencana atau sedang dikerjakan) masih muncul di halaman Arsip Riwayat Selesai (`/tugas?status=selesai`).
+  - **Penyebab**: Logika penyaringan baris di `Records.tsx` sebelumnya mengevaluasi `(view === 'papan' || ...)` terlebih dahulu. Ketika pengguna menavigasi ke arsip selesai dari tampilan papan, nilai `view` yang masih `'papan'` menyebabkan seluruh tugas (termasuk tugas aktif dan rencana) lolos dari filter `effectiveFilter === 'selesai'`. Selain itu, pengelompokan tanggal arsip kronologis belum memiliki pengaman status eksplisit per item.
+- **Perbaikan yang Diterapkan**:
+  - **Isolasi Arsip Selesai Ketat (`isCompletedArchive`)**: Logika penyaringan baris di `Records.tsx` kini memprioritaskan pemeriksaan arsip selesai: `isCompletedArchive ? row.data.status === 'selesai' : ...`. Tugas yang statusnya bukan `'selesai'` dipastikan 100% gugur dari daftar arsip riwayat selesai.
+  - **Failsafe Guard di Grup Kronologis**: Menambahkan `if (r.data.status !== 'selesai') return false;` pada seluruh generator grup (Pekan Ini, Pekan Lalu, Arsip Sebelumnya) sehingga tidak ada celah bagi tugas aktif atau dibuka kembali untuk masuk ke baris pengelompokan.
+  - **Aksi Cepat "Buka Kembali ↩" di Tabel Riwayat Selesai**: Menambahkan tombol aksi langsung `.table-btn-reopen` pada baris tugas arsip selesai. Saat diklik, status tugas langsung beralih ke `rencana`, tanggal `completed_at` dibersihkan, dan tugas seketika berpindah kembali ke daftar tugas aktif tanpa perlu membuka laci atau dropdown berkali-kali.
+  - **Sinkronisasi Ruang Lingkup & URL**: Memastikan URL query `?status=selesai` tersinkronisasi otomatis dengan `taskScope` (`history` vs `current`) di `WorkspacePage.tsx` dan responsif saat beralih lewat tombol navigasi rentang tugas.
+  - **Reaktivitas Laci Detail Tugas**: Menyimpan salinan reaktif `taskData` di `TaskDetailDrawer.tsx` agar perubahan status langsung diperbarui pada UI lokal sebelum maupun sesudah pemanggilan refresh server.
+- **Verifikasi**: 143 tes lulus (19 berkas pengujian), typecheck bersih 0 kesalahan, build produksi Next.js Turbopack sukses penuh.
+
+## Penyempurnaan Dropdown Status, Chip Tenggat, Penanggung Jawab, Sistem ID TGS/KGT & Sinkronisasi Papan (2 Oktober 2026)
+
+- **Perbaikan Dropdown Status Mepet (`.task-status-select`)**:
+  - Menyesuaikan padding kanan dari 24px ke 32px (`padding: 0 32px 0 12px`) dan posisi panah chevron ke `right: 10px center`.
+  - Menetapkan lebar minimum `min-width: 120px` dan memperlebar kolom status di tabel (`.col-task-status` dari 135px ke 145px) sehingga ikon panah dropdown memiliki jarak lega dan tidak lagi menempel atau bertabrakan dengan teks status.
+- **Styling Tenggat Waktu (`.task-due-chip`)**:
+  - Mengubah tampilan tanggal jatuh tempo yang sebelumnya berupa teks polos menjadi chip/pill modern (`.task-due-chip`) dengan sudut bulat penuh (radius 9999px) dan tata letak flex sejajar dengan ikon kalender.
+  - Membedakan skema warna visual:
+    - **Hari Ini**: Chip hijau lembut (`rgba(34, 197, 94, 0.12)`) dengan border dan teks hijau kontras.
+    - **Terlewat**: Chip merah lembut (`rgba(239, 68, 68, 0.1)`) penanda urgensi.
+    - **Mendatang / Normal**: Chip netral elegan terintegrasi warna tema.
+    - **Selesai**: Chip abu-abu tenang dengan tanggal penyelesaian nyata.
+- **Perbaikan Bug Penanggung Jawab "AAgrinas" (`.task-assignee-pill`)**:
+  - **Penyebab**: Kode sebelumnya merender huruf pertama `{assigneeName[0].toUpperCase()}` di dalam elemen `<span>` tanpa spasi atau gaya khusus tepat sebelum nama lengkap (`Agrinas`), sehingga terbaca ganda sebagai `AAgrinas`.
+  - **Solusi**: Menghapus elemen inisial avatar tersebut (yang juga melanggar panduan AGENTS.md terkait larangan avatar tim palsu) dan menggantinya dengan `.task-assignee-pill` elegan dengan batas teks rapi.
+- **Standarisasi Sistem ID Tugas (`TGS-xxxx`) dan Kegiatan (`KGT-xxxx`)**:
+  - Menggantikan format lama yang panjang dan tidak estetik (seperti `MENGU-123456780000` atau `RAPAT-ABCDEF010000`) dengan format standar:
+    - **Tugas**: `TGS-` diikuti 4 karakter heksadesimal/alfanumerik unik (mis. `TGS-1234`, `TGS-8F2A`).
+    - **Kegiatan**: `KGT-` diikuti 4 karakter unik (mis. `KGT-ABCD`, `KGT-4F82`).
+  - Menyediakan utilitas `formatDisplayCode` untuk menormalisasi kode historis maupun fallback ID saat ditampilkan di tabel, kalender, drawer, dan kartu dashboard.
+  - Menambahkan kolom `code` opsional pada skema `journal` dan generator `makeActivityCode` otomatis saat kegiatan dicatat.
+- **Kesinambungan Papan (Scrum Board) & Riwayat Selesai**:
+  - **Filter Kolom Papan Utuh**: Memperbaiki logika penyaringan baris tugas saat `view === 'papan'` sehingga filter status tunggal tidak menghapus kartu di kolom status lainnya. Seluruh 4 kolom papan (Rencana, Dikerjakan, Dibatalkan, Selesai) selalu tampil lengkap dan dapat dipindahkan antar-kolom.
+  - **Jembatan Papan ke Riwayat Selesai**: Menambahkan tautan footer di bagian bawah kolom "Selesai" di Papan: `Buka Riwayat Selesai ({count}) →` yang mengarahkan langsung ke arsip riwayat kronologis lengkap (`/tugas?status=selesai`).
+  - **Penghapusan Avatar Palsu di Kartu Papan**: Mengganti lingkaran inisial avatar (`.scrum-user-avatar`) dengan badge nama penanggung jawab asli (`.scrum-assignee-pill`).
+- **Verifikasi**: 143 tes lulus (19 berkas pengujian), typecheck bersih 0 kesalahan, build produksi Next.js Turbopack sukses penuh.
+
+## Perbaikan Form Tugas di Ponsel & Perombakan Navigasi Mobile (2 Oktober 2026)
+
+- **Perbaikan Form Tugas (`.task-form-intro`) Menutup Input di Ponsel**:
+  - **Penyebab**: Sebelumnya `.task-form-intro` diletakkan di luar kontainer gulir (`.form-grid`), sehingga kartu intro setinggi ~140px menjadi elemen statis yang terpaku di bawah header dialog. Pada layar ponsel (<640px) dan saat keyboard virtual muncul, kartu ini memakan area vertikal berlebih dan menimpa baris isian pertama form.
+  - **Solusi**: Membungkus seluruh isi form di antara header modal dan footer aksi ke dalam `.editor-form-scroll` dengan `overflow-y: auto` dan `-webkit-overflow-scrolling: touch`. Kartu intro kini berada di dalam alur dokumen gulir yang sama dan akan tergulir alami saat pengguna mengisi form.
+  - **Redesain Mobile `.task-form-intro`**: Pada layar ponsel (≤640px), layout diubah menjadi kartu satu baris yang sangat ramping (padding 8px, tombol ringkas 36px) sehingga tidak memboroskan ruang layar.
+  - **Tinggi Maksimum Fleksibel**: Dialog modal diatur ke `max-height: calc(100dvh - 16px)` di mobile dengan batas padding yang aman.
+- **Perombakan Navigasi Mobile Dock (`.manager-dock`)**:
+  - **Glassmorphic Floating Dock**: Mengubah bilah navigasi bawah ponsel menjadi dock mengambang modern berlatar semi-transparan (`backdrop-filter: blur(20px)`, radius 28px) dengan palet tema token terpadu, menghilangkan kontras warna keras dan sudut kaku.
+  - **Aksi Tengah (FAB) Terangkat**: Tombol aksi cepat tengah (`.dock-center-action`) kini terangkat elegan dengan efek bayangan halus, ukuran 44x44px ramah jempol, dan penyelarasan vertikal tanpa terpotong.
+  - **Indikator Tab Aktif Jelas**: Tab rute yang sedang aktif (`[aria-current='page']`) ditandai dengan latar belakang aksen halus (`--brand-soft`) dan ikon berkontras tinggi sehingga manajer mudah mengetahui posisinya.
+  - **Pembaruan Item Navigasi**: Slot navigasi ke-4 diperbarui dari pencatatan menjadi **Kegiatan** (`/jurnal`), sehingga 5 item dock mencakup: **Beranda**, **Tugas**, **Aksi (+)**, **Kegiatan**, dan **Menu (Drawer)**.
+  - **Padding Aman Konten**: `main.manager-main` disesuaikan dengan `padding-bottom: calc(92px + env(safe-area-inset-bottom))` agar konten halaman tidak tertutup oleh navigasi bawah.
+
+## Redesain Beranda, Rutinitas Kerja Manajer, Riwayat Selesai Kronologis, dan Pembersihan UI (2 Oktober 2026)
+
+- **Redesain Beranda (Dashboard) Manajer**:
+  - Menambahkan kartu interaktif "Rutinitas Harian Manajer KDMP" (Pagi: 07:30-09:00, Siang: 12:00-13:30, Sore: 16:00-17:00 hingga Pulang) tersimpan di `localStorage` dilengkapi progres persentase harian dinamis.
+  - Kartu sorotan rapat hari ini dengan tombol gabung langsung `Masuk Rapat Online ↗` untuk rapat Google Meet/Zoom/hybrid yang sah.
+  - Umpan balik "Kegiatan Lapangan Terbaru" terintegrasi langsung dengan catatan lapangan dan chip gabung rapat daring.
+  - Metrik analitik buku kas dan stok opname berdampingan untuk ikhtisar cepat manajer.
+- **Pembedaan Tegas Menu Kegiatan Lapangan & Daftar Tugas**:
+  - Menu samping (`AppShell`) kini memisahkan kategori `Tugas & Proyek` (`/beranda`, `/hari-ini`, `/tugas`, `/tindak-lanjut`, `/proyek`, `/roadmap`) dengan `Kegiatan Lapangan` (`/jurnal`).
+  - Halaman Kegiatan dilengkapi filter relasi (Gerai, Mitra/Pemangku, Rapat Terkait) serta tombol aksi langsung `+ Tindak lanjut` ke manajemen tugas.
+- **Riwayat Selesai Terkelompok Kronologis (Tanpa Menu Horizontal)**:
+  - Mengeliminasi menu horizontal view switcher (`database-views`) dan preset tersimpan (`SavedTaskViews`) pada status Selesai yang tidak diperlukan untuk arsip riwayat.
+  - Menggantikannya dengan **Header Arsip Khusus** berikon centang, rekap jumlah tugas tuntas, dan tombol kembali ke tugas aktif (`← Kembali ke Tugas Aktif`).
+  - Mengelompokkan riwayat tugas selesai secara otomatis ke dalam baris kronologis: **Pekan Ini** (7 hari terakhir), **Pekan Lalu** (8–14 hari lalu), dan **Arsip Sebelumnya** (> 14 hari lalu).
+  - Menyembunyikan input cepat pembuatan tugas baru dari arsip riwayat selesai untuk mencegah kekeliruan input.
+- **Pembersihan & Kompaksi Visual**:
+  - **Papan Scrum**: Mengganti tombol dashed 52px yang memanjang ke bawah dengan tombol tambah cepat di header kolom (`.scrum-col-add-btn`) dan membatasi tinggi internal kartu agar tidak memanjang jauh ke bawah.
+  - **Centang Subtugas**: Mengunci dimensi `.subtask-check-circle` ke 20x20px simetris murni (`aspect-ratio: 1/1`, `border-radius: 50%`) dan menghapus karakter ASCII `└──`/`├──`.
+  - **Kalender**: Menghapus tampilan raw id/kode di sel kalender, mengutamakan keterbacaan judul tugas dengan titik status berwarna.
+  - **Pill Proyek (`.card-project-pill`)**: Redesain menjadi squircle bersih (radius 6px) dengan aksen titik warna proyek.
+  - **Tombol Navigasi Tugas**: Mengubah tombol sebelumnya/selanjutnya menjadi bentuk squircle simetris 36x36px.
+  - **Animasi Modal**: Mengganti animasi diagonal melompat menjadi skala pusat halus (0.96 ke 1) dengan fade opacity.
+- **Verifikasi Kualitas**:
+  - `npm test`: **142/142 tes lulus (19 berkas pengujian)**.
+  - `npm run typecheck`: **0 kesalahan**.
+  - `npm run build`: **Next.js Turbopack build sukses** (9/9 rute teroptimasi penuh).
+
+## Pembersihan kegiatan/tugas, kalender, dan detail visual (2 Oktober 2026)
+
+- Menu kegiatan sekarang bernama **Kegiatan** (sebelumnya "Jurnal Kerja") sehingga berbeda tegas dari **Daftar Tugas**. Formulir, judul halaman, dan deskripsi mengikuti nama baru.
+- "Gabung rapat" tersedia pada detail tugas dan baris kegiatan bila referensi rapat valid online/hybrid dengan URL http(s); tidak ada tombol kosong untuk rapat tatap muka atau data rusak. Kegiatan kini dapat menautkan rapat melalui isian `meeting_id` opsional (kompatibel dengan data lama tanpa migrasi).
+- Kalender: judul tugas tampil utama, kode menjadi metadata mono kecil. Semua tanda kode tugas memakai gaya seragam.
+- Centang subtugas di laci dan tampilan Harian dirapikan: lingkaran jelas, posisi teks sejajar, area sentuh diperluas, fokus keyboard terlihat.
+- Tombol ikon sebelumnya/berikutnya di laci tugas bukan lagi lingkaran penuh, melainkan sudut membulat 12 px.
+- Animasi dialog bergerak naik lembut dari bawah; drawer tetap dari kanan. reduced-motion menonaktifkan animasi.
+- Beranda: tombol "Buat tugas"/"Catat kegiatan" dan bagian "Kegiatan terbaru". Kegiatan dimuat melalui scope halaman Beranda.
+- SQL: ketujuh berkas migrasi masih dirujuk oleh `tests/database.test.ts`, `tests/install-schema.test.ts`, `tests/reset-database.test.ts`, dan generator reset/instalasi; **tidak ada yang dapat dihapus tanpa merusak audit**. `INSTALL_SCHEMA_KOSONG.sql` dan `RESET_DATABASE_KOSONG.sql` tetap menjadi gabungan untuk skema kosong.
+- Perbaikan lanjutan setelah audit: scope halaman `jurnal` dan `beranda` diperluas ke `journal/work-items/stakeholders/units/meetings` supaya relasi tampil, bukan "tidak ditemukan"; tautan "Gabung rapat" pada kegiatan memakai chip `.journal-join-link`; `.home-journal` masuk daftar kartu; tombol aksi Beranda dua kolom di ≤480 px; tombol ciutkan sidebar tidak lagi `opacity: 0`; tes baru `tests/kegiatan.test.tsx` menutup pemisahan menu, keamanan URL rapat, dan relasi kegiatan.
+- Verifikasi paket: **134 tes lulus (18 berkas)**, typecheck 0 kesalahan, lint 0 masalah, build produksi berhasil. UI nyata pada 360/768/1024/1440 px belum diperiksa untuk paket ini.
+
+## Penjelasan kegiatan/tugas dan SQL instalasi
+
+- `KEGIATAN-DAN-TUGAS.md` membedakan Jurnal Kerja (kejadian) dari Tugas (pekerjaan) dan mencatat arah Beranda yang lebih informatif; perubahan dashboard belum diimplementasikan.
+- Semua tujuh migrasi SQL masih dirujuk oleh tes dan generator reset. Tidak ada migrasi yang dihapus. `INSTALL_SCHEMA_KOSONG.sql` adalah gabungan untuk instalasi baru pada skema kosong saja, bukan untuk cloud yang sudah berjalan; uji pemasangan dan penolakan ulang lulus di PGlite.
+
 ## Paket lanjutan
 
 - Default Harian yang selalu membuka Selasa diperbaiki di `DailyTasksView.tsx`; pemeriksaan UI langsung setelah perubahan masih diperlukan.

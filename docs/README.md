@@ -5,6 +5,8 @@
 | [Status](STATUS.md) | Implementasi nyata, verifikasi, kendala, langkah berikut |
 | [Paket lanjutan AI](LANJUTAN-AI.md) | Serah terima konkret untuk navigasi, modal, status tugas, Harian, dan gaya |
 | [Desain antarmuka](DESAIN-ANTARMUKA.md) | Karakter visual, layout perangkat, bentuk komponen, dan alur inti |
+| [Kegiatan dan tugas](KEGIATAN-DAN-TUGAS.md) | Batas fitur, contoh pencatatan, dan arah Beranda |
+| [Migrasi SQL](MIGRASI-SQL.md) | Urutan migrasi, SQL instalasi bersih, dan batas cloud |
 | [Git untuk beberapa AI](GIT-KERJA-PARALEL.md) | Cabang, worktree, PR, konflik, dan batas deployment |
 | [Keputusan](KEPUTUSAN.md) | Pembaruan dari instruksi pemilik |
 | [PRD](PRD.md) | Kebutuhan dan kriteria terima |

@@ -4,7 +4,7 @@ import { schemas, type Entity, type Item } from './schemas';
 import { references } from './catalog';
 import { today, nextOccurrence, addDays } from '@/lib/date';
 import type { ListQuery } from './query';
-import { makeTaskCode } from './task-code';
+import { makeTaskCode, makeActivityCode } from './task-code';
 
 export async function listPage(entity: Entity, input: ListQuery) {
   let query = db().from('hub_records').select('*').eq('entity', entity);
@@ -53,7 +53,7 @@ export async function list(entity: Entity): Promise<Item[]> {
   throw new Error('Terlalu banyak catatan untuk laporan ini. Pilih periode lebih pendek.');
 }
 export async function save(entity: Entity, input: unknown, id?: string) {
-  const data = schemas[entity].parse(input);
+  let data = schemas[entity].parse(input);
   if (entity === 'workstreams') {
     const project = schemas.workstreams.parse(data);
     if (project.start_date && project.target_date && project.start_date > project.target_date)
@@ -129,6 +129,11 @@ export async function save(entity: Entity, input: unknown, id?: string) {
     });
     if (error) throw new Error('Tugas gagal disimpan. Tidak ada perubahan parsial.');
     return record as Item;
+  }
+  if (entity === 'journal') {
+    const journal = schemas['journal'].parse(data);
+    if (!id && !journal.code) journal.code = makeActivityCode(journal.title, crypto.randomUUID());
+    data = journal;
   }
   const client = db();
   const query = id

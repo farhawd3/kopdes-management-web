@@ -2,12 +2,16 @@
 
 Dokumen ini adalah titik mulai untuk AI lain. Baca `../AGENTS.md`, `STATUS.md`, `KEPUTUSAN.md`, `PRD.md`, dan `CHECKLIST.md` sebelum mengubah kode. Instruksi pemilik terbaru mengutamakan aplikasi kerja pribadi yang sederhana, rapi, dan konsisten di ponsel. Jangan lakukan deployment produksi. Jangan mengubah database cloud tanpa penjelasan SQL, proyek tujuan, dan persetujuan pemilik.
 
+Baca juga `KEGIATAN-DAN-TUGAS.md` untuk memisahkan catatan kejadian dari pekerjaan yang harus dilakukan, serta `MIGRASI-SQL.md` sebelum menyentuh skema.
+
 ## Keadaan saat serah terima
 
+- Per 2 Oktober 2026 paket "Pembersihan kegiatan/tugas, kalender, dan detail visual" sudah masuk kode: menu `Jurnal Kerja` menjadi **Kegiatan**, kalender menampilkan judul lebih dulu, tanda kode diseragamkan, centang subtugas dirapikan, tombol ikon memakai sudut 12 px, animasi dialog naik dari bawah, `card-project-pill` disederhanakan, serta "Gabung rapat" muncul pada detail tugas dan kegiatan. Beranda punya tombol "Buat tugas"/"Catat kegiatan" dan bagian "Kegiatan terbaru". Audit lanjutan memperbaiki scope relasi halaman Kegiatan/Beranda, tampilan chip tautan rapat, luapan tombol di 360 px, visibilitas tombol ciutkan sidebar, dan menambah `tests/kegiatan.test.tsx`. Verifikasi: 134 tes (18 berkas), typecheck, lint, build lulus. Perubahan ini belum di-commit.
 - Commit lokal `12718c7` merapikan input cepat tugas pada 360 px dan `cb547a9` menambah panduan ini. Jumlah commit lokal dapat berubah; periksa `git status -sb` dan `git log` sebelum bekerja. Jangan push ke cabang produksi karena dapat memicu deployment.
 - Ada perubahan belum di-commit pada `src/app/personal.css`, `src/app/polish.css`, dan `src/components/layout/AppShell.tsx` dari pekerjaan lain. Periksa diff dan pertahankan isinya. Jangan stage seluruh direktori.
-- Pemeriksaan terakhir: 129 tes, typecheck, lint, dan build lulus. Ini belum membuktikan semua interaksi benar. Beranda/Hari Ini pernah menampilkan satu tugas ketika Daftar Tugas tampak kosong; reproduksi dan cari penyebab sebelum menyatakan alur data konsisten.
+- Beranda/Hari Ini pernah menampilkan satu tugas ketika Daftar Tugas tampak kosong; reproduksi dan cari penyebab sebelum menyatakan alur data konsisten.
 - SQL indeks paginasi masih ditandai belum terverifikasi pada `CHECKLIST.md`. Jangan anggap sudah terpasang.
+- UI paket terakhir belum diperiksa langsung di browser pada 360/768/1024/1440 px; lakukan sebelum menandai selesai.
 
 ## Urutan paket kerja
 
@@ -34,6 +38,8 @@ Tentukan satu kebijakan hapus: tampilkan aksi **Hapus** di detail tugas sebagai 
 
 ### 4. Harian yang lebih ringkas
 
+> Perbaikan pembukaan Selasa otomatis sudah masuk; bagian lain berikut perlu diverifikasi pada UI nyata.
+
 `DailyTasksView.tsx` saat ini menginisialisasi hari ini **dan Selasa** sebagai terbuka (`i === 1`), juga grup mendatang dan terlewat. Hapus pembukaan Selasa otomatis. Buka hanya hari ini; jika ada tugas terlambat, tampilkan ringkasan tertutup dengan jumlah dan aksi buka. Hari lain tampil sebagai baris ringkas berisi tanggal dan jumlah, tanpa ruang kosong besar. Perubahan minggu/tanggal harus memperbarui hari yang relevan; jangan menyimpan tanggal historis sebagai default. Bedakan Hari Ini (`/hari-ini`) dari tampilan Harian di `/tugas` dengan teks navigasi yang jelas.
 
 ### 5. Gaya dan warna
@@ -41,6 +47,8 @@ Tentukan satu kebijakan hapus: tampilkan aksi **Hapus** di detail tugas sebagai 
 Cari sumber glow merah pada keadaan hover/fokus/aktif tombol, terutama aturan `box-shadow`, filter, dan pseudo-element di `personal.css`, `polish.css`, `workspace.css`, `studio.css`, `globals.css`. Jangan menebak selector dari warna yang terlihat: reproduksi dan periksa computed style. Gunakan satu sistem tombol dan status: merah hanya untuk aksi berbahaya atau galat, tanpa halo mencolok; fokus keyboard tetap terlihat dengan outline yang tenang. Selaraskan jarak, radius, ikon, teks, badge, kartu, dan tab pada tiap halaman. Hormati tema gelap dan `prefers-reduced-motion`.
 
 ### 6. Detail visual tugas dan kalender dari pemilik
+
+> Sebagian besar sudah selesai pada 2 Oktober 2026 (lihat CHANGELOG). Item yang tersisa: uji animasi buka/tutup berulang pada 360 dan 1024 px, serta pastikan drawer masuk dari sisi yang sama dengan posisi akhirnya di semua kasus.
 
 - **Kalender menonjolkan ID:** `TaskCalendar.tsx` saat ini merender `.cal-task-code` sebelum `.cal-task-title`. Judul kegiatan harus paling mudah dibaca; kode otomatis menjadi metadata kecil atau hanya ada di detail. Jangan tampilkan UUID mentah. Audit juga `.task-code-badge`, `.card-task-code`, `.task-code-tag` agar kode konsisten, rapi, dan tidak bersambung dengan judul.
 - **Checklist/subtugas:** rapikan baris di `TaskDetailDrawer.tsx` dan `DailyTasksView.tsx`: lingkar centang `.subtask-check-circle` harus jelas kosong/selesai, pusat ikon simetris, area sentuh 44 px, teks sejajar, fokus terlihat, dan status dapat dibaca tanpa warna. Cek keadaan teks panjang pada ponsel.

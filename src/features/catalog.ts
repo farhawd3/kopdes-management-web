@@ -199,9 +199,9 @@ export const catalog: Record<Entity, { title: string; description: string; field
     fields: ['title', 'staff_id', 'date', 'required', 'status', 'notes'],
   },
   journal: {
-    title: 'Jurnal kerja',
-    description: 'Catatan kegiatan harian dan kunjungan lapangan.',
-    fields: ['title', 'date', 'notes', 'unit_id', 'work_item_id', 'stakeholder_id'],
+    title: 'Kegiatan',
+    description: 'Catatan apa yang terjadi: kunjungan, koordinasi, hasil lapangan.',
+    fields: ['title', 'date', 'notes', 'unit_id', 'work_item_id', 'stakeholder_id', 'meeting_id'],
   },
 };
 export const labels: Record<string, string> = {
@@ -243,7 +243,7 @@ export const labels: Record<string, string> = {
   recurrence: 'Pengulangan',
   subtasks: 'Subtugas',
   dependencies: 'Prasyarat',
-  link: 'Tautan bukti / berkas',
+  link: 'Link pengumpulan / bukti hasil',
   notes: 'Catatan',
   actual_date: 'Tanggal tercapai',
   kind: 'Jenis',
@@ -415,8 +415,8 @@ export const navigation = [
   ['/tugas', 'Daftar Tugas', ''],
   ['/tindak-lanjut', 'Perlu Perhatian', ''],
   ['/proyek', 'Proyek', ''],
-  ['/roadmap', 'Linimasa Gantt', ''],
-  ['/jurnal', 'Jurnal Kerja', ''],
+  ['/roadmap', 'Linimasa', ''],
+  ['/jurnal', 'Kegiatan', ''],
   ['/pencatatan', 'Ringkasan Buku', ''],
   ['/keuangan', 'Buku Kas', ''],
   ['/barang', 'Barang Dagangan', ''],

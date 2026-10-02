@@ -9,6 +9,11 @@ import {
   BookOpen,
   Calendar,
   Users,
+  Video,
+  Plus,
+  FilePlus,
+  CalendarPlus,
+  CheckSquare,
 } from 'lucide-react';
 import { schemas, type Entity, type Item } from './schemas';
 import { catalog, formatChoiceLabel, labels, options, references } from './catalog';
@@ -54,15 +59,16 @@ const STAKEHOLDER_PRESETS = [
 ] as const;
 const BASIC_TASK_FIELDS = [
   'title',
+  'due_date',
+  'status',
+  'priority',
+  'assignee',
+  'link',
   'description',
   'workstream_id',
   'milestone_id',
   'stakeholder_id',
   'document_id',
-  'assignee',
-  'due_date',
-  'status',
-  'priority',
 ];
 
 export function Editor({
@@ -155,6 +161,19 @@ export function Editor({
   const [stakeholderPreset, setStakeholderPreset] = useState<
     (typeof STAKEHOLDER_PRESETS)[number] | null
   >(null);
+  const [createdItems, setCreatedItems] = useState<Partial<Record<Entity, Item[]>>>({});
+  const [selectedRefs, setSelectedRefs] = useState<Record<string, string>>({});
+  const [inlineCreator, setInlineCreator] = useState<'meetings' | 'documents' | 'work-items' | null>(null);
+  const [inlineTitle, setInlineTitle] = useState('');
+  const [inlineDate, setInlineDate] = useState(today());
+  const [inlineTime, setInlineTime] = useState('09:00');
+  const [inlineMode, setInlineMode] = useState<'online' | 'tatap muka' | 'hybrid'>('online');
+  const [inlineUrl, setInlineUrl] = useState('');
+  const [inlineDocNumber, setInlineDocNumber] = useState('');
+  const [inlineDocKind, setInlineDocKind] = useState('kontrak');
+  const [inlinePriority, setInlinePriority] = useState('normal');
+  const [inlineBusy, setInlineBusy] = useState(false);
+  const [inlineNotice, setInlineNotice] = useState('');
   useEffect(() => {
     const node = dialog.current;
     node?.showModal();
@@ -296,7 +315,8 @@ export function Editor({
             <X size={20} strokeWidth={2.25} />
           </button>
         </div>
-        {savedDraft && (
+        <div className="editor-form-scroll">
+          {savedDraft && (
           <div className="draft-notice">
             <p>Draf belum disimpan ditemukan di tab ini.</p>
             <button
@@ -357,14 +377,18 @@ export function Editor({
             </small>
           </div>
         )}
-        {entity === 'work-items' && !quick && !showTaskDetails && (
-          <div className="task-form-intro">
-            <p>Isi judul dan tenggat. Hubungkan proyek atau mitra jika pekerjaan ini terkait.</p>
-            <button type="button" onClick={() => setShowTaskDetails(true)}>
-              Detail lainnya: rapat, kendala, pengulangan, dan subtugas
-            </button>
-          </div>
-        )}
+          {entity === 'work-items' && !quick && !showTaskDetails && (
+            <div className="task-form-intro">
+              <p>Isi judul dan tenggat. Hubungkan proyek atau mitra jika ada.</p>
+              <button
+                type="button"
+                className="btn-toggle-task-details"
+                onClick={() => setShowTaskDetails(true)}
+              >
+                Detail lainnya: opsi lanjutan, kendala & subtugas
+              </button>
+            </div>
+          )}
         <div className="form-grid">
           {fields.map((field) => {
             if (entity === 'meetings' && field === 'meeting_url' && meetingMode === 'tatap muka') {
@@ -565,9 +589,59 @@ export function Editor({
                     ...choices,
                   ]
                 : undefined;
+              const refItems = reference
+                ? [
+                    ...(createdItems[reference as Entity] || []),
+                    ...(workspace[reference] || []),
+                  ]
+                : [];
               return (
-                <label key={field} className="field-item">
-                  <span className="field-caption">{label}</span>
+                <div key={field} className="field-item">
+                  <div className="field-caption-row">
+                    <span className="field-caption">{label}</span>
+                    {reference === 'meetings' && (
+                      <button
+                        type="button"
+                        className="field-inline-create-btn"
+                        onClick={() => {
+                          setInlineCreator(inlineCreator === 'meetings' ? null : 'meetings');
+                          setInlineTitle('');
+                          setInlineUrl('');
+                          setInlineNotice('');
+                        }}
+                      >
+                        {inlineCreator === 'meetings' ? 'Tutup Form' : '+ Rapat Baru'}
+                      </button>
+                    )}
+                    {reference === 'documents' && (
+                      <button
+                        type="button"
+                        className="field-inline-create-btn"
+                        onClick={() => {
+                          setInlineCreator(inlineCreator === 'documents' ? null : 'documents');
+                          setInlineTitle('');
+                          setInlineUrl('');
+                          setInlineDocNumber('');
+                          setInlineNotice('');
+                        }}
+                      >
+                        {inlineCreator === 'documents' ? 'Tutup Form' : '+ Dokumen Baru'}
+                      </button>
+                    )}
+                    {entity === 'journal' && field === 'work_item_id' && (
+                      <button
+                        type="button"
+                        className="field-inline-create-btn"
+                        onClick={() => {
+                          setInlineCreator(inlineCreator === 'work-items' ? null : 'work-items');
+                          setInlineTitle('');
+                          setInlineNotice('');
+                        }}
+                      >
+                        {inlineCreator === 'work-items' ? 'Tutup Form' : '+ Tugas Baru'}
+                      </button>
+                    )}
+                  </div>
                   <select
                     key={
                       field === 'category' && stakeholderPreset
@@ -581,21 +655,18 @@ export function Editor({
                     className="field-select"
                     required={entity === 'stock-counts' && field === 'item_id'}
                     disabled={entity === 'work-items' && field === 'milestone_id' && !projectId}
-                    defaultValue={String(selectedValue ?? allChoices?.[0] ?? '')}
-                    onChange={
-                      field === 'item_id'
-                        ? (event) => setStockItem(event.target.value)
-                        : entity === 'work-items' && field === 'workstream_id'
-                          ? (event) => setProjectId(event.target.value)
-                          : entity === 'work-items' && field === 'recurrence'
-                            ? (event) => setRecurrence(event.target.value)
-                            : undefined
-                    }
+                    value={selectedRefs[field] ?? String(selectedValue ?? allChoices?.[0] ?? '')}
+                    onChange={(event) => {
+                      setSelectedRefs((prev) => ({ ...prev, [field]: event.target.value }));
+                      if (field === 'item_id') setStockItem(event.target.value);
+                      else if (entity === 'work-items' && field === 'workstream_id') setProjectId(event.target.value);
+                      else if (entity === 'work-items' && field === 'recurrence') setRecurrence(event.target.value);
+                    }}
                   >
                     {reference && <option value="">Belum Ditentukan</option>}
                     {reference &&
                       Boolean(selectedValue) &&
-                      !(workspace[reference] || []).some((row) => row.id === selectedValue) && (
+                      !refItems.some((row) => row.id === selectedValue) && (
                         <option value={String(selectedValue)}>
                           Catatan terkait yang belum dimuat ({String(selectedValue).slice(0, 8)})
                         </option>
@@ -606,7 +677,7 @@ export function Editor({
                             {formatChoiceLabel(choice)}
                           </option>
                         ))
-                      : (workspace[reference] || [])
+                      : refItems
                           .filter(
                             (row) =>
                               entity !== 'work-items' ||
@@ -620,7 +691,9 @@ export function Editor({
                                 ? ` (No: ${row.data.member_number})`
                                 : reference === 'inventory-items'
                                   ? ` [Stok: ${Number(row.data.book_quantity || 0)} ${String(row.data.measurement || 'unit')}]`
-                                  : '';
+                                  : reference === 'meetings' && row.data.mode
+                                    ? ` [${String(row.data.mode).toUpperCase()}${row.data.meeting_url ? ' · Tautan Online' : ''}]`
+                                    : '';
                             return (
                               <option key={row.id} value={row.id}>
                                 {title}
@@ -629,6 +702,288 @@ export function Editor({
                             );
                           })}
                   </select>
+
+                  {/* Inline Quick Creators */}
+                  {inlineCreator === 'meetings' && reference === 'meetings' && (
+                    <div className="inline-quick-creator-card">
+                      <div className="inline-creator-head">
+                        <Video size={16} />
+                        <strong>Buat & Tautkan Rapat Online / Pertemuan</strong>
+                      </div>
+                      <div className="inline-creator-grid">
+                        <label className="inline-creator-field">
+                          <span>Nama / Agenda Rapat *</span>
+                          <input
+                            type="text"
+                            value={inlineTitle}
+                            onChange={(e) => setInlineTitle(e.target.value)}
+                            placeholder="Contoh: Rapat Koordinasi Online Mitra"
+                            autoFocus
+                          />
+                        </label>
+                        <div className="inline-creator-row">
+                          <label className="inline-creator-field">
+                            <span>Mode Rapat</span>
+                            <select
+                              value={inlineMode}
+                              onChange={(e) => setInlineMode(e.target.value as any)}
+                            >
+                              <option value="online">Online Penuh (Google Meet / Zoom)</option>
+                              <option value="tatap muka">Tatap Muka Langsung</option>
+                              <option value="hybrid">Hybrid (Tatap Muka + Daring)</option>
+                            </select>
+                          </label>
+                          <label className="inline-creator-field">
+                            <span>Tautan Daring (URL Rapat)</span>
+                            <input
+                              type="url"
+                              value={inlineUrl}
+                              onChange={(e) => setInlineUrl(e.target.value)}
+                              placeholder="https://meet.google.com/..."
+                            />
+                          </label>
+                        </div>
+                        <div className="inline-creator-row">
+                          <label className="inline-creator-field">
+                            <span>Tanggal</span>
+                            <input
+                              type="date"
+                              value={inlineDate}
+                              onChange={(e) => setInlineDate(e.target.value)}
+                            />
+                          </label>
+                          <label className="inline-creator-field">
+                            <span>Waktu Mulai</span>
+                            <input
+                              type="time"
+                              value={inlineTime}
+                              onChange={(e) => setInlineTime(e.target.value)}
+                            />
+                          </label>
+                        </div>
+                      </div>
+                      {inlineNotice && <p className="inline-creator-notice">{inlineNotice}</p>}
+                      <div className="inline-creator-actions">
+                        <button type="button" onClick={() => setInlineCreator(null)}>
+                          Batal
+                        </button>
+                        <button
+                          type="button"
+                          className="primary"
+                          disabled={inlineBusy || !inlineTitle.trim()}
+                          onClick={async () => {
+                            setInlineBusy(true);
+                            setInlineNotice('');
+                            try {
+                              const payload = schemas.meetings.parse({
+                                title: inlineTitle.trim(),
+                                date: inlineDate,
+                                time: inlineTime,
+                                mode: inlineMode,
+                                meeting_url: inlineUrl.trim(),
+                                location: inlineMode === 'online' ? 'Google Meet / Online' : 'Gerai KDMP',
+                                status: 'rencana',
+                                participants: '',
+                                agenda: '',
+                                minutes: '',
+                                duration: 60,
+                              });
+                              const res = await api<Item>('meetings', { data: payload });
+                              setCreatedItems((prev) => ({
+                                ...prev,
+                                meetings: [res, ...(prev.meetings || [])],
+                              }));
+                              setSelectedRefs((prev) => ({ ...prev, [field]: res.id }));
+                              setInlineCreator(null);
+                            } catch (err) {
+                              setInlineNotice((err as Error).message);
+                            } finally {
+                              setInlineBusy(false);
+                            }
+                          }}
+                        >
+                          {inlineBusy ? 'Menyimpan…' : 'Simpan & Pilih Rapat'}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {inlineCreator === 'documents' && reference === 'documents' && (
+                    <div className="inline-quick-creator-card">
+                      <div className="inline-creator-head">
+                        <FilePlus size={16} />
+                        <strong>Buat & Tautkan Dokumen / Berkas</strong>
+                      </div>
+                      <div className="inline-creator-grid">
+                        <label className="inline-creator-field">
+                          <span>Judul Dokumen *</span>
+                          <input
+                            type="text"
+                            value={inlineTitle}
+                            onChange={(e) => setInlineTitle(e.target.value)}
+                            placeholder="Contoh: Perjanjian Kerja Sama Pasokan Beras"
+                            autoFocus
+                          />
+                        </label>
+                        <div className="inline-creator-row">
+                          <label className="inline-creator-field">
+                            <span>Nomor Dokumen</span>
+                            <input
+                              type="text"
+                              value={inlineDocNumber}
+                              onChange={(e) => setInlineDocNumber(e.target.value)}
+                              placeholder="014/KDMP/X/2026"
+                            />
+                          </label>
+                          <label className="inline-creator-field">
+                            <span>Jenis Dokumen</span>
+                            <select
+                              value={inlineDocKind}
+                              onChange={(e) => setInlineDocKind(e.target.value)}
+                            >
+                              <option value="kontrak">Perjanjian / Kontrak</option>
+                              <option value="legalitas">Legalitas / Izin</option>
+                              <option value="laporan">Laporan / Notulen</option>
+                              <option value="lainnya">Lainnya</option>
+                            </select>
+                          </label>
+                        </div>
+                        <label className="inline-creator-field">
+                          <span>Tautan Berkas (Google Drive / URL)</span>
+                          <input
+                            type="url"
+                            value={inlineUrl}
+                            onChange={(e) => setInlineUrl(e.target.value)}
+                            placeholder="https://drive.google.com/..."
+                          />
+                        </label>
+                      </div>
+                      {inlineNotice && <p className="inline-creator-notice">{inlineNotice}</p>}
+                      <div className="inline-creator-actions">
+                        <button type="button" onClick={() => setInlineCreator(null)}>
+                          Batal
+                        </button>
+                        <button
+                          type="button"
+                          className="primary"
+                          disabled={inlineBusy || !inlineTitle.trim()}
+                          onClick={async () => {
+                            setInlineBusy(true);
+                            setInlineNotice('');
+                            try {
+                              const payload = schemas.documents.parse({
+                                title: inlineTitle.trim(),
+                                kind: inlineDocKind,
+                                number: inlineDocNumber.trim() || '-',
+                                link: inlineUrl.trim(),
+                                status: 'tersedia',
+                                notes: '',
+                              });
+                              const res = await api<Item>('documents', { data: payload });
+                              setCreatedItems((prev) => ({
+                                ...prev,
+                                documents: [res, ...(prev.documents || [])],
+                              }));
+                              setSelectedRefs((prev) => ({ ...prev, [field]: res.id }));
+                              setInlineCreator(null);
+                            } catch (err) {
+                              setInlineNotice((err as Error).message);
+                            } finally {
+                              setInlineBusy(false);
+                            }
+                          }}
+                        >
+                          {inlineBusy ? 'Menyimpan…' : 'Simpan & Pilih Dokumen'}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {inlineCreator === 'work-items' && entity === 'journal' && field === 'work_item_id' && (
+                    <div className="inline-quick-creator-card">
+                      <div className="inline-creator-head">
+                        <CheckSquare size={16} />
+                        <strong>Buat & Tautkan Tugas Tindak Lanjut</strong>
+                      </div>
+                      <div className="inline-creator-grid">
+                        <label className="inline-creator-field">
+                          <span>Nama Tugas *</span>
+                          <input
+                            type="text"
+                            value={inlineTitle}
+                            onChange={(e) => setInlineTitle(e.target.value)}
+                            placeholder="Contoh: Tindak lanjut koordinasi ketersediaan rak"
+                            autoFocus
+                          />
+                        </label>
+                        <div className="inline-creator-row">
+                          <label className="inline-creator-field">
+                            <span>Tenggat Waktu</span>
+                            <input
+                              type="date"
+                              value={inlineDate}
+                              onChange={(e) => setInlineDate(e.target.value)}
+                            />
+                          </label>
+                          <label className="inline-creator-field">
+                            <span>Prioritas</span>
+                            <select
+                              value={inlinePriority}
+                              onChange={(e) => setInlinePriority(e.target.value)}
+                            >
+                              <option value="rendah">Rendah</option>
+                              <option value="normal">Normal</option>
+                              <option value="tinggi">Tinggi</option>
+                              <option value="mendesak">Mendesak</option>
+                            </select>
+                          </label>
+                        </div>
+                      </div>
+                      {inlineNotice && <p className="inline-creator-notice">{inlineNotice}</p>}
+                      <div className="inline-creator-actions">
+                        <button type="button" onClick={() => setInlineCreator(null)}>
+                          Batal
+                        </button>
+                        <button
+                          type="button"
+                          className="primary"
+                          disabled={inlineBusy || !inlineTitle.trim()}
+                          onClick={async () => {
+                            setInlineBusy(true);
+                            setInlineNotice('');
+                            try {
+                              const payload = schemas['work-items'].parse({
+                                title: inlineTitle.trim(),
+                                due_date: inlineDate,
+                                priority: inlinePriority as any,
+                                status: 'rencana',
+                                workstream_id: projectId || '',
+                              });
+                              const res = await api<Item>('work-items', { data: payload });
+                              setCreatedItems((prev) => ({
+                                ...prev,
+                                'work-items': [res, ...(prev['work-items'] || [])],
+                              }));
+                              setSelectedRefs((prev) => ({ ...prev, [field]: res.id }));
+                              setInlineCreator(null);
+                            } catch (err) {
+                              setInlineNotice((err as Error).message);
+                            } finally {
+                              setInlineBusy(false);
+                            }
+                          }}
+                        >
+                          {inlineBusy ? 'Menyimpan…' : 'Simpan & Pilih Tugas'}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {field === 'meeting_id' && (
+                    <small className="field-helper">
+                      Pilih rapat untuk menampilkan tombol gabung rapat daring secara otomatis.
+                    </small>
+                  )}
                   {entity === 'work-items' && field === 'recurrence' && (
                     <small className="field-helper">
                       Tugas berikutnya dibuat setelah tugas ini ditandai selesai.
@@ -649,7 +1004,22 @@ export function Editor({
                       Pilih barang sebelum mencatat hasil hitung.
                     </small>
                   )}
-                </label>
+                  {entity === 'journal' && field === 'work_item_id' && (
+                    <small className="field-helper">
+                      Pilih tugas yang ditindaklanjuti dari kegiatan ini (opsional).
+                    </small>
+                  )}
+                  {entity === 'journal' && field === 'stakeholder_id' && (
+                    <small className="field-helper">
+                      Pilih mitra atau tokoh yang ditemui di lapangan (opsional).
+                    </small>
+                  )}
+                  {entity === 'journal' && field === 'unit_id' && (
+                    <small className="field-helper">
+                      Pilih gerai atau unit koperasi terkait jika ada (opsional).
+                    </small>
+                  )}
+                </div>
               );
             }
             if (
@@ -726,7 +1096,11 @@ export function Editor({
                               ? 'https://meet.google.com/abc-defg-hij atau tautan Zoom'
                               : entity === 'meetings' && field === 'participants'
                                 ? 'Contoh: Kepala Desa, Seluruh Pengurus, Babinsa'
-                                : undefined
+                                : entity === 'work-items' && field === 'link'
+                                  ? 'https://... (tautan Google Drive, dokumen hasil, portal pengumpulan)'
+                                  : entity === 'journal' && field === 'title'
+                                    ? 'Contoh: Koordinasi Pengadaan Pupuk Bersama Gapoktan'
+                                    : undefined
                   }
                   type={
                     field.endsWith('_date') || field === 'date' || field === 'last_contact'
@@ -819,6 +1193,11 @@ export function Editor({
                     Jam ini hanya catatan. Belum ada pengingat otomatis.
                   </small>
                 )}
+                {entity === 'work-items' && field === 'link' && (
+                  <small className="field-helper">
+                    Tautan Google Drive, spreadsheet, atau portal bukti hasil pengumpulan tugas.
+                  </small>
+                )}
                 {field === 'code' && (
                   <small className="field-helper">Kode singkat proyek, misalnya OPS.</small>
                 )}
@@ -851,6 +1230,7 @@ export function Editor({
               </label>
             );
           })}
+          </div>
         </div>
         {error && (
           <p role="alert" className="notice error">

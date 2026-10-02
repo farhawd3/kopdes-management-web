@@ -22,14 +22,51 @@ export function WeekBarChart({
 }) {
   const max = Math.max(1, ...data.map((d) => d.value));
   const total = data.reduce((sum, day) => sum + day.value, 0);
+  const avgPerDay = (total / 7).toFixed(1);
+  const peakDay = [...data].sort((a, b) => b.value - a.value)[0];
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 60);
     return () => clearTimeout(t);
   }, []);
 
+  const activeDay = data.find((d) => d.date === selectedDate);
+
   return (
-    <div className="dash-chart-wrap">
+    <div className="dash-chart-wrap week-barchart-modern">
+      <div className="week-barchart-header">
+        <div className="week-barchart-metric">
+          <div className="week-metric-main">
+            <span className="week-metric-num">{total}</span>
+            <div className="week-metric-text-group">
+              <span className="week-metric-title">Tugas Tuntas</span>
+              <small className="week-metric-sub">7 hari terakhir</small>
+            </div>
+          </div>
+          <div className="week-metric-pills">
+            <span className="week-metric-pill" title="Rata-rata penyelesaian per hari">
+              ⌀ {avgPerDay}/hari
+            </span>
+            {total > 0 && peakDay && peakDay.value > 0 && (
+              <span className="week-metric-pill peak-pill" title={`Tertinggi: ${peakDay.label} (${peakDay.value} tugas)`}>
+                Puncak: {peakDay.label} ({peakDay.value})
+              </span>
+            )}
+          </div>
+        </div>
+        {selectedDate && (
+          <button
+            type="button"
+            className="week-filter-reset-chip"
+            onClick={() => onSelect?.('')}
+            title="Klik untuk tampilkan semua tugas"
+          >
+            <span>{activeDay?.dateLabel || selectedDate}</span>
+            <span className="reset-x">✕</span>
+          </button>
+        )}
+      </div>
+
       <div
         className="dash-bar-chart"
         role="group"
@@ -37,36 +74,53 @@ export function WeekBarChart({
       >
         {data.map((d, i) => {
           const pct = (d.value / max) * 100;
+          const isSelected = !!d.date && selectedDate === d.date;
+          const dayNum = d.date ? Number(d.date.slice(-2)) : '';
+
           return (
             <button
               type="button"
-              aria-pressed={!!d.date && selectedDate === d.date}
+              aria-pressed={isSelected}
               aria-label={(d.dateLabel || d.label) + ': ' + d.value + ' selesai'}
-              onClick={() => d.date && onSelect?.(d.date)}
+              onClick={() => {
+                if (d.date) {
+                  onSelect?.(selectedDate === d.date ? '' : d.date);
+                }
+              }}
               key={d.date || d.label}
-              className={`dash-bar-col${d.isToday ? ' bar-today' : ''}`}
-              title={`${d.label}: ${d.value} tugas selesai`}
+              className={`dash-bar-col${d.isToday ? ' bar-today' : ''}${isSelected ? ' is-selected-bar' : ''}`}
+              title={`${d.dateLabel || d.label}: ${d.value} tugas selesai (klik untuk filter)`}
             >
-              <span className="dash-bar-count">{d.value > 0 ? d.value : ''}</span>
+              <span className={`dash-bar-count ${d.value > 0 ? 'has-value' : 'zero-value'}`}>
+                {d.value > 0 ? d.value : '0'}
+              </span>
               <div className="dash-bar-track">
                 <div
                   className="dash-bar-fill"
                   style={{
-                    height: mounted ? `${pct}%` : '0%',
-                    transitionDelay: `${i * 55}ms`,
+                    height: mounted ? `${Math.max(pct, d.value > 0 ? 14 : 4)}%` : '4%',
+                    transitionDelay: `${i * 35}ms`,
                   }}
                 />
               </div>
-              <span className="dash-bar-label">{d.label}</span>
+              <div className="dash-bar-labels-wrap">
+                <span className="dash-bar-label">{d.label}</span>
+                {dayNum && <span className="dash-bar-daynum">{dayNum}</span>}
+              </div>
+              {d.isToday && <span className="today-badge-dot" title="Hari ini" />}
             </button>
           );
         })}
       </div>
-      <p className="dash-chart-caption">
-        {total === 0
-          ? 'Belum ada tugas selesai dalam 7 hari.'
-          : `${total} tugas selesai dalam 7 hari.`}
-      </p>
+      <div className="week-barchart-footer">
+        <p className="dash-chart-caption">
+          {selectedDate
+            ? `Menampilkan tugas tuntas pada ${activeDay?.dateLabel || selectedDate}. Klik lagi untuk melepas filter.`
+            : total === 0
+              ? 'Belum ada tugas diselesaikan dalam 7 hari terakhir. Tuntaskan tugas dari daftar untuk melihat tren.'
+              : `${total} tugas diselesaikan manajer dalam 7 hari terakhir dengan ritme kerja teratur.`}
+        </p>
+      </div>
     </div>
   );
 }

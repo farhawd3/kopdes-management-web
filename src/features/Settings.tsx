@@ -45,6 +45,14 @@ export function Settings({ refresh }: { refresh: () => Promise<void> }) {
 
   return (
     <div className="settings-container">
+      <div className="section-head settings-page-head">
+        <div>
+          <span className="eyebrow">PENGATURAN RUANG KERJA</span>
+          <h2>Pengaturan</h2>
+          <p>Kelola pilihan tema warna, profil koperasi, keamanan PIN, dan cadangan data mandiri.</p>
+        </div>
+      </div>
+
       {/* ── Settings Subnavigation Tabs ─────────────────────────── */}
       <div className="settings-tabs-row" role="tablist" aria-label="Kategori Pengaturan">
         <button

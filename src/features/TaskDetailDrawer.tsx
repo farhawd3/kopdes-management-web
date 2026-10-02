@@ -14,12 +14,18 @@ import {
   Calendar,
   Flag,
   ExternalLink,
+  Link2,
+  Copy,
+  CheckCheck,
 } from 'lucide-react';
 import { schemas, type Item } from './schemas';
 import type { Workspace } from './useWorkspace';
 import { api } from '@/lib/client';
 import { formatDate, today } from '@/lib/date';
+import { toggleTaskStatus } from '@/lib/task-status';
 import { RecursiveScheduleModal } from './RecursiveScheduleModal';
+import { meetingJoinUrl } from './meeting';
+import { formatDisplayCode } from './task-code';
 
 type ActivityItem = {
   id: string;
@@ -37,6 +43,8 @@ export function TaskDetailDrawer({
   onUpdated,
   onPrev,
   onNext,
+  onFullEdit,
+  onDelete,
 }: {
   task: Item;
   workspace: Workspace;
@@ -44,6 +52,8 @@ export function TaskDetailDrawer({
   onUpdated: () => Promise<void>;
   onPrev?: () => void;
   onNext?: () => void;
+  onFullEdit?: (task: Item) => void;
+  onDelete?: (task: Item) => void;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
   useEffect(() => {
@@ -51,7 +61,12 @@ export function TaskDetailDrawer({
     node?.showModal();
     return () => node?.close();
   }, []);
-  const data = task.data;
+
+  const [taskData, setTaskData] = useState(task.data);
+  useEffect(() => {
+    setTaskData(task.data);
+  }, [task]);
+  const data = taskData;
   const isComplete = data.status === 'selesai';
 
   const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -63,6 +78,12 @@ export function TaskDetailDrawer({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [showScheduleModal, setShowScheduleModal] = useState(false);
+  const [isEditingLink, setIsEditingLink] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [submissionLink, setSubmissionLink] = useState(String(data.link || ''));
+  useEffect(() => {
+    setSubmissionLink(String(taskData.link || ''));
+  }, [taskData.link]);
 
   const subtasks = Array.isArray(data.subtasks)
     ? (data.subtasks as { title: string; done: boolean; code?: string }[])
@@ -81,7 +102,38 @@ export function TaskDetailDrawer({
   const project = workspace.workstreams?.find((w) => w.id === data.workstream_id);
   const stakeholder = workspace.stakeholders?.find((row) => row.id === data.stakeholder_id);
   const document = workspace.documents?.find((row) => row.id === data.document_id);
+  const meeting = workspace.meetings?.find((row) => row.id === data.meeting_id);
+  const joinUrl = meetingJoinUrl(meeting);
   const managerName = String(workspace.organization?.[0]?.data?.manager || 'Manajer');
+
+  function handleCopySubmissionLink() {
+    if (!data.link) return;
+    void navigator.clipboard?.writeText(String(data.link));
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 2000);
+  }
+
+  async function handleDelete() {
+    if (onDelete) {
+      /* Confirmation and persistence handled in parent via onDelete prop */
+      onDelete(task);
+    } else {
+      if (!window.confirm(`Hapus tugas "${data.title || 'ini'}"? Tindakan ini tidak dapat dibatalkan.`)) return;
+      setBusy(true);
+      setError('');
+      try {
+        /* Mark as dibatalkan as fallback if no delete handler provided */
+        const parsed = schemas['work-items'].parse({ ...data, status: 'dibatalkan' });
+        await api('work-items', { id: task.id, data: parsed });
+        await onUpdated();
+        onClose();
+      } catch (err) {
+        setError((err as Error).message || 'Gagal membatalkan tugas.');
+      } finally {
+        setBusy(false);
+      }
+    }
+  }
 
   async function saveChanges(changes: Record<string, unknown>, activityMsg?: string) {
     if (busy) return;
@@ -108,6 +160,7 @@ export function TaskDetailDrawer({
 
       const parsed = schemas['work-items'].parse(updatedPayload);
       await api('work-items', { id: task.id, data: parsed });
+      setTaskData(parsed);
       await onUpdated();
       return true;
     } catch (err) {
@@ -119,13 +172,10 @@ export function TaskDetailDrawer({
   }
 
   async function toggleComplete() {
-    const nextStatus = isComplete ? 'rencana' : 'selesai';
+    const change = toggleTaskStatus(data.status);
     await saveChanges(
-      {
-        status: nextStatus,
-        completed_at: nextStatus === 'selesai' ? today() : '',
-      },
-      nextStatus === 'selesai'
+      change,
+      change.status === 'selesai'
         ? 'telah menandai tugas ini selesai'
         : 'membuka kembali status tugas',
     );
@@ -171,6 +221,9 @@ export function TaskDetailDrawer({
     >
       <div className="task-detail-backdrop" onClick={onClose} />
       <div className="task-detail-panel">
+        {/* Mobile Pull Handle */}
+        <div className="drawer-mobile-handle" aria-hidden="true" />
+
         {/* Top Control Bar */}
         <div className="drawer-top-bar">
           <div className="left-controls">
@@ -183,6 +236,20 @@ export function TaskDetailDrawer({
               <Check size={16} />
               <span>{isComplete ? 'Selesai' : 'Tandai Selesai'}</span>
             </button>
+            {onFullEdit && (
+              <button
+                type="button"
+                className="btn-drawer-action"
+                title="Buka formulir lengkap untuk mengubah semua data"
+                onClick={() => {
+                  onClose();
+                  onFullEdit(task);
+                }}
+              >
+                <Edit2 size={14} />
+                <span>Ubah Formulir</span>
+              </button>
+            )}
             <button
               type="button"
               className="btn-icon"
@@ -194,6 +261,16 @@ export function TaskDetailDrawer({
           </div>
 
           <div className="right-controls">
+            <button
+              type="button"
+              className="btn-drawer-action btn-danger-action"
+              title="Hapus tugas ini"
+              onClick={handleDelete}
+              disabled={busy}
+            >
+              <Trash2 size={14} />
+              <span>Hapus</span>
+            </button>
             {onPrev && (
               <button type="button" className="btn-icon" title="Tugas Sebelumnya" onClick={onPrev}>
                 <ChevronLeft size={18} />
@@ -224,14 +301,12 @@ export function TaskDetailDrawer({
         {/* Task Title & Code Header */}
         <div className="drawer-header-section">
           <div className="header-meta-row">
-            {Boolean(data.code) && (
-              <span
-                className="task-code-badge"
-                title="Kode tugas dibuat otomatis saat tugas disimpan"
-              >
-                {String(data.code)}
-              </span>
-            )}
+            <span
+              className="task-code-badge"
+              title="Kode tugas dibuat otomatis saat tugas disimpan"
+            >
+              {formatDisplayCode(String(data.code), 'work-items', task.id)}
+            </span>
             {project && (
               <Link
                 href={`/proyek?id=${project.id}`}
@@ -253,22 +328,24 @@ export function TaskDetailDrawer({
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
+                onKeyDown={async (e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (!title.trim()) return;
+                    setIsEditingTitle(false);
+                    if (title.trim() !== data.title) {
+                      await saveChanges({ title: title.trim() }, `mengubah judul menjadi "${title.trim()}"`);
+                    }
+                  } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    setTitle(String(data.title));
+                    setIsEditingTitle(false);
+                  }
+                }}
                 autoFocus
                 className="title-input-field"
               />
               <div className="inline-actions">
-                <button
-                  type="button"
-                  className="btn-tiny-save"
-                  onClick={async () => {
-                    setIsEditingTitle(false);
-                    if (title !== data.title) {
-                      await saveChanges({ title }, `mengubah judul menjadi "${title}"`);
-                    }
-                  }}
-                >
-                  Simpan
-                </button>
                 <button
                   type="button"
                   className="btn-tiny-cancel"
@@ -278,6 +355,20 @@ export function TaskDetailDrawer({
                   }}
                 >
                   Batal
+                </button>
+                <button
+                  type="button"
+                  className="btn-tiny-save"
+                  disabled={busy || !title.trim()}
+                  onClick={async () => {
+                    if (!title.trim()) return;
+                    setIsEditingTitle(false);
+                    if (title.trim() !== data.title) {
+                      await saveChanges({ title: title.trim() }, `mengubah judul menjadi "${title.trim()}"`);
+                    }
+                  }}
+                >
+                  Simpan
                 </button>
               </div>
             </div>
@@ -317,7 +408,18 @@ export function TaskDetailDrawer({
                 <div className="inline-actions">
                   <button
                     type="button"
+                    className="btn-tiny-cancel"
+                    onClick={() => {
+                      setDescription(String(data.description || ''));
+                      setIsEditingDesc(false);
+                    }}
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="button"
                     className="btn-tiny-save"
+                    disabled={busy}
                     onClick={async () => {
                       setIsEditingDesc(false);
                       if (description !== data.description) {
@@ -326,16 +428,6 @@ export function TaskDetailDrawer({
                     }}
                   >
                     Simpan
-                  </button>
-                  <button
-                    type="button"
-                    className="btn-tiny-cancel"
-                    onClick={() => {
-                      setDescription(String(data.description || ''));
-                      setIsEditingDesc(false);
-                    }}
-                  >
-                    Batal
                   </button>
                 </div>
               </div>
@@ -404,10 +496,118 @@ export function TaskDetailDrawer({
               <ExternalLink size={14} /> Dokumen: {String(document.data.title)}
             </a>
           )}
-          {Boolean(data.link) && (
-            <a href={String(data.link)} target="_blank" rel="noreferrer" className="prop-link">
-              <ExternalLink size={14} /> Tautan berkas
+          {joinUrl && (
+            <a href={joinUrl} target="_blank" rel="noreferrer" className="prop-link">
+              <ExternalLink size={14} /> Gabung rapat: {String(meeting?.data.title || 'Rapat online')}
             </a>
+          )}
+        </div>
+        {/* Link Pengumpulan & Bukti Hasil Tugas */}
+        <div className="task-submission-card">
+          <div className="submission-card-head">
+            <div className="submission-title-group">
+              <Link2 size={16} className="submission-icon" />
+              <strong>Link Pengumpulan / Bukti Hasil</strong>
+            </div>
+            {!isEditingLink && (
+              <button
+                type="button"
+                className="btn-edit-submission"
+                onClick={() => setIsEditingLink(true)}
+              >
+                {data.link ? 'Ubah link' : '+ Pasang link pengumpulan'}
+              </button>
+            )}
+          </div>
+          {isEditingLink ? (
+            <div className="submission-edit-wrap">
+              <input
+                type="url"
+                value={submissionLink}
+                onChange={(e) => setSubmissionLink(e.target.value)}
+                placeholder="https://... (contoh: folder Google Drive, dokumen hasil, portal)"
+                className="submission-url-input"
+                autoFocus
+              />
+              <div className="inline-actions">
+                <button
+                  type="button"
+                  className="btn-tiny-cancel"
+                  onClick={() => {
+                    setSubmissionLink(String(data.link || ''));
+                    setIsEditingLink(false);
+                  }}
+                >
+                  Batal
+                </button>
+                <button
+                  type="button"
+                  className="btn-tiny-save"
+                  disabled={busy}
+                  onClick={async () => {
+                    setIsEditingLink(false);
+                    if (submissionLink.trim() !== String(data.link || '')) {
+                      await saveChanges(
+                        { link: submissionLink.trim() },
+                        submissionLink.trim()
+                          ? `memperbarui link pengumpulan`
+                          : `menghapus link pengumpulan`,
+                      );
+                    }
+                  }}
+                >
+                  Simpan Link
+                </button>
+              </div>
+            </div>
+          ) : data.link ? (
+            <div className="submission-link-display">
+              <a
+                href={String(data.link)}
+                target="_blank"
+                rel="noreferrer"
+                className="submission-open-btn"
+                title="Buka link pengumpulan di tab baru"
+              >
+                <ExternalLink size={14} />
+                <span className="submission-url-text">{String(data.link)}</span>
+                <span className="submission-open-badge">Buka Hasil ↗</span>
+              </a>
+              <div className="submission-quick-actions">
+                <button
+                  type="button"
+                  className="btn-tiny-copy"
+                  onClick={handleCopySubmissionLink}
+                  title="Salin tautan bukti hasil"
+                >
+                  {copiedLink ? <CheckCheck size={13} /> : <Copy size={13} />}
+                  <span>{copiedLink ? 'Tersalin' : 'Salin'}</span>
+                </button>
+                <button
+                  type="button"
+                  className="btn-tiny-edit"
+                  onClick={() => setIsEditingLink(true)}
+                  title="Ubah tautan pengumpulan"
+                >
+                  <Edit2 size={13} />
+                  <span>Ubah</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="submission-empty-box">
+              <p className="submission-empty-text">
+                Belum ada link pengumpulan terpasang. Tautkan Google Drive, lembar kerja, foto, atau portal hasil tugas.
+              </p>
+              <button
+                type="button"
+                className="btn-add-submission-quick"
+                onClick={() => setIsEditingLink(true)}
+              >
+                <Plus size={13} />
+                <span>Tambah Link Bukti / Hasil</span>
+              </button>
+            </div>
           )}
         </div>
 
@@ -431,13 +631,14 @@ export function TaskDetailDrawer({
           <div className="subtasks-tree-list">
             {subtasks.map((sub, idx) => (
               <div key={idx} className={`subtask-tree-row ${sub.done ? 'completed' : ''}`}>
-                <span className="tree-connector-line">└──</span>
                 <button
                   type="button"
                   className={`subtask-check-circle ${sub.done ? 'checked' : ''}`}
                   onClick={() => toggleSubtask(idx)}
+                  aria-label={sub.done ? `Tandai belum selesai: ${sub.title}` : `Tandai selesai: ${sub.title}`}
+                  aria-pressed={Boolean(sub.done)}
                 >
-                  {sub.done && <Check size={12} />}
+                  {sub.done && <Check size={12} strokeWidth={2.5} />}
                 </button>
                 {sub.code && <span className="subtask-code-pill">{sub.code}</span>}
                 <span className="subtask-title-text" onClick={() => toggleSubtask(idx)}>

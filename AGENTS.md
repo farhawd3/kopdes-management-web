@@ -3,6 +3,7 @@
 ## Urutan membaca
 0. Jika melanjutkan perbaikan UI/status terbaru, baca `docs/LANJUTAN-AI.md` sebagai serah terima; verifikasi ulang keadaan Git karena dapat berubah.
    Untuk pekerjaan visual, baca juga `docs/DESAIN-ANTARMUKA.md` sebelum mengubah CSS atau layout.
+   Untuk alur kegiatan/tugas dan SQL, baca `docs/KEGIATAN-DAN-TUGAS.md` serta `docs/MIGRASI-SQL.md`.
 1. `docs/STATUS.md`: keadaan nyata dan pekerjaan berikutnya.
 2. `docs/KEPUTUSAN.md` dan `docs/PRD.md`: keputusan pemilik dan kebutuhan.
 3. `docs/CHECKLIST.md` dan kode terkait: kriteria pekerjaan.

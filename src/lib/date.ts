@@ -27,13 +27,19 @@ export function nextOccurrence(value: string, recurrence: string): string {
   current.setUTCDate(Math.min(day, last));
   return current.toISOString().slice(0, 10);
 }
-export function formatDate(value: string): string {
-  return value
-    ? new Intl.DateTimeFormat('id-ID', {
-        timeZone: 'Asia/Jakarta',
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
-      }).format(new Date(value.length === 10 ? value + 'T12:00:00Z' : value))
-    : 'Belum ditentukan';
+export function formatDate(value?: string | null): string {
+  if (!value || value === 'undefined' || value === 'null') {
+    return 'Belum ditentukan';
+  }
+  const dateStr = value.length === 10 ? value + 'T12:00:00Z' : value;
+  const parsed = new Date(dateStr);
+  if (isNaN(parsed.getTime())) {
+    return 'Belum ditentukan';
+  }
+  return new Intl.DateTimeFormat('id-ID', {
+    timeZone: 'Asia/Jakarta',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  }).format(parsed);
 }

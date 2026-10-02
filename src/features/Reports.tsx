@@ -38,37 +38,37 @@ const sectionMeta = {
     title: 'Pekerjaan selesai',
     Icon: CheckCircle2,
     color: 'section-success',
-    emptyText: 'Belum ada tugas yang diselesaikan pada periode ini.',
+    emptyText: 'Nihil pada periode ini.',
   },
   milestones: {
     title: 'Target penting',
     Icon: Flag,
     color: 'section-primary',
-    emptyText: 'Tidak ada milestone yang ditargetkan selesai pada periode ini.',
+    emptyText: 'Nihil.',
   },
   decisions: {
     title: 'Keputusan rapat',
     Icon: Lightbulb,
     color: 'section-warning',
-    emptyText: 'Tidak ada keputusan strategis baru yang dicatat pada periode ini.',
+    emptyText: 'Tidak ada keputusan baru.',
   },
   next: {
     title: 'Rencana Kerja 7 Hari Mendatang',
     Icon: Calendar,
     color: 'section-info',
-    emptyText: 'Belum ada rencana tindak lanjut yang dijadwalkan dalam 7 hari ke depan.',
+    emptyText: 'Belum ada agenda lanjutan.',
   },
   overdue: {
     title: 'Kendala & Tugas Terlambat',
     Icon: AlertTriangle,
     color: 'section-danger',
-    emptyText: 'Tidak ada tugas terlambat dalam data ini.',
+    emptyText: 'Nihil (semua tugas tepat waktu).',
   },
   risks: {
     title: 'Risiko yang belum ditutup',
     Icon: ShieldAlert,
     color: 'section-danger',
-    emptyText: 'Tidak ada risiko terbuka dalam data ini.',
+    emptyText: 'Nihil (tidak ada risiko terbuka).',
   },
 } as const;
 
@@ -159,16 +159,9 @@ export function Reports() {
       <section className="card report-creator-card no-print">
         <div className="section-head">
           <div>
-            <div className="report-badge-head">
-              <span className="report-badge-pill">Alur Kerja Manajer</span>
-              <span className="report-flow-crumb">
-                Pilih Periode <ArrowRight size={12} /> Tinjau Data <ArrowRight size={12} /> Simpan Draf / Terbitkan
-              </span>
-            </div>
-            <h2>Susun Laporan Eksekutif Manajer</h2>
+            <h2>Susun Laporan Kerja</h2>
             <p>
-              Laporan merekam kondisi nyata koperasi secara utuh saat disimpan (*snapshot*). Anda dapat menyimpannya
-              terlebih dahulu sebagai <strong>Draf</strong> untuk ditinjau, atau langsung menerbitkannya sebagai <strong>Laporan final</strong> berkop KDMP.
+              Perekaman capaian, tindak lanjut, dan keuangan periode. Simpan sebagai draf atau terbitkan langsung.
             </p>
           </div>
         </div>
@@ -353,10 +346,8 @@ export function Reports() {
               <div className="draft-banner-text">
                 <FilePenLine size={18} />
                 <div>
-                  <strong>Status: Draf Manajer</strong>
-                  <p>
-                    Dokumen ini masih berstatus draf sementara. Anda dapat memperbarui data, menerbitkannya sebagai dokumen resmi berkop, atau menghapusnya jika tidak dibutuhkan.
-                  </p>
+                  <strong>Status: Draf Sementara</strong>
+                  <p>Dokumen belum diterbitkan resmi.</p>
                 </div>
               </div>
               <div className="draft-banner-actions">

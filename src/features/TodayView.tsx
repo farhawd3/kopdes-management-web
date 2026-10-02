@@ -18,6 +18,7 @@ import {
 import type { Workspace } from './useWorkspace';
 import { schemas, type Item } from './schemas';
 import { addDays, formatDate, today } from '@/lib/date';
+import { toggleTaskStatus } from '@/lib/task-status';
 import { api } from '@/lib/client';
 import { TaskDetailDrawer } from './TaskDetailDrawer';
 import { Editor } from './Editor';
@@ -37,6 +38,7 @@ export function TodayView({
   }));
 
   const [detailTask, setDetailTask] = useState<Item | null>(null);
+  const [editTask, setEditTask] = useState<Item | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [quickTitle, setQuickTitle] = useState('');
   const [busyId, setBusyId] = useState<string | null>(null);
@@ -77,14 +79,12 @@ export function TodayView({
     setBusyId(task.id);
     setError('');
     try {
-      const isDone = task.data.status === 'selesai';
-      const nextStatus = isDone ? 'rencana' : 'selesai';
+      const change = toggleTaskStatus(task.data.status, { completedAt: now });
       await api('work-items', {
         id: task.id,
         data: {
           ...task.data,
-          status: nextStatus,
-          completed_at: nextStatus === 'selesai' ? now : '',
+          ...change,
         },
       });
       await refresh();
@@ -195,15 +195,16 @@ export function TodayView({
             className="btn-quick-submit"
             disabled={!quickTitle.trim() || busyId === 'quick-add'}
           >
-            {busyId === 'quick-add' ? 'Menyimpan…' : 'Tambah'}
+            <Plus size={15} strokeWidth={2.5} />
+            <span>{busyId === 'quick-add' ? 'Menyimpan…' : 'Tambah'}</span>
           </button>
           <button
             type="button"
-            className="btn-full-task-modal"
+            className="btn-open-full-modal"
             onClick={() => setShowCreateModal(true)}
-            title="Buka formulir lengkap dengan rincian"
+            title="Buka formulir lengkap dengan rincian dan subtugas"
           >
-            + Form lengkap
+            Form lengkap
           </button>
         </div>
       </form>
@@ -242,7 +243,7 @@ export function TodayView({
                   return (
                     <div
                       key={task.id}
-                      className={`today-task-card overdue-card ${isBusy ? 'is-busy' : ''}`}
+                      className={`today-task-card overdue-card priority-${task.data.priority || 'mendesak'} ${isBusy ? 'is-busy' : ''}`}
                       role="button"
                       tabIndex={0}
                       onClick={() => setDetailTask(task)}
@@ -351,7 +352,7 @@ export function TodayView({
                   return (
                     <div
                       key={task.id}
-                      className={`today-task-card ${isDone ? 'is-completed' : ''} ${isBusy ? 'is-busy' : ''}`}
+                      className={`today-task-card priority-${task.data.priority || 'sedang'} ${isDone ? 'is-completed' : ''} ${isBusy ? 'is-busy' : ''}`}
                       role="button"
                       tabIndex={0}
                       onClick={() => setDetailTask(task)}
@@ -554,6 +555,27 @@ export function TodayView({
           workspace={workspace}
           onClose={() => setDetailTask(null)}
           onUpdated={refresh}
+          onFullEdit={(task) => {
+            setDetailTask(null);
+            setEditTask(task);
+          }}
+          onDelete={async (task) => {
+            if (!window.confirm(`Hapus tugas "${task.data.title || 'ini'}"? Tindakan ini tidak dapat dibatalkan.`)) return;
+            setDetailTask(null);
+            await api('work-items', { id: task.id, data: { ...task.data, status: 'dibatalkan' } });
+            await refresh();
+          }}
+        />
+      )}
+
+      {/* Full Editor (for onFullEdit) */}
+      {editTask && (
+        <Editor
+          entity="work-items"
+          workspace={workspace}
+          item={editTask}
+          onClose={() => setEditTask(null)}
+          onSaved={async () => { setEditTask(null); await refresh(); }}
         />
       )}
 
@@ -578,6 +600,17 @@ export function TodayView({
           onSaved={refresh}
         />
       )}
+      {/* Mobile Floating Action Button */}
+      <button
+        type="button"
+        className="fab-today-add"
+        onClick={() => setShowCreateModal(true)}
+        title="Tambah tugas baru hari ini"
+        aria-label="Tambah tugas baru hari ini"
+      >
+        <Plus size={20} strokeWidth={2.5} />
+        <span className="fab-today-label">Tugas Baru</span>
+      </button>
     </div>
   );
 }

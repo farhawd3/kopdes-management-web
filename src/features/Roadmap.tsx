@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import type { Workspace } from './useWorkspace';
 import { TaskTimeline } from './TaskTimeline';
-import { Records } from './Records';
+import { MilestoneTracker } from './MilestoneTracker';
 import { Select } from '@/components/ui/Select';
 export function Roadmap({ data, refresh }: { data: Workspace; refresh: () => Promise<void> }) {
   const [project, setProject] = useState('');
@@ -39,11 +39,10 @@ export function Roadmap({ data, refresh }: { data: Workspace; refresh: () => Pro
         scopeId={project || undefined}
       />
       <div className="milestone-section">
-        <Records
-          entity="milestones"
+        <MilestoneTracker
           workspace={data}
           refresh={refresh}
-          scopeId={project || undefined}
+          scopeProjectId={project || undefined}
         />
       </div>
     </>

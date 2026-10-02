@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import type { Item } from './schemas';
 import { api } from '@/lib/client';
-import { today } from '@/lib/date';
+import { selectTaskStatus, type TaskStatus } from '@/lib/task-status';
 import { Select } from '@/components/ui/Select';
 
 export function TaskBatchActions({
@@ -86,13 +86,7 @@ export function TaskBatchActions({
                     data: {
                       ...item.data,
                       ...(date ? { due_date: date } : {}),
-                      ...(status
-                        ? {
-                            status,
-                            completed_at:
-                              status === 'selesai' ? item.data.completed_at || today() : '',
-                          }
-                        : {}),
+                      ...(status ? selectTaskStatus(status as TaskStatus) : {}),
                     },
                   });
                   saved++;

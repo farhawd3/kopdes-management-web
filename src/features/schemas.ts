@@ -233,7 +233,7 @@ export const schemas = {
     })
     .strict(),
   journal: z
-    .object({ title, date, notes: text, unit_id: ref, work_item_id: ref, stakeholder_id: ref })
+    .object({ title, code: text.optional(), date, notes: text, unit_id: ref, work_item_id: ref, stakeholder_id: ref, meeting_id: ref })
     .strict(),
   members: z
     .object({

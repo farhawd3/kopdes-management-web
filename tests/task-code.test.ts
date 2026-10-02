@@ -1,16 +1,23 @@
 import { describe, expect, it } from 'vitest';
-import { makeTaskCode } from '@/features/task-code';
+import { makeTaskCode, makeActivityCode, formatDisplayCode } from '@/features/task-code';
 import { schemas } from '@/features/schemas';
 
-describe('Kode tugas otomatis', () => {
-  it('mengambil kata kegiatan dan penanda unik', () => {
+describe('Kode tugas dan kegiatan otomatis', () => {
+  it('menghasilkan format standar ringkas TGS-xxxx dan KGT-xxxx', () => {
     expect(makeTaskCode('Mengunjungi koperasi', '12345678-0000-0000-0000-000000000000')).toBe(
-      'MENGU-123456780000',
+      'TGS-1234',
     );
-    expect(makeTaskCode('Rapat evaluasi', 'abcdef01-0000-0000-0000-000000000000')).toBe(
-      'RAPAT-ABCDEF010000',
+    expect(makeActivityCode('Rapat evaluasi', 'abcdef01-0000-0000-0000-000000000000')).toBe(
+      'KGT-ABCD',
     );
   });
+
+  it('memformat kode lama yang panjang menjadi format pendek yang rapi', () => {
+    expect(formatDisplayCode('MENGU-123456780000', 'work-items')).toBe('TGS-1234');
+    expect(formatDisplayCode('RAPAT-ABCDEF010000', 'journal')).toBe('KGT-ABCD');
+    expect(formatDisplayCode('', 'journal', '98765432-1111')).toBe('KGT-9876');
+  });
+
   it('menerima dokumen terkait sebagai pilihan tugas', () => {
     const task = schemas['work-items'].parse({
       title: 'Periksa kontrak',

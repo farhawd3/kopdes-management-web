@@ -12,6 +12,11 @@ import {
   AlertCircle,
   Calendar,
   CheckCircle2,
+  Search,
+  X,
+  Layers,
+  ShieldCheck,
+  Clock,
 } from 'lucide-react';
 import { ProjectNotes } from './ProjectNotes';
 import { Editor } from './Editor';
@@ -21,6 +26,7 @@ import type { Workspace } from './useWorkspace';
 import { scopeProgress } from '@/lib/progress';
 import { formatDate, today } from '@/lib/date';
 import { Meter } from '@/components/charts/Charts';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 export function Projects({ data, refresh }: { data: Workspace; refresh: () => Promise<void> }) {
   const query = useSearchParams(),
@@ -176,45 +182,103 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
         </>
       ) : (
         <>
-          <section className="workspace-intro">
+          <section className="workspace-intro projects-intro-banner">
             <div>
-              <span className="eyebrow">PROYEK</span>
+              <span className="eyebrow">INISIATIF & BIDANG KERJA</span>
               <h2>Proyek Anda</h2>
-              <p>Atur tujuan, tugas, kendala, dan progres setiap inisiatif kerja.</p>
+              <p>Kelola target utama, pembagian tugas tim, mitigasi kendala, dan capaian inisiatif koperasi.</p>
             </div>
             <button className="primary" onClick={() => setEdit(null)}>
               <Plus size={18} /> Proyek baru
             </button>
           </section>
-          <label className="project-search">
-            Cari proyek
-            <input
-              type="search"
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder="Nama atau tujuan proyek…"
-            />
-          </label>
-          <div className="project-status-tabs" aria-label="Filter status proyek">
-            {[
-              ['', 'Semua'],
-              ['aktif', 'Aktif'],
-              ['rencana', 'Rencana'],
-              ['ditunda', 'Ditunda'],
-              ['selesai', 'Selesai'],
-              ['diarsipkan', 'Arsip'],
-            ].map(([value, label]) => (
-              <button key={value} aria-pressed={status === value} onClick={() => setStatus(value)}>
-                {label}
-                <small>
-                  {
-                    projects.filter((row) => !value || (row.data.status || 'rencana') === value)
-                      .length
-                  }
-                </small>
-              </button>
-            ))}
+
+          {/* Project Summary KPI Bar */}
+          <div className="projects-kpi-grid">
+            <div className="project-kpi-card">
+              <span className="kpi-icon-wrap"><FolderOpen size={18} /></span>
+              <div className="kpi-info">
+                <strong>{projects.length}</strong>
+                <small>Total Proyek</small>
+              </div>
+            </div>
+            <div className="project-kpi-card">
+              <span className="kpi-icon-wrap kpi-active"><Clock size={18} /></span>
+              <div className="kpi-info">
+                <strong>
+                  {projects.filter((p) => (p.data.status || 'rencana') === 'aktif').length}
+                </strong>
+                <small>Proyek Berjalan</small>
+              </div>
+            </div>
+            <div className="project-kpi-card">
+              <span className="kpi-icon-wrap kpi-done"><CheckCircle2 size={18} /></span>
+              <div className="kpi-info">
+                <strong>
+                  {projects.filter((p) => p.data.status === 'selesai').length}
+                </strong>
+                <small>Proyek Selesai</small>
+              </div>
+            </div>
+            <div className="project-kpi-card">
+              <span className="kpi-icon-wrap kpi-tasks"><Layers size={18} /></span>
+              <div className="kpi-info">
+                <strong>{(data['work-items'] || []).filter((t) => Boolean(t.data.workstream_id)).length}</strong>
+                <small>Tugas Terhubung</small>
+              </div>
+            </div>
           </div>
+
+          {/* Search & Status Filters */}
+          <div className="projects-toolbar-row">
+            <div className="project-search-box">
+              <Search size={16} className="search-icon" />
+              <input
+                type="search"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder="Cari nama atau tujuan proyek..."
+                aria-label="Cari proyek"
+              />
+              {Boolean(search) && (
+                <button
+                  type="button"
+                  className="btn-clear-search"
+                  title="Hapus pencarian"
+                  onClick={() => setSearch('')}
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
+            <div className="project-status-tabs" aria-label="Filter status proyek">
+              {[
+                ['', 'Semua'],
+                ['aktif', 'Aktif'],
+                ['rencana', 'Rencana'],
+                ['ditunda', 'Ditunda'],
+                ['selesai', 'Selesai'],
+                ['diarsipkan', 'Arsip'],
+              ].map(([value, label]) => (
+                <button
+                  key={value}
+                  type="button"
+                  aria-pressed={status === value}
+                  onClick={() => setStatus(value)}
+                >
+                  {label}
+                  <small>
+                    {
+                      projects.filter((row) => !value || (row.data.status || 'rencana') === value)
+                        .length
+                    }
+                  </small>
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div className="project-grid">
             {projects
               .filter(
@@ -232,84 +296,121 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
                 const nextTask = tasks
                   .filter((t) => !['selesai', 'dibatalkan'].includes(t.status) && t.due_date >= now)
                   .sort((a, b) => a.due_date.localeCompare(b.due_date))[0];
+                const progress = scopeProgress(tasks);
+                const projectStatus = String(row.data.status || 'rencana');
+                const pastelTone =
+                  projectStatus === 'selesai'
+                    ? 'pastel-emerald'
+                    : projectStatus === 'aktif'
+                      ? 'pastel-blue'
+                      : projectStatus === 'ditunda'
+                        ? 'pastel-amber'
+                        : 'pastel-purple';
 
                 return (
-                  <Link className="project-card" href={`/proyek?id=${row.id}`} key={row.id}>
-                    <div className="section-head">
-                      <span
-                        className="project-symbol"
-                        style={{ borderColor: String(row.data.color) }}
-                      >
-                        <FolderOpen size={24} />
-                      </span>
-                      <ArrowUpRight size={19} />
-                    </div>
-                    <div className="record-meta">
-                      <span className="eyebrow">{String(row.data.code)}</span>
-                      <span className="badge">{String(row.data.status || 'rencana')}</span>
-                    </div>
-                    <h3>{String(row.data.title)}</h3>
-                    <p>{String(row.data.description || 'Belum ada deskripsi tujuan proyek.')}</p>
-
-                    {/* Progress Meter */}
-                    <div className="project-progress-wrap">
-                      <div className="project-progress-head">
-                        <small>Progres Penyelesaian</small>
-                        <strong>{scopeProgress(tasks)}%</strong>
+                  <Link
+                    className={`project-card project-card-compact ${pastelTone}`}
+                    href={`/proyek?id=${row.id}`}
+                    key={row.id}
+                  >
+                    <div className="project-card-header">
+                      <div className="project-badge-cluster">
+                        <span className="project-code-tag">{String(row.data.code || 'PRJ')}</span>
+                        <span className={`project-status-badge status-${projectStatus}`}>
+                          {projectStatus}
+                        </span>
                       </div>
-                      <Meter value={scopeProgress(tasks)} />
+                      <ArrowUpRight size={17} className="project-card-arrow" />
                     </div>
 
-                    {/* Obstacles & Next Steps */}
-                    <div className="project-card-highlights">
-                      <div className="project-highlight-item">
-                        {openIssues.length > 0 ? (
-                          <span className="issue-warning-badge">
-                            <AlertCircle size={13} /> {openIssues.length} kendala aktif
-                          </span>
-                        ) : (
-                          <span className="issue-clear-badge">
-                            <CheckCircle2 size={13} /> Kendala terkendali
-                          </span>
-                        )}
-                      </div>
-                      {nextTask && (
-                        <div className="project-next-step">
-                          <Calendar size={13} />
-                          <span>Langkah berikut: {nextTask.title} ({formatDate(nextTask.due_date)})</span>
-                        </div>
+                    <div className="project-card-body">
+                      <h3 className="project-compact-title">{String(row.data.title)}</h3>
+                      {Boolean(row.data.description) && (
+                        <p className="project-compact-desc">{String(row.data.description)}</p>
                       )}
                     </div>
 
-                    <div className="project-card-foot">
-                      <span>
-                        {tasks.filter((task) => task.status === 'selesai').length} /{' '}
-                        {tasks.filter((task) => task.status !== 'dibatalkan').length} tugas selesai
-                      </span>
-                      <span>Buka proyek →</span>
+                    {/* Compact Single-line Progress */}
+                    <div className="project-compact-progress-wrap">
+                      <div className="project-compact-bar-track">
+                        <div
+                          className="project-compact-bar-fill"
+                          style={{ width: `${progress}%` }}
+                        />
+                      </div>
+                      <span className="project-compact-progress-label">{progress}%</span>
                     </div>
+
+                    {/* Compact Stats Row */}
+                    <div className="project-compact-meta-row">
+                      <span className="project-meta-pill">
+                        <CheckCircle2 size={12} />
+                        <span>
+                          {tasks.filter((task) => task.status === 'selesai').length} /{' '}
+                          {tasks.filter((task) => task.status !== 'dibatalkan').length} tugas selesai
+                        </span>
+                      </span>
+                      {openIssues.length > 0 ? (
+                        <span className="project-meta-pill issue-warning">
+                          <AlertCircle size={12} /> {openIssues.length} kendala
+                        </span>
+                      ) : (
+                        <span className="project-meta-pill issue-ok">
+                          <ShieldCheck size={12} /> Terkendali
+                        </span>
+                      )}
+                      {Boolean(row.data.target_date) && (
+                        <span className="project-meta-pill date-pill">
+                          <Calendar size={12} /> {formatDate(String(row.data.target_date))}
+                        </span>
+                      )}
+                    </div>
+
+                    {nextTask && (
+                      <div className="project-compact-next">
+                        <span className="next-label">Langkah berikut:</span>
+                        <strong className="next-title">{nextTask.title}</strong>
+                        <small className="next-date">({formatDate(nextTask.due_date)})</small>
+                      </div>
+                    )}
                   </Link>
                 );
               })}
           </div>
-          {!projects.length && (
-            <div className="empty card">
-              <FolderOpen className="empty-icon" size={36} />
-              <h3>Belum ada proyek</h3>
-              <p>Buat proyek untuk mengelompokkan tugas dan jadwal.</p>
-              <button className="primary" onClick={() => setEdit(null)}>
-                Buat proyek pertama
-              </button>
-            </div>
-          )}
-          {projects.length > 0 &&
-            !projects.some(
+
+          {!projects.length ? (
+            <EmptyState
+              icon={<FolderOpen size={28} />}
+              title="Belum ada proyek kerja"
+              description="Buat proyek untuk mengelompokkan tugas, milestone, dan dokumen inisiatif koperasi secara teratur."
+              pastelVariant="blue"
+              action={{
+                label: 'Buat Proyek Pertama',
+                onClick: () => setEdit(null),
+                icon: <Plus size={16} />,
+              }}
+            />
+          ) : !projects.some(
               (row) =>
                 (!status || (row.data.status || 'rencana') === status) &&
                 `${row.data.title} ${row.data.description || ''}`
                   .toLocaleLowerCase('id')
                   .includes(search.toLocaleLowerCase('id')),
-            ) && <p className="empty">Tidak ada proyek yang sesuai pencarian.</p>}
+            ) ? (
+            <EmptyState
+              icon={<Search size={26} />}
+              title="Tidak ada proyek yang cocok"
+              description="Coba gunakan kata kunci lain atau bersihkan penyaring status proyek."
+              pastelVariant="amber"
+              action={{
+                label: 'Tampilkan Semua Proyek',
+                onClick: () => {
+                  setSearch('');
+                  setStatus('');
+                },
+              }}
+            />
+          ) : null}
         </>
       )}
       {edit !== undefined && (

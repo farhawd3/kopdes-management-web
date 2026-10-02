@@ -1017,6 +1017,8 @@ select:not([multiple]):hover {
   select:not([multiple]),
   select:not([multiple])::picker(select) {
     appearance: base-select;
+    font-family: inherit;
+    font-size: inherit;
   }
   select:not([multiple]) {
     gap: 20px;

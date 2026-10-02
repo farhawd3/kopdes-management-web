@@ -8,6 +8,7 @@ import { schemas, type Item } from './schemas';
 import type { Workspace } from './useWorkspace';
 import { Editor } from './Editor';
 import { Select } from '@/components/ui/Select';
+import { EmptyState } from '@/components/ui/EmptyState';
 export function TaskTimeline({
   items,
   workspace,
@@ -355,17 +356,16 @@ export function TaskTimeline({
         </div>
       </div>
       {!visible.length && (
-        <div className="empty">
-          <CalendarDays size={32} className="empty-icon" />
-          <h3>
-            {tasks.length ? 'Tidak ada tugas pada rentang ini' : 'Susun garis waktu pertama Anda'}
-          </h3>
-          <p>
-            {tasks.length
-              ? 'Ubah rentang tanggal atau pilih Lihat jadwal.'
-              : 'Tambahkan tugas dengan tanggal mulai dan tenggat. Durasi proyek Anda tentukan sendiri.'}
-          </p>
-        </div>
+        <EmptyState
+          icon={<CalendarDays size={24} />}
+          title={tasks.length ? 'Tidak ada tugas pada rentang ini' : 'Susun garis waktu pertama Anda'}
+          description={
+            tasks.length
+              ? 'Ubah rentang tanggal atau pilih rentang waktu yang lebih luas.'
+              : 'Tambahkan tugas dengan tanggal mulai dan tenggat untuk memvisualisasikan jadwal kerja.'
+          }
+          tone="purple"
+        />
       )}
       <p className="timeline-help">
         <MoveHorizontal size={15} /> Seret batang untuk memindahkan jadwal; tarik ujung kanan untuk
