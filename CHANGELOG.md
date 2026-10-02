@@ -1,5 +1,37 @@
 # Changelog
 
+### Paket Perombakan UI & Interaksi: Pintasan Terhubung, Navigasi Multiplatform, Perampingan Tugas, dan Desain Dashboard Pastel (3 Oktober 2026)
+
+- **Pintasan Cepat Buat Baru pada Formulir Terhubung (`Editor.tsx`)**:
+  - Menambahkan tombol pintasan inline *+ Proyek Baru*, *+ Mitra Baru*, *+ Milestone Baru*, *+ Rapat Baru*, *+ Dokumen Baru*, serta *+ Tugas Baru* (pada form Kegiatan) di samping field caption relasi.
+  - Membuka form mikro inline langsung di tempat, memvalidasi dengan Zod, dan memilih item baru secara otomatis tanpa perlu berpindah halaman.
+  - Mengelompokkan pilihan proyek pada dropdown menjadi `<optgroup label="Proyek Aktif">` (proyek yang sedang berjalan) dan `<optgroup label="Riwayat / Selesai">` (proyek selesai/arsip).
+- **Aksi Cepat & Penyempurnaan Animasi Laci Detail Tugas (`TaskDetailDrawer.tsx` & `personal.css`)**:
+  - Mengganti animasi buka laci kaku dengan `@keyframes drawerOpenSmooth` (translasi lembut 42px dengan scale 0.985 ke 1 dan opacity fade-in cubic bezier).
+  - Menambahkan pengubah status langsung (Rencana, Dikerjakan, Selesai, Dibatalkan) tanpa perlu membuka form ubah penuh.
+  - Menambahkan pengubah prioritas langsung (Rendah, Normal, Tinggi, Mendesak) dengan penanda warna visual.
+  - Menambahkan pengubah tanggal tenggat langsung (*inline date input*) dengan format kalender rapi.
+  - Mengamankan aksi hapus tugas dengan soft-cancellation berstatus `dibatalkan` untuk mencegah error HTTP 405.
+- **Navigasi Multiplatform Tablet & Desktop (`AppShell.tsx` & `personal.css`)**:
+  - Mengaktifkan kembali bilah rel tablet (`tablet-rail`) berlebar 72px yang ergonomis dengan ikon, teks keterangan berlabel (Beranda, Hari Ini, Tugas, Kegiatan, Menu), dan indikator aktif bernuansa pastel.
+  - Menambahkan tombol pembuka menu universal (`topbar-nav-menu-btn`) di bilah atas untuk tablet, mobile, dan desktop ketika bilah sisi sedang disembunyikan.
+- **Perampingan Halaman Tugas (`Records.tsx`)**:
+  - Mengisolasi kartu target periode (sprint), formulir input cepat draf, tampilan tersimpan (*saved views*), dan aksi massal (*task batch actions*) agar hanya tampil di mode `daftar`.
+  - Tampilan `harian` dan `papan` kini sepenuhnya bebas dari tumpukan komponen yang membingungkan dan langsung fokus pada rencana kerja hari itu serta kolom Kanban.
+  - Menyembunyikan bilah filter ganda pada mode `harian` untuk menghindari redundansi dengan kontrol bawaan `DailyTasksView`.
+- **Navigator Mingguan Interaktif Tugas Harian (`DailyTasksView.tsx` & `personal.css`)**:
+  - Menambahkan bilah navigator mingguan 7 hari (*Interactive Weekly Strip*) lengkap dengan nama hari, tanggal, dot indikator tugas belum tuntas, serta tombol pintas "Hari Ini Saja" dan "Buka Semua".
+- **Paket Tema Warna Pastel & Kartu Swatch Modern (`Settings.tsx` & `personal.css`)**:
+  - Menata ulang pemilihan warna di Pengaturan menjadi kartu paket palet pastel modern: Mint & Sage, Lavender Mist, Peach & Oat, Pastel Sky, Matcha & Lime, serta Charcoal & Slate.
+  - Menampilkan strip 3 warna (Utama, Pendamping, Lembut), badge status aktif, dan keterangan nuansa kerja.
+- **Rombak Total Grafik Dashboard (`DashboardCharts.tsx` & `personal.css`)**:
+  - Memperbarui `WeekBarChart` dengan metrik 28px tebal, badge rata-rata harian, pill hari puncak, dan chip reset filter terpilih.
+  - Menata ulang batang grafik penyelesaian 7 hari dengan tinggi 160px, rounded track 10px, gradient pastel lembut, dan penanda tanggal hari ini.
+  - Memoles `TaskDonutChart` dengan diagram lingkaran SVG 120px, total tugas tebal di tengah, dan kartu legenda status berbentuk pill interaktif.
+- **Penataan Font Dropdown & Kuncian Popover Kalender (`personal.css`)**:
+  - Menstandarkan `vertical-align: middle !important` dan perataan tengah di semua dropdown tanpa kecuali.
+  - Mengunci kontainer `.date-field` dan popover `.date-picker` secara eksplisit (`top: calc(100% + 6px) !important; bottom: auto !important;`) sehingga popover kalender selalu konsisten terbuka ke arah bawah.
+
 ### Paket Perapihan Menyeluruh, Harmonisasi Judul & Optimalisasi Antarmuka Mobile (2 Oktober 2026)
 
 - **Eliminasi Judul Halaman Redundan**:

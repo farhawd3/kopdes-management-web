@@ -22,7 +22,7 @@ import { schemas, type Item } from './schemas';
 import type { Workspace } from './useWorkspace';
 import { api } from '@/lib/client';
 import { formatDate, today } from '@/lib/date';
-import { toggleTaskStatus } from '@/lib/task-status';
+import { toggleTaskStatus, selectTaskStatus, type TaskStatus } from '@/lib/task-status';
 import { RecursiveScheduleModal } from './RecursiveScheduleModal';
 import { meetingJoinUrl } from './meeting';
 import { formatDisplayCode } from './task-code';
@@ -317,9 +317,54 @@ export function TaskDetailDrawer({
                 {String(project.data.title)}
               </Link>
             )}
-            <span className={`priority-badge priority-${data.priority || 'normal'}`}>
-              <Flag size={12} /> {String(data.priority || 'normal')}
-            </span>
+            <div className="drawer-status-select-wrap">
+              <select
+                aria-label="Ubah status tugas"
+                className={`drawer-status-select status-${data.status || 'rencana'}`}
+                value={String(data.status || 'rencana')}
+                disabled={busy}
+                onChange={async (e) => {
+                  const nextStatus = e.target.value as TaskStatus;
+                  const statusChanges = selectTaskStatus(nextStatus);
+                  const labelMap: Record<string, string> = {
+                    rencana: 'Rencana',
+                    proses: 'Dikerjakan',
+                    selesai: 'Selesai',
+                    dibatalkan: 'Dibatalkan',
+                  };
+                  await saveChanges(
+                    statusChanges,
+                    `mengubah status tugas menjadi "${labelMap[nextStatus] || nextStatus}"`,
+                  );
+                }}
+              >
+                <option value="rencana">Rencana</option>
+                <option value="proses">Dikerjakan</option>
+                <option value="selesai">Selesai</option>
+                <option value="dibatalkan">Dibatalkan</option>
+              </select>
+            </div>
+            <div className="drawer-priority-select-wrap">
+              <Flag size={12} className="priority-flag-icon" />
+              <select
+                aria-label="Ubah prioritas tugas"
+                className={`drawer-priority-select priority-${data.priority || 'normal'}`}
+                value={String(data.priority || 'normal')}
+                disabled={busy}
+                onChange={async (e) => {
+                  const nextPriority = e.target.value;
+                  await saveChanges(
+                    { priority: nextPriority },
+                    `mengubah prioritas menjadi "${nextPriority}"`,
+                  );
+                }}
+              >
+                <option value="rendah">Rendah</option>
+                <option value="normal">Normal</option>
+                <option value="tinggi">Tinggi</option>
+                <option value="mendesak">Mendesak</option>
+              </select>
+            </div>
           </div>
 
           {isEditingTitle ? (
@@ -470,12 +515,24 @@ export function TaskDetailDrawer({
 
         {/* Due Date & Recurrence Row */}
         <div className="date-properties-strip">
-          <div className="prop-item">
+          <label className="prop-item date-prop-editable" title="Ubah tanggal tenggat tugas">
             <Calendar size={15} />
-            <span>
-              Tenggat: <strong>{formatDate(String(data.due_date))}</strong>
-            </span>
-          </div>
+            <span className="prop-label-text">Tenggat:</span>
+            <input
+              type="date"
+              className="drawer-date-inline-input"
+              value={String(data.due_date || today())}
+              disabled={busy}
+              onChange={async (e) => {
+                const nextDate = e.target.value;
+                if (!nextDate) return;
+                await saveChanges(
+                  { due_date: nextDate },
+                  `memperbarui tenggat menjadi ${formatDate(nextDate)}`,
+                );
+              }}
+            />
+          </label>
           {Boolean(data.recurrence && data.recurrence !== 'tidak') && (
             <div className="prop-item">
               <Repeat size={15} />

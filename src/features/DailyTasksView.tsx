@@ -95,7 +95,7 @@ export function DailyTasksView({
     setBusyId(task.id);
     setError('');
     try {
-      await api('work-items', { id: task.id }, 'DELETE');
+      await api('work-items', { id: task.id, data: { ...task.data, status: 'dibatalkan' } });
       await onRefresh();
     } catch (error) {
       setError((error as Error).message);
@@ -123,6 +123,22 @@ export function DailyTasksView({
   const sunday = addDays(monday, 6);
   const upcomingTasks = tasks.filter((t) => String(t.data.due_date) > sunday);
 
+  function expandOnlyToday() {
+    const next: Record<string, boolean> = { upcoming: false, overdue: false };
+    for (const w of weekDays) {
+      next[w.date] = w.isToday;
+    }
+    setExpandedDays(next);
+  }
+
+  function expandAllDays() {
+    const next: Record<string, boolean> = { upcoming: true, overdue: true };
+    for (const w of weekDays) {
+      next[w.date] = true;
+    }
+    setExpandedDays(next);
+  }
+
   return (
     <div className="daily-tasks-container">
       {error && (
@@ -130,6 +146,65 @@ export function DailyTasksView({
           {error}
         </p>
       )}
+
+      {/* ── Quick Day Strip Navigator ───────────────────────── */}
+      <div className="daily-nav-header">
+        <div className="daily-week-strip" role="tablist" aria-label="Navigasi hari pekan ini">
+          {weekDays.map(({ date, dayName, items, isToday }) => {
+            const isExpanded = !!expandedDays[date];
+            const dayNum = Number(date.slice(-2));
+            const hasIncomplete = items.some(
+              (t) => t.data.status !== 'selesai' && t.data.status !== 'dibatalkan',
+            );
+            return (
+              <button
+                key={date}
+                type="button"
+                role="tab"
+                aria-selected={isExpanded}
+                className={`week-strip-day-btn ${isToday ? 'is-today' : ''} ${isExpanded ? 'is-active' : ''}`}
+                onClick={() => {
+                  setExpandedDays((prev) => ({
+                    ...prev,
+                    [date]: !prev[date],
+                  }));
+                }}
+                title={`${dayName}, ${formatDate(date)} · ${items.length} tugas`}
+              >
+                <span className="strip-day-name">{dayName.slice(0, 3)}</span>
+                <span className="strip-day-num">{dayNum}</span>
+                <span className="strip-day-meta">
+                  {items.length > 0 ? (
+                    <span className={`strip-count-dot ${hasIncomplete ? 'has-pending' : 'all-done'}`}>
+                      {items.length}
+                    </span>
+                  ) : (
+                    <span className="strip-empty-dot" />
+                  )}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+        <div className="daily-nav-actions">
+          <button
+            type="button"
+            className="btn-daily-filter"
+            onClick={expandOnlyToday}
+            title="Tampilkan hanya hari ini"
+          >
+            Hari Ini Saja
+          </button>
+          <button
+            type="button"
+            className="btn-daily-filter"
+            onClick={expandAllDays}
+            title="Buka semua hari dalam pekan ini"
+          >
+            Buka Semua
+          </button>
+        </div>
+      </div>
 
       {/* Past Overdue Tasks (If Any) */}
       {pastOverdueTasks.length > 0 && (

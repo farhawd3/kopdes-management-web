@@ -123,17 +123,33 @@ export function Settings({ refresh }: { refresh: () => Promise<void> }) {
                     onClick={() => setColorStyle(c.id)}
                     aria-pressed={isSelected}
                   >
-                    <div className="swatch-preview" style={{ background: c.soft }}>
-                      <span className="swatch-demo-line" style={{ background: c.primary, color: '#1a1f16' }}>
-                        ● {c.name.split(' ')[0]}
-                      </span>
-                      <span className="swatch-companion-dot" style={{ background: c.companion }} title="Aksen pendamping" />
-                      {isSelected && <Check size={14} className="swatch-check" />}
-                    </div>
-                    <div className="swatch-info">
+                    <div className="swatch-header-row">
                       <strong>{c.name}</strong>
-                      <small>{c.desc}</small>
+                      {isSelected ? (
+                        <span className="swatch-active-badge">
+                          <Check size={12} strokeWidth={3} />
+                          <span>Aktif</span>
+                        </span>
+                      ) : null}
                     </div>
+                    <div className="swatch-palette-strip">
+                      <span
+                        className="swatch-color-pill swatch-primary-pill"
+                        style={{ backgroundColor: c.primary }}
+                        title="Warna Utama"
+                      />
+                      <span
+                        className="swatch-color-pill swatch-companion-pill"
+                        style={{ backgroundColor: c.companion }}
+                        title="Aksen Pendamping"
+                      />
+                      <span
+                        className="swatch-color-pill swatch-soft-pill"
+                        style={{ backgroundColor: c.soft }}
+                        title="Latar Lembut"
+                      />
+                    </div>
+                    <small className="swatch-desc-text">{c.desc}</small>
                   </button>
                 );
               })}

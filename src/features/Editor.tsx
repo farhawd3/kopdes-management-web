@@ -163,8 +163,13 @@ export function Editor({
   >(null);
   const [createdItems, setCreatedItems] = useState<Partial<Record<Entity, Item[]>>>({});
   const [selectedRefs, setSelectedRefs] = useState<Record<string, string>>({});
-  const [inlineCreator, setInlineCreator] = useState<'meetings' | 'documents' | 'work-items' | null>(null);
+  const [inlineCreator, setInlineCreator] = useState<
+    'meetings' | 'documents' | 'work-items' | 'workstreams' | 'stakeholders' | 'milestones' | null
+  >(null);
   const [inlineTitle, setInlineTitle] = useState('');
+  const [inlineCode, setInlineCode] = useState('');
+  const [inlineContact, setInlineContact] = useState('');
+  const [inlineCategory, setInlineCategory] = useState('Mitra');
   const [inlineDate, setInlineDate] = useState(today());
   const [inlineTime, setInlineTime] = useState('09:00');
   const [inlineMode, setInlineMode] = useState<'online' | 'tatap muka' | 'hybrid'>('online');
@@ -599,6 +604,50 @@ export function Editor({
                 <div key={field} className="field-item">
                   <div className="field-caption-row">
                     <span className="field-caption">{label}</span>
+                    {reference === 'workstreams' && (
+                      <button
+                        type="button"
+                        className="field-inline-create-btn"
+                        onClick={() => {
+                          setInlineCreator(inlineCreator === 'workstreams' ? null : 'workstreams');
+                          setInlineTitle('');
+                          setInlineCode('');
+                          setInlineDate(today());
+                          setInlineNotice('');
+                        }}
+                      >
+                        {inlineCreator === 'workstreams' ? 'Tutup Form' : '+ Proyek Baru'}
+                      </button>
+                    )}
+                    {reference === 'stakeholders' && (
+                      <button
+                        type="button"
+                        className="field-inline-create-btn"
+                        onClick={() => {
+                          setInlineCreator(inlineCreator === 'stakeholders' ? null : 'stakeholders');
+                          setInlineTitle('');
+                          setInlineContact('');
+                          setInlineCategory('Mitra');
+                          setInlineNotice('');
+                        }}
+                      >
+                        {inlineCreator === 'stakeholders' ? 'Tutup Form' : '+ Mitra Baru'}
+                      </button>
+                    )}
+                    {reference === 'milestones' && Boolean(projectId) && (
+                      <button
+                        type="button"
+                        className="field-inline-create-btn"
+                        onClick={() => {
+                          setInlineCreator(inlineCreator === 'milestones' ? null : 'milestones');
+                          setInlineTitle('');
+                          setInlineDate(today());
+                          setInlineNotice('');
+                        }}
+                      >
+                        {inlineCreator === 'milestones' ? 'Tutup Form' : '+ Milestone Baru'}
+                      </button>
+                    )}
                     {reference === 'meetings' && (
                       <button
                         type="button"
@@ -671,36 +720,74 @@ export function Editor({
                           Catatan terkait yang belum dimuat ({String(selectedValue).slice(0, 8)})
                         </option>
                       )}
-                    {allChoices
-                      ? allChoices.map((choice) => (
-                          <option key={choice} value={choice}>
-                            {formatChoiceLabel(choice)}
-                          </option>
-                        ))
-                      : refItems
-                          .filter(
-                            (row) =>
-                              entity !== 'work-items' ||
-                              field !== 'milestone_id' ||
-                              row.data.workstream_id === projectId,
-                          )
-                          .map((row) => {
-                            const title = String(row.data.title);
-                            const subtitle =
-                              reference === 'members' && row.data.member_number
-                                ? ` (No: ${row.data.member_number})`
-                                : reference === 'inventory-items'
-                                  ? ` [Stok: ${Number(row.data.book_quantity || 0)} ${String(row.data.measurement || 'unit')}]`
-                                  : reference === 'meetings' && row.data.mode
-                                    ? ` [${String(row.data.mode).toUpperCase()}${row.data.meeting_url ? ' · Tautan Online' : ''}]`
-                                    : '';
-                            return (
-                              <option key={row.id} value={row.id}>
-                                {title}
-                                {subtitle}
-                              </option>
-                            );
-                          })}
+                    {allChoices ? (
+                      allChoices.map((choice) => (
+                        <option key={choice} value={choice}>
+                          {formatChoiceLabel(choice)}
+                        </option>
+                      ))
+                    ) : reference === 'workstreams' ? (
+                      (() => {
+                        const activeProjects = refItems.filter(
+                          (row) =>
+                            String(row.data.status) !== 'selesai' &&
+                            String(row.data.status) !== 'diarsipkan',
+                        );
+                        const historyProjects = refItems.filter(
+                          (row) =>
+                            String(row.data.status) === 'selesai' ||
+                            String(row.data.status) === 'diarsipkan',
+                        );
+                        return (
+                          <>
+                            {activeProjects.length > 0 && (
+                              <optgroup label="Proyek Aktif">
+                                {activeProjects.map((row) => (
+                                  <option key={row.id} value={row.id}>
+                                    {String(row.data.title)}
+                                    {row.data.code ? ` [${String(row.data.code)}]` : ''}
+                                  </option>
+                                ))}
+                              </optgroup>
+                            )}
+                            {historyProjects.length > 0 && (
+                              <optgroup label="Riwayat / Selesai">
+                                {historyProjects.map((row) => (
+                                  <option key={row.id} value={row.id}>
+                                    {String(row.data.title)} (Riwayat/Selesai)
+                                  </option>
+                                ))}
+                              </optgroup>
+                            )}
+                          </>
+                        );
+                      })()
+                    ) : (
+                      refItems
+                        .filter(
+                          (row) =>
+                            entity !== 'work-items' ||
+                            field !== 'milestone_id' ||
+                            row.data.workstream_id === projectId,
+                        )
+                        .map((row) => {
+                          const title = String(row.data.title);
+                          const subtitle =
+                            reference === 'members' && row.data.member_number
+                              ? ` (No: ${row.data.member_number})`
+                              : reference === 'inventory-items'
+                                ? ` [Stok: ${Number(row.data.book_quantity || 0)} ${String(row.data.measurement || 'unit')}]`
+                                : reference === 'meetings' && row.data.mode
+                                  ? ` [${String(row.data.mode).toUpperCase()}${row.data.meeting_url ? ' · Tautan Online' : ''}]`
+                                  : '';
+                          return (
+                            <option key={row.id} value={row.id}>
+                              {title}
+                              {subtitle}
+                            </option>
+                          );
+                        })
+                    )}
                   </select>
 
                   {/* Inline Quick Creators */}
@@ -974,6 +1061,235 @@ export function Editor({
                           }}
                         >
                           {inlineBusy ? 'Menyimpan…' : 'Simpan & Pilih Tugas'}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {inlineCreator === 'workstreams' && reference === 'workstreams' && (
+                    <div className="inline-quick-creator-card">
+                      <div className="inline-creator-head">
+                        <FolderKanban size={16} />
+                        <strong>Buat & Tautkan Proyek Baru</strong>
+                      </div>
+                      <div className="inline-creator-grid">
+                        <label className="inline-creator-field">
+                          <span>Nama / Judul Proyek *</span>
+                          <input
+                            type="text"
+                            value={inlineTitle}
+                            onChange={(e) => setInlineTitle(e.target.value)}
+                            placeholder="Contoh: Digitalisasi Gerai & PPOB"
+                            autoFocus
+                          />
+                        </label>
+                        <div className="inline-creator-row">
+                          <label className="inline-creator-field">
+                            <span>Kode Singkat (Opsional)</span>
+                            <input
+                              type="text"
+                              value={inlineCode}
+                              onChange={(e) => setInlineCode(e.target.value)}
+                              placeholder="Contoh: PPOB"
+                              maxLength={12}
+                            />
+                          </label>
+                          <label className="inline-creator-field">
+                            <span>Target Selesai</span>
+                            <input
+                              type="date"
+                              value={inlineDate}
+                              onChange={(e) => setInlineDate(e.target.value)}
+                            />
+                          </label>
+                        </div>
+                      </div>
+                      {inlineNotice && <p className="inline-creator-notice">{inlineNotice}</p>}
+                      <div className="inline-creator-actions">
+                        <button type="button" onClick={() => setInlineCreator(null)}>
+                          Batal
+                        </button>
+                        <button
+                          type="button"
+                          className="primary"
+                          disabled={inlineBusy || !inlineTitle.trim()}
+                          onClick={async () => {
+                            setInlineBusy(true);
+                            setInlineNotice('');
+                            try {
+                              const payload = schemas.workstreams.parse({
+                                title: inlineTitle.trim(),
+                                target_date: inlineDate,
+                                code: inlineCode.trim() || undefined,
+                                status: 'aktif',
+                                priority: 'normal',
+                                notes: '',
+                              });
+                              const res = await api<Item>('workstreams', { data: payload });
+                              setCreatedItems((prev) => ({
+                                ...prev,
+                                workstreams: [res, ...(prev.workstreams || [])],
+                              }));
+                              setSelectedRefs((prev) => ({ ...prev, [field]: res.id }));
+                              setProjectId(res.id);
+                              setInlineCreator(null);
+                            } catch (err) {
+                              setInlineNotice((err as Error).message);
+                            } finally {
+                              setInlineBusy(false);
+                            }
+                          }}
+                        >
+                          {inlineBusy ? 'Menyimpan…' : 'Simpan & Pilih Proyek'}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {inlineCreator === 'stakeholders' && reference === 'stakeholders' && (
+                    <div className="inline-quick-creator-card">
+                      <div className="inline-creator-head">
+                        <Users size={16} />
+                        <strong>Tambah & Tautkan Kontak / Mitra Baru</strong>
+                      </div>
+                      <div className="inline-creator-grid">
+                        <label className="inline-creator-field">
+                          <span>Nama Orang atau Lembaga *</span>
+                          <input
+                            type="text"
+                            value={inlineTitle}
+                            onChange={(e) => setInlineTitle(e.target.value)}
+                            placeholder="Contoh: Bpk. Sugeng (Penyedia Rak) atau Babinsa"
+                            autoFocus
+                          />
+                        </label>
+                        <div className="inline-creator-row">
+                          <label className="inline-creator-field">
+                            <span>Kategori</span>
+                            <select
+                              value={inlineCategory}
+                              onChange={(e) => setInlineCategory(e.target.value)}
+                            >
+                              <option value="Agrinas">Agrinas</option>
+                              <option value="PIC lapangan / Babinsa">PIC lapangan / Babinsa</option>
+                              <option value="Pengurus dan pengawas koperasi">Pengurus dan pengawas koperasi</option>
+                              <option value="Pemerintah desa">Pemerintah desa</option>
+                              <option value="Mitra">Mitra / Rekanan Usaha</option>
+                              <option value="Warga / Petani">Warga / Petani</option>
+                            </select>
+                          </label>
+                          <label className="inline-creator-field">
+                            <span>Kontak (WA / Telepon)</span>
+                            <input
+                              type="tel"
+                              value={inlineContact}
+                              onChange={(e) => setInlineContact(e.target.value)}
+                              placeholder="0812-xxxx-xxxx"
+                            />
+                          </label>
+                        </div>
+                      </div>
+                      {inlineNotice && <p className="inline-creator-notice">{inlineNotice}</p>}
+                      <div className="inline-creator-actions">
+                        <button type="button" onClick={() => setInlineCreator(null)}>
+                          Batal
+                        </button>
+                        <button
+                          type="button"
+                          className="primary"
+                          disabled={inlineBusy || !inlineTitle.trim()}
+                          onClick={async () => {
+                            setInlineBusy(true);
+                            setInlineNotice('');
+                            try {
+                              const payload = schemas.stakeholders.parse({
+                                title: inlineTitle.trim(),
+                                category: inlineCategory,
+                                contact: inlineContact.trim(),
+                                influence: 3,
+                                interest: 3,
+                                follow_up: '',
+                              });
+                              const res = await api<Item>('stakeholders', { data: payload });
+                              setCreatedItems((prev) => ({
+                                ...prev,
+                                stakeholders: [res, ...(prev.stakeholders || [])],
+                              }));
+                              setSelectedRefs((prev) => ({ ...prev, [field]: res.id }));
+                              setInlineCreator(null);
+                            } catch (err) {
+                              setInlineNotice((err as Error).message);
+                            } finally {
+                              setInlineBusy(false);
+                            }
+                          }}
+                        >
+                          {inlineBusy ? 'Menyimpan…' : 'Simpan & Pilih Mitra'}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {inlineCreator === 'milestones' && reference === 'milestones' && (
+                    <div className="inline-quick-creator-card">
+                      <div className="inline-creator-head">
+                        <Sparkles size={16} />
+                        <strong>Tambah & Tautkan Milestone Proyek</strong>
+                      </div>
+                      <div className="inline-creator-grid">
+                        <label className="inline-creator-field">
+                          <span>Judul Milestone *</span>
+                          <input
+                            type="text"
+                            value={inlineTitle}
+                            onChange={(e) => setInlineTitle(e.target.value)}
+                            placeholder="Contoh: Pengadaan Rak & Perlengkapan Gerai Siap"
+                            autoFocus
+                          />
+                        </label>
+                        <label className="inline-creator-field">
+                          <span>Tenggat Target Milestone</span>
+                          <input
+                            type="date"
+                            value={inlineDate}
+                            onChange={(e) => setInlineDate(e.target.value)}
+                          />
+                        </label>
+                      </div>
+                      {inlineNotice && <p className="inline-creator-notice">{inlineNotice}</p>}
+                      <div className="inline-creator-actions">
+                        <button type="button" onClick={() => setInlineCreator(null)}>
+                          Batal
+                        </button>
+                        <button
+                          type="button"
+                          className="primary"
+                          disabled={inlineBusy || !inlineTitle.trim()}
+                          onClick={async () => {
+                            setInlineBusy(true);
+                            setInlineNotice('');
+                            try {
+                              const payload = schemas.milestones.parse({
+                                title: inlineTitle.trim(),
+                                workstream_id: projectId,
+                                due_date: inlineDate,
+                                notes: '',
+                              });
+                              const res = await api<Item>('milestones', { data: payload });
+                              setCreatedItems((prev) => ({
+                                ...prev,
+                                milestones: [res, ...(prev.milestones || [])],
+                              }));
+                              setSelectedRefs((prev) => ({ ...prev, [field]: res.id }));
+                              setInlineCreator(null);
+                            } catch (err) {
+                              setInlineNotice((err as Error).message);
+                            } finally {
+                              setInlineBusy(false);
+                            }
+                          }}
+                        >
+                          {inlineBusy ? 'Menyimpan…' : 'Simpan & Pilih Milestone'}
                         </button>
                       </div>
                     </div>

@@ -193,18 +193,22 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
       </a>
       <header className="manager-topbar">
         <div className="topbar-left-cluster">
-          {desktopSidebarHidden === 'true' && (
-            <button
-              type="button"
-              className="desktop-sidebar-expand-btn"
-              aria-label="Buka menu samping (Ctrl+B)"
-              title="Buka menu samping (Ctrl+B)"
-              onClick={() => setDesktopSidebarHidden('false')}
-            >
-              <PanelLeftOpen size={18} />
-              <span className="expand-btn-text">Menu</span>
-            </button>
-          )}
+          <button
+            type="button"
+            className="topbar-nav-menu-btn"
+            aria-label="Buka menu navigasi"
+            title="Menu Navigasi (Ctrl+B)"
+            onClick={() => {
+              if (window.innerWidth >= 1100) {
+                setDesktopSidebarHidden(desktopSidebarHidden === 'true' ? 'false' : 'true');
+              } else {
+                setMenu(!menu);
+              }
+            }}
+          >
+            {desktopSidebarHidden === 'true' ? <PanelLeftOpen size={18} /> : <Menu size={18} />}
+            <span className="topbar-menu-label">Menu</span>
+          </button>
           <Link href="/beranda" className="manager-profile" aria-label={`Kembali ke Beranda (${name})`} title={`Kembali ke Beranda (${name})`}>
             <span className="manager-avatar-badge">{name[0] || 'M'}</span>
           </Link>
@@ -275,20 +279,52 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
         </div>
       </header>
       <nav className="tablet-rail" aria-label="Navigasi tablet">
-        <Link href="/beranda" aria-label="Beranda" title="Beranda">
-          <House size={21} />
+        <Link
+          href="/beranda"
+          aria-label="Beranda"
+          title="Beranda"
+          className={`tablet-rail-link ${path === '/beranda' ? 'is-active' : ''}`}
+        >
+          <House size={20} />
+          <span className="tablet-rail-text">Beranda</span>
         </Link>
-        <Link href="/hari-ini" aria-label="Hari Ini" title="Hari Ini">
-          <SunMedium size={21} />
+        <Link
+          href="/hari-ini"
+          aria-label="Hari Ini"
+          title="Hari Ini"
+          className={`tablet-rail-link ${path === '/hari-ini' ? 'is-active' : ''}`}
+        >
+          <SunMedium size={20} />
+          <span className="tablet-rail-text">Hari Ini</span>
         </Link>
-        <Link href="/tugas" aria-label="Tugas" title="Tugas">
-          <CheckCheck size={21} />
+        <Link
+          href="/tugas"
+          aria-label="Tugas"
+          title="Tugas"
+          className={`tablet-rail-link ${path === '/tugas' ? 'is-active' : ''}`}
+        >
+          <CheckCheck size={20} />
+          <span className="tablet-rail-text">Tugas</span>
         </Link>
-        <Link href="/jurnal" aria-label="Kegiatan" title="Kegiatan">
-          <BookOpen size={21} />
+        <Link
+          href="/jurnal"
+          aria-label="Kegiatan"
+          title="Kegiatan"
+          className={`tablet-rail-link ${path === '/jurnal' ? 'is-active' : ''}`}
+        >
+          <BookOpen size={20} />
+          <span className="tablet-rail-text">Kegiatan</span>
         </Link>
-        <button aria-label="Buka semua halaman" aria-expanded={menu} onClick={() => setMenu(!menu)}>
-          <Menu size={21} />
+        <button
+          type="button"
+          aria-label="Buka semua halaman"
+          aria-expanded={menu}
+          onClick={() => setMenu(!menu)}
+          className={`tablet-rail-link tablet-rail-menu-btn ${menu ? 'is-active' : ''}`}
+          title="Buka menu lengkap"
+        >
+          <Menu size={20} />
+          <span className="tablet-rail-text">Menu</span>
         </button>
       </nav>
       <aside className={`manager-sidebar ${menu ? 'is-open' : ''}`} aria-label="Semua halaman">

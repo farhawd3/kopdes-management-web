@@ -1561,7 +1561,7 @@ export function Records({
           )}
         </div>
       )}
-      {entity === 'work-items' && (workspace.sprints || []).length > 0 && !sprintFilter && !isCompletedArchive && (
+      {entity === 'work-items' && (workspace.sprints || []).length > 0 && !sprintFilter && !isCompletedArchive && view === 'daftar' && (
         <div className="active-sprints-row">
           {(workspace.sprints || [])
             .filter((s) => s.data.status === 'aktif')
@@ -1576,7 +1576,7 @@ export function Records({
             ))}
         </div>
       )}
-      {entity === 'work-items' && !isCompletedArchive && view !== 'kalender' && view !== 'gantt' && (
+      {entity === 'work-items' && !isCompletedArchive && view === 'daftar' && (
         <form
           className="today-quick-add-card"
           onSubmit={async (event) => {
@@ -1624,15 +1624,17 @@ export function Records({
           </div>
         </form>
       )}
-      <button
-        type="button"
-        className="mobile-filter-toggle"
-        aria-expanded={filtersOpen}
-        onClick={() => setFiltersOpen(!filtersOpen)}
-      >
-        Cari & filter{search || effectiveFilter || workstream || priority ? ' · aktif' : ''}
-      </button>
-      <div className={`filters ${filtersOpen ? 'filters-expanded' : ''}`}>
+      {view !== 'harian' && (
+        <>
+          <button
+            type="button"
+            className="mobile-filter-toggle"
+            aria-expanded={filtersOpen}
+            onClick={() => setFiltersOpen(!filtersOpen)}
+          >
+            Cari & filter{search || effectiveFilter || workstream || priority ? ' · aktif' : ''}
+          </button>
+          <div className={`filters ${filtersOpen ? 'filters-expanded' : ''}`}>
         <label>
           <span className="field-caption">
             <Search size={14} /> Cari
@@ -1786,8 +1788,10 @@ export function Records({
             </label>
           </>
         )}
-      </div>
-      {entity === 'work-items' && !isCompletedArchive && (
+          </div>
+        </>
+      )}
+      {entity === 'work-items' && !isCompletedArchive && view === 'daftar' && (
         <SavedTaskViews
           value={{
             search,
@@ -1809,7 +1813,7 @@ export function Records({
           }}
         />
       )}
-      {entity === 'work-items' && (
+      {entity === 'work-items' && !isCompletedArchive && view === 'daftar' && (
         <TaskBatchActions items={rows} refresh={refresh} />
       )}
       {error && (
