@@ -4,6 +4,7 @@
 |---|---|
 | [Status](STATUS.md) | Implementasi nyata, verifikasi, kendala, langkah berikut |
 | [Paket lanjutan AI](LANJUTAN-AI.md) | Serah terima konkret untuk navigasi, modal, status tugas, Harian, dan gaya |
+| [Git untuk beberapa AI](GIT-KERJA-PARALEL.md) | Cabang, worktree, PR, konflik, dan batas deployment |
 | [Keputusan](KEPUTUSAN.md) | Pembaruan dari instruksi pemilik |
 | [PRD](PRD.md) | Kebutuhan dan kriteria terima |
 | [Checklist](CHECKLIST.md) | Implementasi, penerimaan dan backlog aktif |

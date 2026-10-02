@@ -4,7 +4,7 @@ Dokumen ini adalah titik mulai untuk AI lain. Baca `../AGENTS.md`, `STATUS.md`, 
 
 ## Keadaan saat serah terima
 
-- Commit lokal `12718c7` merapikan input cepat tugas pada 360 px; cabang `main` masih satu commit di depan `origin/main`. Jangan push ke cabang produksi karena dapat memicu deployment.
+- Commit lokal `12718c7` merapikan input cepat tugas pada 360 px dan `cb547a9` menambah panduan ini. Jumlah commit lokal dapat berubah; periksa `git status -sb` dan `git log` sebelum bekerja. Jangan push ke cabang produksi karena dapat memicu deployment.
 - Ada perubahan belum di-commit pada `src/app/personal.css`, `src/app/polish.css`, dan `src/components/layout/AppShell.tsx` dari pekerjaan lain. Periksa diff dan pertahankan isinya. Jangan stage seluruh direktori.
 - Pemeriksaan terakhir: 129 tes, typecheck, lint, dan build lulus. Ini belum membuktikan semua interaksi benar. Beranda/Hari Ini pernah menampilkan satu tugas ketika Daftar Tugas tampak kosong; reproduksi dan cari penyebab sebelum menyatakan alur data konsisten.
 - SQL indeks paginasi masih ditandai belum terverifikasi pada `CHECKLIST.md`. Jangan anggap sudah terpasang.
@@ -47,3 +47,14 @@ Cari sumber glow merah pada keadaan hover/fokus/aktif tombol, terutama aturan `b
 3. Jalankan `npm test`, `npm run typecheck`, `npm run lint`, `npm run build`.
 4. Uji UI nyata pada 360, 768, 1024, 1440 px: buka/tutup menu, modal, tugas, status, dan Harian. Catat ukuran yang benar-benar diuji. Tidak boleh ada horizontal overflow halaman; tabel/Gantt boleh bergulir dalam kontainer.
 5. Perbarui `STATUS.md`, `CHECKLIST.md`, dan `../CHANGELOG.md` hanya untuk hasil yang terbukti. Jangan mengklaim siap produksi dari tes otomatis saja. Simpan perubahan per paket; jangan push cabang utama atau deploy produksi tanpa instruksi baru dari pemilik.
+
+## Saran tambahan untuk sistem yang benar-benar menyatu
+
+- Buat matriks hubungan entitas yang diuji, bukan sekadar tautan tampilan: proyek → milestone → tugas; tugas ↔ mitra/kontak, rapat, dokumen/kontrak, kendala; barang → opname; transaksi kas → buku kas. Untuk setiap hubungan, uji buat, ubah, buka dari kedua arah, hapus/arsip referensi, dan data yang tidak ditemukan.
+- Jadikan status tugas, tanggal selesai, dan catatan aktivitas sebagai satu operasi domain. Pastikan Beranda, Hari Ini, Tugas, kalender, papan, Gantt, dan laporan membaca hasil yang sama setelah mutasi tanpa refresh manual. Periksa invalidasi cache setelah setiap perubahan.
+- Audit paginasi dan filter di server. Angka ringkasan harus menyebut jika hanya mencakup 50 baris yang dimuat, atau memakai query agregat server yang benar. Jangan mengunduh semua riwayat untuk menghitung dashboard.
+- Tambahkan uji alur untuk data kosong, ratusan tugas lintas bulan, relasi yang putus, jaringan gagal, sesi kedaluwarsa, dan akses ulang setelah login. Galat harus jelas dan tidak menjadi angka nol atau pesan sukses palsu.
+- Audit aksesibilitas: ikon memiliki nama, status tidak hanya warna, modal mengelola fokus, dan kontrol dapat dipakai keyboard. Periksa performa di ponsel: permintaan berulang, ukuran bundle, animasi, dan scroll tabel.
+- Simpan cadangan dan uji pemulihan pada data uji terpisah sebelum memakai data penting. Jangan pernah reset cloud untuk menyelesaikan bug UI.
+
+Panduan kerja Git untuk beberapa AI ada di `GIT-KERJA-PARALEL.md`. Selesaikan masalah per paket dan buktikan alurnya; tidak ada satu tes yang dapat membuktikan klaim “100% bebas error”.

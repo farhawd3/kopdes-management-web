@@ -26,13 +26,12 @@ export function DailyTasksView({
   const dayOfWeek = (new Date(currentDate + 'T12:00:00Z').getUTCDay() + 6) % 7;
   const monday = addDays(currentDate, -dayOfWeek);
 
-  // Expanded days state: default Tuesday, Today, and Overdue expanded
+  // Only today opens by default; a fixed weekday can expose old dates unexpectedly.
   const [expandedDays, setExpandedDays] = useState<Record<string, boolean>>(() => {
-    const init: Record<string, boolean> = { upcoming: true, overdue: true };
-    // Expand today and Tuesday by default
+    const init: Record<string, boolean> = { upcoming: false, overdue: false };
     for (let i = 0; i < 7; i++) {
       const date = addDays(monday, i);
-      init[date] = date === currentDate || i === 1; // 1 is Tuesday
+      init[date] = date === currentDate;
     }
     return init;
   });

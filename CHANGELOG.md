@@ -1,5 +1,10 @@
 # Changelog
 
+### Harian dan panduan integrasi (2 Oktober 2026)
+
+- Tampilan Harian hanya membuka hari ini secara bawaan; hari Selasa dan grup lain tidak lagi terbuka tanpa diminta.
+- Menambah panduan audit keterhubungan fitur dan cara kerja Git ketika beberapa AI mengerjakan proyek.
+
 ### Input cepat ponsel (2 Oktober 2026)
 
 - Memisahkan kolom judul dan tombol input cepat tugas pada layar sempit agar petunjuk lengkap terbaca dan tombol mudah disentuh.

@@ -1,5 +1,11 @@
 # Status proyek — 2 Oktober 2026
 
+## Paket lanjutan
+
+- Default Harian yang selalu membuka Selasa diperbaiki di `DailyTasksView.tsx`; pemeriksaan UI langsung setelah perubahan masih diperlukan.
+- Matriks audit hubungan fitur dan alur Git beberapa AI tercatat di `LANJUTAN-AI.md` dan `GIT-KERJA-PARALEL.md`. Pekerjaan dalam panduan itu belum dianggap selesai.
+- Sesudah perubahan ini, 129 tes, typecheck, lint, dan build lulus. Pemeriksaan UI langsung serta audit data lintas halaman masih diperlukan.
+
 ## Pemeriksaan ponsel terbaru
 
 - Input cepat tugas pada lebar 360 px kini memakai dua baris sehingga judul dan tombol tidak saling menekan.
