@@ -1,6 +1,7 @@
 # Panduan AI — Kopdes Management Web
 
 ## Urutan membaca
+0. Jika melanjutkan perbaikan UI/status terbaru, baca `docs/LANJUTAN-AI.md` sebagai serah terima; verifikasi ulang keadaan Git karena dapat berubah.
 1. `docs/STATUS.md`: keadaan nyata dan pekerjaan berikutnya.
 2. `docs/KEPUTUSAN.md` dan `docs/PRD.md`: keputusan pemilik dan kebutuhan.
 3. `docs/CHECKLIST.md` dan kode terkait: kriteria pekerjaan.
