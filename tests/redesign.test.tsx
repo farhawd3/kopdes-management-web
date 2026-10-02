@@ -244,7 +244,7 @@ describe('Fitur Redesain Behance', () => {
     expect(screen.getByRole('heading', { name: /Tambah Tugas Baru/i })).toBeTruthy();
   });
 
-  it('Editor pemangku kepentingan menyediakan pilihan cepat Babinsa dan Kades', () => {
+  it('Editor mitra menyediakan kategori Agrinas tanpa nama orang rekaan', () => {
     render(
       <Editor
         entity="stakeholders"
@@ -253,52 +253,41 @@ describe('Fitur Redesain Behance', () => {
         onSaved={vi.fn().mockResolvedValue(undefined)}
       />,
     );
-
-    expect(screen.getByText(/Pilihan Cepat Pemangku Desa/i)).toBeTruthy();
-    const babinsaBtn = screen.getByRole('button', { name: /Babinsa \(TNI\)/i });
-    expect(babinsaBtn).toBeTruthy();
-
-    fireEvent.click(babinsaBtn);
-    expect((screen.getByLabelText(/Nama pemangku/i) as HTMLInputElement).value).toContain(
-      'Babinsa Desa',
-    );
-    expect((screen.getByLabelText(/Kategori/i) as HTMLSelectElement).value).toContain(
-      'Keamanan Desa',
-    );
-    expect((screen.getByLabelText(/Tingkat wewenang/i) as HTMLSelectElement).value).toBe('4');
+    expect(screen.getByText('Jenis kontak')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Agrinas' }));
+    expect((screen.getByLabelText(/Nama orang atau lembaga/i) as HTMLInputElement).value).toBe('');
+    expect((screen.getByLabelText(/Kategori/i) as HTMLSelectElement).value).toBe('Agrinas');
+    expect(screen.queryByLabelText(/Tingkat wewenang/i)).toBeNull();
   });
 
-  it('Records pemangku kepentingan menampilkan lencana peran, kuadran, dan kontak WhatsApp', () => {
-    const babinsa: Item = {
+  it('Records mitra menampilkan kontak dan tindak lanjut tersimpan', () => {
+    const contact: Item = {
       id: 'stk-1',
       created_at: '',
       updated_at: '',
       data: {
-        title: 'Sertu Budi (Babinsa)',
-        category: 'Keamanan Desa (Babinsa / Bhabinkamtibmas)',
+        title: 'Kontak uji',
+        category: 'Agrinas',
         contact: '081234567890',
-        influence: 4,
+        influence: 3,
         interest: 3,
         last_contact: '2026-09-28',
-        follow_up: 'Koordinasi keamanan gerai',
+        follow_up: 'Hubungi PIC',
       },
     };
-
     render(
       <Records
         entity="stakeholders"
-        workspace={{ stakeholders: [babinsa] }}
+        workspace={{ stakeholders: [contact] }}
         refresh={vi.fn().mockResolvedValue(undefined)}
       />,
     );
-
-    expect(screen.getAllByText('Sertu Budi (Babinsa)').length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText(/Keamanan Desa/i).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText('Libatkan Erat · Mitra Kunci Strategis')).toBeTruthy();
+    expect(screen.getAllByText('Kontak uji').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/Agrinas/i).length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText('WhatsApp ↗')).toBeTruthy();
     expect(screen.getByText('Telepon')).toBeTruthy();
-    expect(screen.getByText(/Koordinasi keamanan gerai/)).toBeTruthy();
-    expect(screen.getByText(/Peta pengaruh–minat/i)).toBeTruthy();
+    expect(screen.getByText(/Hubungi PIC/)).toBeTruthy();
+    expect(screen.queryByText(/Peta pengaruh/i)).toBeNull();
   });
 
   it('Editor meetings menyesuaikan input lokasi dan online meeting berdasarkan pilihan format rapat', () => {

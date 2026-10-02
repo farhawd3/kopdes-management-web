@@ -17,11 +17,11 @@ export const COLOR_STYLES: {
   {
     id: 'lime',
     name: 'Lime & Ink (Bawaan)',
-    primary: '#CEDD86',
+    primary: '#C5E64D',
     companion: '#B5A8D6',
-    soft: '#f1f5e0',
+    soft: '#f2f8d9',
     canvas: '#F6F7F3',
-    desc: 'Hijau lembut dengan teks arang kontras',
+    desc: 'Hijau segar dengan teks arang kontras',
   },
   {
     id: 'sage',

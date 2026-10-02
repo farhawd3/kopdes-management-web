@@ -1,5 +1,51 @@
 # Status proyek — 2 Oktober 2026
 
+## Detail tugas kembali terbuka setelah pindah tampilan
+
+- Parameter `task` pada URL sebelumnya tertinggal saat detail tugas ditutup. Ketika halaman dipasang ulang, parameter itu membuka tugas yang sama. Penutupan kini menghapus parameter sambil mempertahankan filter URL lain.
+- Alur URL tugas → tutup lewat Escape/tombol → pindah ke Papan diperiksa di browser lokal; dialog tetap tertutup. Tes regresi menutup lalu memasang ulang tampilan lulus.
+- Verifikasi paket: 129 tes, typecheck, lint, dan build lulus.
+
+## Perbaikan dari anotasi tampilan
+
+- Riwayat tugas mendapat kartu per peristiwa; tombol tutup pusat aksi dan centang Hari Ini diperjelas. Tajuk lokasi, pilihan status, metadata tugas, pintasan tindak lanjut, input cepat, dan grafik tujuh hari dirapikan.
+- Warna prioritas pada kartu Beranda memakai empat warna semantik tetap. Grafik kosong menyebutkan bahwa belum ada tugas selesai, tanpa mengarang jumlah.
+- Tugas baru mendapat kode otomatis dari kata pertama judul dan 12 karakter UUID; kode historis tetap. Tugas dapat menunjuk satu Mitra atau kontak serta satu Dokumen atau kontrak yang sudah dicatat. Tidak ada migrasi SQL untuk tambahan referensi JSONB ini.
+- Tampilan Beranda, Tugas, dan Hari Ini diperiksa di browser lokal pada desktop; Hari Ini diukur pada 360 px tanpa luapan halaman. Pemeriksaan fisik tablet/ponsel dan semua keadaan interaksi belum lengkap.
+- Pemeriksaan kode paket anotasi: 128 tes lulus, typecheck, lint, dan build produksi lulus.
+
+## Login lokal setelah pesan migrasi keamanan
+
+- Pemeriksaan baca saja ke proyek `mqycnhebhzqaziouipet`: tabel `manager_security` dan `hub_records` tersedia, kunci server dapat membacanya, dan metadata serta satu panggilan diagnostik fungsi `reserve_pin_attempt` berhasil. **Migrasi keamanan tidak hilang**.
+- Server pengembangan sebelumnya berjalan tanpa akses jaringan, sehingga panggilan Supabase gagal tetapi ditampilkan sebagai “Migrasi keamanan belum tersedia”. Server lokal dijalankan ulang dengan akses jaringan; pemilik mengonfirmasi berhasil masuk memakai PIN.
+- Pesan galat login kini membedakan fungsi hilang, izin fungsi, koneksi server, dan galat database. PIN dan hash tidak dicetak. Panggilan diagnostik memakai satu jatah percobaan sementara; tidak ada PIN yang dicoba.
+- Verifikasi paket ini: 126 tes lulus, typecheck, lint, dan build lulus.
+
+## Alur tugas dan ponsel
+
+- Form tugas baru menampilkan isian pokok lebih dulu, dengan **Detail lainnya** untuk isian lanjutan. Tugas menautkan Mitra atau kontak, Rapat, dan Kendala; milestone terkunci sampai proyek dipilih dan hanya menampilkan milestone proyek itu. Kode tugas tidak wajib diisi dan tidak ditampilkan bila kosong.
+- Jadwal berulang dimulai dari **Tidak berulang**. Jam dan batas tanggal terkunci sampai pola dipilih; tugas berikutnya hanya dibuat saat tugas sekarang diselesaikan dan batas tanggal belum lewat. Jam tidak mengirim pengingat otomatis.
+- Pada stok opname, jumlah buku diambil dari barang terpilih dan tidak bisa diketik ulang; kolom hitung baru aktif setelah barang dipilih.
+- Kalender ponsel memakai sel tanggal ringkas agar tujuh hari muat dalam lebar layar; Gantt ponsel mulai dari daftar tanggal, dengan bagan mendatar sebagai pilihan. Navigasi bawah dipindah ke tepi layar dan ruang konten ditambah.
+- Tes baru mencakup penguncian input, pilihan mitra, dan milestone. Pemeriksaan kode paket sebelumnya: **125 tes lulus**, typecheck, lint, dan build lulus. Setelah login, halaman Tugas diperiksa pada 360/768/1024/1440 px. Luapan horizontal ponsel dan tombol Tugas baru yang menimpa pilihan rentang diperbaiki; Kalender dan Gantt ponsel diperiksa tanpa luapan halaman. Pengujian visual halaman lain belum menyeluruh.
+
+## Navigasi, kontak, dan data bertahap
+
+- Pemeriksaan kode: 123 tes lulus, typecheck, lint, dan build lulus. Kueri daftar tugas dibaca langsung dari Supabase setelah reset. Pemeriksaan visual halaman pribadi pada semua ukuran belum dilakukan karena sesi browser pemeriksaan kedaluwarsa.
+- Halaman kini meminta domain yang dibutuhkan saja, maksimal 50 catatan per permintaan. Tugas aktif dan selesai terbaru dipisah dari riwayat selesai lama; tombol **Muat 50 lagi** tersedia. Beranda memberi tahu saat ringkasan berasal dari data parsial.
+- Cache bacaan 60 detik menggabungkan permintaan serentak dan dibersihkan setelah perubahan. Uji baca langsung Supabase berhasil dan menemukan satu tugas setelah reset. Uji visual halaman login diperlukan untuk melihat data pribadi; sesi browser pemeriksaan sudah kedaluwarsa.
+- Menu **Terakhir** dihapus; menu **Mitra & kontak** menggantikan label lama. Kategori Agrinas ditambah tanpa data orang rekaan. Warna Lime lebih tegas dan gaya kartu/tombol/tab dirapikan di `polish.css`.
+- Panduan contoh pengisian rundown tersedia di `docs/PANDUAN-ONBOARDING.md`.
+- Migrasi indeks `20261002000006_paged_records.sql` disiapkan dan diuji lokal. Pemilik menyetujui dan akan menjalankannya melalui SQL Editor. **Hasil cloud belum dikonfirmasi**; data tetap bisa dibaca tanpa indeks ini, tetapi performa data besar belum dioptimalkan di cloud.
+
+## Reset proyek Supabase saat ini
+
+- Pemilik memilih reset proyek `mqycnhebhzqaziouipet`, bukan membuat proyek baru.
+- Berkas manual: `supabase/reset/RESET_DATABASE_KOSONG.sql`; panduan: `docs/RESET-DATABASE.md`. Versi terbaru menggabungkan migrasi 1–6 dalam satu transaksi, menghapus PIN/sesi, dan menolak reset jika catatan atau laporan sudah ada. Saat reset cloud sebelumnya dijalankan, berkas mencakup migrasi 1–5.
+- Pengujian PostgreSQL lokal lulus: pemasangan bersih, reset ulang, RLS/izin anonim, tabel lain tetap ada, serta pembatalan ketika catatan/laporan ditemukan.
+- Pemilik mengonfirmasi SQL reset berhasil dijalankan di cloud. Tidak ada perubahan URL/kunci Supabase. Pembuatan ulang PIN dan uji simpan setelah reset belum dikonfirmasi.
+- Reset database bukan bukti performa data besar; migrasi indeks cloud belum dikonfirmasi.
+
 ## Paket Perapian Detail Kecil (2 Oktober 2026)
 
 - **Verifikasi Kualitas Kode**:

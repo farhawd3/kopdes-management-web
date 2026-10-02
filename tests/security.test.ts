@@ -73,7 +73,16 @@ describe('Keamanan PIN dan API', () => {
   });
   it('galat database tidak membuka sesi', async () => {
     mocks.rpc.mockResolvedValue({ data: null, error: { message: 'failed' } });
-    expect((await POST(request({ action: 'login', pin: '485921' }))).status).toBe(503);
+    const response = await POST(request({ action: 'login', pin: '485921' }));
+    expect(response.status).toBe(503);
+    expect((await response.json()).error).toContain('tidak dapat terhubung ke Supabase');
+    expect(mocks.set).not.toHaveBeenCalled();
+  });
+  it('fungsi PIN yang hilang mendapat pesan khusus tanpa membuka sesi', async () => {
+    mocks.rpc.mockResolvedValue({ data: null, error: { code: 'PGRST202', message: 'not found' } });
+    const response = await POST(request({ action: 'login', pin: '485921' }));
+    expect(response.status).toBe(503);
+    expect((await response.json()).error).toContain('Fungsi keamanan belum tersedia');
     expect(mocks.set).not.toHaveBeenCalled();
   });
   it('token pengaturan salah tidak dapat membuat PIN', async () => {

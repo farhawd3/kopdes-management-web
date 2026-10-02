@@ -20,62 +20,50 @@ import { DateField } from '@/components/ui/DateField';
 
 const STAKEHOLDER_PRESETS = [
   {
-    label: 'Kepala Desa',
-    title: 'Bpk. ... (Kepala Desa)',
-    category: 'Pemerintah Desa (Kepala Desa / BPD / Perangkat)',
-    influence: 5,
-    interest: 4,
-    follow_up: 'Audiensi progres persiapan dan dukungan desa',
-  },
-  {
-    label: 'Babinsa (TNI)',
-    title: 'Sertu ... (Babinsa Desa)',
-    category: 'Keamanan Desa (Babinsa / Bhabinkamtibmas)',
-    influence: 4,
-    interest: 3,
-    follow_up: 'Koordinasi pengamanan gerai dan aset koperasi',
-  },
-  {
-    label: 'Bhabinkamtibmas',
-    title: 'Aipda ... (Bhabinkamtibmas)',
-    category: 'Keamanan Desa (Babinsa / Bhabinkamtibmas)',
-    influence: 4,
-    interest: 3,
-    follow_up: 'Koordinasi ketertiban lingkungan operasional koperasi',
-  },
-  {
-    label: 'Pengawas Koperasi',
-    title: 'Bpk/Ibu ... (Pengawas Koperasi)',
-    category: 'Badan Pengawas Koperasi',
-    influence: 5,
-    interest: 5,
-    follow_up: 'Penyampaian laporan perkembangan dan kepatuhan bulanan',
-  },
-  {
-    label: 'Pengurus Koperasi',
-    title: 'Bpk/Ibu ... (Pengurus Koperasi)',
-    category: 'Pengurus & Pengelola Koperasi',
-    influence: 4,
-    interest: 5,
-    follow_up: 'Rapat koordinasi rutin pelaksanaan program kerja',
-  },
-  {
-    label: 'Dinas Koperasi & UKM',
-    title: 'Dinas Koperasi & UKM Kab. Karanganyar',
-    category: 'Dinas Koperasi & UKM / Pembina',
-    influence: 4,
-    interest: 3,
-    follow_up: 'Konsultasi kepatuhan legalitas dan pembinaan koperasi',
-  },
-  {
-    label: 'Kelompok Tani (Gapoktan)',
-    title: 'Gapoktan / Kelompok Tani ...',
-    category: 'Masyarakat Desa & Kelompok Tani',
+    label: 'Agrinas',
+    title: '',
+    category: 'Agrinas',
     influence: 3,
-    interest: 5,
-    follow_up: 'Sosialisasi kemitraan penyerapan hasil pertanian lokal',
+    interest: 3,
+    follow_up: '',
+  },
+  {
+    label: 'PIC / Babinsa',
+    title: '',
+    category: 'PIC lapangan / Babinsa',
+    influence: 3,
+    interest: 3,
+    follow_up: '',
+  },
+  {
+    label: 'Pengurus / Pengawas',
+    title: '',
+    category: 'Pengurus dan pengawas koperasi',
+    influence: 3,
+    interest: 3,
+    follow_up: '',
+  },
+  {
+    label: 'Pemerintah desa',
+    title: '',
+    category: 'Pemerintah desa',
+    influence: 3,
+    interest: 3,
+    follow_up: '',
   },
 ] as const;
+const BASIC_TASK_FIELDS = [
+  'title',
+  'description',
+  'workstream_id',
+  'milestone_id',
+  'stakeholder_id',
+  'document_id',
+  'assignee',
+  'due_date',
+  'status',
+  'priority',
+];
 
 export function Editor({
   entity,
@@ -159,6 +147,9 @@ export function Editor({
   const [meetingMode, setMeetingMode] = useState<string>(() =>
     String(item?.data.mode || 'tatap muka'),
   );
+  const [recurrence, setRecurrence] = useState(String(item?.data.recurrence || 'tidak'));
+  const [projectId, setProjectId] = useState(String(item?.data.workstream_id || ''));
+  const [showTaskDetails, setShowTaskDetails] = useState(Boolean(item?.id));
   const [error, setError] = useState(''),
     [busy, setBusy] = useState(false);
   const [stakeholderPreset, setStakeholderPreset] = useState<
@@ -171,7 +162,11 @@ export function Editor({
       node?.close();
     };
   }, []);
-  const fields = quick ? ['title', 'due_date', 'workstream_id'] : catalog[entity].fields;
+  const fields = quick
+    ? ['title', 'due_date', 'workstream_id']
+    : entity === 'work-items' && !showTaskDetails
+      ? BASIC_TASK_FIELDS
+      : catalog[entity].fields;
   const defaults = restoredDraft ||
     item?.data || {
       due_date: today(),
@@ -225,6 +220,10 @@ export function Editor({
             if (entity === 'work-items')
               values.completed_at =
                 values.status === 'selesai' ? item?.data.completed_at || today() : '';
+            if (entity === 'work-items' && values.recurrence === 'tidak') {
+              values.recurrence_time = '09:00';
+              values.recurrence_end_date = '';
+            }
             if (entity === 'meetings') {
               if (meetingMode === 'tatap muka') {
                 values.meeting_url = '';
@@ -281,7 +280,7 @@ export function Editor({
                   : entity === 'workstreams'
                     ? 'Tambah Proyek Baru'
                     : entity === 'stakeholders'
-                      ? 'Tambah Pemangku Kepentingan'
+                      ? 'Tambah Mitra atau Kontak'
                       : entity === 'meetings'
                         ? 'Jadwalkan Rapat Baru'
                         : `Tambah ${catalog[entity].title}`}
@@ -306,6 +305,9 @@ export function Editor({
                 setRestoredDraft(savedDraft);
                 setMeetingMode(String(savedDraft.mode || 'tatap muka'));
                 setStockItem(String(savedDraft.item_id || ''));
+                setRecurrence(String(savedDraft.recurrence || 'tidak'));
+                setProjectId(String(savedDraft.workstream_id || ''));
+                setShowTaskDetails(true);
                 setFormVersion((value) => value + 1);
                 setSavedDraft(null);
                 setDirty(true);
@@ -336,7 +338,7 @@ export function Editor({
           <div className="stakeholder-preset-banner">
             <div className="preset-label">
               <Sparkles size={14} />
-              <strong>Pilihan Cepat Pemangku Desa:</strong>
+              <strong>Jenis kontak</strong>
             </div>
             <div className="preset-buttons">
               {STAKEHOLDER_PRESETS.map((p) => (
@@ -351,8 +353,16 @@ export function Editor({
               ))}
             </div>
             <small className="preset-hint">
-              Klik untuk mengisi template jabatan, wewenang, dan panduan koordinasi secara otomatis.
+              Pilih jenis, lalu isi nama orang atau lembaga sesuai data Anda.
             </small>
+          </div>
+        )}
+        {entity === 'work-items' && !quick && !showTaskDetails && (
+          <div className="task-form-intro">
+            <p>Isi judul dan tenggat. Hubungkan proyek atau mitra jika pekerjaan ini terkait.</p>
+            <button type="button" onClick={() => setShowTaskDetails(true)}>
+              Detail lainnya: rapat, kendala, pengulangan, dan subtugas
+            </button>
           </div>
         )}
         <div className="form-grid">
@@ -379,6 +389,12 @@ export function Editor({
                     : defaults[field as keyof typeof defaults],
               choices = options[entity + '.' + field] || options[field],
               reference = references[field];
+            const selectedValue =
+              entity === 'work-items' &&
+              field === 'milestone_id' &&
+              projectId !== String(defaults.workstream_id || '')
+                ? ''
+                : value;
             const label =
               entity === 'members' && field === 'date'
                 ? 'Tanggal bergabung'
@@ -387,7 +403,7 @@ export function Editor({
                   : entity === 'workstreams' && field === 'target_date'
                     ? 'Target selesai'
                     : entity === 'stakeholders' && field === 'title'
-                      ? 'Nama pemangku / Pejabat'
+                      ? 'Nama orang atau lembaga'
                       : entity === 'stakeholders' && field === 'contact'
                         ? 'Nomor WhatsApp / Kontak telepon'
                         : entity === 'stakeholders' && field === 'influence'
@@ -425,6 +441,11 @@ export function Editor({
                       ['due_date', 'date'].includes(field) ||
                       (entity === 'organization' && field === 'start_date')
                     }
+                    disabled={
+                      entity === 'work-items' &&
+                      field === 'recurrence_end_date' &&
+                      recurrence === 'tidak'
+                    }
                   />
                 </div>
               );
@@ -442,6 +463,14 @@ export function Editor({
                     <span className="field-caption">{label}</span>
                   </legend>
                   <div className="dependency-checkboxes">
+                    {((value || []) as string[])
+                      .filter((id) => !(workspace['work-items'] || []).some((row) => row.id === id))
+                      .map((id) => (
+                        <label className="check" key={id}>
+                          <input type="checkbox" name={field} value={id} defaultChecked />
+                          <span>Tugas terkait di halaman lain ({id.slice(0, 8)})</span>
+                        </label>
+                      ))}
                     {(workspace['work-items'] || [])
                       .filter((row) => row.id !== item?.id)
                       .map((row) => (
@@ -543,38 +572,83 @@ export function Editor({
                     key={
                       field === 'category' && stakeholderPreset
                         ? `${field}-${stakeholderPreset.category}`
-                        : field
+                        : entity === 'work-items' && field === 'milestone_id'
+                          ? `${field}-${projectId}`
+                          : field
                     }
                     name={field}
+                    aria-label={label}
                     className="field-select"
-                    defaultValue={String(value ?? allChoices?.[0] ?? '')}
+                    required={entity === 'stock-counts' && field === 'item_id'}
+                    disabled={entity === 'work-items' && field === 'milestone_id' && !projectId}
+                    defaultValue={String(selectedValue ?? allChoices?.[0] ?? '')}
                     onChange={
-                      field === 'item_id' ? (event) => setStockItem(event.target.value) : undefined
+                      field === 'item_id'
+                        ? (event) => setStockItem(event.target.value)
+                        : entity === 'work-items' && field === 'workstream_id'
+                          ? (event) => setProjectId(event.target.value)
+                          : entity === 'work-items' && field === 'recurrence'
+                            ? (event) => setRecurrence(event.target.value)
+                            : undefined
                     }
                   >
                     {reference && <option value="">Belum Ditentukan</option>}
+                    {reference &&
+                      Boolean(selectedValue) &&
+                      !(workspace[reference] || []).some((row) => row.id === selectedValue) && (
+                        <option value={String(selectedValue)}>
+                          Catatan terkait yang belum dimuat ({String(selectedValue).slice(0, 8)})
+                        </option>
+                      )}
                     {allChoices
                       ? allChoices.map((choice) => (
                           <option key={choice} value={choice}>
                             {formatChoiceLabel(choice)}
                           </option>
                         ))
-                      : (workspace[reference] || []).map((row) => {
-                          const title = String(row.data.title);
-                          const subtitle =
-                            reference === 'members' && row.data.member_number
-                              ? ` (No: ${row.data.member_number})`
-                              : reference === 'inventory-items'
-                                ? ` [Stok: ${Number(row.data.book_quantity || 0)} ${String(row.data.measurement || 'unit')}]`
-                                : '';
-                          return (
-                            <option key={row.id} value={row.id}>
-                              {title}
-                              {subtitle}
-                            </option>
-                          );
-                        })}
+                      : (workspace[reference] || [])
+                          .filter(
+                            (row) =>
+                              entity !== 'work-items' ||
+                              field !== 'milestone_id' ||
+                              row.data.workstream_id === projectId,
+                          )
+                          .map((row) => {
+                            const title = String(row.data.title);
+                            const subtitle =
+                              reference === 'members' && row.data.member_number
+                                ? ` (No: ${row.data.member_number})`
+                                : reference === 'inventory-items'
+                                  ? ` [Stok: ${Number(row.data.book_quantity || 0)} ${String(row.data.measurement || 'unit')}]`
+                                  : '';
+                            return (
+                              <option key={row.id} value={row.id}>
+                                {title}
+                                {subtitle}
+                              </option>
+                            );
+                          })}
                   </select>
+                  {entity === 'work-items' && field === 'recurrence' && (
+                    <small className="field-helper">
+                      Tugas berikutnya dibuat setelah tugas ini ditandai selesai.
+                    </small>
+                  )}
+                  {entity === 'work-items' && field === 'milestone_id' && !projectId && (
+                    <small className="field-helper">
+                      Pilih proyek lebih dulu untuk memilih milestone.
+                    </small>
+                  )}
+                  {entity === 'work-items' && field === 'milestone_id' && projectId && (
+                    <small className="field-helper">
+                      Hanya milestone dari proyek ini yang ditampilkan.
+                    </small>
+                  )}
+                  {entity === 'stock-counts' && field === 'item_id' && (
+                    <small className="field-helper">
+                      Pilih barang sebelum mencatat hasil hitung.
+                    </small>
+                  )}
                 </label>
               );
             }
@@ -638,6 +712,7 @@ export function Editor({
                   }
                   name={field}
                   className="field-input"
+                  aria-label={label}
                   placeholder={
                     entity === 'stakeholders' && field === 'title'
                       ? 'Contoh: Sertu Joko (Babinsa) atau Bpk. Mulyono (Kepala Desa)'
@@ -656,7 +731,7 @@ export function Editor({
                   type={
                     field.endsWith('_date') || field === 'date' || field === 'last_contact'
                       ? 'date'
-                      : field === 'time'
+                      : field === 'time' || field === 'recurrence_time'
                         ? 'time'
                         : field === 'link' || field === 'meeting_url'
                           ? 'url'
@@ -680,6 +755,15 @@ export function Editor({
                   }
                   step={numeric ? 1 : undefined}
                   maxLength={field === 'title' ? 200 : 5000}
+                  disabled={
+                    (entity === 'work-items' &&
+                      field === 'recurrence_time' &&
+                      recurrence === 'tidak') ||
+                    (entity === 'stock-counts' &&
+                      ['book_quantity', 'counted_quantity'].includes(field) &&
+                      !stockItem)
+                  }
+                  readOnly={entity === 'stock-counts' && field === 'book_quantity'}
                   required={
                     [
                       'title',
@@ -694,6 +778,9 @@ export function Editor({
                       'minimum_quantity',
                       'counted_quantity',
                     ].includes(field) ||
+                    (entity === 'work-items' &&
+                      field === 'recurrence_time' &&
+                      recurrence !== 'tidak') ||
                     (entity === 'organization' && field === 'start_date')
                   }
                   defaultValue={String(
@@ -702,11 +789,13 @@ export function Editor({
                         ? 3
                         : field === 'duration'
                           ? 60
-                          : field === 'color'
-                            ? '#B3243B'
-                            : field === 'time'
-                              ? '09:00'
-                              : ''),
+                          : field === 'recurrence_time'
+                            ? '09:00'
+                            : field === 'color'
+                              ? '#B3243B'
+                              : field === 'time'
+                                ? '09:00'
+                                : ''),
                   )}
                 />
                 {entity === 'stakeholders' && field === 'contact' && (
@@ -719,8 +808,19 @@ export function Editor({
                     Rencana koordinasi berikutnya atau catatan penting.
                   </small>
                 )}
+                {entity === 'work-items' && field === 'document_id' && (
+                  <small className="field-helper">
+                    Pilih kontrak yang sudah dicatat di Dokumen. Kode tugas dibuat otomatis saat
+                    disimpan.
+                  </small>
+                )}
+                {entity === 'work-items' && field === 'recurrence_time' && (
+                  <small className="field-helper">
+                    Jam ini hanya catatan. Belum ada pengingat otomatis.
+                  </small>
+                )}
                 {field === 'code' && (
-                  <small className="field-helper">Kode singkat 2–8 karakter, misalnya OPS.</small>
+                  <small className="field-helper">Kode singkat proyek, misalnya OPS.</small>
                 )}
                 {entity === 'meetings' && field === 'location' && (
                   <small className="field-helper">
@@ -744,7 +844,8 @@ export function Editor({
                 )}
                 {entity === 'stock-counts' && field === 'book_quantity' && (
                   <small className="field-helper">
-                    Stok pembanding saat pemeriksaan. Tidak mengubah stok pada daftar barang.
+                    Diambil dari stok buku barang saat dipilih. Tidak mengubah stok pada daftar
+                    barang.
                   </small>
                 )}
               </label>

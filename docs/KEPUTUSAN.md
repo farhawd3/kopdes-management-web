@@ -1,5 +1,9 @@
 # Keputusan proyek — 30 September 2026
 
+## 2 Oktober 2026 — reset proyek saat ini
+
+Pemilik meminta memakai kembali `mqycnhebhzqaziouipet` dan meresetnya karena belum berisi data. Target ini adalah proyek Kopdes yang sekarang, bukan proyek legacy. Siapkan SQL reset dengan pengaman data kosong; pemilik tetap menjalankan langkah cloud. PIN dan sesi dibuat ulang, URL proyek tetap sama.
+
 Instruksi pemilik terbaru menjadi acuan jika berbeda dari rancangan awal PRD.
 
 | Hal | Keputusan |

@@ -31,6 +31,7 @@ export function TaskTimeline({
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
+  const [showMobileChart, setShowMobileChart] = useState(false);
   const drag = useRef<{ item: Item; x: number; width: number; resize: boolean } | null>(null);
   const end = addDays(start, days - 1);
   const allTasks = (workspace['work-items'] || []).map((item) => ({
@@ -75,7 +76,7 @@ export function TaskTimeline({
       }),
     });
   return (
-    <section className="timeline-panel">
+    <section className={`timeline-panel ${showMobileChart ? 'mobile-chart-open' : ''}`}>
       <div className="timeline-toolbar">
         <div className="actions">
           <button aria-label="Periode sebelumnya" onClick={() => setStart(addDays(start, -days))}>
@@ -219,6 +220,14 @@ export function TaskTimeline({
           {message}
         </p>
       )}
+      <button
+        type="button"
+        className="timeline-mobile-toggle"
+        aria-expanded={showMobileChart}
+        onClick={() => setShowMobileChart((value) => !value)}
+      >
+        {showMobileChart ? 'Lihat daftar jadwal' : 'Lihat bagan Gantt'}
+      </button>
       <div
         className="timeline-scroll"
         tabIndex={0}

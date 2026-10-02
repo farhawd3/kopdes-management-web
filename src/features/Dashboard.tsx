@@ -107,7 +107,7 @@ export function Dashboard({ data }: { data: Workspace }) {
   const cash = cashSummary(data['cash-entries'] || []);
   const inventory = data['inventory-items'] || [];
   const criticalStockItems = inventory.filter(
-    (item) => Number(item.data.book_quantity || 0) <= Number(item.data.min_stock || 5),
+    (item) => Number(item.data.book_quantity || 0) <= Number(item.data.minimum_quantity || 0),
   );
   const outOfStockItems = inventory.filter((item) => Number(item.data.book_quantity || 0) <= 0);
   const completedCount = tasks.filter((t) => t.status === 'selesai').length;
@@ -182,31 +182,31 @@ export function Dashboard({ data }: { data: Workspace }) {
       {/* ── Stat Cards Row ───────────────────────────────── */}
       <div className="dash-stats-row">
         <StatCard
-          label="Penyelesaian tugas"
+          label="Tugas yang dimuat"
           value={`${completion}%`}
           percentage={completion}
-          sub={`${completedCount} dari ${totalTasks} selesai`}
+          sub={`${completedCount} dari ${totalTasks} selesai · aktif/terbaru`}
           accent
           href="/tugas?status=selesai"
         />
         <StatCard
           label="Tugas aktif"
           value={open.length}
-          sub="belum selesai atau dibatalkan"
+          sub="dari catatan yang dimuat"
           icon={<ListTodo size={18} />}
           href="/tugas"
         />
         <StatCard
           label="Terlambat"
           value={overdueCount}
-          sub={overdueCount > 0 ? 'perlu diperhatikan' : 'semua tepat waktu'}
+          sub={overdueCount > 0 ? 'perlu diperhatikan' : 'tidak ada pada catatan yang dimuat'}
           icon={<AlertTriangle size={18} />}
           href="/tugas?status=terlambat"
         />
         <StatCard
           label="Rapat hari ini"
           value={todayMeetingCount}
-          sub={meeting ? String(meeting.data.title) : 'tidak ada jadwal'}
+          sub={meeting ? String(meeting.data.title) : 'tidak ada pada catatan yang dimuat'}
           icon={<Calendar size={18} />}
           href="/rapat"
         />
@@ -292,7 +292,9 @@ export function Dashboard({ data }: { data: Workspace }) {
                     <CalendarDays size={14} />
                     {formatDate(task.due_date)}
                   </span>
-                  <span>{task.priority}</span>
+                  <span className={`focus-priority priority-${task.priority}`}>
+                    {task.priority}
+                  </span>
                 </div>
                 {task.subtasks.length > 0 && (
                   <div className="focus-progress">

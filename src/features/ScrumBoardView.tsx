@@ -16,10 +16,34 @@ type ScrumColumn = {
 };
 
 const SCRUM_COLUMNS: ScrumColumn[] = [
-  { id: 'rencana', key: 'rencana', title: 'Rencana', subtitle: 'Rencana kerja', color: 'var(--ink-muted)' },
-  { id: 'proses', key: 'proses', title: 'Dikerjakan', subtitle: 'Sedang berjalan', color: 'var(--brand)' },
-  { id: 'dibatalkan', key: 'dibatalkan', title: 'Dibatalkan', subtitle: 'Tidak dilanjutkan', color: 'var(--danger, #ef4444)' },
-  { id: 'selesai', key: 'selesai', title: 'Selesai', subtitle: 'Tuntas', color: 'var(--success, #10b981)' },
+  {
+    id: 'rencana',
+    key: 'rencana',
+    title: 'Rencana',
+    subtitle: 'Rencana kerja',
+    color: 'var(--ink-muted)',
+  },
+  {
+    id: 'proses',
+    key: 'proses',
+    title: 'Dikerjakan',
+    subtitle: 'Sedang berjalan',
+    color: 'var(--brand)',
+  },
+  {
+    id: 'dibatalkan',
+    key: 'dibatalkan',
+    title: 'Dibatalkan',
+    subtitle: 'Tidak dilanjutkan',
+    color: 'var(--danger, #ef4444)',
+  },
+  {
+    id: 'selesai',
+    key: 'selesai',
+    title: 'Selesai',
+    subtitle: 'Tuntas',
+    color: 'var(--success, #10b981)',
+  },
 ];
 
 export function ScrumBoardView({
@@ -47,7 +71,8 @@ export function ScrumBoardView({
       if (colKey === 'rencana') return status === 'rencana' || status === 'draft';
       if (colKey === 'siap') return status === 'siap' || status === 'antrean';
       if (colKey === 'proses') return status === 'proses' || status === 'berjalan';
-      if (colKey === 'dibatalkan') return status === 'dibatalkan' || status === 'menunggu' || status === 'tertunda';
+      if (colKey === 'dibatalkan')
+        return status === 'dibatalkan' || status === 'menunggu' || status === 'tertunda';
       if (colKey === 'selesai') return status === 'selesai';
       return status === colKey;
     });
@@ -125,10 +150,7 @@ export function ScrumBoardView({
               {/* Column Header */}
               <div className="scrum-column-header">
                 <div className="scrum-col-title-group">
-                  <span
-                    className="scrum-col-indicator"
-                    style={{ backgroundColor: col.color }}
-                  />
+                  <span className="scrum-col-indicator" style={{ backgroundColor: col.color }} />
                   <div className="scrum-col-title-text">
                     <h3 className="column-title">{col.title}</h3>
                     <small className="column-subtitle">{col.subtitle}</small>
@@ -159,7 +181,6 @@ export function ScrumBoardView({
                 ) : (
                   colTasks.map((task) => {
                     const data = task.data;
-                    const taskCode = String(data.code || `#KD-${task.id.slice(0, 5).toUpperCase()}`);
                     const subtasks = Array.isArray(data.subtasks)
                       ? (data.subtasks as { title: string; done: boolean }[])
                       : [];
@@ -176,7 +197,10 @@ export function ScrumBoardView({
                       : formatDate(dueDate);
 
                     // Calculate time / deadline text
-                    const isLate = dueDate < today() && data.status !== 'selesai' && data.status !== 'dibatalkan';
+                    const isLate =
+                      dueDate < today() &&
+                      data.status !== 'selesai' &&
+                      data.status !== 'dibatalkan';
                     const deadlineText =
                       data.status === 'selesai'
                         ? 'Selesai'
@@ -186,7 +210,9 @@ export function ScrumBoardView({
                             ? `${doneSubtasks}/${subtasks.length} selesai`
                             : 'Tenggat terdekat';
 
-                    const managerName = String(workspace.organization?.[0]?.data?.manager || 'Manajer');
+                    const managerName = String(
+                      workspace.organization?.[0]?.data?.manager || 'Manajer',
+                    );
                     const assignee = String(data.assignee || managerName);
                     const initials = assignee
                       .split(' ')
@@ -230,7 +256,9 @@ export function ScrumBoardView({
                             >
                               <span
                                 className="project-dot"
-                                style={{ backgroundColor: String(project.data.color || 'var(--brand)') }}
+                                style={{
+                                  backgroundColor: String(project.data.color || 'var(--brand)'),
+                                }}
                               />
                               {String(project.data.title)}
                             </span>
@@ -244,7 +272,9 @@ export function ScrumBoardView({
 
                         {/* Card Title & Code */}
                         <div className="card-title-wrap">
-                          <span className="card-task-code">{taskCode}</span>
+                          {Boolean(data.code) && (
+                            <span className="card-task-code">{String(data.code)}</span>
+                          )}
                           <h4 className="card-task-title">{String(data.title)}</h4>
                         </div>
 

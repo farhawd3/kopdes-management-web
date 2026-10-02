@@ -6,6 +6,8 @@ import { addDays } from '@/lib/date';
 export function recordHref(entity: Entity, row: Item) {
   if (entity === 'workstreams') return `/proyek?id=${encodeURIComponent(row.id)}`;
   if (entity === 'work-items') return `/tugas?task=${encodeURIComponent(row.id)}`;
+  if (entity === 'stakeholders' || entity === 'interactions')
+    return `/mitra?bagian=${entity}&record=${encodeURIComponent(row.id)}`;
   const books: Partial<Record<Entity, string>> = {
     members: 'anggota',
     'cash-entries': 'keuangan',

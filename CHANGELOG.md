@@ -1,5 +1,42 @@
 # Changelog
 
+### Perbaikan detail tugas (2 Oktober 2026)
+
+- Menghapus parameter tugas dari URL saat dialog ditutup agar pergantian Daftar/Papan/Kalender/Gantt tidak membukanya kembali. Menambah tes regresi untuk alur tutup dan pindah tampilan.
+
+### Perapian dari anotasi halaman (2 Oktober 2026)
+
+- Menata riwayat tugas, tombol tutup menu aksi, tajuk, status tabel, kode pada papan, dan metadata daftar.
+- Membuat kode tugas baru otomatis dari judul kegiatan; menautkan dokumen atau kontrak yang sudah dicatat ke tugas, berdampingan dengan Mitra atau kontak.
+- Memperjelas pintasan tindak lanjut, keadaan kosong grafik tujuh hari, warna prioritas, input cepat Hari Ini, dan tombol centang tugas.
+
+### Diagnosis login lokal (2 Oktober 2026)
+
+- Memastikan migrasi keamanan Supabase terpasang; sumber pesan yang salah adalah koneksi server pengembangan yang terbatasi jaringan.
+- Mengganti pesan galat PIN agar fungsi hilang, izin, dan koneksi dapat dibedakan. Server lokal dijalankan ulang dengan jaringan; pemilik mengonfirmasi berhasil masuk memakai PIN.
+- Merapikan tombol Tugas baru pada ponsel dan mengurung tabel panjang di area gulirnya agar halaman Tugas, Kalender, dan Gantt tidak meluap ke samping.
+
+### Alur tugas, jadwal berulang, dan tampilan ponsel (2 Oktober 2026)
+
+- Menjelaskan bahwa tugas berulang berikutnya dibuat setelah tugas saat ini selesai; jam hanya catatan. Input terkait terkunci sampai pengulangan dipilih, dan batas tanggal kini dihormati.
+- Menambahkan tautan Mitra atau kontak, Rapat, dan Kendala di tugas. Milestone hanya dapat dipilih setelah proyek dan harus berasal dari proyek itu.
+- Form opname meminta barang sebelum jumlah diisi dan mengunci stok buku yang disalin dari daftar barang.
+- Menghilangkan kewajiban kode tugas, memisahkan judul dari metadata lama, dan meringkas form tugas baru dengan tombol Detail lainnya. Kalender serta Gantt ponsel dibuat lebih terbaca; navigasi bawah ditempatkan di tepi layar.
+- Memperbarui panduan onboarding dan menambah tes untuk kondisi formulir. Pemeriksaan perangkat setelah login masih terbuka.
+
+### Navigasi, tugas, dan panduan onboarding (2 Oktober 2026)
+
+- Menyatukan tampilan tab, tombol, ikon, kartu, dan gerak masuk halaman; memperkuat warna Lime.
+- Mengganti menu Pemangku menjadi Mitra & kontak, menyederhanakan formulir, dan menambah Agrinas.
+- Memuat catatan per 50 baris dengan riwayat tugas selesai dan cache bacaan singkat. Ringkasan yang parsial kini disebut apa adanya.
+- Menambahkan panduan pengisian rundown dan menyiapkan migrasi indeks untuk data besar. Migrasi indeks cloud masih menunggu langkah manual.
+
+### Reset database kosong (2 Oktober 2026)
+
+- Menyiapkan SQL reset untuk proyek Supabase saat ini, disertai panduan pembuatan ulang PIN.
+- Menambahkan pengaman agar catatan kerja dan laporan yang sudah tersimpan tidak terhapus tanpa ditinjau.
+- Menguji pemasangan ulang, izin akses, dan pembatalan reset di PostgreSQL lokal. Cloud belum diubah.
+
 ### Estetika, Perapian UI Menyeluruh & Grafis Animasi (1 Oktober 2026)
 
 - **Perapian Header Tanggal Atas**: Merapikan penataan chip tanggal (`.home-date-chip`) di kanan atas tajuk beranda dengan tata letak pill horizontal sejajar, ikon kalender rapi, border 1.5px tegas, dan tanpa pemotongan baris.

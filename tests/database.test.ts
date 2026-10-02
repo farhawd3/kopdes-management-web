@@ -12,9 +12,16 @@ beforeAll(async () => {
   );
   await database.exec(readFileSync('supabase/migrations/20260930000001_manager_hub.sql', 'utf8'));
   await database.exec(readFileSync('supabase/migrations/20261001000002_operations.sql', 'utf8'));
-  await database.exec(readFileSync('supabase/migrations/20261001000003_cooperative_redesign.sql', 'utf8'));
-  await database.exec(readFileSync('supabase/migrations/20261001000004_interconnected_operations.sql', 'utf8'));
-  await database.exec(readFileSync('supabase/migrations/20261001000005_manager_superapp.sql', 'utf8'));
+  await database.exec(
+    readFileSync('supabase/migrations/20261001000003_cooperative_redesign.sql', 'utf8'),
+  );
+  await database.exec(
+    readFileSync('supabase/migrations/20261001000004_interconnected_operations.sql', 'utf8'),
+  );
+  await database.exec(
+    readFileSync('supabase/migrations/20261001000005_manager_superapp.sql', 'utf8'),
+  );
+  await database.exec(readFileSync('supabase/migrations/20261002000006_paged_records.sql', 'utf8'));
 }, 60000);
 afterAll(async () => {
   await database?.close();
@@ -224,12 +231,23 @@ describe('Migrasi PostgreSQL nyata di mesin lokal', () => {
     const sprintId = randomUUID();
     await database.query(
       "insert into public.hub_records(id,entity,data) values($1,'sprints',$2::jsonb)",
-      [sprintId, JSON.stringify({ title: 'Sprint 1 Persiapan', goal: 'Kesiapan toko', status: 'aktif' })],
+      [
+        sprintId,
+        JSON.stringify({ title: 'Sprint 1 Persiapan', goal: 'Kesiapan toko', status: 'aktif' }),
+      ],
     );
     const taskId = randomUUID();
     await database.query(
       "insert into public.hub_records(id,entity,data) values($1,'work-items',$2::jsonb)",
-      [taskId, JSON.stringify({ title: 'Tugas sprint', sprint_id: sprintId, code: 'KD-44001', due_date: '2026-10-01' })],
+      [
+        taskId,
+        JSON.stringify({
+          title: 'Tugas sprint',
+          sprint_id: sprintId,
+          code: 'KD-44001',
+          due_date: '2026-10-01',
+        }),
+      ],
     );
     const result = await database.query<{ id: string }>(
       "select id from public.hub_records where entity='work-items' and data->>'sprint_id'=$1",
@@ -246,17 +264,32 @@ describe('Migrasi PostgreSQL nyata di mesin lokal', () => {
     const cashId = randomUUID();
     await database.query(
       "insert into public.hub_records(id,entity,data) values($1,'cash-entries',$2::jsonb)",
-      [cashId, JSON.stringify({ title: 'Simpanan pokok', direction: 'masuk', amount: 100000, member_id: memberId })],
+      [
+        cashId,
+        JSON.stringify({
+          title: 'Simpanan pokok',
+          direction: 'masuk',
+          amount: 100000,
+          member_id: memberId,
+        }),
+      ],
     );
     const found = await database.query<{ id: string }>(
-      "select id from public.hub_records where id=$1",
+      'select id from public.hub_records where id=$1',
       [cashId],
     );
     expect(found.rows[0].id).toBe(cashId);
     await expect(
       database.query(
         "insert into public.hub_records(entity,data) values('cash-entries',$1::jsonb)",
-        [JSON.stringify({ title: 'Kas tak bertuan', direction: 'masuk', amount: 50000, member_id: randomUUID() })],
+        [
+          JSON.stringify({
+            title: 'Kas tak bertuan',
+            direction: 'masuk',
+            amount: 50000,
+            member_id: randomUUID(),
+          }),
+        ],
       ),
     ).rejects.toThrow('Missing related record');
   });
@@ -267,21 +300,22 @@ describe('Migrasi PostgreSQL nyata di mesin lokal', () => {
       [reportId],
     );
     const res = await database.query<{ status: string }>(
-      "select status from public.manager_reports where id=$1",
+      'select status from public.manager_reports where id=$1',
       [reportId],
     );
     expect(res.rows[0].status).toBe('draft');
-    await database.query(
-      "update public.manager_reports set status='final' where id=$1",
-      [reportId],
-    );
+    await database.query("update public.manager_reports set status='final' where id=$1", [
+      reportId,
+    ]);
     const updated = await database.query<{ status: string }>(
-      "select status from public.manager_reports where id=$1",
+      'select status from public.manager_reports where id=$1',
       [reportId],
     );
     expect(updated.rows[0].status).toBe('final');
-    await database.query("delete from public.manager_reports where id=$1", [reportId]);
-    const afterDelete = await database.query("select id from public.manager_reports where id=$1", [reportId]);
+    await database.query('delete from public.manager_reports where id=$1', [reportId]);
+    const afterDelete = await database.query('select id from public.manager_reports where id=$1', [
+      reportId,
+    ]);
     expect(afterDelete.rows).toHaveLength(0);
   });
 });

@@ -157,9 +157,6 @@ export function DailyTasksView({
             <div className="daily-task-items-list">
               {pastOverdueTasks.map((task) => {
                 const isDone = task.data.status === 'selesai';
-                const taskCode = String(
-                  task.data.code || `#KD-${task.id.slice(0, 5).toUpperCase()}`,
-                );
                 const subtasks = Array.isArray(task.data.subtasks)
                   ? (task.data.subtasks as { title: string; done: boolean; code?: string }[])
                   : [];
@@ -193,7 +190,9 @@ export function DailyTasksView({
                         {isDone && <Check size={13} />}
                       </button>
 
-                      <span className="task-code-tag">{taskCode}</span>
+                      {Boolean(task.data.code) && (
+                        <span className="task-code-tag">{String(task.data.code)}</span>
+                      )}
                       <span className="task-title-text">{String(task.data.title)}</span>
                       <span className="task-due-tag is-overdue">
                         {formatDate(String(task.data.due_date))}
@@ -288,9 +287,6 @@ export function DailyTasksView({
                 ) : (
                   items.map((task) => {
                     const isDone = task.data.status === 'selesai';
-                    const taskCode = String(
-                      task.data.code || `#KD-${task.id.slice(0, 5).toUpperCase()}`,
-                    );
                     const subtasks = Array.isArray(task.data.subtasks)
                       ? (task.data.subtasks as { title: string; done: boolean; code?: string }[])
                       : [];
@@ -325,7 +321,9 @@ export function DailyTasksView({
                             {isDone && <Check size={13} />}
                           </button>
 
-                          <span className="task-code-tag">{taskCode}</span>
+                          {Boolean(task.data.code) && (
+                            <span className="task-code-tag">{String(task.data.code)}</span>
+                          )}
 
                           <span className="task-title-text">{String(task.data.title)}</span>
 
@@ -375,7 +373,6 @@ export function DailyTasksView({
                           <div className="nested-subtasks-tree">
                             {subtasks.map((sub, sIdx) => {
                               const isLast = sIdx === subtasks.length - 1;
-                              const subCode = sub.code || `${taskCode}-${sIdx + 1}`;
                               return (
                                 <div
                                   key={sIdx}
@@ -390,7 +387,7 @@ export function DailyTasksView({
                                   >
                                     {sub.done && <Check size={11} />}
                                   </button>
-                                  <span className="subtask-code-tag">{subCode}</span>
+                                  {sub.code && <span className="subtask-code-tag">{sub.code}</span>}
                                   <span className="subtask-title-text">{sub.title}</span>
                                 </div>
                               );
@@ -433,9 +430,6 @@ export function DailyTasksView({
             ) : (
               upcomingTasks.map((task) => {
                 const isDone = task.data.status === 'selesai';
-                const taskCode = String(
-                  task.data.code || `#KD-${task.id.slice(0, 5).toUpperCase()}`,
-                );
                 return (
                   <div key={task.id} className="daily-task-item" onClick={() => onOpenTask(task)}>
                     <button
@@ -445,7 +439,9 @@ export function DailyTasksView({
                     >
                       {isDone && <Check size={13} />}
                     </button>
-                    <span className="task-code-tag">{taskCode}</span>
+                    {Boolean(task.data.code) && (
+                      <span className="task-code-tag">{String(task.data.code)}</span>
+                    )}
                     <span className="task-title-text">{String(task.data.title)}</span>
                     <span className="task-due-badge">{formatDate(String(task.data.due_date))}</span>
                     <div className="task-row-actions">

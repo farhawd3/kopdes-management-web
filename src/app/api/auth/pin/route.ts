@@ -52,7 +52,17 @@ export async function POST(request: Request) {
     }
     if (body.action === 'change') await requireSession();
     const { data: stored, error: attemptError } = await client.rpc('reserve_pin_attempt');
-    if (attemptError) throw new Error('Migrasi keamanan belum tersedia.');
+    if (attemptError) {
+      if (['PGRST202', '42883'].includes(attemptError.code))
+        throw new Error('Fungsi keamanan belum tersedia di proyek Supabase ini. Periksa migrasi.');
+      if (attemptError.code === '42501')
+        throw new Error('Kunci server tidak memiliki izin untuk memeriksa PIN.');
+      if (!attemptError.code)
+        throw new Error(
+          'Server tidak dapat terhubung ke Supabase. Periksa jaringan server, lalu coba lagi.',
+        );
+      throw new Error('Pemeriksaan PIN gagal di database. Periksa status proyek Supabase.');
+    }
     if (!stored)
       return NextResponse.json(
         {

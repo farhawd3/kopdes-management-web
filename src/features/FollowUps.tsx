@@ -83,8 +83,8 @@ export function FollowUps({ data, compact = false }: { data: Workspace; compact?
               <ShieldCheck size={26} />
             </div>
             <div className="follow-up-empty-text">
-              <strong>Semua catatan terpantau aman</strong>
-              <p>Tidak ada tugas tertunda, kendala kritis, atau dokumen yang membutuhkan tindakan saat ini.</p>
+              <strong>Belum ada tindak lanjut pada catatan yang dimuat</strong>
+              <p>Periksa riwayat dan muat catatan lain bila Anda mencari pekerjaan lama.</p>
             </div>
           </div>
         )}
@@ -92,7 +92,8 @@ export function FollowUps({ data, compact = false }: { data: Workspace; compact?
         {!compact && (
           <div className="follow-up-footer-note">
             <small>
-              Daftar mengikuti data tersimpan. Selisih opname tidak mengubah stok buku secara otomatis.
+              Daftar mengikuti data tersimpan. Selisih opname tidak mengubah stok buku secara
+              otomatis.
             </small>
           </div>
         )}
@@ -102,4 +103,3 @@ export function FollowUps({ data, compact = false }: { data: Workspace; compact?
     </div>
   );
 }
-

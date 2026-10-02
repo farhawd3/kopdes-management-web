@@ -1,5 +1,29 @@
 # Checklist produk aktif
 
+## Perapian 2 Oktober
+- [x] Detail tugas tidak kembali terbuka setelah ditutup dan tampilan horizontal diganti.
+- [x] Anotasi tugas: riwayat, kode otomatis, dokumen/kontrak, label daftar, status, dan tombol tutup dirapikan.
+- [x] Anotasi Beranda/Hari Ini: tindak lanjut, grafik kosong, warna prioritas, input cepat, dan ikon selesai dirapikan.
+- [x] Login PIN lokal kembali berhasil setelah server dapat menjangkau Supabase; pesan galat koneksi dibedakan dari migrasi hilang.
+- [x] Tombol Tugas baru tidak menimpa pilihan rentang pada ponsel; tabel tugas bergulir di dalam kontainernya.
+- [x] Form tugas mengunci milestone sebelum proyek dipilih dan membatasi pilihan ke proyek itu.
+- [x] Tugas dapat menautkan Mitra atau kontak, Rapat, dan Kendala tanpa kode tugas wajib.
+- [x] Input jam/batas pengulangan terkunci saat tidak berulang; pembuatan tugas berikutnya menghormati batas tanggal.
+- [x] Form opname meminta barang terlebih dulu; stok buku menjadi salinan terkunci dan hasil hitung baru aktif setelah barang dipilih.
+- [x] Kalender ponsel diringkas dan Gantt ponsel menyediakan daftar tanggal serta bagan pilihan.
+- [ ] Pemeriksaan visual dan interaksi nyata di ponsel/tablet setelah masuk dengan PIN.
+- [x] Panduan onboarding berbasis rundown, termasuk proyek, milestone, tugas, rapat, dan kontak.
+- [x] Label Mitra & kontak serta pilihan Agrinas tanpa identitas palsu.
+- [x] Daftar tugas dan catatan per 50 baris, riwayat selesai, cache bacaan, dan penanda ringkasan parsial.
+- [ ] Migrasi indeks paginasi `20261002000006_paged_records.sql` dijalankan di proyek Supabase saat ini.
+- [ ] Pemeriksaan visual setelah login pada 360, 768, 1024, dan 1440 px di perangkat/browse nyata.
+
+## Reset database kosong
+- [x] Berkas reset migrasi 1–5 dan panduan manual tersedia.
+- [x] Reset diuji lokal; menolak penghapusan jika catatan atau laporan sudah ada.
+- [x] SQL dijalankan pemilik di proyek `mqycnhebhzqaziouipet` (konfirmasi pemilik).
+- [ ] PIN dibuat ulang dan penyimpanan catatan diverifikasi setelah reset cloud.
+
 ## Tersedia
 - [x] Proyek fleksibel tanpa patokan durasi program.
 - [x] Status, prioritas, pencarian, filter dan properti proyek.
@@ -15,7 +39,7 @@
 - [x] Pusat Aksi Cepat Manajer (Superapp Action Center) dengan pintasan keyboard 1-9 untuk seluruh operasional dan perencanaan.
 - [x] Dasbor beranda multifungsi: pintasan aksi cepat harian, peringatan otomatis stok persediaan kritis, dan rekapitulasi data riil.
 - [x] Ruang kerja editorial: 5 palet tema seimbang (Lime & Ink, Sage, Lavender, Peach, Sky) dan pratinjau komponen langsung di Pengaturan.
-- [x] Navigasi sidebar terstruktur: favorit sematan, riwayat terakhir dibuka dinamis, dan grup menu kolapsibel.
+- [x] Navigasi sidebar terstruktur: favorit sematan dan grup menu kolapsibel; menu Terakhir dihapus agar pilihan tidak berulang.
 - [x] Karakter visual tiap modul: proyek terhubung, dokumen dengan masa berlaku berkode warna, risiko 3-level, dan alur terstruktur rapat.
 
 ## Penerimaan berikutnya
