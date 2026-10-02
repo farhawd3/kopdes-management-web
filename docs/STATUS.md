@@ -1,5 +1,25 @@
 # Status proyek — 2 Oktober 2026
 
+## Perapian Menu, Eliminasi Redundansi & Relasi Database Dokumen
+
+- **Eliminasi Redundansi Menu & Navigasi**:
+  - Menyelesaikan kebingungan peran antara tugas harian, master tugas, dan audit masalah.
+  - Menu `/tugas` dipertegas menjadi **Daftar Tugas** (bank/backlog tugas, kanban, kalender, filter status).
+  - Menu `/tindak-lanjut` dipertegas menjadi **Perlu Perhatian** dengan ikon peringatan `AlertCircle` (pusat audit anomali: tugas macet, dokumen kedaluwarsa, isu blocker, dan review mingguan).
+  - Menu `/roadmap` dipertegas menjadi **Linimasa Gantt** (visualisasi linimasa jadwal proyek).
+  - Menu `/pencatatan` dipertegas menjadi **Ringkasan Buku** (hub ringkasan data dari 4 buku operasional).
+  - Menu operasional dan koordinasi diperjelas: **Buku Kas**, **Barang Dagangan**, **Stok Opname**, **Buku Anggota**, **Unit Gerai**, **Kesiapan Gerai**, **Risiko & Isu**, **Laporan Kerja**, **Rapat & Keputusan**, **Mitra & Kontak**, **Tim & Petugas**.
+  - Urutan kelompok sidebar disesuaikan secara logis: Pekerjaan → Pencatatan → Operasional → Koordinasi → Lainnya. Semua 22 URL rute asli tetap 100% kompatibel tanpa tautan rusak.
+- **Integritas Relasi Database (SQL Migration 7)**:
+  - Berkas baru: `supabase/migrations/20261002000007_document_relation_check.sql`.
+  - Memperbarui fungsi PostgreSQL `hub_check_relations()` agar secara ketat memvalidasi referensi `document_id` pada tugas ke entitas `documents`. Menambahkan indeks pencarian cepat `hub_task_document_idx`.
+  - Berkas reset `supabase/reset/RESET_DATABASE_KOSONG.sql` dibangun ulang melalui `scripts/build-reset.mjs` dengan menyertakan migrasi 7.
+- **Verifikasi Kualitas**:
+  - `npm test`: **129/129 tes lulus (16 suites)** termasuk pengujian PGlite lokal untuk validasi relasi `document_id`.
+  - `npm run typecheck`: **0 kesalahan TypeScript**.
+  - `npm run lint`: **0 kesalahan / 0 peringatan** ESLint.
+  - `npm run build`: **Next.js 16.3.7 Turbopack berhasil**, 9/9 rute teroptimasi penuh.
+
 ## Detail tugas kembali terbuka setelah pindah tampilan
 
 - Parameter `task` pada URL sebelumnya tertinggal saat detail tugas ditutup. Ketika halaman dipasang ulang, parameter itu membuka tugas yang sama. Penutupan kini menghapus parameter sambil mempertahankan filter URL lain.

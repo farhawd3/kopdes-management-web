@@ -1,6 +1,8 @@
 # Checklist produk aktif
 
 ## Perapian 2 Oktober
+- [x] Eliminasi menu redundant: pelabelan unik dan pembedaan peran Hari Ini (kokpit harian), Daftar Tugas (backlog master), Perlu Perhatian (audit anomali), Linimasa Gantt, dan Ringkasan Buku.
+- [x] Migrasi SQL 7: validasi ketat referensi dokumen (document_id) pada tabel tugas (hub_check_relations) dan indeks pencarian dokumen.
 - [x] Detail tugas tidak kembali terbuka setelah ditutup dan tampilan horizontal diganti.
 - [x] Anotasi tugas: riwayat, kode otomatis, dokumen/kontrak, label daftar, status, dan tombol tutup dirapikan.
 - [x] Anotasi Beranda/Hari Ini: tindak lanjut, grafik kosong, warna prioritas, input cepat, dan ikon selesai dirapikan.

@@ -22,6 +22,9 @@ beforeAll(async () => {
     readFileSync('supabase/migrations/20261001000005_manager_superapp.sql', 'utf8'),
   );
   await database.exec(readFileSync('supabase/migrations/20261002000006_paged_records.sql', 'utf8'));
+  await database.exec(
+    readFileSync('supabase/migrations/20261002000007_document_relation_check.sql', 'utf8'),
+  );
 }, 60000);
 afterAll(async () => {
   await database?.close();
@@ -203,6 +206,11 @@ describe('Migrasi PostgreSQL nyata di mesin lokal', () => {
     await expect(
       database.query("insert into public.hub_records(entity,data) values('checklist',$1)", [
         JSON.stringify({ title: 'Checklist', unit_id: randomUUID() }),
+      ]),
+    ).rejects.toThrow('Missing related record');
+    await expect(
+      database.query("insert into public.hub_records(entity,data) values('work-items',$1)", [
+        JSON.stringify({ title: 'Tugas dokumen', due_date: '2026-10-01', document_id: randomUUID() }),
       ]),
     ).rejects.toThrow('Missing related record');
   });

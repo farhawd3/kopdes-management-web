@@ -36,7 +36,7 @@ import {
   HelpCircle,
   SunMedium,
   Sparkles,
-  ArrowRightCircle,
+  AlertCircle,
 } from 'lucide-react';
 import { usePreference } from '@/lib/usePreference';
 import { searchWorkspace } from '@/features/workspace-navigation';
@@ -45,25 +45,25 @@ import { ManagerActionModal } from './ManagerActionModal';
 
 const navIcons: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
   '/beranda': House,
-  '/tindak-lanjut': ArrowRightCircle,
   '/hari-ini': SunMedium,
   '/tugas': CheckCheck,
+  '/tindak-lanjut': AlertCircle,
   '/proyek': FolderKanban,
   '/roadmap': Milestone,
   '/jurnal': BookOpen,
-  '/rapat': Users,
-  '/dokumen': FileText,
-  '/mitra': Briefcase,
-  '/tim': UserCheck,
+  '/pencatatan': Landmark,
+  '/keuangan': Wallet,
+  '/barang': Boxes,
+  '/stok-opname': ClipboardList,
+  '/anggota': Users,
   '/gerai': Store,
   '/kesiapan': CheckCircle2,
   '/risiko': ShieldAlert,
   '/laporan': BarChart3,
-  '/pencatatan': Landmark,
-  '/anggota': Users,
-  '/keuangan': Wallet,
-  '/barang': Boxes,
-  '/stok-opname': ClipboardList,
+  '/rapat': Users,
+  '/dokumen': FileText,
+  '/mitra': Briefcase,
+  '/tim': UserCheck,
   '/pengaturan': Settings,
   '/panduan': HelpCircle,
 };
@@ -71,11 +71,11 @@ const navIcons: Record<string, React.ComponentType<{ size?: number; className?: 
 const sections = [
   [
     'Pekerjaan',
-    ['/beranda', '/tindak-lanjut', '/hari-ini', '/tugas', '/proyek', '/roadmap', '/jurnal'],
+    ['/beranda', '/hari-ini', '/tugas', '/tindak-lanjut', '/proyek', '/roadmap', '/jurnal'],
   ],
-  ['Koordinasi', ['/rapat', '/dokumen', '/mitra', '/tim']],
+  ['Pencatatan', ['/pencatatan', '/keuangan', '/barang', '/stok-opname', '/anggota']],
   ['Operasional', ['/gerai', '/kesiapan', '/risiko', '/laporan']],
-  ['Pencatatan', ['/pencatatan', '/anggota', '/keuangan', '/barang', '/stok-opname']],
+  ['Koordinasi', ['/rapat', '/dokumen', '/mitra', '/tim']],
   ['Lainnya', ['/pengaturan', '/panduan']],
 ] as const;
 function ShellFrame({ children }: { children: React.ReactNode }) {
