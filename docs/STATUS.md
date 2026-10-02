@@ -1,5 +1,27 @@
 # Status proyek — 2 Oktober 2026
 
+## Sistem Variabel Global (Design Tokens) & Harmonisasi Simetri Komponen
+
+- **Design System Global Variables (`personal.css`)**:
+  - Membangun token global lengkap di level `:root` dan `.dark`:
+    - **Tipografi**: `--font-sans`, `--font-mono`, skala ukuran `--font-size-2xs` hingga `--font-size-2xl`, serta bobot `--font-weight-normal/medium/semibold/bold/extrabold`.
+    - **Form Controls & Dropdowns**: `--control-font`, `--control-height-sm/md/lg`, `--control-padding-sm/md/lg`, `--control-radius-sm/md/lg`, `--control-border`, `--control-border-hover`, `--control-border-focus`, `--control-shadow-focus`, serta ikon chevron inline SVG (`--select-chevron-icon` dan `--select-chevron-dark-icon`).
+    - **Tombol & Proporsi Simetris**: `--btn-font`, `--btn-height-sm/md/lg`, `--btn-padding-sm/md/lg`, `--btn-font-size-sm/md/lg`, `--btn-radius-sm/md/pill`.
+    - **Tabel**: `--table-th-height`, `--table-th-padding`, `--table-td-padding`, `--table-border`, `--table-radius`, `--table-row-hover`.
+- **Perbaikan Simetri & Tombol Jadwal Berulang (`RecursiveScheduleModal` & `SprintModal`)**:
+  - Mengatasi huruf tombol simpan yang sebelumnya terlalu besar dan tidak proporsional:
+    - Menambahkan aturan `.sprint-form-actions`, `.btn-cancel`, dan `.btn-save-sprint` yang terikat pada variabel `--btn-height-md` (38px), `--btn-font-size-md` (13.5px), `--btn-radius-md`, dan padding simetris.
+    - Tombol "Batal" dan "Simpan pengulangan" kini sejajar rapi, proporsional, dan seimbang secara visual.
+  - Menyelaraskan seluruh input teks, tanggal, dan waktu dalam modal ke token kontrol global (`--control-height-md`, padding, radius).
+- **Penyelarasan Dropdown & Tabel Tugas (`task-table-wrap`)**:
+  - Menyelaraskan dropdown status (`.task-status-select`) dengan font sistem `Plus Jakarta Sans` (`--control-font`), tinggi 32px (`--control-height-sm`), ikon chevron SVG, dan aksen warna semantik status yang halus.
+  - Menyelaraskan seluruh dropdown native `<select>` dan custom `<Select>` di seluruh aplikasi agar memiliki tinggi, font, padding, dan chevron yang seragam dan konsisten.
+- **Verifikasi Kualitas**:
+  - `npm test`: **129/129 tes lulus (16 file pengujian)**.
+  - `npm run typecheck`: **0 kesalahan**.
+  - `npm run lint`: **0 kesalahan / 0 peringatan**.
+  - `npm run build`: **Next.js Turbopack build sukses** (9/9 rute teroptimasi penuh).
+
 ## Penyederhanaan & Harmonisasi Tabel Tugas (`task-table-wrap`) Clean Design
 
 - **Pembersihan Elemen Membingungkan & Harmonisasi Visual**:

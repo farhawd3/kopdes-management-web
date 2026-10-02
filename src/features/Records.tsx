@@ -1129,7 +1129,7 @@ export function Records({
                         <span className="sr-only">Status {String(row.data.title)}</span>
                         <select
                           disabled={busy}
-                          className="task-status-select"
+                          className={`task-status-select status-${row.data.status}`}
                           value={String(row.data.status)}
                           onChange={(event) =>
                             void update(row, {
