@@ -1,5 +1,14 @@
 # Status proyek — 3 Oktober 2026
 
+## Lanjutan redesain: navigasi, dialog, dan state (3 Oktober 2026)
+
+- Sembilan galat lint dan seluruh peringatan lama diperbaiki tanpa menonaktifkan aturan: scope tugas mengikuti URL; tampilan tugas mengikuti perubahan query tanpa menghapus filter lokal; pergantian detail tugas memperbarui judul/deskripsi/tautan; cache workspace dipisahkan per scope sebelum render; `any` pada editor dihapus dan impor mati dibersihkan.
+- Rutinitas membaca preferensi tervalidasi. Daftar kosong tersimpan tidak diganti kembali oleh contoh bawaan; jumlah selesai hanya menghitung rutinitas yang masih ada. Pilihan tetap tersedia selama sesi jika browser menolak penulisan storage.
+- Target periode memakai dialog native, Escape/backdrop tidak menutup ketika penyimpanan berjalan, galat tetap terlihat, form menjadi satu kolom di ponsel, dan tombol tutup berukuran 44 px. Navigasi tugas sebelum/berikutnya terkunci selama penyimpanan.
+- Aturan tablet disatukan pada 768–1023 px dengan rel 76 px; desktop mulai 1024 px. Aturan tablet ganda serta `!important` yang tidak diperlukan di blok tersebut dihapus. Sidebar ciut mempertahankan nama aksesibel dan target 44 px; menu ponsel tertutup menjadi inert.
+- Verifikasi akhir: **159 tes pada 21 berkas lulus** melalui `npm test -- --maxWorkers=2`; typecheck, lint seluruh repo (0 galat/0 peringatan), dan build produksi lulus. Delapan tes regresi baru memeriksa scope/cache, pergantian detail, preferensi kosong/rusak/storage diblokir, dialog ketika menyimpan, query tampilan, dan navigasi pada batas desktop. Dua percobaan dengan worker bawaan mengalami timeout 5 detik pada tes UI berbeda; batas waktu dan asersi tes tidak diubah.
+- Audit visual 360/768/1024/1440 px dan tema terang/gelap **belum selesai**: koneksi browser lokal masih timeout ketika membuka aplikasi. Tes DOM bukan pemeriksaan render/perangkat. Tidak ada migrasi cloud atau deployment produksi.
+
 ## Redesain ruang kerja dan konteks proyek (3 Oktober 2026)
 
 - Cabang kerja: `codex/workspace-redesign`. Konsolidasi CSS yang sudah ada saat mulai bekerja dipertahankan; impor aktif tetap `globals.css` dan `personal.css`.

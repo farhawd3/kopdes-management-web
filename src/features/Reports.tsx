@@ -16,7 +16,6 @@ import {
   FilePenLine,
   Sparkles,
   Wallet,
-  ArrowRight,
   Info,
 } from 'lucide-react';
 import { api } from '@/lib/client';
@@ -131,10 +130,14 @@ export function Reports() {
     setBusy(true);
     setError('');
     try {
-      const updated = await api<Report>('reports', {
-        id: report.id,
-        status: 'final',
-      }, 'PATCH');
+      const updated = await api<Report>(
+        'reports',
+        {
+          id: report.id,
+          status: 'final',
+        },
+        'PATCH',
+      );
       setReports((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
       setSelected(updated);
       setNotice('Draf berhasil diterbitkan menjadi Laporan Resmi.');
@@ -161,7 +164,8 @@ export function Reports() {
           <div>
             <h2>Susun Laporan Kerja</h2>
             <p>
-              Perekaman capaian, tindak lanjut, dan keuangan periode. Simpan sebagai draf atau terbitkan langsung.
+              Perekaman capaian, tindak lanjut, dan keuangan periode. Simpan sebagai draf atau
+              terbitkan langsung.
             </p>
           </div>
         </div>
@@ -244,7 +248,10 @@ export function Reports() {
           <div className="report-form-actions-split">
             <div className="action-hint">
               <Info size={14} />
-              <small>Pilih <strong>Simpan Draf</strong> untuk draf sementara, atau <strong>Jadikan final</strong> untuk dokumen berkop.</small>
+              <small>
+                Pilih <strong>Simpan Draf</strong> untuk draf sementara, atau{' '}
+                <strong>Jadikan final</strong> untuk dokumen berkop.
+              </small>
             </div>
             <div className="action-buttons-group">
               <button
@@ -273,8 +280,16 @@ export function Reports() {
           </div>
         </form>
 
-        {notice && <p className="notice success mt-3" role="status">{notice}</p>}
-        {error && <p className="notice error mt-3" role="alert">{error}</p>}
+        {notice && (
+          <p className="notice success mt-3" role="status">
+            {notice}
+          </p>
+        )}
+        {error && (
+          <p className="notice error mt-3" role="alert">
+            {error}
+          </p>
+        )}
       </section>
 
       {/* ── Report Archive Tabs & Filters ────────────────────────── */}
@@ -465,7 +480,8 @@ export function Reports() {
               <div className="confirm-content">
                 <strong>Hapus {isCurrentDraft ? 'Draf Laporan' : 'Laporan'} Ini?</strong>
                 <p>
-                  Tindakan ini akan menghapus laporan {selected.title} secara permanen dari basis data. Data tugas, buku kas, dan catatan koperasi tidak akan terpengaruh.
+                  Tindakan ini akan menghapus laporan {selected.title} secara permanen dari basis
+                  data. Data tugas, buku kas, dan catatan koperasi tidak akan terpengaruh.
                 </p>
                 <div className="confirm-actions">
                   <button
@@ -514,7 +530,8 @@ export function Reports() {
             <div className="meta-item">
               <span className="meta-label">Nomor Dokumen:</span>
               <strong className="meta-val">
-                KDMP/{isCurrentDraft ? 'DRAF-MGR' : 'LAP-MGR'}/{selected.period_end.replace(/-/g, '')}
+                KDMP/{isCurrentDraft ? 'DRAF-MGR' : 'LAP-MGR'}/
+                {selected.period_end.replace(/-/g, '')}
               </strong>
             </div>
             <div className="meta-item">
@@ -540,7 +557,9 @@ export function Reports() {
             <div className="report-cash-summary-card">
               <div className="cash-head">
                 <Wallet size={18} />
-                <strong>Rekapitulasi Arus Kas Tercatat ({selected.snapshot.cash.count} transaksi)</strong>
+                <strong>
+                  Rekapitulasi Arus Kas Tercatat ({selected.snapshot.cash.count} transaksi)
+                </strong>
               </div>
               <div className="cash-grid">
                 <div className="cash-item item-in">
@@ -553,7 +572,9 @@ export function Reports() {
                 </div>
                 <div className="cash-item item-net">
                   <small>Selisih Arus Kas</small>
-                  <strong className={selected.snapshot.cash.net >= 0 ? 'text-green' : 'text-danger'}>
+                  <strong
+                    className={selected.snapshot.cash.net >= 0 ? 'text-green' : 'text-danger'}
+                  >
                     {rupiah(selected.snapshot.cash.net)}
                   </strong>
                 </div>
@@ -660,7 +681,9 @@ export function Reports() {
               <strong className="sig-role">Pengurus & Badan Pengawas</strong>
               <span className="sig-org">Koperasi Desa Merdeka Puntukrejo</span>
               <div className="sig-space" />
-              <div className="sig-line">( ..................................................................... )</div>
+              <div className="sig-line">
+                ( ..................................................................... )
+              </div>
               <span className="sig-desc">Ketua Pengurus / Pengawas</span>
             </div>
 
@@ -669,7 +692,9 @@ export function Reports() {
               <strong className="sig-role">Disusun & Dilaporkan Oleh,</strong>
               <span className="sig-org">Manajer Operasional Koperasi</span>
               <div className="sig-space" />
-              <div className="sig-line">( ..................................................................... )</div>
+              <div className="sig-line">
+                ( ..................................................................... )
+              </div>
               <span className="sig-desc">Manajer KDMP Puntukrejo</span>
             </div>
           </footer>

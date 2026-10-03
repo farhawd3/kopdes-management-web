@@ -1,5 +1,13 @@
 # Changelog
 
+### Lanjutan redesain: navigasi, dialog, dan state (3 Oktober 2026)
+
+- Perbaiki galat lint dan hapus `any`/impor mati; scope tugas mengikuti URL, query tampilan mempertahankan filter lokal, field detail mengikuti tugas terpilih, dan cache scope lama tidak tampil saat berpindah scope.
+- Satukan tablet 768–1023 px/rel 76 px dan desktop mulai 1024 px. Hapus aturan tablet ganda; beri nama aksesibel pada navigasi ciut dan inert pada menu ponsel tertutup.
+- Ganti modal target periode menjadi dialog native; cegah penutupan selama penyimpanan, rapikan form ponsel, dan pertahankan galat. Navigasi detail tugas dikunci selama menyimpan.
+- Validasi preferensi rutinitas, pertahankan konfigurasi kosong, abaikan centang rutinitas yang dihapus, dan simpan pilihan selama sesi jika storage browser menolak penulisan.
+- Delapan tes regresi baru ditambahkan: 159 tes/21 berkas lulus dengan dua worker; typecheck, lint penuh (0 galat/0 peringatan), dan build lulus. Percobaan worker bawaan mengalami timeout pada tes UI berbeda; batas waktu tes tidak dilonggarkan. Audit visual empat ukuran masih tertahan oleh timeout browser; tidak ada klaim UAT/perangkat baru atau deployment produksi.
+
 ### Redesain ruang kerja dan konteks proyek (3 Oktober 2026)
 
 - Pertahankan konsolidasi stylesheet yang sudah ada; perbarui palet netral/hijau lembut, sidebar arang, radius, kontrol, kartu, tab, topbar, dan hierarki judul Beranda.

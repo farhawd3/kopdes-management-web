@@ -1,6 +1,8 @@
 'use client';
 import { useSyncExternalStore } from 'react';
 const eventName = 'kopdes-preference';
+// Private browsing can reject writes; keep the user's choice for this session.
+const temporaryPreferences = new Map<string, string>();
 function subscribe(callback: () => void) {
   window.addEventListener('storage', callback);
   window.addEventListener(eventName, callback);
@@ -13,8 +15,10 @@ export function usePreference(key: string, fallback: string): [string, (value: s
   const value = useSyncExternalStore(
     subscribe,
     () => {
+      const temporary = temporaryPreferences.get(key);
+      if (temporary !== undefined) return temporary;
       try {
-        return localStorage.getItem(key) || fallback;
+        return localStorage.getItem(key) ?? fallback;
       } catch {
         return fallback;
       }
@@ -26,8 +30,9 @@ export function usePreference(key: string, fallback: string): [string, (value: s
     (next) => {
       try {
         localStorage.setItem(key, next);
+        temporaryPreferences.delete(key);
       } catch {
-        /* Browser privat dapat menolak penyimpanan. */
+        temporaryPreferences.set(key, next);
       }
       window.dispatchEvent(new Event(eventName));
     },

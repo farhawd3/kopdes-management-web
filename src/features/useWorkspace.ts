@@ -42,6 +42,17 @@ export function useWorkspace(
   const [operations, setOperations] = useState(() => initialCache?.operations || false);
   const [more, setMore] = useState<Partial<Record<Entity, number>>>(() => initialCache?.more || {});
   const [fetching, setFetching] = useState<Entity | null>(null);
+  const [renderedCacheKey, setRenderedCacheKey] = useState(cacheKey);
+  if (renderedCacheKey !== cacheKey) {
+    // A new page/scope must never render data belonging to the preceding scope.
+    setRenderedCacheKey(cacheKey);
+    setData(initialCache?.data || {});
+    setMore(initialCache?.more || {});
+    setOperations(initialCache?.operations || false);
+    setLoading(!initialCache);
+    setError('');
+    setFetching(null);
+  }
   const generation = useRef(0);
   const pathFor = useCallback(
     (entity: Entity, offset = 0) => {
@@ -140,7 +151,7 @@ export function useWorkspace(
     } catch (e) {
       setError((e as Error).message);
     } finally {
-      setFetching(null);
+      if (current === generation.current) setFetching(null);
     }
   };
   useEffect(() => {
@@ -148,17 +159,18 @@ export function useWorkspace(
     // Stale-while-revalidate: if cached data exists, render immediately without flash
     const cached = workspaceCache.get(cacheKey);
     if (cached) {
-      setData(cached.data);
-      setMore(cached.more);
-      setOperations(cached.operations);
-      setLoading(false);
       window.dispatchEvent(new CustomEvent('hub-workspace', { detail: cached.data }));
     } else {
-      setLoading(true);
+      window.dispatchEvent(new CustomEvent('hub-workspace', { detail: null }));
     }
-    void refresh();
+    // Cancel an obsolete mount before it starts a request (including StrictMode's probe).
+    let active = true;
+    void Promise.resolve().then(() => {
+      if (active) return refresh();
+    });
     const requestRef = generation;
     return () => {
+      active = false;
       requestRef.current++;
     };
   }, [refresh, cacheKey]);

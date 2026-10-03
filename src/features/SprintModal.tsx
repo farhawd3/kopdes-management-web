@@ -1,6 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
-import { createPortal } from 'react-dom';
+import { useState, useEffect, useRef } from 'react';
 import { X, Target, Calendar, Clock } from 'lucide-react';
 import { addDays, today } from '@/lib/date';
 import { api } from '@/lib/client';
@@ -16,16 +15,14 @@ export function SprintModal({
   onClose: () => void;
   onSaved: () => Promise<void>;
 }) {
-  const [mounted, setMounted] = useState(false);
+  const dialog = useRef<HTMLDialogElement>(null);
   const [title, setTitle] = useState(String(sprint?.data.title || 'Sprint 1'));
   const [goal, setGoal] = useState(String(sprint?.data.goal || ''));
   const [duration, setDuration] = useState(
     (sprint?.data.duration as '1 minggu' | '2 minggu' | '1 bulan' | 'kustom') || '2 minggu',
   );
   const [startDate, setStartDate] = useState(String(sprint?.data.start_date || today()));
-  const [endDate, setEndDate] = useState(
-    String(sprint?.data.end_date || addDays(today(), 14)),
-  );
+  const [endDate, setEndDate] = useState(String(sprint?.data.end_date || addDays(today(), 14)));
   const [status, setStatus] = useState(
     (sprint?.data.status as 'aktif' | 'rencana' | 'selesai') || 'aktif',
   );
@@ -34,16 +31,10 @@ export function SprintModal({
   const [error, setError] = useState('');
 
   useEffect(() => {
-    setMounted(true);
+    const node = dialog.current;
+    node?.showModal();
+    return () => node?.close();
   }, []);
-
-  useEffect(() => {
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') onClose();
-    }
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onClose]);
 
   function handleDurationChange(val: '1 minggu' | '2 minggu' | '1 bulan' | 'kustom') {
     setDuration(val);
@@ -81,12 +72,16 @@ export function SprintModal({
   }
 
   const modalContent = (
-    <div
-      className="sprint-modal-backdrop"
-      role="dialog"
+    <dialog
+      ref={dialog}
+      className="sprint-modal-dialog"
       aria-labelledby="sprint-modal-title"
+      onCancel={(event) => {
+        event.preventDefault();
+        if (!busy) onClose();
+      }}
       onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
+        if (e.target === e.currentTarget && !busy) onClose();
       }}
     >
       <div className="sprint-modal-card">
@@ -95,11 +90,15 @@ export function SprintModal({
             <span className="sprint-icon-pill">
               <Target size={18} />
             </span>
-            <h2 id="sprint-modal-title">
-              {sprint?.id ? 'Ubah Target Periode' : 'Target Periode'}
-            </h2>
+            <h2 id="sprint-modal-title">{sprint?.id ? 'Ubah Target Periode' : 'Target Periode'}</h2>
           </div>
-          <button type="button" className="close-btn" onClick={onClose} aria-label="Tutup modal">
+          <button
+            type="button"
+            className="close-btn"
+            onClick={onClose}
+            disabled={busy}
+            aria-label="Tutup modal"
+          >
             <X size={18} />
           </button>
         </header>
@@ -136,9 +135,7 @@ export function SprintModal({
               <Select
                 value={duration}
                 onChange={(val) =>
-                  handleDurationChange(
-                    val as '1 minggu' | '2 minggu' | '1 bulan' | 'kustom',
-                  )
+                  handleDurationChange(val as '1 minggu' | '2 minggu' | '1 bulan' | 'kustom')
                 }
                 options={[
                   { value: '1 minggu', label: '1 Minggu' },
@@ -154,9 +151,7 @@ export function SprintModal({
               <span className="field-label">Status</span>
               <Select
                 value={status}
-                onChange={(val) =>
-                  setStatus(val as 'aktif' | 'rencana' | 'selesai')
-                }
+                onChange={(val) => setStatus(val as 'aktif' | 'rencana' | 'selesai')}
                 options={[
                   { value: 'aktif', label: 'Aktif' },
                   { value: 'rencana', label: 'Rencana' },
@@ -225,9 +220,8 @@ export function SprintModal({
           </div>
         </form>
       </div>
-    </div>
+    </dialog>
   );
 
-  if (!mounted) return null;
-  return createPortal(modalContent, document.body);
+  return modalContent;
 }

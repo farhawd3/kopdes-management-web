@@ -5,7 +5,9 @@
 - [x] Pencarian berscope dengan konteks proyek, tautan sumber, dan batas data dimuat yang jelas.
 - [x] Navigasi bagian detail proyek dan relasi dokumen/keputusan/kendala melalui tugas, disertai tes isolasi antarproyek.
 - [ ] Audit visual ulang seluruh modul pada 360/768/1024/1440 px, terang dan gelap setelah paket ini.
-- [ ] Selesaikan 9 galat lint lama dan periksa ulang lint seluruh repo.
+- [x] Selesaikan 9 galat lint lama dan periksa ulang lint seluruh repo.
+- [x] Perbaiki sinkronisasi scope/cache, query tampilan, field detail tugas, dan preferensi rutinitas dengan tes regresi.
+- [x] Pakai dialog native untuk target periode, cegah penutupan saat menyimpan, dan konsolidasikan batas tablet/desktop.
 - [ ] UAT interaksi pencarian/proyek dengan data nyata serta audit rinci desain setiap modul.
 
 ## Perapian 2 Oktober

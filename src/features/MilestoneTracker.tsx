@@ -1,16 +1,6 @@
 'use client';
 import { useState } from 'react';
-import {
-  Flag,
-  CheckCircle2,
-  Calendar,
-  Plus,
-  Edit3,
-  RotateCcw,
-  Check,
-  AlertCircle,
-  Layers,
-} from 'lucide-react';
+import { Flag, CheckCircle2, Calendar, Plus, Edit3, RotateCcw, Check, Layers } from 'lucide-react';
 import type { Workspace } from './useWorkspace';
 import type { Item } from './schemas';
 import { Editor } from './Editor';
@@ -98,7 +88,8 @@ export function MilestoneTracker({
             <h3>Tonggak Capaian (Milestone)</h3>
           </div>
           <p>
-            Target hasil kunci (checkpoint) tanpa durasi untuk memantau keberhasilan tiap tahapan proyek.
+            Target hasil kunci (checkpoint) tanpa durasi untuk memantau keberhasilan tiap tahapan
+            proyek.
           </p>
         </div>
 
@@ -133,11 +124,7 @@ export function MilestoneTracker({
             </button>
           </div>
 
-          <button
-            type="button"
-            className="btn-add-milestone"
-            onClick={() => setEditItem(null)}
-          >
+          <button type="button" className="btn-add-milestone" onClick={() => setEditItem(null)}>
             <Plus size={15} />
             <span>Milestone Baru</span>
           </button>
@@ -154,9 +141,7 @@ export function MilestoneTracker({
                 ? 'Belum ada milestone yang tercapai'
                 : 'Tidak ada milestone yang ditargetkan'}
           </h4>
-          <p>
-            Tentukan titik capaian penting untuk memastikan proyek Anda bergerak sesuai target.
-          </p>
+          <p>Tentukan titik capaian penting untuk memastikan proyek Anda bergerak sesuai target.</p>
           {filter === 'semua' && (
             <button
               type="button"
@@ -218,7 +203,10 @@ export function MilestoneTracker({
                     <span>Target: {formatDate(String(milestone.data.due_date))}</span>
                   </div>
 
-                  <div className="milestone-tasks-count" title="Tugas yang terhubung ke milestone ini">
+                  <div
+                    className="milestone-tasks-count"
+                    title="Tugas yang terhubung ke milestone ini"
+                  >
                     <Layers size={13} />
                     <span>
                       {relatedTasks.length > 0

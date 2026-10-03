@@ -11,8 +11,6 @@ import {
   CalendarDays,
   AlertCircle,
   Clock,
-  Sparkles,
-  Layers,
 } from 'lucide-react';
 import { type Item } from './schemas';
 import type { Workspace } from './useWorkspace';
@@ -87,9 +85,7 @@ export function DailyTasksView({
   const activeDayTasks = tasks.filter((t) => t.data.due_date === selectedDate);
   const activeDayDoneCount = activeDayTasks.filter((t) => t.data.status === 'selesai').length;
   const activeDayProgressPercent =
-    activeDayTasks.length > 0
-      ? Math.round((activeDayDoneCount / activeDayTasks.length) * 100)
-      : 0;
+    activeDayTasks.length > 0 ? Math.round((activeDayDoneCount / activeDayTasks.length) * 100) : 0;
 
   async function toggleComplete(task: Item, e: React.MouseEvent) {
     e.stopPropagation();
@@ -155,15 +151,10 @@ export function DailyTasksView({
     const subtasks = Array.isArray(task.data.subtasks)
       ? (task.data.subtasks as { title: string; done: boolean; code?: string }[])
       : [];
-    const project = workspace.workstreams?.find(
-      (w) => w.id === task.data.workstream_id,
-    );
+    const project = workspace.workstreams?.find((w) => w.id === task.data.workstream_id);
 
     return (
-      <div
-        key={task.id}
-        className={`daily-task-row-wrap ${isDone ? 'is-completed' : ''}`}
-      >
+      <div key={task.id} className={`daily-task-row-wrap ${isDone ? 'is-completed' : ''}`}>
         {/* Parent Task Row */}
         <div
           className="daily-task-item"
@@ -255,7 +246,9 @@ export function DailyTasksView({
                   type="button"
                   className={`subtask-round-check ${sub.done ? 'checked' : ''}`}
                   onClick={(e) => toggleSubtask(task, sIdx, e)}
-                  aria-label={sub.done ? `Tandai belum selesai: ${sub.title}` : `Tandai selesai: ${sub.title}`}
+                  aria-label={
+                    sub.done ? `Tandai belum selesai: ${sub.title}` : `Tandai selesai: ${sub.title}`
+                  }
                   aria-pressed={Boolean(sub.done)}
                 >
                   {sub.done && <Check size={11} strokeWidth={2.8} />}
@@ -336,7 +329,9 @@ export function DailyTasksView({
                   <span className="strip-day-num">{dayNum}</span>
                   <span className="strip-day-meta">
                     {items.length > 0 ? (
-                      <span className={`strip-count-dot ${hasIncomplete ? 'has-pending' : 'all-done'}`}>
+                      <span
+                        className={`strip-count-dot ${hasIncomplete ? 'has-pending' : 'all-done'}`}
+                      >
                         {items.length}
                       </span>
                     ) : (

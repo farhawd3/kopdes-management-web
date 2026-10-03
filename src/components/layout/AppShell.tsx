@@ -200,7 +200,7 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
             aria-label="Buka menu navigasi"
             title="Menu Navigasi (Ctrl+B)"
             onClick={() => {
-              if (window.innerWidth >= 1100) {
+              if (window.innerWidth >= 1024) {
                 setDesktopSidebarHidden(desktopSidebarHidden === 'true' ? 'false' : 'true');
               } else {
                 setMenu(!menu);
@@ -403,6 +403,8 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
                     <Link
                       key={href}
                       href={href}
+                      aria-label={label}
+                      title={label}
                       aria-current={isActive ? 'page' : undefined}
                       className={`sidebar-nav-item ${isActive ? 'is-active' : ''}`}
                       onClick={() => setMenu(false)}
@@ -450,6 +452,8 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
                     <Link
                       key={href}
                       href={href}
+                      aria-label={navigation.find(([url]) => url === href)?.[1]}
+                      title={navigation.find(([url]) => url === href)?.[1]}
                       aria-current={isActive ? 'page' : undefined}
                       className={`sidebar-nav-item ${isActive ? 'is-active' : ''}`}
                       onClick={() => setMenu(false)}
@@ -579,8 +583,10 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
       />
       <aside
         className={`mobile-app-sheet ${menu ? 'is-open' : ''}`}
+        inert={!menu}
+        aria-hidden={!menu}
         role="dialog"
-        aria-modal="true"
+        aria-modal={menu ? true : undefined}
         aria-label="Menu navigasi ruang kerja"
       >
         <div

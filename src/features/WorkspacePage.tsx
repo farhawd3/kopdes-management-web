@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useWorkspace } from './useWorkspace';
-import { pages, navigation, catalog } from './catalog';
+import { pages, catalog } from './catalog';
 import { Records } from './Records';
 import { Dashboard } from './Dashboard';
 import { Roadmap } from './Roadmap';
@@ -22,18 +22,9 @@ export function WorkspacePage({ slug }: { slug: string }) {
   const query = useSearchParams();
   const router = useRouter();
   const requestedSection = query.get('bagian');
-  const [taskScope, setTaskScope] = useState<'current' | 'history'>(() =>
-    ['selesai', 'dibatalkan'].includes(query.get('status') || '') ? 'history' : 'current',
-  );
-
-  useEffect(() => {
-    const statusParam = query.get('status') || '';
-    if (['selesai', 'dibatalkan'].includes(statusParam)) {
-      if (taskScope !== 'history') setTaskScope('history');
-    } else if (taskScope === 'history' && !statusParam) {
-      setTaskScope('current');
-    }
-  }, [query, taskScope]);
+  const taskScope = ['selesai', 'dibatalkan'].includes(query.get('status') || '')
+    ? 'history'
+    : 'current';
   const requestedRecord =
     query.get('record') || query.get('task') || (slug === 'proyek' ? query.get('id') : null);
   const selectedEntity = (
@@ -72,9 +63,6 @@ export function WorkspacePage({ slug }: { slug: string }) {
   }, []);
   const sectionIndex = pages[slug]?.findIndex((entity) => entity === requestedSection) ?? -1;
   const tab = tabChoice?.section === requestedSection ? tabChoice.index : Math.max(0, sectionIndex);
-  const title =
-    navigation.find(([path]) => path === `/${slug}`)?.[1] ||
-    (slug === 'pemangku' ? 'Mitra & kontak' : 'Ruang kerja');
   if (loading) return <SkeletonLoading slug={slug} />;
   if (error)
     return (
@@ -89,14 +77,12 @@ export function WorkspacePage({ slug }: { slug: string }) {
     );
   return (
     <div className={`workspace-page page-${slug}`}>
-
       {slug === 'tugas' && (
         <div className="workspace-scope-control" role="group" aria-label="Rentang tugas">
           <button
             type="button"
             aria-pressed={taskScope === 'current'}
             onClick={() => {
-              setTaskScope('current');
               const next = new URLSearchParams(query.toString());
               next.delete('status');
               router.replace(`/tugas${next.size ? '?' + next.toString() : ''}`);
@@ -108,7 +94,6 @@ export function WorkspacePage({ slug }: { slug: string }) {
             type="button"
             aria-pressed={taskScope === 'history'}
             onClick={() => {
-              setTaskScope('history');
               const next = new URLSearchParams(query.toString());
               next.set('status', 'selesai');
               router.replace(`/tugas?${next.toString()}`);

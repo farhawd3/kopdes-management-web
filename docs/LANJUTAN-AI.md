@@ -4,7 +4,14 @@ Dokumen ini adalah titik mulai untuk AI lain. Baca `../AGENTS.md`, `STATUS.md`, 
 
 Baca juga `KEGIATAN-DAN-TUGAS.md` untuk memisahkan catatan kejadian dari pekerjaan yang harus dilakukan, serta `MIGRASI-SQL.md` sebelum menyentuh skema.
 
-## Keadaan saat serah terima
+## Keadaan terbaru — 3 Oktober 2026
+
+- Cabang aktif paket redesain: `codex/workspace-redesign`; selalu periksa Git kembali. Stylesheet aktif hanya `globals.css` dan `personal.css`; berkas workspace/studio/polish/responsive-finish sudah dikonsolidasikan dan dihapus pada paket sebelumnya.
+- Pencarian berkonteks proyek dan navigasi bagian proyek tersedia. Relasi dokumen/kendala mengikuti tugas; keputusan mengikuti rapat terkait tugas. Jangan menambahkan bidang proyek fiktif ke domain tersebut.
+- Paket lanjutan memperbaiki lint/state, dialog native target periode, preferensi rutinitas, batas tablet 768–1023/desktop 1024, nama aksesibel navigasi ciut, dan menu ponsel tertutup yang inert. Rincian hasil ada di STATUS dan CHANGELOG.
+- Audit render empat ukuran serta tema terang/gelap belum dilakukan setelah paket ini karena alat browser lokal gagal membuka tab (timeout CDP). Prioritas berikutnya adalah pemeriksaan browser, fokus/Escape/modal, navigasi/sidebar, dan UAT data nyata. Tes DOM tidak menggantikan bukti visual.
+
+## Catatan serah terima sebelumnya — 2 Oktober 2026
 
 - Per 2 Oktober 2026 paket "Pembersihan kegiatan/tugas, kalender, dan detail visual" sudah masuk kode: menu `Jurnal Kerja` menjadi **Kegiatan**, kalender menampilkan judul lebih dulu, tanda kode diseragamkan, centang subtugas dirapikan, tombol ikon memakai sudut 12 px, animasi dialog naik dari bawah, `card-project-pill` disederhanakan, serta "Gabung rapat" muncul pada detail tugas dan kegiatan. Beranda punya tombol "Buat tugas"/"Catat kegiatan" dan bagian "Kegiatan terbaru". Audit lanjutan memperbaiki scope relasi halaman Kegiatan/Beranda, tampilan chip tautan rapat, luapan tombol di 360 px, visibilitas tombol ciutkan sidebar, dan menambah `tests/kegiatan.test.tsx`. Verifikasi: 134 tes (18 berkas), typecheck, lint, build lulus. Perubahan ini belum di-commit.
 - Commit lokal `12718c7` merapikan input cepat tugas pada 360 px dan `cb547a9` menambah panduan ini. Jumlah commit lokal dapat berubah; periksa `git status -sb` dan `git log` sebelum bekerja. Jangan push ke cabang produksi karena dapat memicu deployment.

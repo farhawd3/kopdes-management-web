@@ -786,13 +786,14 @@ export function Records({
     });
   }
   const requestedView = query.get('view');
-  useEffect(() => {
-    // A sidebar link can change only the query while this page remains mounted.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+  const [previousRequestedView, setPreviousRequestedView] = useState(requestedView);
+  // Reconcile a changed navigation request before rendering a stale view.
+  if (previousRequestedView !== requestedView) {
+    setPreviousRequestedView(requestedView);
     if (requestedView && ['daftar', 'papan', 'kalender', 'gantt', 'harian'].includes(requestedView)) {
       setView(requestedView);
     }
-  }, [requestedView]);
+  }
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {

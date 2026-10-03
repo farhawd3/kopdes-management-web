@@ -63,9 +63,7 @@ export function TaskDetailDrawer({
   }, []);
 
   const [taskData, setTaskData] = useState(task.data);
-  useEffect(() => {
-    setTaskData(task.data);
-  }, [task]);
+  const [sourceData, setSourceData] = useState(task.data);
   const data = taskData;
   const isComplete = data.status === 'selesai';
 
@@ -81,9 +79,17 @@ export function TaskDetailDrawer({
   const [isEditingLink, setIsEditingLink] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
   const [submissionLink, setSubmissionLink] = useState(String(data.link || ''));
-  useEffect(() => {
-    setSubmissionLink(String(taskData.link || ''));
-  }, [taskData.link]);
+  if (sourceData !== task.data) {
+    setSourceData(task.data);
+    setTaskData(task.data);
+    setTitle(String(task.data.title || ''));
+    setDescription(String(task.data.description || ''));
+    setSubmissionLink(String(task.data.link || ''));
+    setIsEditingTitle(false);
+    setIsEditingDesc(false);
+    setIsEditingLink(false);
+    setError('');
+  }
 
   const subtasks = Array.isArray(data.subtasks)
     ? (data.subtasks as { title: string; done: boolean; code?: string }[])
@@ -124,7 +130,12 @@ export function TaskDetailDrawer({
       /* Confirmation and persistence handled in parent via onDelete prop */
       onDelete(task);
     } else {
-      if (!window.confirm(`Hapus tugas "${data.title || 'ini'}"? Tindakan ini tidak dapat dibatalkan.`)) return;
+      if (
+        !window.confirm(
+          `Hapus tugas "${data.title || 'ini'}"? Tindakan ini tidak dapat dibatalkan.`,
+        )
+      )
+        return;
       setBusy(true);
       setError('');
       try {
@@ -167,6 +178,7 @@ export function TaskDetailDrawer({
       const parsed = schemas['work-items'].parse(updatedPayload);
       await api('work-items', { id: task.id, data: parsed });
       setTaskData(parsed);
+      if ('link' in changes) setSubmissionLink(String(parsed.link || ''));
       await onUpdated();
       return true;
     } catch (err) {
@@ -278,12 +290,24 @@ export function TaskDetailDrawer({
               <span>Hapus</span>
             </button>
             {onPrev && (
-              <button type="button" className="btn-icon" title="Tugas Sebelumnya" onClick={onPrev}>
+              <button
+                type="button"
+                className="btn-icon"
+                title="Tugas Sebelumnya"
+                onClick={onPrev}
+                disabled={busy}
+              >
                 <ChevronLeft size={18} />
               </button>
             )}
             {onNext && (
-              <button type="button" className="btn-icon" title="Tugas Berikutnya" onClick={onNext}>
+              <button
+                type="button"
+                className="btn-icon"
+                title="Tugas Berikutnya"
+                onClick={onNext}
+                disabled={busy}
+              >
                 <ChevronRight size={18} />
               </button>
             )}
@@ -385,7 +409,10 @@ export function TaskDetailDrawer({
                     if (!title.trim()) return;
                     setIsEditingTitle(false);
                     if (title.trim() !== data.title) {
-                      await saveChanges({ title: title.trim() }, `mengubah judul menjadi "${title.trim()}"`);
+                      await saveChanges(
+                        { title: title.trim() },
+                        `mengubah judul menjadi "${title.trim()}"`,
+                      );
                     }
                   } else if (e.key === 'Escape') {
                     e.preventDefault();
@@ -415,7 +442,10 @@ export function TaskDetailDrawer({
                     if (!title.trim()) return;
                     setIsEditingTitle(false);
                     if (title.trim() !== data.title) {
-                      await saveChanges({ title: title.trim() }, `mengubah judul menjadi "${title.trim()}"`);
+                      await saveChanges(
+                        { title: title.trim() },
+                        `mengubah judul menjadi "${title.trim()}"`,
+                      );
                     }
                   }}
                 >
@@ -561,7 +591,8 @@ export function TaskDetailDrawer({
           )}
           {joinUrl && (
             <a href={joinUrl} target="_blank" rel="noreferrer" className="prop-link">
-              <ExternalLink size={14} /> Gabung rapat: {String(meeting?.data.title || 'Rapat online')}
+              <ExternalLink size={14} /> Gabung rapat:{' '}
+              {String(meeting?.data.title || 'Rapat online')}
             </a>
           )}
         </div>
@@ -672,7 +703,8 @@ export function TaskDetailDrawer({
           ) : (
             <div className="submission-empty-box">
               <p className="submission-empty-text">
-                Belum ada link pengumpulan terpasang. Tautkan Google Drive, lembar kerja, foto, atau portal hasil tugas.
+                Belum ada link pengumpulan terpasang. Tautkan Google Drive, lembar kerja, foto, atau
+                portal hasil tugas.
               </p>
               <button
                 type="button"
@@ -710,7 +742,9 @@ export function TaskDetailDrawer({
                   type="button"
                   className={`subtask-check-circle ${sub.done ? 'checked' : ''}`}
                   onClick={() => toggleSubtask(idx)}
-                  aria-label={sub.done ? `Tandai belum selesai: ${sub.title}` : `Tandai selesai: ${sub.title}`}
+                  aria-label={
+                    sub.done ? `Tandai belum selesai: ${sub.title}` : `Tandai selesai: ${sub.title}`
+                  }
                   aria-pressed={Boolean(sub.done)}
                 >
                   {sub.done && <Check size={12} strokeWidth={2.5} />}

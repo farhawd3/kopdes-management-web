@@ -10,9 +10,7 @@ import {
   Calendar,
   Users,
   Video,
-  Plus,
   FilePlus,
-  CalendarPlus,
   CheckSquare,
 } from 'lucide-react';
 import { schemas, type Entity, type Item } from './schemas';
@@ -813,7 +811,11 @@ export function Editor({
                             <span>Mode Rapat</span>
                             <select
                               value={inlineMode}
-                              onChange={(e) => setInlineMode(e.target.value as any)}
+                              onChange={(e) => {
+                                const mode = e.target.value;
+                                if (mode === 'online' || mode === 'tatap muka' || mode === 'hybrid')
+                                  setInlineMode(mode);
+                              }}
                             >
                               <option value="online">Online Penuh (Google Meet / Zoom)</option>
                               <option value="tatap muka">Tatap Muka Langsung</option>
@@ -1042,7 +1044,7 @@ export function Editor({
                               const payload = schemas['work-items'].parse({
                                 title: inlineTitle.trim(),
                                 due_date: inlineDate,
-                                priority: inlinePriority as any,
+                                priority: inlinePriority,
                                 status: 'rencana',
                                 workstream_id: projectId || '',
                               });

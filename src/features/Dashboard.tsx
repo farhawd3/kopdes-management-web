@@ -1,6 +1,8 @@
 'use client';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { z } from 'zod';
+import { usePreference } from '@/lib/usePreference';
 import {
   ArrowUpRight,
   CalendarDays,
@@ -16,8 +18,6 @@ import {
   Clock,
   BookOpen,
   Video,
-  CheckCircle2,
-  CheckSquare,
   SlidersHorizontal,
   Plus,
   Trash2,
@@ -40,6 +40,16 @@ import {
   ProjectProgressBar,
 } from '@/components/charts/DashboardCharts';
 import { Select } from '@/components/ui/Select';
+
+const routineSchema = z.array(z.object({ id: z.string(), time: z.string(), title: z.string() }));
+function parseRoutinePreference<T>(text: string, schema: z.ZodType<T>, fallback: T): T {
+  try {
+    const parsed = schema.safeParse(JSON.parse(text));
+    return parsed.success ? parsed.data : fallback;
+  } catch {
+    return fallback;
+  }
+}
 
 export function Dashboard({ data }: { data: Workspace }) {
   const now = today();
@@ -87,49 +97,29 @@ export function Dashboard({ data }: { data: Workspace }) {
     { id: 'kunci-toko', time: '17:00', title: 'Cek keamanan, inventaris, dan kunci gerai' },
   ];
 
-  const [routines, setRoutines] = useState(DEFAULT_ROUTINES);
-  const [completedRoutines, setCompletedRoutines] = useState<string[]>([]);
+  const [routineText, setRoutineText] = usePreference(
+    ROUTINE_CONFIG_KEY,
+    JSON.stringify(DEFAULT_ROUTINES),
+  );
+  const [completedText, setCompletedText] = usePreference(ROUTINE_KEY, '[]');
+  const routines = parseRoutinePreference(routineText, routineSchema, DEFAULT_ROUTINES);
+  const completedRoutines = parseRoutinePreference(completedText, z.array(z.string()), []);
+  const routineCompletedCount = routines.filter((routine) =>
+    completedRoutines.includes(routine.id),
+  ).length;
   const [showRoutineModal, setShowRoutineModal] = useState(false);
   const [newRoutineTime, setNewRoutineTime] = useState('08:00');
   const [newRoutineTitle, setNewRoutineTitle] = useState('');
 
-  useEffect(() => {
-    try {
-      const configStored = localStorage.getItem(ROUTINE_CONFIG_KEY);
-      if (configStored) {
-        const parsed = JSON.parse(configStored);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setRoutines(parsed);
-        }
-      }
-    } catch {
-      // ignore
-    }
-
-    try {
-      const stored = localStorage.getItem(ROUTINE_KEY);
-      if (stored) {
-        setCompletedRoutines(JSON.parse(stored));
-      }
-    } catch {
-      // ignore
-    }
-  }, [ROUTINE_KEY]);
-
   function saveRoutines(items: typeof DEFAULT_ROUTINES) {
-    setRoutines(items);
-    try {
-      localStorage.setItem(ROUTINE_CONFIG_KEY, JSON.stringify(items));
-    } catch {
-      // ignore
-    }
+    setRoutineText(JSON.stringify(items));
   }
 
   function handleAddRoutine(e: React.FormEvent) {
     e.preventDefault();
     if (!newRoutineTitle.trim()) return;
     const newItem = {
-      id: `routine-${Date.now()}`,
+      id: crypto.randomUUID(),
       time: newRoutineTime.trim() || '08:00',
       title: newRoutineTitle.trim(),
     };
@@ -148,15 +138,10 @@ export function Dashboard({ data }: { data: Workspace }) {
   }
 
   function toggleRoutine(id: string) {
-    setCompletedRoutines((prev) => {
-      const next = prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id];
-      try {
-        localStorage.setItem(ROUTINE_KEY, JSON.stringify(next));
-      } catch {
-        // ignore
-      }
-      return next;
-    });
+    const next = completedRoutines.includes(id)
+      ? completedRoutines.filter((item) => item !== id)
+      : [...completedRoutines, id];
+    setCompletedText(JSON.stringify(next));
   }
 
   // Bar chart: 7-day completion
@@ -476,7 +461,7 @@ export function Dashboard({ data }: { data: Workspace }) {
                   <span>Atur</span>
                 </button>
                 <span className="routine-progress-pill">
-                  {completedRoutines.length}/{routines.length} selesai
+                  {routineCompletedCount}/{routines.length} selesai
                 </span>
               </div>
             </div>
@@ -497,7 +482,8 @@ export function Dashboard({ data }: { data: Workspace }) {
               })}
               {routines.length === 0 && (
                 <p className="routine-empty-text">
-                  Belum ada rutinitas. Klik tombol <strong>Atur</strong> untuk menambahkan rutinitas harian gerai.
+                  Belum ada rutinitas. Klik tombol <strong>Atur</strong> untuk menambahkan rutinitas
+                  harian gerai.
                 </p>
               )}
             </div>
@@ -558,9 +544,7 @@ export function Dashboard({ data }: { data: Workspace }) {
                       </div>
                       <Link href={recordHref('journal', row)} className="journal-card-link">
                         <strong>{String(row.data.title || '')}</strong>
-                        {Boolean(row.data.notes) && (
-                          <p>{String(row.data.notes).slice(0, 100)}</p>
-                        )}
+                        {Boolean(row.data.notes) && <p>{String(row.data.notes).slice(0, 100)}</p>}
                       </Link>
                       <div className="journal-card-tags">
                         {unit && <span className="j-tag j-unit">{String(unit.data.title)}</span>}
