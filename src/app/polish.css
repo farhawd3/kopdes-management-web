@@ -942,12 +942,12 @@
   }
 }
 
-/* Tombol aksi cepat di tajuk Beranda */
+/* Tombol aksi cepat di tajuk Beranda — min 44px untuk mobile-orientasi */
 .home-action-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  min-height: 38px;
+  min-height: 44px;
   padding: 0 14px;
   border-radius: var(--radius-pill, 20px);
   background: var(--brand);
@@ -967,7 +967,7 @@
   .home-action-btn {
     flex: 1 1 calc(50% - 4px);
     justify-content: center;
-    min-height: 40px;
+    min-height: 44px;
     padding: 0 10px;
     font-size: 12.5px;
   }

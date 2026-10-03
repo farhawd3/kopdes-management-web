@@ -260,6 +260,21 @@ body {
   gap: 16px;
 }
 
+/* Cegah melebar melebihi viewport di ponsel (pencatatan/stok/anggota memakai loader)
+   — kartu skeleton 378px menimpa konten 360px. */
+.skeleton-work-col,
+.skeleton-banner-card,
+.skeleton-filters-row,
+.skeleton-task-cards-list,
+.skeleton-task-card,
+.skeleton-card-top,
+.skeleton-card-meta,
+.skeleton-progress-bar {
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
 .skeleton-banner-card {
   background: var(--surface);
   border: 1px solid var(--line);
@@ -4082,6 +4097,11 @@ select option {
   }
   .home-overview {
     display: contents;
+  }
+  .home-overview > *,
+  .home-work > * {
+    min-width: 0;
+    max-width: 100%;
   }
   .home-routine-card {
     order: -1;
@@ -12935,7 +12955,7 @@ button.donut-legend-row[aria-pressed='true'] {
 @media (min-width:768px) and (max-width:1100px) {
   .tablet-rail { position:fixed; inset:0 auto 0 0; width:76px; display:flex; flex-direction:column; align-items:center; gap:14px; padding:22px 8px; background:var(--surface); border-right:1px solid var(--line); z-index:70; }
   .tablet-rail :is(a,button) { display:grid; place-items:center; width:48px; min-height:48px; border:0; border-radius:14px; background:var(--brand-soft); color:var(--ink); }
-  .manager-topbar,.manager-main { margin-left:76px; }
+  .manager-topbar,.manager-main { margin-left:76px; width:calc(100% - 76px); }
   .manager-sidebar { transform:translateX(-110%); width:280px; z-index:90; }
   .manager-sidebar.is-open { transform:none; }
   .close-navigation { display:grid; place-items:center; min-width:44px; }
@@ -13973,20 +13993,6 @@ dialog.editor textarea:focus,
   margin: 0 !important;
 }
 
-.manager-main {
-  margin-left: 244px !important;
-  padding: 28px 36px 48px !important;
-  min-width: 0 !important;
-  box-sizing: border-box !important;
-}
-
-@media (max-width: 1023px) {
-  .manager-main {
-    margin-left: 0 !important;
-    padding: 20px 20px 80px !important;
-  }
-}
-
 /* Ensure no card touches its parent container or borders */
 .card,
 .follow-up-panel,
@@ -14394,34 +14400,10 @@ dialog.editor textarea:focus,
 }
 
 /* ── 6.5. Sidebar Polish: Fixed Height, Single Scroll, Clean Elements ───────── */
-.manager-sidebar {
-  width: 256px !important;
-  height: 100vh !important;
-  overflow: hidden !important;
-  padding: 18px 14px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 12px !important;
-}
-
-.manager-main {
-  margin-left: 256px !important;
-  padding: 28px 36px 48px !important;
-  width: calc(100% - 256px) !important;
-  box-sizing: border-box !important;
-  min-width: 0 !important;
-}
-
-@media (max-width: 1023px) {
-  .manager-sidebar {
-    width: 280px !important;
-  }
-  .manager-main {
-    margin-left: 0 !important;
-    width: 100% !important;
-    padding: 20px 20px 80px !important;
-  }
-}
+/* Aturan `margin-left`/`width` `!important` lama yang saling menimpa (256px +
+   media 1023 origin) dihapus; base `.manager-sidebar`/`.manager-main` + rail
+   breakpoint + collapsed state di bawah sudah menjadi satu-satunya sumber.
+   Lihat `.__manager-shell.sidebar-collapsed*` di media 1024. */
 
 /* ── 6.5.1. Desktop Sidebar Toggle & Collapsed State ────────── */
 
@@ -17005,6 +16987,8 @@ button.dash-bar-col.is-selected-bar {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
+    max-width: 100%;
+    min-width: 0;
   }
   @media (max-width: 350px) {
     .mobile-nav-cards-grid {
@@ -17027,6 +17011,8 @@ button.dash-bar-col.is-selected-bar {
     transition: all 0.15s ease;
     min-height: 52px;
     box-sizing: border-box;
+    max-width: 100%;
+    min-width: 0;
   }
   .mobile-nav-card:active {
     transform: scale(0.97);
