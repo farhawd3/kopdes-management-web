@@ -43,13 +43,13 @@ Buka `.env.local`:
 - `HUB_SUPABASE_URL`: URL proyek baru, sudah disiapkan.
 - `HUB_SUPABASE_SERVICE_KEY`: isi kunci server/secret key proyek baru dari Settings → API Keys. Jangan gunakan publishable/anon key.
 - `HUB_SETUP_TOKEN`: token acak untuk pengaturan PIN pertama, sudah dibuat secara lokal. Jangan kirim di chat.
-- `HUB_APP_ORIGIN`: `http://localhost:3000` saat pengembangan; domain HTTPS tepat saat hosting.
+- `HUB_APP_ORIGIN`: `http://127.0.0.1:3000` saat memakai `npm run dev`; domain HTTPS tepat saat hosting. Alamat pada browser harus memakai host, protokol dan port yang sama. Jika sengaja memakai `localhost`, ubah origin menjadi `http://localhost:3000` dan jalankan ulang server.
 
 Simpan berkas dan jalankan ulang server setelah mengubah env. Nama variabel HUB sengaja berbeda agar kredensial lama tidak terpakai tanpa sengaja. `.env.local` dan arsipnya diabaikan Git.
 
 ## 4. PIN dan data awal
 
-1. Jalankan `npm run dev`, buka `http://localhost:3000/pin`.
+1. Jalankan `npm run dev`, buka `http://127.0.0.1:3000/pin`.
 2. Klik Pengaturan PIN pertama kali.
 3. Masukkan PIN baru 6–12 digit dan token dari `HUB_SETUP_TOKEN`.
 4. Simpan lalu masuk dengan PIN. Hapus `HUB_SETUP_TOKEN` dari konfigurasi hosting setelah inisialisasi sukses.

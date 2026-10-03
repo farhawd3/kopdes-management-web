@@ -1,5 +1,11 @@
 # Changelog
 
+## Samakan origin pengembangan lokal — 3 Oktober 2026
+
+- Perbaiki konfigurasi lokal yang masih memakai localhost ketika browser/server memakai 127.0.0.1:3000. Selaraskan .env.example, README dan panduan Supabase; host, protokol dan port wajib sama.
+- Probe endpoint PIN dengan JSON tidak sah: origin 127.0.0.1 diterima sampai validasi JSON (400), localhost dan origin asing ditolak (403). Tidak memakai PIN, mencatat percobaan login, mengubah database, konfigurasi hosting atau aturan keamanan server.
+- Verifikasi: 167 tes/22 berkas, typecheck, lint, build dan diff-check lulus. Perubahan awal next-env.d.ts dipertahankan; .env.local tetap tidak masuk Git. Login memakai PIN pengguna belum diuji.
+
 ## Audit panduan Markdown — 3 Oktober 2026
 
 - Gabungkan rancangan dashboard ke DESAIN-ANTARMUKA dan peta rute/API ke ARSITEKTUR; hapus dua dokumen duplikat serta dua rencana program lama yang sudah digantikan. Riwayat tetap tersedia di Git; fixture dan cadangan pribadi dipertahankan.

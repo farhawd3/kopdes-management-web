@@ -4,6 +4,8 @@ Keadaan aktif dirangkum di sini; riwayat paket ada di [CHANGELOG](../CHANGELOG.m
 
 ## Implementasi aktif
 
+Konfigurasi lokal kini memakai `HUB_APP_ORIGIN=http://127.0.0.1:3000`, sesuai hostname `npm run dev` dan URL browser pemilik. Probe endpoint PIN dengan JSON sengaja tidak sah mendapat 400 (lolos pemeriksaan origin); `localhost` dan origin asing mendapat 403. Probe berhenti sebelum akses database, tidak memakai PIN atau menambah percobaan masuk. Login dengan PIN tetap perlu dicoba pemilik. Konfigurasi hosting tidak diubah.
+
 - Ruang kerja pribadi dengan proyek fleksibel, catatan terformat, milestone, tugas daftar/papan/harian/kalender/Gantt, subtugas, prasyarat dan pengulangan.
 - Koordinasi, rapat bertautan pengguna dan ICS, dokumen, risiko, kegiatan, laporan snapshot, profil, PIN dan cadangan JSON.
 - Anggota, kas, barang dan opname memakai gerbang kemampuan database. Galat atau migrasi belum tersedia tidak ditampilkan sebagai data nol.

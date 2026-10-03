@@ -18,7 +18,7 @@ Salin `.env.example` menjadi `.env.local`, lalu ikuti [panduan Supabase dan PIN]
 npm run dev
 ```
 
-Buka `http://localhost:3000/pin`. Jika belum diinisialisasi, buat PIN pertama dengan token pengaturan server. Masuk, lengkapi profil, lalu buat proyek sendiri dengan tujuan dan jadwal pilihan Anda.
+Buka `http://127.0.0.1:3000/pin`, sesuai hostname server dan `HUB_APP_ORIGIN` pada contoh konfigurasi. Host, protokol, dan port harus sama; `localhost` dan `127.0.0.1` merupakan origin berbeda. Setelah mengubah konfigurasi, jalankan ulang server. Jika belum diinisialisasi, buat PIN pertama dengan token pengaturan server. Masuk, lengkapi profil, lalu buat proyek sendiri dengan tujuan dan jadwal pilihan Anda.
 
 ## Pemeriksaan
 

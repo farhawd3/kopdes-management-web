@@ -4,6 +4,8 @@ Implementasi dan penerimaan dipisahkan. Bukti terakhir ada di [STATUS](STATUS.md
 
 ## Implementasi tersedia
 
+- [x] Contoh konfigurasi/panduan lokal memakai host yang sama dengan server; penolakan origin lokal diperbaiki dan diprobe tanpa mutasi database.
+
 - [x] Proyek fleksibel, properti, catatan terformat, milestone dan tugas terhubung.
 - [x] Daftar/papan/harian/kalender/Gantt, filter, subtugas, prasyarat, pengulangan dan riwayat tugas.
 - [x] Gantt dengan rentang/skala, geser/resize, tinjau/simpan dan alternatif keyboard/form.
