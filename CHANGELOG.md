@@ -1,5 +1,20 @@
 # Changelog
 
+## Overhaul panel detail tugas (Hierarki Judul, Properties Grid Notion-Style, dan Top Bar) — 4 Oktober 2026
+
+- Perbaiki hierarki visual TaskDetailDrawer: pindahkan judul tugas (`.task-detail-title`) ke posisi teratas tepat di bawah badge kode tugas (`TGS-F2A4`) dan link proyek. Menghilangkan masalah dropdown status/prioritas raksasa 100% yang sebelumnya mendominasi dan mendorong judul ke bawah secara canggung.
+- Rombak properti tugas menjadi **Unified Properties Grid** ala Notion/Linear (`.drawer-properties-grid`):
+  - **Status & Prioritas**: Ditampilkan sebagai interactive pill badges ringkas dengan warna pastel semantik (rencana, proses, selesai, dibatalkan; rendah, normal, tinggi, mendesak) tanpa melebarkan kontainer menjadi kotak input teks kaku.
+  - **Ikon Bendera**: Perbaiki tata letak ikon bendera prioritas (`.priority-flag-icon`) dari posisi absolute yang menimpa teks menjadi flex item statis dengan jarak aman 6 px (`🚩 Tinggi`).
+  - **Tenggat**: Integrasi langsung sebagai baris properti kalender ringkas berlatar pill (`.date-prop-editable`).
+  - **Penanggung Jawab & Dibuat Oleh**: Ganti kartu raksasa yang boros ruang dan avatar lingkaran warna-warni mencolok dengan chip pengguna minimalis bernuansa profesional (`.prop-user-chip`).
+  - **Metadata Sekunder**: Baris rapi untuk perulangan jadwal, mitra/kontak, dokumen terlampir, dan tautan rapat daring.
+- Rapikan bilah kontrol atas (`.drawer-top-bar`):
+  - Satukan tombol navigasi tugas sebelumnya dan berikutnya ke dalam grup conjoined segmented pill (`.drawer-nav-group`).
+  - Selaraskan tombol `Tandai Selesai`, tombol aksi `Jadwal` dan `Formulir`, serta tombol bahaya `Hapus` dan tombol tutup `[✕]`.
+- Posisikan kotak catatan deskripsi (`.drawer-description-box`) tepat di bawah daftar properti sebagai kanvas catatan yang bersih dan proporsional.
+- Verifikasi lengkap: 171 tes dalam 23 berkas lulus (`npm test`), 0 kesalahan TypeScript (`npm run typecheck`), dan Next.js production build berhasil (`npm run build`).
+
 ## Overhaul estetika kartu dashboard (Stat Cards, Agenda Rapat, dan Filter Pills) — 4 Oktober 2026
 
 - Transformasi 4 kartu ringkasan dashboard (`.dash-stat-card`): ganti tampilan putih polos dan flat membosankan dengan sistem tema 4 pilar pastel yang kaya dan hidup:

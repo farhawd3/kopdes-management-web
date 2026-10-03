@@ -261,8 +261,17 @@ export function TaskDetailDrawer({
               onClick={toggleComplete}
               disabled={busy}
             >
-              <Check size={16} />
+              <Check size={15} />
               <span>{isComplete ? 'Selesai' : 'Tandai Selesai'}</span>
+            </button>
+            <button
+              type="button"
+              className="btn-drawer-action"
+              title="Atur Jadwal Berkala"
+              onClick={() => setShowScheduleModal(true)}
+            >
+              <Repeat size={14} />
+              <span>Jadwal</span>
             </button>
             {onFullEdit && (
               <button
@@ -274,21 +283,39 @@ export function TaskDetailDrawer({
                   onFullEdit(task);
                 }}
               >
-                <Edit2 size={14} />
-                <span>Ubah Formulir</span>
+                <Edit2 size={13} />
+                <span>Formulir</span>
               </button>
             )}
-            <button
-              type="button"
-              className="btn-icon"
-              title="Jadwal Berkala"
-              onClick={() => setShowScheduleModal(true)}
-            >
-              <Repeat size={16} />
-            </button>
           </div>
 
           <div className="right-controls">
+            {(onPrev || onNext) && (
+              <div className="drawer-nav-group" role="group" aria-label="Navigasi tugas">
+                {onPrev && (
+                  <button
+                    type="button"
+                    className="btn-icon btn-nav-prev"
+                    title="Tugas Sebelumnya"
+                    onClick={onPrev}
+                    disabled={busy}
+                  >
+                    <ChevronLeft size={16} />
+                  </button>
+                )}
+                {onNext && (
+                  <button
+                    type="button"
+                    className="btn-icon btn-nav-next"
+                    title="Tugas Berikutnya"
+                    onClick={onNext}
+                    disabled={busy}
+                  >
+                    <ChevronRight size={16} />
+                  </button>
+                )}
+              </div>
+            )}
             <button
               type="button"
               className="btn-drawer-action btn-danger-action"
@@ -299,28 +326,6 @@ export function TaskDetailDrawer({
               <Trash2 size={14} />
               <span>Hapus</span>
             </button>
-            {onPrev && (
-              <button
-                type="button"
-                className="btn-icon"
-                title="Tugas Sebelumnya"
-                onClick={onPrev}
-                disabled={busy}
-              >
-                <ChevronLeft size={18} />
-              </button>
-            )}
-            {onNext && (
-              <button
-                type="button"
-                className="btn-icon"
-                title="Tugas Berikutnya"
-                onClick={onNext}
-                disabled={busy}
-              >
-                <ChevronRight size={18} />
-              </button>
-            )}
             <button
               type="button"
               className="btn-icon close-drawer-btn"
@@ -340,7 +345,8 @@ export function TaskDetailDrawer({
 
         {/* Task Title & Code Header */}
         <div className="drawer-header-section">
-          <div className="header-meta-row">
+          {/* Eyebrow: Task Code & Project Badge */}
+          <div className="drawer-eyebrow-row">
             <span
               className="task-code-badge"
               title="Kode tugas dibuat otomatis saat tugas disimpan"
@@ -361,52 +367,9 @@ export function TaskDetailDrawer({
                 {String(project.data.title)}
               </Link>
             )}
-            <Select
-              className={`drawer-status-select-wrap status-${data.status || 'rencana'}`}
-              value={String(data.status || 'rencana')}
-              disabled={busy}
-              onChange={async (nextVal) => {
-                const nextStatus = nextVal as TaskStatus;
-                const statusChanges = selectTaskStatus(nextStatus);
-                const labelMap: Record<string, string> = {
-                  rencana: 'Rencana',
-                  proses: 'Dikerjakan',
-                  selesai: 'Selesai',
-                  dibatalkan: 'Dibatalkan',
-                };
-                await saveChanges(
-                  statusChanges,
-                  `mengubah status tugas menjadi "${labelMap[nextStatus] || nextStatus}"`,
-                );
-              }}
-              options={[
-                { value: 'rencana', label: 'Rencana' },
-                { value: 'proses', label: 'Dikerjakan' },
-                { value: 'selesai', label: 'Selesai' },
-                { value: 'dibatalkan', label: 'Dibatalkan' },
-              ]}
-              ariaLabel="Ubah status tugas"
-            />
-            <Select
-              className={`drawer-priority-select-wrap priority-${data.priority || 'normal'}`}
-              value={String(data.priority || 'normal')}
-              disabled={busy}
-              onChange={async (nextPriority) => {
-                await saveChanges(
-                  { priority: nextPriority },
-                  `mengubah prioritas menjadi "${nextPriority}"`,
-                );
-              }}
-              options={[
-                { value: 'rendah', label: 'Rendah', icon: <Flag size={12} className="priority-flag-icon" /> },
-                { value: 'normal', label: 'Normal', icon: <Flag size={12} className="priority-flag-icon" /> },
-                { value: 'tinggi', label: 'Tinggi', icon: <Flag size={12} className="priority-flag-icon" /> },
-                { value: 'mendesak', label: 'Mendesak', icon: <Flag size={12} className="priority-flag-icon" /> },
-              ]}
-              ariaLabel="Ubah prioritas tugas"
-            />
           </div>
 
+          {/* Title */}
           {isEditingTitle ? (
             <div className="title-edit-form">
               <input
@@ -472,6 +435,156 @@ export function TaskDetailDrawer({
             </h2>
           )}
 
+          {/* Linear/Notion-style Unified Properties Grid */}
+          <div className="drawer-properties-grid">
+            {/* Status */}
+            <div className="drawer-prop-row">
+              <span className="drawer-prop-label">Status</span>
+              <div className="drawer-prop-control">
+                <Select
+                  className={`drawer-status-select-wrap status-${data.status || 'rencana'}`}
+                  value={String(data.status || 'rencana')}
+                  disabled={busy}
+                  onChange={async (nextVal) => {
+                    const nextStatus = nextVal as TaskStatus;
+                    const statusChanges = selectTaskStatus(nextStatus);
+                    const labelMap: Record<string, string> = {
+                      rencana: 'Rencana',
+                      proses: 'Dikerjakan',
+                      selesai: 'Selesai',
+                      dibatalkan: 'Dibatalkan',
+                    };
+                    await saveChanges(
+                      statusChanges,
+                      `mengubah status tugas menjadi "${labelMap[nextStatus] || nextStatus}"`,
+                    );
+                  }}
+                  options={[
+                    { value: 'rencana', label: 'Rencana' },
+                    { value: 'proses', label: 'Dikerjakan' },
+                    { value: 'selesai', label: 'Selesai' },
+                    { value: 'dibatalkan', label: 'Dibatalkan' },
+                  ]}
+                  ariaLabel="Ubah status tugas"
+                />
+              </div>
+            </div>
+
+            {/* Prioritas */}
+            <div className="drawer-prop-row">
+              <span className="drawer-prop-label">Prioritas</span>
+              <div className="drawer-prop-control">
+                <Select
+                  className={`drawer-priority-select-wrap priority-${data.priority || 'normal'}`}
+                  value={String(data.priority || 'normal')}
+                  disabled={busy}
+                  onChange={async (nextPriority) => {
+                    await saveChanges(
+                      { priority: nextPriority },
+                      `mengubah prioritas menjadi "${nextPriority}"`,
+                    );
+                  }}
+                  options={[
+                    { value: 'rendah', label: 'Rendah', icon: <Flag size={12} className="priority-flag-icon" /> },
+                    { value: 'normal', label: 'Normal', icon: <Flag size={12} className="priority-flag-icon" /> },
+                    { value: 'tinggi', label: 'Tinggi', icon: <Flag size={12} className="priority-flag-icon" /> },
+                    { value: 'mendesak', label: 'Mendesak', icon: <Flag size={12} className="priority-flag-icon" /> },
+                  ]}
+                  ariaLabel="Ubah prioritas tugas"
+                />
+              </div>
+            </div>
+
+            {/* Tenggat */}
+            <div className="drawer-prop-row">
+              <span className="drawer-prop-label">Tenggat</span>
+              <div className="drawer-prop-control date-prop-editable" title="Ubah tanggal tenggat tugas">
+                <Calendar size={13} className="drawer-prop-calendar-icon" />
+                <DateInput
+                  aria-label="Tenggat tugas"
+                  className="drawer-date-inline-input"
+                  value={String(data.due_date || today())}
+                  disabled={busy}
+                  onValueChange={async (value) => {
+                    const nextDate = value;
+                    if (!nextDate) return;
+                    await saveChanges(
+                      { due_date: nextDate },
+                      `memperbarui tenggat menjadi ${formatDate(nextDate)}`,
+                    );
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Penanggung Jawab */}
+            <div className="drawer-prop-row">
+              <span className="drawer-prop-label">PENANGGUNG JAWAB</span>
+              <div className="drawer-prop-control prop-user-chip">
+                <span className="prop-avatar prop-avatar-assignee">
+                  {String(data.assignee || managerName).charAt(0).toUpperCase()}
+                </span>
+                <span className="prop-user-name">{String(data.assignee || managerName)}</span>
+                <span className="prop-user-role">Pelaksana Utama</span>
+              </div>
+            </div>
+
+            {/* Dibuat Oleh */}
+            <div className="drawer-prop-row">
+              <span className="drawer-prop-label">DIBUAT OLEH</span>
+              <div className="drawer-prop-control prop-user-chip">
+                <span className="prop-avatar prop-avatar-creator">M</span>
+                <span className="prop-user-name">{managerName}</span>
+                <span className="prop-user-role">Catatan pribadi</span>
+              </div>
+            </div>
+
+            {/* Perulangan jika ada */}
+            {Boolean(data.recurrence && data.recurrence !== 'tidak') && (
+              <div className="drawer-prop-row">
+                <span className="drawer-prop-label">Perulangan</span>
+                <div className="drawer-prop-control prop-text-badge">
+                  <Repeat size={12} />
+                  <span>{String(data.recurrence)}</span>
+                </div>
+              </div>
+            )}
+
+            {/* Mitra jika ada */}
+            {stakeholder && (
+              <div className="drawer-prop-row">
+                <span className="drawer-prop-label">Mitra / Kontak</span>
+                <div className="drawer-prop-control prop-text-badge">
+                  <span>{String(stakeholder.data.title)}</span>
+                </div>
+              </div>
+            )}
+
+            {/* Dokumen jika ada */}
+            {document && (
+              <div className="drawer-prop-row">
+                <span className="drawer-prop-label">Dokumen</span>
+                <div className="drawer-prop-control">
+                  <a href={`/dokumen?record=${encodeURIComponent(document.id)}`} className="prop-link">
+                    <ExternalLink size={13} /> {String(document.data.title)}
+                  </a>
+                </div>
+              </div>
+            )}
+
+            {/* Rapat jika ada */}
+            {joinUrl && (
+              <div className="drawer-prop-row">
+                <span className="drawer-prop-label">Rapat</span>
+                <div className="drawer-prop-control">
+                  <a href={joinUrl} target="_blank" rel="noreferrer" className="prop-link">
+                    <ExternalLink size={13} /> {String(meeting?.data.title || 'Rapat online')}
+                  </a>
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Description Section */}
           <div className="drawer-description-box">
             <div className="box-title-row">
@@ -483,7 +596,7 @@ export function TaskDetailDrawer({
                   onClick={() => setIsEditingDesc(true)}
                   title="Ubah Deskripsi"
                 >
-                  <Edit2 size={14} />
+                  <Edit2 size={13} />
                 </button>
               )}
             </div>
@@ -528,83 +641,6 @@ export function TaskDetailDrawer({
               </p>
             )}
           </div>
-        </div>
-
-        {/* 3-Column Metadata Row (Assigned By, Assigned To, Followers) */}
-        <div className="metadata-cards-grid">
-          <div className="meta-card">
-            <span className="meta-label">DIBUAT OLEH</span>
-            <div className="user-profile-row">
-              <span className="meta-avatar manager-avatar">M</span>
-              <div className="user-info">
-                <strong>{managerName}</strong>
-                <small>Catatan pribadi</small>
-              </div>
-            </div>
-          </div>
-
-          <div className="meta-card">
-            <span className="meta-label">PENANGGUNG JAWAB</span>
-            <div className="user-profile-row">
-              <span className="meta-avatar assignee-avatar">
-                {String(data.assignee || managerName)
-                  .charAt(0)
-                  .toUpperCase()}
-              </span>
-              <div className="user-info">
-                <strong>{String(data.assignee || managerName)}</strong>
-                <small>Pelaksana Utama</small>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Due Date & Recurrence Row */}
-        <div className="date-properties-strip">
-          <label className="prop-item date-prop-editable" title="Ubah tanggal tenggat tugas">
-            <Calendar size={15} />
-            <span className="prop-label-text">Tenggat:</span>
-            <DateInput
-              aria-label="Tenggat tugas"
-              className="drawer-date-inline-input"
-              value={String(data.due_date || today())}
-              disabled={busy}
-              onValueChange={async (value) => {
-                const nextDate = value;
-                if (!nextDate) return;
-                await saveChanges(
-                  { due_date: nextDate },
-                  `memperbarui tenggat menjadi ${formatDate(nextDate)}`,
-                );
-              }}
-            />
-          </label>
-          {Boolean(data.recurrence && data.recurrence !== 'tidak') && (
-            <div className="prop-item">
-              <Repeat size={15} />
-              <span>
-                Perulangan: <strong>{String(data.recurrence)}</strong>
-              </span>
-            </div>
-          )}
-          {stakeholder && (
-            <div className="prop-item">
-              <span>
-                Mitra atau kontak: <strong>{String(stakeholder.data.title)}</strong>
-              </span>
-            </div>
-          )}
-          {document && (
-            <a href={`/dokumen?record=${encodeURIComponent(document.id)}`} className="prop-link">
-              <ExternalLink size={14} /> Dokumen: {String(document.data.title)}
-            </a>
-          )}
-          {joinUrl && (
-            <a href={joinUrl} target="_blank" rel="noreferrer" className="prop-link">
-              <ExternalLink size={14} /> Gabung rapat:{' '}
-              {String(meeting?.data.title || 'Rapat online')}
-            </a>
-          )}
         </div>
         {/* Link Pengumpulan & Bukti Hasil Tugas */}
         {/* Link Pengumpulan & Bukti Hasil Tugas */}
