@@ -19,6 +19,7 @@ import { addDays, formatDate, today } from '@/lib/date';
 import { toggleTaskStatus } from '@/lib/task-status';
 import { api } from '@/lib/client';
 import { formatDisplayCode } from './task-code';
+import { SubtaskToggle } from './SubtaskToggle';
 
 const DAY_LABELS = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'] as const;
 
@@ -52,6 +53,7 @@ export function DailyTasksView({
   const [viewMode, setViewMode] = useState<'focused' | 'all-week'>('focused');
   const [error, setError] = useState('');
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [pendingSubtask, setPendingSubtask] = useState<string | null>(null);
 
   // Calculate week range relative to the selectedDate
   const dayOfWeek = (new Date(selectedDate + 'T12:00:00Z').getUTCDay() + 6) % 7;
@@ -118,6 +120,7 @@ export function DailyTasksView({
     e.stopPropagation();
     if (busyId) return;
     setBusyId(task.id);
+    setPendingSubtask(`${task.id}:${subIndex}`);
     setError('');
     try {
       const subtasks = Array.isArray(task.data.subtasks)
@@ -133,6 +136,7 @@ export function DailyTasksView({
       setError((err as Error).message);
     } finally {
       setBusyId(null);
+      setPendingSubtask(null);
     }
   }
 
@@ -247,17 +251,13 @@ export function DailyTasksView({
                 className={`tree-subtask-item ${sub.done ? 'sub-done' : ''}`}
                 onClick={(e) => toggleSubtask(task, sIdx, e)}
               >
-                <button
-                  type="button"
-                  className={`subtask-round-check ${sub.done ? 'checked' : ''}`}
-                  onClick={(e) => toggleSubtask(task, sIdx, e)}
-                  aria-label={
-                    sub.done ? `Tandai belum selesai: ${sub.title}` : `Tandai selesai: ${sub.title}`
-                  }
-                  aria-pressed={Boolean(sub.done)}
-                >
-                  {sub.done && <Check size={11} strokeWidth={2.8} />}
-                </button>
+                <SubtaskToggle
+                  done={Boolean(sub.done)}
+                  title={sub.title}
+                  disabled={Boolean(busyId)}
+                  busy={busyId === task.id && pendingSubtask === `${task.id}:${sIdx}`}
+                  onClick={(event) => void toggleSubtask(task, sIdx, event)}
+                />
                 {sub.code && <span className="subtask-code-tag">{sub.code}</span>}
                 <span className="subtask-title-text">{sub.title}</span>
               </div>

@@ -165,15 +165,12 @@ it('a query-only navigation switches task views while preserving local filters',
     refresh: vi.fn(),
   };
   const view = render(<Records {...props} />);
-  fireEvent.change(screen.getByRole('combobox', { name: 'Prioritas' }), {
-    target: { value: 'tinggi' },
-  });
+  fireEvent.click(screen.getByRole('button', { name: /^Prioritas:/ }));
+  fireEvent.click(screen.getByRole('option', { name: 'Tinggi' }));
   window.history.replaceState(null, '', '/tugas?view=papan');
   view.rerender(<Records {...props} />);
   expect(screen.getByRole('button', { name: 'Papan' }).getAttribute('aria-pressed')).toBe('true');
-  expect((screen.getByRole('combobox', { name: 'Prioritas' }) as HTMLSelectElement).value).toBe(
-    'tinggi',
-  );
+  expect(screen.getByRole('button', { name: 'Prioritas: Tinggi' })).toBeTruthy();
 });
 
 it('at 1024px the menu toggles the desktop sidebar and closed mobile navigation is inert', () => {

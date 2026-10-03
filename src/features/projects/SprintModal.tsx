@@ -1,4 +1,5 @@
 'use client';
+import { DateInput } from '@/components/ui/DateField';
 import { useState, useEffect, useRef } from 'react';
 import { X, Target, Calendar, Clock } from 'lucide-react';
 import { addDays, today } from '@/lib/date';
@@ -167,14 +168,13 @@ export function SprintModal({
               <span className="field-label">
                 <Calendar size={14} /> Tanggal Mulai
               </span>
-              <input
-                type="date"
+              <DateInput
                 value={startDate}
-                onChange={(e) => {
-                  setStartDate(e.target.value);
-                  if (duration === '1 minggu') setEndDate(addDays(e.target.value, 7));
-                  else if (duration === '2 minggu') setEndDate(addDays(e.target.value, 14));
-                  else if (duration === '1 bulan') setEndDate(addDays(e.target.value, 30));
+                onValueChange={(value) => {
+                  setStartDate(value);
+                  if (duration === '1 minggu') setEndDate(addDays(value, 7));
+                  else if (duration === '2 minggu') setEndDate(addDays(value, 14));
+                  else if (duration === '1 bulan') setEndDate(addDays(value, 30));
                 }}
                 className="text-input"
               />
@@ -184,10 +184,9 @@ export function SprintModal({
               <span className="field-label">
                 <Calendar size={14} /> Tanggal Selesai
               </span>
-              <input
-                type="date"
+              <DateInput
                 value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
+                onValueChange={(value) => setEndDate(value)}
                 className="text-input"
               />
             </label>

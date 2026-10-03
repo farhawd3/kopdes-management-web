@@ -10,10 +10,15 @@ Konfigurasi lokal kini memakai `HUB_APP_ORIGIN=http://127.0.0.1:3000`, sesuai ho
 - Koordinasi, rapat bertautan pengguna dan ICS, dokumen, risiko, kegiatan, laporan snapshot, profil, PIN dan cadangan JSON.
 - Anggota, kas, barang dan opname memakai gerbang kemampuan database. Galat atau migrasi belum tersedia tidak ditampilkan sebagai data nol.
 - Dashboard mempertahankan style acuan e8fc8b4 dan tweak berikutnya. Tugas/kegiatan awal dibatasi tiga; grafik/rutinitas opsional. Perlu Perhatian memakai permukaan netral dan rincian yang dapat dibuka. Acuan ada di [DESAIN-ANTARMUKA](DESAIN-ANTARMUKA.md).
+- Font memakai token global; dropdown, tanggal, aksi dan subtugas memakai style/komponen bersama. Kalender mengutamakan atas dan dibatasi area panel yang terlihat. Kartu proyek, panduan Onboarding Manajer, form mobile dan kontras tombol tema gelap dirapikan tanpa mengganti acuan visual.
 - Sepuluh folder domain dan enam kontrak/form bersama; tes dipisah menjadi unit, UI, database dan keamanan. Peta ada di [ARSITEKTUR](ARSITEKTUR.md).
 - Sumber mati, CSS eksperimen, pratinjau ditolak dan screenshot sementara dibersihkan. Pagination/cache diperbaiki, modul besar dimuat terpisah dan progres memakai utilitas bersama.
 
 ## Bukti pemeriksaan terakhir
+
+Paket mobile/kontrol bersama: **171 tes dalam 23 berkas**, typecheck, lint, build dan audit sumber **74/74** lulus. Tes baru memeriksa pilihan dropdown, fokus/Escape kalender, batas tanggal/form dan pencegahan pengiriman ulang subtugas. Perubahan awal next-env.d.ts dipertahankan.
+
+Fixture lokal memakai komponen aplikasi dan API tiruan tanpa akses database: 22 halaman diperiksa pada 360 px dalam tema terang/gelap; 21 form Editor pada 360 px dalam kedua tema. Proyek, Panduan, Risiko dan Tugas diperiksa pada **360/768/1024/1440 px**, kedua tema, tanpa luapan halaman setelah koreksi. Matriks risiko dan tabel tugas bergulir di dalam kontainer. Kalender pada detail tugas 360 px membuka ke atas tanpa terpotong/luapan; input memakai 16 px. Kontras tombol diperiksa pada tujuh halaman gelap. Pemeriksaan ini tidak mencakup semua keadaan data, semua interaksi atau perangkat fisik.
 
 Paket struktur folder a871d6a: **167 tes dalam 22 berkas**, typecheck, lint, build, audit sumber **71/71** dan diff-check lulus. Pemindahan tidak mengubah isi bisnis selain rujukan modul. Hasil lokal ini tidak membuktikan cloud atau penerimaan perangkat selesai.
 
@@ -36,7 +41,7 @@ Ikuti [MIGRASI-SQL](MIGRASI-SQL.md) sebelum perubahan skema. Eksekusi cloud meme
 
 1. Konfirmasi PIN/simpan setelah reset dan keadaan migrasi cloud tanpa mengulang SQL otomatis.
 2. UAT data nyata: konsistensi Beranda, Hari Ini, Tugas, Riwayat dan pencarian; cadangan/pemulihan di lingkungan uji.
-3. Audit navigasi, fokus/Escape, modal, tabel/Gantt dan Harian pada empat lebar, terang/gelap dan perangkat fisik.
+3. Lanjutkan audit interaksi/keadaan data pada seluruh modul dan empat lebar; uji navigasi, fokus, modal, Gantt/Harian dan perangkat fisik. Sweep fixture mobile bukan pengganti UAT.
 4. Ukur performa data besar/bundle sebelum mengklaim peningkatan kecepatan.
 
 Belum tersedia: kolaborasi real-time, editor blok bebas, PWA/offline, unggah berkas, baseline/jalur kritis dan penjadwalan otomatis dependensi. Impor CSV tersedia terbatas pada daftar Records; buku pencatatan menyediakan ekspor, bukan impor.

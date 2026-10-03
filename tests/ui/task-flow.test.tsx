@@ -23,9 +23,8 @@ it('jadwal tidak berulang mengunci jam dan batas tanggal sampai pola dipilih', (
   expect((screen.getByLabelText('Batas pengulangan (opsional)') as HTMLInputElement).disabled).toBe(
     true,
   );
-  fireEvent.change(screen.getByRole('combobox', { name: 'Tipe Perulangan' }), {
-    target: { value: 'mingguan' },
-  });
+  fireEvent.click(screen.getByRole('button', { name: /^Tipe Perulangan:/ }));
+  fireEvent.click(screen.getByRole('option', { name: 'Setiap minggu' }));
   expect((screen.getByLabelText('Jam catatan (WIB)') as HTMLInputElement).disabled).toBe(false);
   fireEvent.click(screen.getByRole('button', { name: 'Simpan pengulangan' }));
   expect(onSave).toHaveBeenCalledWith({

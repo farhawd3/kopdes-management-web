@@ -15,6 +15,7 @@ import { schemas } from '../schemas';
 import { today } from '@/lib/date';
 import { SkeletonLoading } from '@/components/ui/SkeletonLoading';
 import { pageEntities } from './workspace-scope';
+import { ManagerGuide } from './ManagerGuide';
 const Roadmap = dynamic(() => import('../roadmap/Roadmap').then((module) => module.Roadmap), {
   loading: () => <SkeletonLoading slug="roadmap" />,
 });
@@ -218,37 +219,7 @@ export function WorkspacePage({ slug }: { slug: string }) {
           </div>
         </details>
       )}
-      {slug === 'panduan' && (
-        <section className="card prose">
-          <h2>Mulai dalam empat langkah</h2>
-          <ol>
-            <li>Buka Pengaturan, isi profil dan tanggal mulai kerja.</li>
-            <li>
-              Buat proyek sendiri. Tambahkan tujuan, catatan, dan tugas dengan jadwal pilihan Anda.
-            </li>
-            <li>Buka Hari Ini setiap pagi. Tuntaskan atau jadwalkan ulang tugas.</li>
-            <li>Simpan snapshot laporan mingguan dan unduh cadangan JSON.</li>
-          </ol>
-          <h2>Koordinasi yang tercatat</h2>
-          <p>
-            Catat rapat dan keputusan, lalu gunakan tombol Tindak lanjut untuk membuat tugas. Simpan
-            tautan dokumen, bukti kesiapan, serta mitigasi risiko.
-          </p>
-          <h2>Menjaga data</h2>
-          <p>
-            PIN tidak disimpan di browser. Kunci aplikasi setelah selesai. Jangan membagikan token
-            pengaturan atau kunci server. Cadangan JSON mencakup catatan kerja dan snapshot laporan.
-            Simpan juga laporan penting sebagai PDF.
-          </p>
-          <h2>Lingkup awal</h2>
-          <p>
-            Buka Gantt untuk memilih rentang dan skala. Seret batang atau ubah tanggal melalui nama
-            tugas, lalu simpan jadwal. Catatan proyek mendukung judul, daftar, checklist, dan
-            kutipan. Baseline, jalur kritis otomatis, kolaborasi real-time, dan offline belum
-            tersedia.
-          </p>
-        </section>
-      )}
+      {slug === 'panduan' && <ManagerGuide />}
       {draft && (
         <Editor
           entity="work-items"

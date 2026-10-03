@@ -2,25 +2,43 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { CalendarDays, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { addDays, formatDate, today } from '@/lib/date';
-export function DateField({
+import { usePopoverPlacement } from './usePopoverPlacement';
+export function DateInput({
   name,
   label,
   defaultValue = '',
   required = false,
   disabled = false,
+  value: controlledValue,
+  onValueChange,
+  className,
+  min,
+  max,
+  'aria-label': ariaLabel,
 }: {
-  name: string;
-  label: string;
+  name?: string;
+  label?: string;
+  value?: string;
+  onValueChange?: (value: string) => void;
+  className?: string;
+  min?: string;
+  max?: string;
+  'aria-label'?: string;
   defaultValue?: string;
   required?: boolean;
   disabled?: boolean;
 }) {
   const id = useId(),
-    root = useRef<HTMLDivElement>(null),
     trigger = useRef<HTMLButtonElement>(null);
-  const [value, setValue] = useState(defaultValue),
+  const [internalValue, setValue] = useState(defaultValue),
     [open, setOpen] = useState(false),
     [month, setMonth] = useState((defaultValue || today()).slice(0, 7));
+  const value = controlledValue ?? internalValue;
+  function changeValue(next: string) {
+    setValue(next);
+    onValueChange?.(next);
+  }
+  const root = usePopoverPlacement(open && !disabled, true);
   useEffect(() => {
     if (!open || disabled) return;
     const close = (event: PointerEvent) => {
@@ -28,7 +46,7 @@ export function DateField({
     };
     document.addEventListener('pointerdown', close);
     return () => document.removeEventListener('pointerdown', close);
-  }, [open, disabled]);
+  }, [open, disabled, root]);
   const first = month + '-01';
   const offset = (new Date(first + 'T12:00:00Z').getUTCDay() + 6) % 7;
   const days = Array.from({ length: 42 }, (_, index) => addDays(first, index - offset));
@@ -38,7 +56,7 @@ export function DateField({
     setMonth(date.toISOString().slice(0, 7));
   }
   function choose(date: string) {
-    setValue(date);
+    changeValue(date);
     setOpen(false);
     trigger.current?.focus();
   }
@@ -55,22 +73,26 @@ export function DateField({
         }
       }}
     >
-      <label htmlFor={id}>{label}</label>
+      {label && <label htmlFor={id}>{label}</label>}
       <div className="date-input">
         <input
           id={id}
-          aria-label={label}
+          aria-label={ariaLabel || label}
           name={name}
+          className={className}
+          min={min}
+          max={max}
           type="date"
           required={required}
           disabled={disabled}
           value={value}
-          onClick={() => {
+          onClick={(event) => {
+            event.preventDefault();
             setMonth((value || today()).slice(0, 7));
             setOpen(true);
           }}
           onChange={(event) => {
-            setValue(event.target.value);
+            changeValue(event.target.value);
             if (event.target.value) setMonth(event.target.value.slice(0, 7));
           }}
         />
@@ -78,7 +100,7 @@ export function DateField({
           type="button"
           disabled={disabled}
           ref={trigger}
-          aria-label={`Pilih ${label.toLowerCase()}`}
+          aria-label={`Pilih ${(label || ariaLabel || 'tanggal').toLowerCase()}`}
           aria-expanded={open}
           aria-controls={id + '-picker'}
           onClick={() => {
@@ -93,8 +115,9 @@ export function DateField({
         <div
           id={id + '-picker'}
           className="date-picker"
+          data-popover
           role="group"
-          aria-label={`Kalender ${label}`}
+          aria-label={`Kalender ${label || ariaLabel || 'tanggal'}`}
         >
           <div className="date-picker-head">
             <button type="button" aria-label="Bulan sebelumnya" onClick={() => move(-1)}>
@@ -122,6 +145,7 @@ export function DateField({
                 type="button"
                 key={date}
                 aria-label={formatDate(date)}
+                disabled={Boolean((min && date < min) || (max && date > max))}
                 aria-pressed={date === value}
                 aria-current={date === today() ? 'date' : undefined}
                 data-outside={date.slice(0, 7) !== month}
@@ -132,7 +156,11 @@ export function DateField({
             ))}
           </div>
           <div className="date-picker-footer">
-            <button type="button" onClick={() => choose(today())}>
+            <button
+              type="button"
+              disabled={Boolean((min && today() < min) || (max && today() > max))}
+              onClick={() => choose(today())}
+            >
               Hari ini
             </button>
             {!required && (
@@ -155,4 +183,14 @@ export function DateField({
       )}
     </div>
   );
+}
+
+export function DateField(props: {
+  name: string;
+  label: string;
+  defaultValue?: string;
+  required?: boolean;
+  disabled?: boolean;
+}) {
+  return <DateInput {...props} />;
 }

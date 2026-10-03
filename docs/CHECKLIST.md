@@ -19,6 +19,8 @@ Implementasi dan penerimaan dipisahkan. Bukti terakhir ada di [STATUS](STATUS.md
 - [x] Struktur modul/tes; 167 tes, typecheck, lint, build dan audit sumber lulus pada paket struktur.
 - [x] Fixture banner terang 360/768/1024/1440 px, rincian/keadaan kosong 360 px.
 - [x] Panduan Markdown diindeks; duplikasi digabung dan rujukan usang diperbaiki.
+- [x] Font/token kontrol bersama, dropdown lebih tenang, kalender adaptif, aksi/subtugas dan panduan onboarding dirapikan.
+- [x] Sweep fixture 22 halaman/21 form mobile dalam dua tema; Proyek/Panduan/Risiko/Tugas pada empat lebar. Bukti dan batas pemeriksaan ada di STATUS.
 
 ## Cloud dan penerimaan
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## Rapikan mobile, kontrol dan tema — 3 Oktober 2026
+
+- Satukan keluarga font, ukuran input/dropdown dan teks tombol ke token global; bersihkan aturan kontrol lama yang bertentangan. Pilihan dropdown lebih tenang dan membungkus label panjang; warna tombol mengikuti tema.
+- Semua input tanggal memakai kalender bersama yang mengutamakan atas, menjaga batas tanggal serta nama/value form, dan mengikuti batas panel bergulir. Perbaiki luapan skeleton, matriks risiko, tabel tugas dan aksi buku pada layar sempit.
+- Rapikan kartu/meta proyek dan ringkasan dua kolom ponsel, jarak inline-actions, panduan Onboarding Manajer empat langkah, serta checklist subtugas dengan indikator simpan kecil dan penguncian selama mutasi.
+- Verifikasi: 171 tes/23 berkas, typecheck, lint, build, audit sumber 74/74 dan diff-check. Fixture 22 halaman/21 form pada 360 px dalam dua tema; Proyek/Panduan/Risiko/Tugas pada 360/768/1024/1440 px. Kalender detail 360 px tidak terpotong/meluap. Belum merupakan UAT semua data/interaksi atau perangkat fisik; tidak mengubah database/hosting. Perubahan awal next-env.d.ts dipertahankan.
+
 ## Samakan origin pengembangan lokal — 3 Oktober 2026
 
 - Perbaiki konfigurasi lokal yang masih memakai localhost ketika browser/server memakai 127.0.0.1:3000. Selaraskan .env.example, README dan panduan Supabase; host, protokol dan port wajib sama.

@@ -1,4 +1,5 @@
 'use client';
+import { DateInput } from '@/components/ui/DateField';
 import { useState } from 'react';
 import type { Item } from '../schemas';
 import { api } from '@/lib/client';
@@ -65,12 +66,7 @@ export function TaskBatchActions({
             </label>
             <label>
               Tenggat baru
-              <input
-                type="date"
-                value={date}
-                disabled={busy}
-                onChange={(e) => setDate(e.target.value)}
-              />
+              <DateInput value={date} disabled={busy} onValueChange={(value) => setDate(value)} />
             </label>
           </div>
           <button

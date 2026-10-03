@@ -40,7 +40,7 @@ button,
 }
 .sidebar-create {
   background: var(--brand);
-  color: var(--surface);
+  color: var(--brand-contrast);
   border: 0;
   box-shadow: var(--shadow);
 }
@@ -55,7 +55,7 @@ button,
 .topbar select {
   border-color: transparent;
   background: transparent;
-  font-size: 12px;
+  font-size: var(--control-text-size);
 }
 .brand-sub {
   font-size: 8px;
@@ -366,7 +366,7 @@ button,
 }
 .filters input,
 .filters select {
-  font-size: 12px;
+  font-size: var(--control-text-size);
 }
 .task-table th {
   padding-top: 15px;
@@ -564,7 +564,7 @@ button,
 .timeline-toolbar input,
 .timeline-toolbar select,
 .timeline-toolbar button {
-  font-size: 12px;
+  font-size: var(--control-text-size);
 }
 .timeline-toolbar .actions {
   flex-wrap: nowrap;
@@ -1001,8 +1001,8 @@ select:not([multiple]):hover {
   select:not([multiple]),
   select:not([multiple])::picker(select) {
     appearance: base-select;
-    font-family: inherit;
-    font-size: inherit;
+    font-family: var(--font-sans);
+    font-size: var(--control-text-size);
   }
   select:not([multiple]) {
     gap: 20px;
@@ -1124,7 +1124,7 @@ select:not([multiple]):hover {
 }
 .calendar-day-number[aria-current='date'] {
   background: var(--brand);
-  color: var(--surface);
+  color: var(--brand-contrast);
   font-weight: 700;
 }
 .calendar-day-number[aria-pressed='true'] {
@@ -1213,11 +1213,11 @@ select:not([multiple]):hover {
 }
 .studio-shell .brand-icon {
   background: var(--brand);
-  color: #ffffff;
+  color: var(--brand-contrast);
   border-radius: 12px;
   font-size: 26px;
   box-shadow: 0 2px 8px rgba(237, 125, 61, 0.25);
-  font-family: 'Plus Jakarta Sans Variable', sans-serif;
+  font-family: var(--font-sans);
 }
 .studio-shell .brand-sub {
   color: var(--ink-muted);
@@ -1240,7 +1240,7 @@ select:not([multiple]):hover {
 }
 .studio-shell .sidebar-create {
   margin: 0 0 16px;
-  color: #ffffff;
+  color: var(--brand-contrast);
   background: var(--brand);
   box-shadow: 0 2px 8px rgba(237, 125, 61, 0.25);
   border: 0;
@@ -1745,16 +1745,6 @@ select:not([multiple]):hover {
   color: var(--brand);
   background: var(--brand-soft);
 }
-.date-picker {
-  width: 100%;
-  min-width: 0;
-  border: 1px solid var(--line);
-  padding: 10px;
-  margin-top: 8px;
-  border-radius: 14px;
-  box-shadow: var(--shadow);
-  background: var(--surface);
-}
 .date-picker-head {
   display: flex;
   align-items: center;
@@ -1798,7 +1788,7 @@ select:not([multiple]):hover {
 }
 .date-picker-days button[aria-pressed='true'] {
   background: var(--brand);
-  color: var(--surface);
+  color: var(--brand-contrast);
 }
 .date-picker-footer {
   display: flex;
@@ -1885,7 +1875,7 @@ select:not([multiple]):hover {
   }
   .studio-shell .topbar select {
     width: 88px;
-    font-size: 12px;
+    font-size: var(--control-text-size);
   }
   .search-trigger span,
   .studio-shell .density-toggle {
@@ -1927,9 +1917,6 @@ select:not([multiple]):hover {
   }
   .calendar-controls {
     gap: 4px;
-  }
-  .date-picker {
-    padding: 6px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -2003,9 +1990,6 @@ select:not([multiple]):hover {
     max-width: none;
     padding: 12px;
   }
-  .date-picker {
-    padding: 4px;
-  }
   .date-picker-days {
     gap: 0;
   }
@@ -2034,21 +2018,7 @@ select:not([multiple]):hover {
 .date-field {
   position: relative;
 }
-.date-picker {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  z-index: 30;
-  max-height: 60vh;
-  overflow: auto;
-  box-shadow: 0 14px 40px #182b3b26;
-}
 @media (max-width: 600px) {
-  .date-picker {
-    left: -6px;
-    width: calc(100% + 12px);
-    padding: 2px;
-  }
   .date-picker-days button {
     min-width: 44px;
   }
@@ -2247,7 +2217,7 @@ select:not([multiple]):hover {
   border: 0;
   background: transparent;
   padding: 8px 0;
-  font-size: 13px;
+  font-size: var(--control-text-size);
 }
 .notebook-layout {
   display: grid;
@@ -2441,9 +2411,6 @@ select:not([multiple]):hover {
 .editor .form-grid {
   grid-template-columns: 1fr;
 }
-.editor .date-picker {
-  max-width: 350px;
-}
 @media (max-width: 1100px) {
   .notebook-layout {
     grid-template-columns: 1fr;
@@ -2526,8 +2493,6 @@ select:not([multiple]):hover {
   --warning: #f59e0b;
 
   /* ── 2. Typography Scale ──────────────────────────────────────────────── */
-  --font-sans: 'Plus Jakarta Sans Variable', 'Inter Variable', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
   --font-size-2xs: 10px;
   --font-size-xs: 11px;
@@ -3043,7 +3008,7 @@ body {
 /* Buttons and Global Accent Overrides */
 .primary {
   background: var(--brand);
-  color: #111215;
+  color: var(--brand-contrast);
   font-weight: 750;
   border-radius: var(--radius-pill);
   border: 0;
@@ -3201,7 +3166,7 @@ tr:last-child td {
 
 .btn-mark-complete.completed {
   background: var(--brand);
-  color: #111215;
+  color: var(--brand-contrast);
   border-color: var(--brand);
   box-shadow: 0 2px 8px rgba(213, 249, 53, 0.35);
 }
@@ -3375,7 +3340,7 @@ tr:last-child td {
   cursor: pointer;
   border: 1px solid var(--brand);
   background: var(--brand);
-  color: var(--brand-text, #111215);
+  color: var(--brand-contrast);
   transition: all 0.15s ease;
   min-height: 32px;
 }
@@ -3407,7 +3372,7 @@ tr:last-child td {
 
 .submission-url-text {
   font-size: 12.5px;
-  font-family: var(--font-mono, ui-monospace, monospace);
+  font-family: var(--font-mono);
   color: var(--ink);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -3511,7 +3476,7 @@ tr:last-child td {
 }
 
 .task-code-badge {
-  font-family: var(--font-mono, ui-monospace, monospace);
+  font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.4px;
@@ -3624,13 +3589,6 @@ tr:last-child td {
   resize: vertical;
 }
 
-.inline-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-}
-
 .btn-tiny-save {
   display: inline-flex;
   align-items: center;
@@ -3641,7 +3599,7 @@ tr:last-child td {
   font-weight: 600;
   border-radius: var(--radius-md);
   background: var(--brand);
-  color: var(--brand-contrast, #111215) !important;
+  color: var(--brand-contrast) !important;
   border: none;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -3761,7 +3719,7 @@ tr:last-child td {
 
 .assignee-avatar {
   background: var(--brand);
-  color: #111215;
+  color: var(--brand-contrast);
 }
 
 .user-info strong {
@@ -3857,7 +3815,7 @@ tr:last-child td {
   padding: 2px 8px;
   border-radius: var(--radius-pill);
   background: var(--brand);
-  color: #111215;
+  color: var(--brand-contrast);
 }
 
 .subtasks-progress-bar {
@@ -3911,62 +3869,13 @@ tr:last-child td {
 
 .tree-connector-line {
   color: var(--ink-subtle);
-  font-family: monospace;
+  font-family: var(--font-mono);
   font-size: 12px;
-}
-
-button.subtask-check-circle,
-.subtask-check-circle {
-  width: 18px !important;
-  height: 18px !important;
-  min-width: 18px !important;
-  min-height: 18px !important;
-  max-width: 18px !important;
-  max-height: 18px !important;
-  aspect-ratio: 1 / 1 !important;
-  border-radius: 50% !important;
-  border: 1.75px solid var(--line-strong) !important;
-  background: var(--surface) !important;
-  box-sizing: border-box !important;
-  display: inline-flex !important;
-  position: relative !important;
-  align-items: center !important;
-  justify-content: center !important;
-  cursor: pointer !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  transition: all 0.15s ease !important;
-  flex-shrink: 0 !important;
-  line-height: 1 !important;
-}
-
-button.subtask-check-circle:hover,
-.subtask-check-circle:hover {
-  border-color: var(--brand) !important;
-  transform: scale(1.08) !important;
-}
-
-button.subtask-check-circle:focus-visible,
-.subtask-check-circle:focus-visible {
-  outline: 2px solid var(--brand);
-}
-
-button.subtask-check-circle.checked,
-.subtask-check-circle.checked {
-  background: var(--brand) !important;
-  border-color: var(--brand) !important;
-  color: #111215 !important;
-}
-
-button.subtask-check-circle::after,
-.subtask-check-circle::after {
-  display: none !important;
-  content: none !important;
 }
 
 .subtask-code-pill,
 .subtask-code-tag {
-  font-family: var(--font-mono, ui-monospace, monospace);
+  font-family: var(--font-mono);
   font-size: 10px;
   font-weight: 700;
   background: var(--canvas);
@@ -4293,7 +4202,7 @@ button.subtask-check-circle::after,
 .notebook-search input {
   border: 0;
   background: transparent;
-  font-size: 13px;
+  font-size: var(--control-text-size);
   outline: none;
   width: 100%;
 }
@@ -4458,7 +4367,7 @@ button.subtask-check-circle::after,
 
 .project-status-tabs button[aria-pressed='true'] {
   background: var(--brand);
-  color: #111215;
+  color: var(--brand-contrast);
   box-shadow: 0 2px 8px rgba(213, 249, 53, 0.3);
 }
 
@@ -4656,8 +4565,8 @@ dialog.editor .form-grid {
   background: var(--canvas);
   border: 1px solid var(--line);
   color: var(--ink);
-  font-size: 13.5px;
-  font-family: inherit;
+  font-size: var(--control-text-size);
+  font-family: var(--font-sans);
   transition: all 0.15s ease;
   box-sizing: border-box;
 }
@@ -4759,7 +4668,7 @@ dialog.editor .form-grid {
   padding: 9px 22px;
   border-radius: var(--radius-pill);
   background: var(--brand);
-  color: var(--brand-text);
+  color: var(--brand-contrast);
   border: none;
   font-size: 13.5px;
   font-weight: 750;
@@ -5182,7 +5091,7 @@ dialog.editor .form-grid {
   height: 34px;
   border-radius: 9px;
   background: var(--brand);
-  color: var(--brand-text);
+  color: var(--brand-contrast);
   display: grid;
   place-items: center;
   font-weight: 800;
@@ -5529,7 +5438,7 @@ dialog.editor .form-grid {
 }
 .calendar-selected .calendar-day-number {
   background: var(--brand);
-  color: var(--brand-text);
+  color: var(--brand-contrast);
   font-weight: 800;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
@@ -5564,7 +5473,7 @@ dialog.editor .form-grid {
 }
 .calendar-add:hover {
   background: var(--brand);
-  color: var(--brand-text);
+  color: var(--brand-contrast);
   border-color: var(--brand);
   transform: scale(1.08);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
@@ -5582,7 +5491,7 @@ dialog.editor .form-grid {
   padding: 7px 16px;
   border-radius: var(--radius-pill);
   background: var(--brand);
-  color: var(--brand-text);
+  color: var(--brand-contrast);
   font-size: 13px;
   font-weight: 700;
   border: none;
@@ -5792,7 +5701,7 @@ dialog.editor .form-grid {
   padding: 2px 8px;
   border-radius: var(--radius-pill);
   background: var(--brand);
-  color: var(--brand-text, #111215);
+  color: var(--brand-contrast);
 }
 
 .swatch-palette-strip {
@@ -5986,7 +5895,7 @@ dialog.editor .form-grid {
 }
 .focus-filters button[aria-pressed='true'] span {
   background: var(--brand);
-  color: var(--brand-text);
+  color: var(--brand-contrast);
 }
 .focus-task-list {
   display: grid;
@@ -6053,7 +5962,7 @@ dialog.editor .form-grid {
 }
 .focus-task:hover .focus-open {
   background: var(--brand);
-  color: var(--brand-text);
+  color: var(--brand-contrast);
   border-color: var(--brand);
 }
 .focus-task h2 {
@@ -6323,8 +6232,8 @@ select {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  font-family: var(--control-font) !important;
-  font-size: var(--control-font-size-md);
+  font-family: var(--font-sans) !important;
+  font-size: var(--control-text-size);
   font-weight: var(--font-weight-medium);
   line-height: normal;
   color: var(--ink);
@@ -6352,8 +6261,8 @@ select:focus {
   outline: none;
 }
 select option {
-  font-family: var(--control-font);
-  font-size: var(--control-font-size-md);
+  font-family: var(--font-sans);
+  font-size: var(--control-text-size);
   font-weight: var(--font-weight-medium);
   background-color: var(--surface);
   color: var(--ink);
@@ -6366,7 +6275,7 @@ select option {
 }
 .primary {
   background: var(--brand);
-  color: var(--brand-text);
+  color: var(--brand-contrast);
   border-color: transparent;
 }
 .tabs,
@@ -6429,7 +6338,7 @@ select option {
 }
 .calendar-day-number[aria-pressed='true'] {
   background: var(--brand);
-  color: var(--brand-text);
+  color: var(--brand-contrast);
 }
 .calendar-event {
   min-height: 44px;
@@ -6439,7 +6348,7 @@ select option {
 }
 .calendar-modes button[aria-pressed='true'] {
   background: var(--brand);
-  color: var(--brand-text);
+  color: var(--brand-contrast);
 }
 .metadata-cards-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -6742,7 +6651,7 @@ select option {
   }
   .calendar-days > .calendar-selected .calendar-day-number {
     background: var(--brand) !important;
-    color: #111215 !important;
+    color: var(--brand-contrast) !important;
     font-weight: 800 !important;
     border: none !important;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25) !important;
@@ -7427,7 +7336,7 @@ dialog.task-detail-drawer::backdrop {
 .manager-main .notebook-add-btn:hover:not(:disabled) {
   background: var(--brand);
   border-color: var(--brand);
-  color: #ffffff;
+  color: var(--brand-contrast);
   box-shadow: 0 2px 8px rgba(179, 36, 59, 0.28);
   transform: translateY(-1px);
 }
@@ -7857,7 +7766,7 @@ dialog.task-detail-drawer::backdrop {
 }
 .preset-chip.active {
   background: var(--brand);
-  color: #fff;
+  color: var(--brand-contrast);
   border-color: var(--brand);
 }
 .preset-hint {
@@ -8257,8 +8166,8 @@ dialog.task-detail-drawer::backdrop {
   background: var(--control-bg-muted);
   border: var(--control-border);
   color: var(--ink);
-  font-size: var(--control-font-size-md);
-  font-family: var(--control-font);
+  font-size: var(--control-text-size);
+  font-family: var(--font-sans);
   transition: all 0.15s ease;
   box-sizing: border-box;
 }
@@ -8315,7 +8224,7 @@ textarea.text-input {
   background: var(--canvas);
   border: 1px solid var(--line);
   color: var(--ink);
-  font-family: var(--btn-font);
+  font-family: var(--font-sans);
   font-size: var(--btn-font-size-md);
   font-weight: var(--font-weight-semibold);
   cursor: pointer;
@@ -8345,9 +8254,9 @@ textarea.text-input {
   padding: var(--btn-padding-md);
   border-radius: var(--btn-radius-md);
   background: var(--brand);
-  color: var(--brand-text);
+  color: var(--brand-contrast);
   border: 1px solid transparent;
-  font-family: var(--btn-font);
+  font-family: var(--font-sans);
   font-size: var(--btn-font-size-md);
   font-weight: var(--font-weight-bold);
   cursor: pointer;
@@ -8706,7 +8615,7 @@ textarea.text-input {
 .picker-day-cell.range-start,
 .picker-day-cell.range-end {
   background: var(--brand);
-  color: var(--brand-text);
+  color: var(--brand-contrast);
   font-weight: 800;
   border-radius: 8px;
 }
@@ -8775,7 +8684,7 @@ textarea.text-input {
   padding: 7px 16px;
   border-radius: var(--radius-pill);
   background: var(--brand);
-  color: var(--brand-text);
+  color: var(--brand-contrast);
   border: none;
   font-size: 12.5px;
   font-weight: 750;
@@ -8803,15 +8712,6 @@ textarea.text-input {
 }
 
 /* DateField inline popover picker (modern styling, high contrast, non-cramped) */
-.date-picker {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16);
-  border-radius: 18px;
-  padding: 16px;
-  color: var(--ink);
-  z-index: 100;
-}
 
 .date-picker-head {
   display: flex;
@@ -8886,7 +8786,7 @@ textarea.text-input {
 
 .date-picker-days button[aria-pressed='true'] {
   background: var(--brand);
-  color: var(--brand-text);
+  color: var(--brand-contrast);
   font-weight: 800;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
@@ -9087,7 +8987,7 @@ textarea.text-input {
 
 .drop-target-action-link:hover {
   background: var(--brand);
-  color: #ffffff;
+  color: var(--brand-contrast);
   border-color: var(--brand);
 }
 
@@ -9196,7 +9096,7 @@ textarea.text-input {
 .scrum-col-add-btn:hover {
   background: var(--brand);
   border-color: var(--brand);
-  color: var(--brand-contrast, #111215);
+  color: var(--brand-contrast);
 }
 
 .scrum-count-pill {
@@ -9292,7 +9192,7 @@ textarea.text-input {
 
 .card-task-code,
 .scrum-task-card .card-task-code {
-  font-family: var(--font-mono, ui-monospace, monospace);
+  font-family: var(--font-mono);
   font-size: 10.5px;
   font-weight: 700;
   letter-spacing: 0.3px;
@@ -9865,7 +9765,7 @@ textarea.text-input {
 
 .daily-btn-today.is-active-today {
   background: var(--brand) !important;
-  color: var(--brand-text, #111215) !important;
+  color: var(--brand-contrast) !important;
 }
 
 .daily-week-strip {
@@ -9948,7 +9848,7 @@ textarea.text-input {
 
 .strip-count-dot.has-pending {
   background: var(--brand);
-  color: var(--brand-text, #111215);
+  color: var(--brand-contrast);
 }
 
 .strip-count-dot.all-done {
@@ -10013,7 +9913,7 @@ textarea.text-input {
   padding: 0 16px !important;
   border-radius: var(--radius-pill) !important;
   background: var(--brand) !important;
-  color: var(--brand-text, #111215) !important;
+  color: var(--brand-contrast) !important;
   border: 1px solid var(--brand) !important;
   font-size: 13px;
   font-weight: 750;
@@ -10110,7 +10010,7 @@ textarea.text-input {
   padding: 3px 10px;
   border-radius: var(--radius-pill);
   background: var(--brand);
-  color: var(--brand-text, #111215);
+  color: var(--brand-contrast);
   line-height: 1.3;
 }
 
@@ -10221,7 +10121,7 @@ textarea.text-input {
 
 .btn-create-task-empty:hover {
   background: var(--brand) !important;
-  color: var(--brand-text, #111215) !important;
+  color: var(--brand-contrast) !important;
   border-color: var(--brand) !important;
   transform: translateY(-1px);
 }
@@ -10332,7 +10232,7 @@ textarea.text-input {
   padding: 2px 9px;
   border-radius: var(--radius-pill);
   background: var(--brand);
-  color: var(--brand-text);
+  color: var(--brand-contrast);
   line-height: 1.4;
 }
 
@@ -10367,7 +10267,7 @@ textarea.text-input {
 
 .btn-quick-add-day:hover {
   background: var(--brand) !important;
-  color: var(--brand-text, #111215) !important;
+  color: var(--brand-contrast) !important;
   border-color: var(--brand) !important;
 }
 
@@ -10452,7 +10352,7 @@ button.task-round-check.checked,
 .task-round-check.checked {
   background: var(--brand) !important;
   border-color: var(--brand) !important;
-  color: var(--brand-contrast, #111215) !important;
+  color: var(--brand-contrast) !important;
   box-shadow: 0 2px 8px color-mix(in srgb, var(--brand) 35%, transparent) !important;
   animation: checkPop 0.24s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
@@ -10478,7 +10378,7 @@ button.task-round-check::after,
 }
 
 .task-code-tag {
-  font-family: var(--font-mono, ui-monospace, monospace);
+  font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
   color: var(--ink-muted);
@@ -10592,65 +10492,10 @@ button.task-round-check::after,
 }
 
 .tree-connector {
-  font-family: monospace;
+  font-family: var(--font-mono);
   font-size: 12px;
   color: var(--ink-subtle);
   user-select: none;
-}
-
-button.subtask-round-check,
-.subtask-round-check {
-  width: 18px !important;
-  height: 18px !important;
-  min-width: 18px !important;
-  min-height: 18px !important;
-  max-width: 18px !important;
-  max-height: 18px !important;
-  aspect-ratio: 1 / 1 !important;
-  border-radius: 50% !important;
-  border: 1.75px solid var(--line-strong) !important;
-  background: var(--surface) !important;
-  color: var(--brand-contrast, #111215) !important;
-  box-sizing: border-box !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  cursor: pointer !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  flex-shrink: 0 !important;
-  line-height: 1 !important;
-  position: relative !important;
-  transition: all 0.15s ease !important;
-}
-
-button.subtask-round-check:focus-visible,
-.subtask-round-check:focus-visible {
-  outline: 2px solid var(--brand);
-  outline-offset: 2px;
-}
-
-button.subtask-round-check:hover,
-.subtask-round-check:hover {
-  border-color: var(--brand) !important;
-  background: color-mix(in srgb, var(--brand) 12%, var(--surface)) !important;
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand) 18%, transparent) !important;
-  transform: scale(1.08) !important;
-}
-
-button.subtask-round-check.checked,
-.subtask-round-check.checked {
-  background: var(--brand) !important;
-  border-color: var(--brand) !important;
-  color: #111215 !important;
-  box-shadow: 0 2px 6px color-mix(in srgb, var(--brand) 30%, transparent) !important;
-  animation: checkPop 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
-}
-
-button.subtask-round-check::after,
-.subtask-round-check::after {
-  display: none !important;
-  content: none !important;
 }
 
 .tree-sub-code {
@@ -10806,8 +10651,8 @@ button.subtask-round-check::after,
   width: 100%;
   border: none;
   background: transparent;
-  font-size: 14px;
-  font-family: inherit;
+  font-size: var(--control-text-size);
+  font-family: var(--font-sans);
   color: var(--ink);
   outline: none;
   padding: 6px 0;
@@ -10828,7 +10673,7 @@ button.subtask-round-check::after,
   padding: 7px 16px;
   border-radius: var(--radius-pill);
   background: var(--brand);
-  color: var(--brand-text);
+  color: var(--brand-contrast);
   border: none;
   font-size: 13px;
   font-weight: 750;
@@ -11190,7 +11035,7 @@ button.subtask-round-check::after,
   padding: 8px 18px;
   border-radius: var(--radius-pill);
   background: var(--brand);
-  color: var(--brand-text);
+  color: var(--brand-contrast);
   font-size: 13px;
   font-weight: 750;
   border: none;
@@ -11290,7 +11135,7 @@ button.subtask-round-check::after,
   padding: 5px 12px;
   border-radius: var(--radius-pill);
   background: var(--brand);
-  color: var(--brand-text);
+  color: var(--brand-contrast);
   font-size: 12px;
   font-weight: 750;
   text-decoration: none;
@@ -11571,7 +11416,7 @@ button.subtask-round-check::after,
 
 .table-code {
   display: inline-block;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 11.5px;
   font-weight: 700;
   color: var(--ink);
@@ -12073,7 +11918,7 @@ button.subtask-round-check::after,
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  font-family: var(--control-font) !important;
+  font-family: var(--font-sans) !important;
   font-size: var(--control-font-size-sm);
   font-weight: var(--font-weight-semibold);
   line-height: normal;
@@ -12382,7 +12227,7 @@ button.subtask-round-check::after,
   height: var(--btn-height-sm);
   padding: 0 12px;
   border-radius: var(--btn-radius-sm);
-  font-family: var(--btn-font);
+  font-family: var(--font-sans);
   font-size: var(--btn-font-size-sm);
   font-weight: var(--font-weight-bold);
   background: var(--surface);
@@ -12407,7 +12252,7 @@ button.subtask-round-check::after,
   height: var(--btn-height-sm);
   padding: 0 10px;
   border-radius: var(--btn-radius-sm);
-  font-family: var(--btn-font);
+  font-family: var(--font-sans);
   font-size: 11.5px;
   font-weight: var(--font-weight-semibold);
   background: color-mix(in srgb, var(--surface) 90%, var(--canvas));
@@ -12506,8 +12351,8 @@ button.subtask-round-check::after,
   border: 1px solid var(--line);
   background: var(--surface);
   color: var(--ink);
-  font-family: 'Plus Jakarta Sans Variable', 'Inter Variable', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-  font-size: 13.5px;
+  font-family: var(--font-sans) !important;
+  font-size: var(--control-text-size);
   font-weight: 500;
   line-height: normal;
   outline: none;
@@ -12548,7 +12393,7 @@ button.subtask-round-check::after,
   height: 42px;
   padding: 0 16px;
   border-radius: 10px;
-  font-family: 'Plus Jakarta Sans Variable', 'Inter Variable', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-sans);
   font-size: 12.5px;
   font-weight: 700;
   background: var(--surface);
@@ -12571,50 +12416,6 @@ button.subtask-round-check::after,
 /* ==========================================================================
    Custom Select Dropdown Component
    ========================================================================== */
-.custom-select-wrap {
-  position: relative;
-  display: inline-block;
-  width: 100%;
-}
-
-.custom-select-wrap.is-disabled {
-  opacity: 0.6;
-  pointer-events: none;
-}
-
-.custom-select-trigger {
-  width: 100%;
-  min-height: var(--control-height-md);
-  height: var(--control-height-md);
-  padding: 0 14px;
-  border-radius: var(--control-radius-md);
-  border: var(--control-border);
-  background: var(--control-bg);
-  color: var(--ink);
-  font-family: var(--control-font) !important;
-  font-size: var(--control-font-size-md);
-  font-weight: var(--font-weight-medium);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  cursor: pointer;
-  outline: none;
-  transition: all 0.15s ease;
-  text-align: left;
-  box-sizing: border-box;
-}
-
-.custom-select-trigger:hover {
-  border-color: var(--line-strong);
-  background: color-mix(in srgb, var(--surface) 96%, var(--canvas));
-}
-
-.custom-select-trigger:focus-visible,
-.custom-select-wrap.is-open .custom-select-trigger {
-  border-color: var(--brand);
-  box-shadow: var(--control-shadow-focus);
-}
 
 .custom-select-label-wrap {
   display: flex;
@@ -12631,42 +12432,10 @@ button.subtask-round-check::after,
   flex-shrink: 0;
 }
 
-.custom-select-label {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-family: var(--control-font);
-  font-size: var(--control-font-size-md);
-  color: var(--ink);
-}
-
 .custom-select-chevron {
   color: var(--ink-muted);
   flex-shrink: 0;
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.15s ease;
-}
-
-.custom-select-wrap.is-open .custom-select-chevron {
-  transform: rotate(180deg);
-  color: var(--ink);
-}
-
-.custom-select-menu {
-  position: absolute;
-  top: calc(100% + 5px);
-  left: 0;
-  right: 0;
-  z-index: 120;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.14), 0 4px 14px rgba(0, 0, 0, 0.06);
-  padding: 6px;
-  max-height: 260px;
-  overflow-y: auto;
-  min-width: 160px;
-  animation: selectMenuFadeIn 0.15s ease-out;
-  box-sizing: border-box;
 }
 
 @keyframes selectMenuFadeIn {
@@ -12678,34 +12447,6 @@ button.subtask-round-check::after,
     opacity: 1;
     transform: translateY(0) scale(1);
   }
-}
-
-.dark .custom-select-menu,
-[data-theme='dark'] .custom-select-menu {
-  background: #181922;
-  border-color: #2e3242;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65);
-}
-
-.custom-select-option {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 8px 12px;
-  min-height: 36px;
-  border-radius: 8px;
-  border: none;
-  background: transparent;
-  color: var(--ink);
-  font-family: 'Plus Jakarta Sans Variable', 'Inter Variable', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-  font-size: 13px;
-  font-weight: 500;
-  text-align: left;
-  cursor: pointer;
-  transition: background 0.12s ease, color 0.12s ease;
-  box-sizing: border-box;
 }
 
 .custom-select-option-content {
@@ -12721,48 +12462,6 @@ button.subtask-round-check::after,
   align-items: center;
   color: var(--ink-muted);
   flex-shrink: 0;
-}
-
-.custom-select-option-text {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.custom-select-option:hover,
-.custom-select-option.is-highlighted {
-  background: var(--brand-soft);
-  color: var(--ink);
-}
-
-.dark .custom-select-option:hover,
-[data-theme='dark'] .custom-select-option:hover,
-.dark .custom-select-option.is-highlighted,
-[data-theme='dark'] .custom-select-option.is-highlighted {
-  background: rgba(213, 249, 53, 0.12);
-  color: #f2f4f8;
-}
-
-.custom-select-option.is-selected {
-  font-weight: 650;
-  color: var(--ink);
-  background: color-mix(in srgb, var(--brand-soft) 60%, var(--surface));
-}
-
-.dark .custom-select-option.is-selected,
-[data-theme='dark'] .custom-select-option.is-selected {
-  background: rgba(213, 249, 53, 0.2);
-  color: #ffffff;
-}
-
-.custom-select-check {
-  color: #166534;
-  flex-shrink: 0;
-}
-
-.dark .custom-select-check,
-[data-theme='dark'] .custom-select-check {
-  color: var(--brand);
 }
 
 /* Meeting Details in Card */
@@ -14567,7 +14266,7 @@ button.donut-legend-row[aria-pressed='true'] {
   height: 44px;
   border-radius: 50%;
   background: var(--brand);
-  color: var(--brand-text, #111215);
+  color: var(--brand-contrast);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -14655,7 +14354,7 @@ button.donut-legend-row[aria-pressed='true'] {
   padding: 1px 5px;
   font-size: 11px;
   font-weight: 700;
-  font-family: monospace;
+  font-family: var(--font-mono);
 }
 .action-modal-close {
   width: 36px;
@@ -14780,7 +14479,7 @@ button.donut-legend-row[aria-pressed='true'] {
   background: var(--surface-subtle, var(--canvas));
   border: 1px solid var(--line);
   color: var(--ink-muted);
-  font-family: monospace;
+  font-family: var(--font-mono);
   flex-shrink: 0;
 }
 
@@ -14807,7 +14506,7 @@ button.donut-legend-row[aria-pressed='true'] {
 }
 .command-open-hub-btn:hover {
   background: var(--brand);
-  color: #ffffff;
+  color: var(--brand-contrast);
   border-color: var(--brand);
 }
 
@@ -15171,7 +14870,7 @@ button.donut-legend-row[aria-pressed='true'] {
   padding: 7px 14px;
   border-radius: 9px;
   background: var(--brand);
-  color: #ffffff;
+  color: var(--brand-contrast);
   border: 0;
   font-size: 12px;
   font-weight: 700;
@@ -15726,32 +15425,6 @@ dialog.editor {
 }
 
 /* 2. Dropdowns & Stacking Context: Prevent dropdowns from being clipped/squeezed by cards */
-.custom-select-wrap {
-  position: relative !important;
-  display: inline-block !important;
-  width: 100% !important;
-}
-
-.custom-select-wrap.is-open {
-  z-index: 500 !important;
-}
-
-.custom-select-menu {
-  position: absolute !important;
-  top: calc(100% + 6px) !important;
-  left: 0 !important;
-  right: 0 !important;
-  z-index: 510 !important;
-  background: var(--surface) !important;
-  border: 1px solid var(--line-strong, var(--line)) !important;
-  border-radius: 12px !important;
-  box-shadow: 0 16px 40px -4px rgba(0, 0, 0, 0.22), 0 4px 16px rgba(0, 0, 0, 0.08) !important;
-  padding: 6px !important;
-  max-height: 280px !important;
-  overflow-y: auto !important;
-  min-width: 180px !important;
-  box-sizing: border-box !important;
-}
 
 .filters,
 .dashboard-controls {
@@ -15817,7 +15490,7 @@ dialog.editor {
   border: 1px solid var(--line);
   background: var(--canvas);
   color: var(--ink);
-  font-size: 12.5px;
+  font-size: var(--control-text-size);
   font-weight: 500;
   min-width: 130px;
 }
@@ -16185,7 +15858,7 @@ dialog.editor textarea:focus,
 .dash-stat-card.dash-stat-accent {
   background: var(--brand);
   border-color: color-mix(in srgb, var(--brand) 80%, #000);
-  color: var(--brand-text);
+  color: var(--brand-contrast);
 }
 
 .dash-stat-card.dash-stat-accent:hover {
@@ -17697,7 +17370,7 @@ dialog.editor textarea:focus,
   border-radius: 10px;
   background: var(--surface);
   border: 1px solid var(--line);
-  font-size: 13px;
+  font-size: var(--control-text-size);
   color: var(--ink);
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
@@ -17824,21 +17497,21 @@ dialog.editor textarea:focus,
 }
 
 .project-status-badge.status-aktif {
-  background: rgba(59, 130, 246, 0.1);
-  color: #1d4ed8;
-  border-color: rgba(59, 130, 246, 0.25);
+  background: var(--pastel-blue-bg);
+  color: var(--pastel-blue-text);
+  border-color: var(--pastel-blue-border);
 }
 
 .project-status-badge.status-selesai {
-  background: rgba(16, 185, 129, 0.1);
-  color: #047857;
-  border-color: rgba(16, 185, 129, 0.25);
+  background: var(--pastel-emerald-bg);
+  color: var(--pastel-emerald-text);
+  border-color: var(--pastel-emerald-border);
 }
 
 .project-status-badge.status-ditunda {
-  background: rgba(245, 158, 11, 0.1);
-  color: #b45309;
-  border-color: rgba(245, 158, 11, 0.25);
+  background: var(--pastel-amber-bg);
+  color: var(--pastel-amber-text);
+  border-color: var(--pastel-amber-border);
 }
 
 .project-card-arrow {
@@ -18072,7 +17745,7 @@ dialog.editor textarea:focus,
   padding: 0 14px;
   border-radius: 10px;
   background: var(--brand);
-  color: #fff;
+  color: var(--brand-contrast);
   border: 0;
   font-size: 13px;
   font-weight: 600;
@@ -18319,7 +17992,7 @@ dialog.editor textarea:focus,
   padding: 0 16px;
   border-radius: 10px;
   background: var(--brand);
-  color: #fff;
+  color: var(--brand-contrast);
   border: 0;
   font-size: 13px;
   font-weight: 600;
@@ -18386,7 +18059,7 @@ dialog.editor textarea:focus,
   background: var(--canvas);
   color: var(--ink);
   font-size: 13px;
-  font-family: var(--font-mono, monospace);
+  font-family: var(--font-mono);
   font-weight: 600;
   box-sizing: border-box;
 }
@@ -18411,7 +18084,7 @@ dialog.editor textarea:focus,
   padding: 0 14px;
   border-radius: 10px;
   background: var(--brand);
-  color: var(--brand-contrast, #111215);
+  color: var(--brand-contrast);
   font-size: 13px;
   font-weight: 650;
   border: 0;
@@ -18449,7 +18122,7 @@ dialog.editor textarea:focus,
 }
 
 .routine-time-badge {
-  font-family: var(--font-mono, monospace);
+  font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
   color: var(--brand-text, var(--brand));
@@ -18546,7 +18219,7 @@ dialog.editor textarea:focus,
   padding: 0 18px;
   border-radius: 8px;
   background: var(--brand);
-  color: var(--brand-contrast, #111215);
+  color: var(--brand-contrast);
   font-size: 13px;
   font-weight: 650;
   border: 0;
@@ -19187,7 +18860,7 @@ button.dash-bar-col.is-selected-bar {
   padding: 8px 18px;
   border-radius: 10px;
   background: var(--brand);
-  color: var(--brand-contrast, #111215);
+  color: var(--brand-contrast);
   font-size: 13px;
   font-weight: 650;
   border: none;
@@ -19314,7 +18987,7 @@ button.dash-bar-col.is-selected-bar {
   background: var(--canvas);
   color: var(--ink);
   padding: 0 10px;
-  font-size: 13px;
+  font-size: var(--control-text-size);
   width: 100%;
 }
 .inline-creator-row {
@@ -19446,7 +19119,7 @@ button.dash-bar-col.is-selected-bar {
     height: 38px;
     border-radius: 12px;
     background: var(--brand);
-    color: #ffffff;
+    color: var(--brand-contrast);
     display: grid;
     place-items: center;
     font-weight: 800;
@@ -19690,129 +19363,6 @@ button.dash-bar-col.is-selected-bar {
     transform: scale(0.96) !important;
     transition: transform 0.08s ease !important;
   }
-}
-
-/* ── Universal Dropdown Typography, Middle Alignment & Consistency ─────────── */
-select,
-select option,
-select optgroup,
-.field-select,
-.task-status-select,
-.custom-select-trigger,
-.custom-select-option,
-.custom-select-label,
-.custom-select-option-text,
-.dashboard-controls select,
-.routine-add-form select,
-.filter-group select {
-  font-family: var(--font-sans) !important;
-  font-size: 13.5px !important;
-  font-weight: 500 !important;
-  letter-spacing: -0.01em;
-  -webkit-font-smoothing: antialiased;
-  vertical-align: middle !important;
-  line-height: normal !important;
-}
-
-select,
-.field-select,
-.task-status-select,
-.custom-select-trigger {
-  display: inline-flex !important;
-  align-items: center !important;
-  vertical-align: middle !important;
-}
-
-select option,
-select optgroup {
-  padding: 8px 12px !important;
-  vertical-align: middle !important;
-  line-height: 1.4 !important;
-}
-
-/* ── Universal Date / Calendar Input Styling & Popover Fix ─────────────────── */
-.date-field {
-  position: relative !important;
-}
-
-.date-picker,
-.editor .date-picker {
-  position: absolute !important;
-  top: calc(100% + 6px) !important;
-  bottom: auto !important;
-  left: 0 !important;
-  right: auto !important;
-  z-index: 600 !important;
-  margin-top: 0 !important;
-  width: 100% !important;
-  max-width: 330px !important;
-  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.16), 0 2px 8px rgba(0, 0, 0, 0.08) !important;
-}
-
-input[type='date'],
-input[type='month'],
-input[type='time'],
-.text-input[type='date'],
-.field-input[type='date'] {
-  width: 100%;
-  min-height: 42px;
-  height: 42px;
-  padding: 8px 12px;
-  border-radius: 10px;
-  border: 1px solid var(--line);
-  background-color: var(--surface);
-  color: var(--ink);
-  font-family: var(--font-sans) !important;
-  font-size: 13.5px !important;
-  font-weight: 500;
-  box-sizing: border-box;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-  cursor: pointer;
-  vertical-align: middle !important;
-  font-size: 13.5px !important;
-  font-weight: 500;
-  box-sizing: border-box;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-  cursor: pointer;
-}
-
-input[type='date']:hover,
-input[type='month']:hover,
-input[type='time']:hover {
-  border-color: var(--line-strong);
-}
-
-input[type='date']:focus,
-input[type='month']:focus,
-input[type='time']:focus {
-  outline: none;
-  border-color: var(--brand);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 20%, transparent);
-}
-
-input[type='date']::-webkit-calendar-picker-indicator,
-input[type='month']::-webkit-calendar-picker-indicator,
-input[type='time']::-webkit-calendar-picker-indicator {
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 6px;
-  opacity: 0.75;
-  transition: opacity 0.15s ease;
-}
-
-input[type='date']:hover::-webkit-calendar-picker-indicator,
-input[type='month']:hover::-webkit-calendar-picker-indicator,
-input[type='time']:hover::-webkit-calendar-picker-indicator {
-  opacity: 1;
-}
-
-[data-theme='dark'] input[type='date']::-webkit-calendar-picker-indicator,
-.dark input[type='date']::-webkit-calendar-picker-indicator,
-[data-theme='dark'] input[type='month']::-webkit-calendar-picker-indicator,
-.dark input[type='month']::-webkit-calendar-picker-indicator,
-[data-theme='dark'] input[type='time']::-webkit-calendar-picker-indicator,
-.dark input[type='time']::-webkit-calendar-picker-indicator {
-  filter: invert(0.85);
 }
 
 /* ── Mobile Follow-up Toolbar Refinements ──────────────────────────────────── */
@@ -20139,12 +19689,12 @@ input[type='time']:hover::-webkit-calendar-picker-indicator {
   border: 1px solid var(--line) !important;
   border-radius: 8px !important;
   padding: 4px 10px !important;
-  font-size: 12.5px !important;
+  font-size: var(--control-text-size) !important;
   font-weight: 700 !important;
   background: var(--surface-subtle) !important;
   color: var(--ink-heading) !important;
   cursor: pointer;
-  font-family: inherit;
+  font-family: var(--font-sans);
   min-height: 32px !important;
   height: 32px !important;
   line-height: normal;
@@ -20224,7 +19774,7 @@ input[type='time']:hover::-webkit-calendar-picker-indicator {
   padding: 7px 16px;
   border-radius: var(--radius-pill);
   background: var(--brand);
-  color: var(--brand-contrast, #111215);
+  color: var(--brand-contrast);
   font-size: 13px;
   font-weight: 700;
   border: none;
@@ -20567,7 +20117,7 @@ input[type='time']:hover::-webkit-calendar-picker-indicator {
 
 .cal-btn-action.cal-btn-done:hover {
   background: var(--brand);
-  color: var(--brand-contrast, #111215);
+  color: var(--brand-contrast);
   border-color: var(--brand);
 }
 
@@ -20838,7 +20388,7 @@ input[type='time']:hover::-webkit-calendar-picker-indicator {
 }
 .manager-main .primary {
   background: var(--brand);
-  color: var(--brand-text);
+  color: var(--brand-contrast);
   border: 1px solid var(--brand-hover);
   box-shadow: none;
 }
@@ -21362,7 +20912,7 @@ input[type='time']:hover::-webkit-calendar-picker-indicator {
   }
   .manager-main .task-calendar .calendar-selected .calendar-day-number {
     background: var(--brand) !important;
-    color: #111215 !important;
+    color: var(--brand-contrast) !important;
     font-weight: 800 !important;
     border: none !important;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25) !important;
@@ -21578,7 +21128,7 @@ input[type='time']:hover::-webkit-calendar-picker-indicator {
   background: var(--canvas);
   color: var(--ink-muted);
   font-size: 10.5px;
-  font-family: var(--font-mono, ui-monospace, monospace);
+  font-family: var(--font-mono);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   line-height: 1.3;
@@ -21842,7 +21392,7 @@ input[type='time']:hover::-webkit-calendar-picker-indicator {
 .routine-progress-pill {
   font-size: 11px;
   font-weight: 700;
-  color: var(--brand-contrast, #111215);
+  color: var(--brand-contrast);
   background: var(--brand);
   padding: 3px 9px;
   border-radius: var(--radius-pill);
@@ -21880,7 +21430,7 @@ input[type='time']:hover::-webkit-calendar-picker-indicator {
   flex-shrink: 0;
 }
 .routine-time {
-  font-family: var(--font-mono, monospace);
+  font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
   color: var(--brand);
@@ -21910,7 +21460,7 @@ input[type='time']:hover::-webkit-calendar-picker-indicator {
   padding: 6px 14px;
   border-radius: var(--radius-pill);
   background: var(--brand);
-  color: var(--brand-contrast, #111215);
+  color: var(--brand-contrast);
   font-size: 12.5px;
   font-weight: 750;
   text-decoration: none;
@@ -21982,7 +21532,7 @@ input[type='time']:hover::-webkit-calendar-picker-indicator {
 }
 .journal-join-chip:hover {
   background: var(--brand);
-  color: var(--brand-contrast, #111215);
+  color: var(--brand-contrast);
 }
 .dark .journal-join-chip,
 [data-theme='dark'] .journal-join-chip {
@@ -22324,7 +21874,7 @@ input[type='time']:hover::-webkit-calendar-picker-indicator {
   .task-database .quick-add-input-wrap input,
   .today-view-wrapper .quick-add-input-wrap input {
     min-width: 0;
-    font-size: 14px;
+    font-size: var(--control-text-size);
   }
 
   .task-database .quick-add-actions,
@@ -22382,3 +21932,96 @@ input[type='time']:hover::-webkit-calendar-picker-indicator {
   .manager-home .compact-bar-snippet { display: none; }
   .manager-home .compact-bar-actions { width: 100%; justify-content: flex-end; flex-wrap: wrap; }
 }
+
+/* Kontrol bersama: edit token di globals.css, bukan font per halaman. */
+input, select, textarea, .custom-select-trigger, .custom-select-option {
+  font-family: var(--font-sans);
+  font-size: var(--control-text-size) !important;
+  line-height: 1.5;
+}
+select option, select optgroup { font: inherit; color: var(--ink); background: var(--surface); }
+.custom-select-wrap { position: relative; display: inline-block; width: 100%; min-width: 0; }
+.custom-select-wrap.is-open { z-index: 500; }
+.custom-select-wrap.is-disabled { opacity: .6; }
+.custom-select-trigger { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 44px; padding: 10px 12px; gap: 10px; border: 1px solid var(--line); border-radius: var(--control-radius-md); color: var(--ink); background: var(--surface); text-align: left; }
+.custom-select-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: inherit; font: inherit; }
+.custom-select-menu { position: absolute; inset: calc(100% + 6px) 0 auto; z-index: 510; min-width: 0; padding: 4px; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--surface); box-shadow: var(--shadow-float); max-height: min(280px, var(--popover-available-height, 280px)); overflow-y: auto; overscroll-behavior: contain; }
+.custom-select-option { width: 100%; min-height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 10px; gap: 8px; border: 0; border-radius: var(--control-option-radius); background: transparent; color: var(--ink); box-shadow: none; text-align: left; }
+.custom-select-option-text { white-space: normal; overflow-wrap: anywhere; }
+.custom-select-option:hover, .custom-select-option.is-highlighted, .custom-select-option.is-selected { background: var(--brand-soft); color: var(--ink); }
+.custom-select-check { color: var(--ink); flex-shrink: 0; }
+.date-field { position: relative; min-width: 0; }
+.date-picker { position: absolute; inset: auto auto calc(100% + 8px) var(--popover-offset, 0px); width: var(--popover-width, 344px); max-width: calc(100vw - 16px); max-height: min(420px, var(--popover-available-height, 420px)); overflow: auto; overscroll-behavior: contain; padding: 8px; z-index: 600; background: var(--surface); color: var(--ink); border: 1px solid var(--line-strong); border-radius: 14px; box-shadow: var(--shadow-float); }
+[data-popover-side='above'] > .custom-select-menu { inset-block: auto calc(100% + 6px); }
+[data-popover-side='below'] > .date-picker { inset-block: calc(100% + 8px) auto; }
+.date-picker-head button, .date-picker-footer button { color: var(--ink); }
+.date-picker-days button { padding: 0; min-width: 0; width: 100%; aspect-ratio: 1; color: var(--ink); }
+.date-picker-days button[aria-pressed='true'] { color: var(--brand-contrast); background: var(--brand); }
+.inline-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px; min-width: 0; }
+.inline-actions > * { margin: 0; }
+.inline-actions > :is(input, textarea, .custom-select-wrap) { flex: 1 1 160px; min-width: 0; }
+.subtask-toggle { flex: 0 0 44px; width: 44px; min-height: 44px; padding: 0; border: 0; background: transparent; color: var(--ink); box-shadow: none; }
+.subtask-toggle-mark { width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; border: 1.5px solid var(--line-strong); border-radius: 6px; background: var(--surface); }
+.subtask-toggle[aria-pressed='true'] .subtask-toggle-mark { background: var(--brand); color: var(--brand-contrast); border-color: var(--brand); }
+.subtask-toggle[aria-busy='true'] { opacity: 1; }
+.subtask-pending-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ink); animation: subtask-pulse 1s ease-in-out infinite alternate; }
+@keyframes subtask-pulse { to { opacity: .35; } }
+.subtask-title-text { min-width: 0; overflow-wrap: anywhere; }
+.manager-guide { display: grid; gap: 16px; }
+.manager-guide h2, .manager-guide h3 { margin: 0 0 8px; }
+.manager-guide p { margin: 0 0 16px; line-height: 1.65; }
+.guide-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.guide-steps > li { display: flex; gap: 16px; align-items: flex-start; }
+.guide-steps > li > div { min-width: 0; }
+.guide-step-number { flex: 0 0 32px; height: 32px; display: grid; place-items: center; border-radius: 10px; background: var(--brand-soft); color: var(--ink); font-weight: 700; }
+.guide-details summary { min-height: 44px; cursor: pointer; font-weight: 600; color: var(--ink); }
+.project-badge-cluster, .project-compact-meta-row { flex-wrap: wrap; min-width: 0; }
+.project-card-body { min-width: 0; flex: 1; }
+.project-compact-title { overflow-wrap: anywhere; }
+.project-card-header { align-items: flex-start; }
+.project-code-tag { max-width: 100%; overflow-wrap: anywhere; }
+.project-card .project-compact-meta-row { gap: 8px 12px; }
+.project-card .project-meta-pill { border: 0; background: transparent; padding: 0; border-radius: 0; }
+.project-cover .section-head, .project-properties { flex-wrap: wrap; gap: 14px; }
+.project-context > *, .note-page { min-width: 0; }
+.note-content { overflow-wrap: anywhere; }
+@media (max-width: 767px) {
+  :root { --control-text-size: 16px; }
+  .manager-main :is(input:not([type='checkbox']):not([type='radio']), select, textarea, button, .button) { min-height: 44px; }
+  .manager-main :is(.form-grid, .guide-steps, .project-context) { grid-template-columns: minmax(0, 1fr); }
+  .manager-main :is(.section-head, .form-actions, .filters, .projects-toolbar-row, .note-toolbar, .record-actions) { flex-wrap: wrap; gap: 12px; min-width: 0; }
+  .manager-main :is(.section-head, .filters, .projects-toolbar-row) > * { min-width: 0; max-width: 100%; }
+  .project-grid { grid-template-columns: minmax(0, 1fr); }
+  .projects-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .project-kpi-card { min-width: 0; padding: 12px; gap: 8px; }
+  .project-kpi-card .kpi-info { min-width: 0; }
+  .project-kpi-card .kpi-info small { overflow-wrap: anywhere; }
+  .notebook-actions { flex-wrap: wrap; gap: 8px; }
+  .notebook-add-btn { min-width: 0; flex: 1; }
+  .notebook-open-btn { flex-shrink: 0; min-width: 44px; min-height: 44px; }
+  .skeleton-banner-text { min-width: 0; flex: 1; }
+  .skeleton-text-line { max-width: 100%; }
+  .project-card { padding: 18px; gap: 14px; }
+  .project-properties { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .project-properties > span { min-width: 0; overflow-wrap: anywhere; }
+  .project-cover { padding: 18px; }
+  .guide-steps { grid-template-columns: minmax(0, 1fr); }
+  .guide-steps > li { padding: 18px; gap: 12px; }
+  .inline-actions { justify-content: flex-start; }
+  .inline-actions > button { flex: 1 1 auto; }
+  .note-toolbar { display: flex; flex-wrap: wrap; gap: 8px; }
+  .date-picker-days { gap: 2px; }
+}
+@media (prefers-reduced-motion: reduce) { .subtask-pending-dot { animation: none; } }
+
+.date-picker-head, .date-picker-footer { flex-wrap: wrap; gap: 6px; }
+
+.risk-matrix-scroll { max-width: 100%; overflow-x: auto; overscroll-behavior: contain; }
+.risk-matrix-clean { min-width: 460px; }
+
+.task-table-wrap { position: relative; contain: inline-size paint; max-width: 100%; }
+
+.project-color-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.date-prop-editable .date-field { flex: 1; min-width: 0; }
+
+@media (max-width: 767px) { .manager-main .project-badge-link { min-height: 44px !important; } }

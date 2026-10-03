@@ -22,6 +22,8 @@ Topbar menunjukkan lokasi halaman dan aksi yang benar-benar dipakai. Judul halam
 
 ## Bentuk komponen
 
+- **Sumber style bersama**: ubah `--font-sans`, `--font-mono`, `--control-text-size`, `--control-option-radius` dan `--brand-contrast` di `src/app/globals.css`. Ukuran kontrol menjadi 16 px pada ponsel. Aturan aktif kontrol/dropdown/kalender/aksi berada di bagian akhir `src/app/personal.css`; jangan menambah salinan font/warna literal per komponen. `DateInput` melayani semua tanggal form, sedangkan `DateField` menyediakan label untuk pemanggil lama.
+- **Kalender/dropdown**: kalender mengutamakan atas; bila ruang tidak cukup, posisi mengikuti area panel/viewport. Lebar dan tinggi dibatasi area bergulir, dengan scroll di menu. Dropdown memakai radius menu 10 px dan pilihan 5 px, label panjang membungkus, serta warna permukaan/teks dari token tema.
 - **Kartu**: permukaan jelas, judul dan meta terpisah, tindakan mudah ditemukan, hover halus. Jangan memberi setiap kartu gradien/warna kuat. Kartu berisi data nyata dan satu tujuan.
 - **Tombol**: primer untuk tindakan utama, sekunder untuk navigasi/opsi, destruktif hanya untuk hapus. Ikon selalu terlihat dan memiliki label aksesibel. Area sentuh minimum 44 px pada ponsel. Keadaan disabled jelas beserta sebab jika perlu.
 - **Form**: label di atas kontrol, bantuan dekat input, dependensi dikunci sampai prasyarat dipilih. Pada ponsel satu kolom. Kesalahan ditampilkan dekat kolom atau pada ringkasan yang terlihat.

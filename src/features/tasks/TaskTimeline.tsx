@@ -1,4 +1,5 @@
 'use client';
+import { DateInput } from '@/components/ui/DateField';
 import { useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, CalendarDays, MoveHorizontal, Flag, Plus } from 'lucide-react';
 import { addDays, daysBetween, formatDate, today } from '@/lib/date';
@@ -90,25 +91,23 @@ export function TaskTimeline({
         </div>
         <label>
           Mulai
-          <input
+          <DateInput
             aria-label="Awal rentang Gantt"
-            type="date"
             value={start}
-            onChange={(event) => {
-              if (event.target.value) setStart(event.target.value);
+            onValueChange={(value) => {
+              if (value) setStart(value);
             }}
           />
         </label>
         <label>
           Sampai
-          <input
+          <DateInput
             aria-label="Akhir rentang Gantt"
-            type="date"
             min={start}
             max={addDays(start, 365)}
             value={end}
-            onChange={(event) => {
-              const length = daysBetween(start, event.target.value) + 1;
+            onValueChange={(value) => {
+              const length = daysBetween(start, value) + 1;
               if (length >= 1 && length <= 366) setDays(length);
             }}
           />
@@ -358,7 +357,9 @@ export function TaskTimeline({
       {!visible.length && (
         <EmptyState
           icon={<CalendarDays size={24} />}
-          title={tasks.length ? 'Tidak ada tugas pada rentang ini' : 'Susun garis waktu pertama Anda'}
+          title={
+            tasks.length ? 'Tidak ada tugas pada rentang ini' : 'Susun garis waktu pertama Anda'
+          }
           description={
             tasks.length
               ? 'Ubah rentang tanggal atau pilih rentang waktu yang lebih luas.'

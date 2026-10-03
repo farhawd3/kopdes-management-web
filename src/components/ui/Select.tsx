@@ -2,6 +2,7 @@
 
 import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { ChevronDown, Check } from 'lucide-react';
+import { usePopoverPlacement } from './usePopoverPlacement';
 
 export interface SelectOption {
   value: string;
@@ -38,7 +39,6 @@ export function Select({
 }: SelectProps) {
   const generatedId = useId();
   const selectId = customId || generatedId;
-  const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -48,6 +48,7 @@ export function Select({
 
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const rootRef = usePopoverPlacement(isOpen);
 
   // Normalize options to { value, label, icon }
   const options = useMemo<SelectOption[]>(() => {
@@ -78,7 +79,7 @@ export function Select({
     return () => {
       document.removeEventListener('pointerdown', handlePointerDown);
     };
-  }, [isOpen]);
+  }, [isOpen, rootRef]);
 
   // Auto scroll highlighted item into view
   useEffect(() => {
@@ -86,7 +87,7 @@ export function Select({
     const items = menuRef.current.querySelectorAll<HTMLButtonElement>('[role="option"]');
     const targetItem = items[highlightedIndex];
     if (targetItem) {
-      targetItem.scrollIntoView({ block: 'nearest' });
+      targetItem.scrollIntoView?.({ block: 'nearest' });
     }
   }, [highlightedIndex, isOpen]);
 
@@ -172,6 +173,9 @@ export function Select({
         id={selectId}
         name={name}
         aria-label={ariaLabel}
+        aria-hidden="true"
+        disabled={disabled}
+        onFocus={() => triggerRef.current?.focus()}
         value={currentValue}
         onChange={(e) => handleSelect(e.target.value)}
         tabIndex={-1}
@@ -201,6 +205,8 @@ export function Select({
         id={`${selectId}-trigger`}
         className="custom-select-trigger"
         aria-haspopup="listbox"
+        aria-label={ariaLabel ? `${ariaLabel}: ${displayLabel}` : displayLabel}
+        aria-controls={`${selectId}-menu`}
         aria-expanded={isOpen}
         disabled={disabled}
         onClick={() => {
@@ -228,8 +234,10 @@ export function Select({
         <div
           ref={menuRef}
           className="custom-select-menu"
+          id={`${selectId}-menu`}
+          data-popover
           role="listbox"
-          aria-labelledby={selectId}
+          aria-labelledby={`${selectId}-trigger`}
           tabIndex={-1}
         >
           {options.map((option, index) => {
@@ -249,9 +257,7 @@ export function Select({
                 onMouseEnter={() => setHighlightedIndex(index)}
               >
                 <span className="custom-select-option-content">
-                  {option.icon && (
-                    <span className="custom-select-option-icon">{option.icon}</span>
-                  )}
+                  {option.icon && <span className="custom-select-option-icon">{option.icon}</span>}
                   <span className="custom-select-option-text">{option.label}</span>
                 </span>
                 {isSelected && (

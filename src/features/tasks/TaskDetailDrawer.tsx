@@ -1,4 +1,5 @@
 'use client';
+import { DateInput } from '@/components/ui/DateField';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -27,6 +28,7 @@ import { toggleTaskStatus, selectTaskStatus, type TaskStatus } from '@/lib/task-
 import { RecursiveScheduleModal } from './RecursiveScheduleModal';
 import { meetingJoinUrl } from '../meetings/meeting';
 import { formatDisplayCode } from './task-code';
+import { SubtaskToggle } from './SubtaskToggle';
 
 type ActivityItem = {
   id: string;
@@ -75,6 +77,7 @@ export function TaskDetailDrawer({
   const [newSubtaskTitle, setNewSubtaskTitle] = useState('');
   const [newCommentText, setNewCommentText] = useState('');
   const [busy, setBusy] = useState(false);
+  const [pendingSubtask, setPendingSubtask] = useState<number | null>(null);
   const [error, setError] = useState('');
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [isEditingLink, setIsEditingLink] = useState(false);
@@ -211,8 +214,14 @@ export function TaskDetailDrawer({
   }
 
   async function toggleSubtask(index: number) {
+    if (busy) return;
+    setPendingSubtask(index);
     const nextSubtasks = subtasks.map((s, idx) => (idx === index ? { ...s, done: !s.done } : s));
-    await saveChanges({ subtasks: nextSubtasks });
+    try {
+      await saveChanges({ subtasks: nextSubtasks });
+    } finally {
+      setPendingSubtask(null);
+    }
   }
 
   async function removeSubtask(index: number) {
@@ -341,9 +350,13 @@ export function TaskDetailDrawer({
               <Link
                 href={`/proyek?id=${project.id}`}
                 className="project-badge project-badge-link"
-                style={{ borderColor: String(project.data.color || '#d5f935') }}
                 title={`Buka proyek ${String(project.data.title)}`}
               >
+                <span
+                  className="project-color-dot"
+                  aria-hidden="true"
+                  style={{ background: String(project.data.color || 'var(--line-strong)') }}
+                />
                 {String(project.data.title)}
               </Link>
             )}
@@ -554,13 +567,13 @@ export function TaskDetailDrawer({
           <label className="prop-item date-prop-editable" title="Ubah tanggal tenggat tugas">
             <Calendar size={15} />
             <span className="prop-label-text">Tenggat:</span>
-            <input
-              type="date"
+            <DateInput
+              aria-label="Tenggat tugas"
               className="drawer-date-inline-input"
               value={String(data.due_date || today())}
               disabled={busy}
-              onChange={async (e) => {
-                const nextDate = e.target.value;
+              onValueChange={async (value) => {
+                const nextDate = value;
                 if (!nextDate) return;
                 await saveChanges(
                   { due_date: nextDate },
@@ -738,17 +751,13 @@ export function TaskDetailDrawer({
           <div className="subtasks-tree-list">
             {subtasks.map((sub, idx) => (
               <div key={idx} className={`subtask-tree-row ${sub.done ? 'completed' : ''}`}>
-                <button
-                  type="button"
-                  className={`subtask-check-circle ${sub.done ? 'checked' : ''}`}
-                  onClick={() => toggleSubtask(idx)}
-                  aria-label={
-                    sub.done ? `Tandai belum selesai: ${sub.title}` : `Tandai selesai: ${sub.title}`
-                  }
-                  aria-pressed={Boolean(sub.done)}
-                >
-                  {sub.done && <Check size={12} strokeWidth={2.5} />}
-                </button>
+                <SubtaskToggle
+                  done={Boolean(sub.done)}
+                  title={sub.title}
+                  disabled={busy}
+                  busy={pendingSubtask === idx}
+                  onClick={() => void toggleSubtask(idx)}
+                />
                 {sub.code && <span className="subtask-code-pill">{sub.code}</span>}
                 <span className="subtask-title-text" onClick={() => toggleSubtask(idx)}>
                   {sub.title}
@@ -757,6 +766,8 @@ export function TaskDetailDrawer({
                   type="button"
                   className="subtask-delete-btn"
                   title="Hapus Subtugas"
+                  aria-label={`Hapus subtugas: ${sub.title}`}
+                  disabled={busy}
                   onClick={() => removeSubtask(idx)}
                 >
                   <Trash2 size={13} />

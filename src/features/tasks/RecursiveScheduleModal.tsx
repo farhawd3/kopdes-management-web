@@ -1,4 +1,5 @@
 'use client';
+import { DateInput } from '@/components/ui/DateField';
 import { useState, useEffect } from 'react';
 import { X, Repeat, Clock, Calendar } from 'lucide-react';
 import { Select } from '@/components/ui/Select';
@@ -101,10 +102,9 @@ export function RecursiveScheduleModal({
             <span className="field-label">
               <Calendar size={16} aria-hidden="true" /> Batas pengulangan (opsional)
             </span>
-            <input
-              type="date"
+            <DateInput
               value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
+              onValueChange={(value) => setEndDate(value)}
               className="text-input"
               disabled={!enabled}
             />

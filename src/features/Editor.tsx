@@ -1,4 +1,5 @@
 'use client';
+import { DateInput } from '@/components/ui/DateField';
 import { useEffect, useId, useRef, useState } from 'react';
 import {
   X,
@@ -835,10 +836,9 @@ export function Editor({
                         <div className="inline-creator-row">
                           <label className="inline-creator-field">
                             <span>Tanggal</span>
-                            <input
-                              type="date"
+                            <DateInput
                               value={inlineDate}
-                              onChange={(e) => setInlineDate(e.target.value)}
+                              onValueChange={(value) => setInlineDate(value)}
                             />
                           </label>
                           <label className="inline-creator-field">
@@ -1008,10 +1008,9 @@ export function Editor({
                         <div className="inline-creator-row">
                           <label className="inline-creator-field">
                             <span>Tenggat Waktu</span>
-                            <input
-                              type="date"
+                            <DateInput
                               value={inlineDate}
-                              onChange={(e) => setInlineDate(e.target.value)}
+                              onValueChange={(value) => setInlineDate(value)}
                             />
                           </label>
                           <label className="inline-creator-field">
@@ -1098,10 +1097,9 @@ export function Editor({
                           </label>
                           <label className="inline-creator-field">
                             <span>Target Selesai</span>
-                            <input
-                              type="date"
+                            <DateInput
                               value={inlineDate}
-                              onChange={(e) => setInlineDate(e.target.value)}
+                              onValueChange={(value) => setInlineDate(value)}
                             />
                           </label>
                         </div>
@@ -1251,10 +1249,9 @@ export function Editor({
                         </label>
                         <label className="inline-creator-field">
                           <span>Tenggat Target Milestone</span>
-                          <input
-                            type="date"
+                          <DateInput
                             value={inlineDate}
-                            onChange={(e) => setInlineDate(e.target.value)}
+                            onValueChange={(value) => setInlineDate(value)}
                           />
                         </label>
                       </div>

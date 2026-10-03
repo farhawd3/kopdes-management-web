@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 :root {
+  /* Satu sumber font dan warna teks tindakan; komponen memakai token ini. */
+  --font-sans: 'Plus Jakarta Sans Variable', 'Inter Variable', system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --brand-contrast: #111215;
+  --control-text-size: 14px;
+  --control-option-radius: 5px;
   --brand: #d5f935;
   --brand-hover: #c4ea26;
   --brand-soft: #f4fce3;
@@ -105,14 +111,14 @@ body {
   margin: 0;
   background: var(--canvas);
   color: var(--ink);
-  font-family: 'Inter Variable', 'Segoe UI', sans-serif;
+  font-family: var(--font-sans);
   font-size: 14px;
   line-height: 1.6;
 }
 h1,
 h2,
 h3 {
-  font-family: 'Plus Jakarta Sans Variable', 'Segoe UI', sans-serif;
+  font-family: var(--font-sans);
   line-height: 1.3;
   font-weight: 650;
   overflow-wrap: anywhere;
@@ -151,6 +157,7 @@ button,
   border: 1px solid var(--line);
   background: var(--surface);
   font: inherit;
+  color: var(--ink);
   font-weight: 600;
   cursor: pointer;
   gap: 8px;
@@ -165,7 +172,7 @@ button:disabled {
 }
 .primary {
   background: var(--brand);
-  color: #111215;
+  color: var(--brand-contrast);
   border-color: var(--brand);
   font-weight: 750;
 }
@@ -845,7 +852,7 @@ small {
   }
   .topbar button,
   .topbar select {
-    font-size: 12px;
+    font-size: var(--control-text-size);
     padding: 8px;
   }
   .hero {
@@ -1393,7 +1400,7 @@ small {
   color: var(--brand);
 }
 .task-table select {
-  font-size: 12px;
+  font-size: var(--control-text-size);
   border-color: transparent;
   background: var(--canvas);
 }

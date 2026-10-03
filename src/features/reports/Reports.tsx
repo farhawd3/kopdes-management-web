@@ -1,4 +1,5 @@
 'use client';
+import { DateInput } from '@/components/ui/DateField';
 import { useEffect, useState } from 'react';
 import {
   Printer,
@@ -216,23 +217,16 @@ export function Reports() {
             </label>
             <label className="field-item">
               <span className="field-caption">Dari Tanggal</span>
-              <input
+              <DateInput
                 className="field-input"
                 name="start"
-                type="date"
                 defaultValue={addDays(today(), -6)}
                 required
               />
             </label>
             <label className="field-item">
               <span className="field-caption">Sampai Tanggal</span>
-              <input
-                className="field-input"
-                name="end"
-                type="date"
-                defaultValue={today()}
-                required
-              />
+              <DateInput className="field-input" name="end" defaultValue={today()} required />
             </label>
             <label className="field-item field-wide wide">
               <span className="field-caption">Catatan manajer</span>
@@ -512,7 +506,9 @@ export function Reports() {
               <Building2 size={36} />
             </div>
             <div className="kop-text">
-              <span className="kop-instansi">{String(selected.snapshot.organization || 'Koperasi')}</span>
+              <span className="kop-instansi">
+                {String(selected.snapshot.organization || 'Koperasi')}
+              </span>
               <div className="kop-divider" />
               <h1 className="kop-doc-title">
                 {isCurrentDraft
@@ -676,7 +672,9 @@ export function Reports() {
             <div className="signature-col">
               <p className="sig-pre">Mengetahui,</p>
               <strong className="sig-role">Pengurus & Badan Pengawas</strong>
-              <span className="sig-org">{String(selected.snapshot.organization || 'Koperasi')}</span>
+              <span className="sig-org">
+                {String(selected.snapshot.organization || 'Koperasi')}
+              </span>
               <div className="sig-space" />
               <div className="sig-line">
                 ( ..................................................................... )
@@ -692,7 +690,9 @@ export function Reports() {
               <div className="sig-line">
                 ( ..................................................................... )
               </div>
-              <span className="sig-desc">Manajer {String(selected.snapshot.organization || 'Koperasi')}</span>
+              <span className="sig-desc">
+                Manajer {String(selected.snapshot.organization || 'Koperasi')}
+              </span>
             </div>
           </footer>
         </article>
