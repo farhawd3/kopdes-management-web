@@ -11,7 +11,7 @@ Panduan ini mengatur standar arsitektur, penulisan kode TypeScript/React, tata l
 
 ## 1. Arsitektur Folder & Domain
 
-Struktur direktori aplikasi mengikuti pola Domain-Driven berbasis Next.js App Router:
+Struktur direktori aplikasi memakai Next.js App Router. Enam kontrak/form lintas-domain tetap di akar features: schemas.ts, catalog.ts, query.ts, service.ts, Editor.tsx dan Records.tsx; struktur rinci ada di docs/ARSITEKTUR.md:
 
 ```
 src/
@@ -19,12 +19,12 @@ src/
 ├── components/           # Komponen UI bersama lintas-domain
 │   ├── charts/           # Visualisasi data & metrik
 │   ├── layout/           # AppShell, navigasi, topbar, dock mobile
-│   └── ui/               # EmptyState, Select, Dialog, Dropzone, SkeletonLoading
+│   └── ui/               # EmptyState, Select, DateField, CsvDropzone, SkeletonLoading
 ├── features/             # Modul domain independen (skema, kueri, UI fitur)
-│   ├── <entity>/         # Schema, service, views (Tasks, Projects, Records, dsb.)
+│   ├── <domain>/         # Komponen/utilitas dashboard, tasks, projects, operations, dsb.
 │   ├── catalog.ts        # Katalog entitas, definisi bidang, navigasi
 │   ├── schemas.ts        # Validasi Zod seluruh entitas
-│   └── workspace/useWorkspace.ts # Hook utama dengan SWR in-memory cache
+│   └── workspace/useWorkspace.ts # Hook dengan cache memori per lingkup dan validasi ulang
 └── lib/                  # Utilitas murni & pustaka bersama
     ├── client.ts         # Wrapper API client & penanganan galat
     ├── date.ts           # Kalender bersama & kalkulasi tanggal zona Asia/Jakarta
@@ -33,7 +33,7 @@ src/
 ```
 
 ### Aturan Arsitektur:
-1. **Rute Tipis**: `app/[slug]/page.tsx` hanya meneruskan parameter ke `features/workspace/WorkspacePage.tsx`. Hindari meletakkan logika bisnis di dalam `app/`.
+1. **Rute Tipis**: `src/app/(app)/[slug]/page.tsx` hanya meneruskan parameter ke `features/workspace/WorkspacePage.tsx`. Hindari meletakkan logika bisnis di dalam `app/`.
 2. **Hindari Abstraksi Spekulatif**: Jangan membuat generic repository atau factory yang tidak dibutuhkan. Gunakan fungsi konkret dengan nama yang menjelaskan aksi bisnis.
 3. **Satu Sumber Progres**: Semua perhitungan persentase, bobot, dan kesiapan WAJIB memanggil `src/lib/progress.ts`. Dilarang menduplikasi rumus kalkulasi di komponen view.
 
@@ -64,7 +64,7 @@ Aplikasi ini diutamakan untuk penggunaan smartphone dan tablet di lapangan oleh 
 ## 3. Kinerja & Stale-While-Revalidate (SWR) Caching
 
 1. **In-Memory Cache**: Hindari flash loading/skeleton berulang saat berpindah tab dengan memanfaatkan cache memori `workspaceCache` di `useWorkspace.ts`.
-2. **0ms Perceived Latency**: Saat bernavigasi antar-halaman yang sudah pernah dibuka, tampilkan data dari cache secara instan, lalu lakukan validasi ulang (`refresh()`) secara senyap di latar belakang.
+2. **Bacaan cache saat navigasi**: Saat bernavigasi antar-halaman yang sudah pernah dibuka, tampilkan data dari cache secara instan, lalu lakukan validasi ulang (`refresh()`) secara senyap di latar belakang.
 3. **Invalidasi Tepat**: Ketika mutasi (POST, PATCH, DELETE) berhasil, lakukan pembaruan data lokal atau panggil `refresh()` untuk menyinkronkan state global dan memicu event `hub-workspace`.
 
 ---
@@ -111,7 +111,7 @@ import { EmptyState } from '@/components/ui/EmptyState';
 
 Setiap perubahan kode WAJIB melewati 3 tahapan verifikasi sebelum dilaporkan:
 1. `npm run typecheck` (`tsc --noEmit`) → Harus 0 error.
-2. `npm test` (`vitest run`) → Seluruh rangkaian tes (19+ berkas tes) wajib lulus 100%.
+2. `npm test` (`vitest run`) → Seluruh rangkaian tes yang tersedia wajib lulus.
 3. `npm run build` (`next build`) → Seluruh rute statis & dinamis harus sukses teroptimasi.
 
-*Catatan Lingkungan*: Di Windows sandbox, selalu gunakan `BypassSandbox: true` saat menjalankan perintah CLI `npm.cmd` dan `node` agar path Node.js dapat diakses tanpa hambatan isolasi.
+*Catatan Lingkungan*: Di Windows gunakan `npm.cmd` jika diperlukan. Jalankan perintah dengan izin bawaan; minta eskalasi melalui parameter alat yang tersedia hanya jika sandbox benar-benar menghalangi pekerjaan. Jangan memakai parameter `BypassSandbox` yang tidak tersedia.

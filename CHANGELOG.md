@@ -1,5 +1,13 @@
 # Changelog
 
+## Audit panduan Markdown — 3 Oktober 2026
+
+- Gabungkan rancangan dashboard ke DESAIN-ANTARMUKA dan peta rute/API ke ARSITEKTUR; hapus dua dokumen duplikat serta dua rencana program lama yang sudah digantikan. Riwayat tetap tersedia di Git; fixture dan cadangan pribadi dipertahankan.
+- Ringkas STATUS, serah terima dan checklist agar membedakan keadaan aktif, bukti lokal, konfirmasi cloud dan pekerjaan terbuka. Lengkapi indeks seluruh panduan, perbaiki lokasi tes, CSS aktif, domain data, tema dan langkah instalasi/reset.
+- Verifikasi: 21 panduan terindeks, tautan lokal dan rujukan kode literal valid; 167 tes/22 berkas, typecheck, lint, build, audit sumber dan diff-check lulus. Build diulang setelah kendala akses next-env.d.ts di sandbox; perubahan awal file itu dipertahankan.
+- Paket ini hanya mengubah dokumentasi; tidak mengubah UI, data cloud atau menjalankan deployment.
+
+
 ## Perapian struktur folder — 3 Oktober 2026
 
 - Pindahkan 31 modul fitur ke 10 folder domain dan 22 berkas tes ke unit/UI/database/keamanan. Enam kontrak/form lintas-domain tetap di akar features. Komponen bersama, lib/server, fixture, skrip, SQL, CSS, dan rute tetap pada tempatnya.

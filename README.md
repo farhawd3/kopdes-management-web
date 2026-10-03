@@ -57,7 +57,7 @@ Repository: [halimxn/kopdes-management-web](https://github.com/halimxn/kopdes-ma
 
 Buka **Proyek** untuk membuat ruang kerja berisi tujuan, PIC, catatan, milestone dan tugas. Data proyek memakai domain `workstreams` yang kompatibel dengan data lama. Halaman **Tugas** menyediakan daftar, papan, kalender dan Gantt, pencarian, filter status/proyek/prioritas, serta pengurutan. Klik judul tugas untuk membuka detail.
 
-Desain memakai latar hangat dan aksen rose, navigasi yang dikelompokkan, tema terang/gelap, serta navigasi bawah di ponsel. Catatan mendukung format sederhana. Editor blok drag-and-drop dan kolaborasi real-time belum tersedia.
+Desain memakai permukaan netral, teks arang dan aksen hijau lembut/lavender, navigasi yang dikelompokkan, tema terang/gelap, serta navigasi bawah di ponsel. Catatan mendukung format sederhana. Editor blok drag-and-drop dan kolaborasi real-time belum tersedia.
 
 ## Pencatatan operasional
 

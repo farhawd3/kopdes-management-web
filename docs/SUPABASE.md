@@ -3,7 +3,9 @@
 Proyek tujuan: **kopdes-management-web**, ID **mqycnhebhzqaziouipet**, Free, Singapore.
 Proyek lama tidak digunakan atau diubah oleh aplikasi baru.
 
-## 1. Konfirmasi migrasi
+## 1. Tentukan keadaan skema
+
+Panduan berikut menjelaskan fondasi awal. Pada proyek kosong gunakan SQL instalasi gabungan; pada proyek yang sudah dipakai jalankan hanya migrasi tambahan yang belum terpasang. Ikuti [MIGRASI-SQL](MIGRASI-SQL.md), bukan mengulang migrasi awal atau reset.
 
 Berkas: `supabase/migrations/20260930000001_manager_hub.sql`.
 
@@ -11,7 +13,7 @@ Migrasi membuat enam tabel:
 
 | Tabel | Isi |
 |---|---|
-| hub_records | 16 jenis catatan kerja, setiap jenis divalidasi Zod |
+| hub_records | 16 domain awal; migrasi berikutnya memperluas menjadi 21, divalidasi Zod |
 | manager_security | Hash PIN dan batas percobaan persisten |
 | manager_sessions | Hash token sesi dengan kedaluwarsa |
 | manager_reports | Snapshot laporan yang tidak berubah ketika pekerjaan diedit |
@@ -28,7 +30,7 @@ Fungsi pemulihan baru menghapus dan mengganti data ketika **fitur Pulihkan** dig
 
 1. Buka proyek `kopdes-management-web` pada Supabase, pastikan ID `mqycnhebhzqaziouipet`.
 2. Buka SQL Editor → New query.
-3. Salin seluruh isi berkas migrasi di atas, lalu Run setelah Anda menyetujuinya.
+3. Salin SQL instalasi atau migrasi tambahan yang telah dipilih sesuai MIGRASI-SQL, lalu Run setelah dampak dan targetnya disetujui.
 4. Pastikan hasil sukses. Jangan menjalankannya pada proyek lama atau mengulang migrasi yang sudah berhasil.
 5. Beri tahu AI bahwa migrasi selesai, atau salin pesan error tanpa kunci rahasia.
 

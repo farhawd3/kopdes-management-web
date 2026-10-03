@@ -1,6 +1,6 @@
 # Pencatatan anggota, kas, barang, dan opname
 
-## Aktivasi database — menunggu persetujuan pemilik
+## Aktivasi database
 
 Berkas: `supabase/migrations/20261001000002_operations.sql`.
 Proyek tujuan: **mqycnhebhzqaziouipet**, Supabase baru Kopdes Management Web.
@@ -11,7 +11,7 @@ Migrasi ini:
 - Menambahkan fungsi pemeriksaan aktivasi yang hanya dapat dipanggil server.
 - Mempertahankan data lama, PIN, sesi, dan RLS. Tidak menghapus tabel atau catatan.
 
-**Jangan jalankan sebelum menyetujui isi migrasi.** Setelah setuju:
+Migrasi ini sebelumnya dikonfirmasi dijalankan pemilik dan kemampuan pencatatan pernah diperiksa secara lokal. Jangan menjalankan ulang berdasarkan panduan ini; periksa keadaan proyek sesuai [MIGRASI-SQL](MIGRASI-SQL.md). Untuk lingkungan baru, jelaskan SQL dan minta persetujuan sebelum mengikuti langkah berikut:
 1. Unduh cadangan JSON dari Pengaturan dan simpan di tempat pribadi.
 2. Buka proyek **mqycnhebhzqaziouipet** di Supabase, lalu SQL Editor → New query.
 3. Salin seluruh isi berkas migrasi di atas dan jalankan **sekali**. Jangan jalankan ulang migrasi pertama.
@@ -19,7 +19,7 @@ Migrasi ini:
 5. Muat ulang aplikasi. Keterangan “Pencatatan belum diaktifkan” akan hilang setelah fungsi baru tersedia pada API Supabase.
 6. Catat satu data nyata, buka ulang halaman, dan periksa data tersimpan. Jangan kirim data pribadi atau kunci database melalui chat.
 
-Migrasi baru sudah diuji pada PostgreSQL lokal. Pemasangan dan uji simpan di Supabase cloud tetap dilakukan pemilik; belum dianggap selesai sebelum dikonfirmasi.
+Migrasi diuji dengan PostgreSQL lokal. Konfirmasi pemasangan sebelumnya tidak menggantikan uji simpan setelah reset; lihat [STATUS](STATUS.md) untuk batas bukti cloud.
 
 ## Pemakaian
 

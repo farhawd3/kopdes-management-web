@@ -17,12 +17,12 @@ Pemilik membatalkan arah penggantian style total setelah menilai tampilan sebelu
 | Arah pengalaman | Task/project manager terinspirasi ruang kerja Notion: proyek, catatan, tugas terhubung, daftar/papan/kalender/Gantt |
 | Kode | Runtime baru yang sederhana; kode lama menjadi arsip referensi lokal |
 | Database | Supabase baru `mqycnhebhzqaziouipet`; database lama tidak diubah |
-| Model data | Enam tabel fisik; 16 domain tervalidasi Zod dalam `hub_records` JSONB, disertai relasi dan transaksi SQL |
+| Model data | Enam tabel fisik; 21 domain tervalidasi Zod dalam `hub_records` JSONB, disertai relasi dan transaksi SQL |
 | Migrasi | `20260930000001_manager_hub.sql` dijelaskan, disetujui pemilik, dan tabel terverifikasi tersedia |
 | Proyek | Memakai domain `workstreams`; tujuan, catatan, PIC, tanggal, tugas, dan milestone. Status/prioritas proyek dan data lama tetap kompatibel |
 | Form | Form HTML/React dan Zod bersama; tidak menambah lapisan React Hook Form yang belum diperlukan |
-| Desain | Latar rose/lavender lembut, kartu berlapis, ikon konsisten, sidebar berkelompok; tema gelap dan tata letak adaptif |
-| Dokumen | `docs-new` menggantikan `docs`; CHANGELOG dan AGENTS di akar |
+| Desain | Permukaan netral, teks arang, aksen hijau lembut/lavender, kartu membulat dan sidebar berkelompok; tema gelap dan tata letak adaptif |
+| Dokumen | Panduan aktif di `docs`; CHANGELOG dan AGENTS di akar |
 | Arsip | `.local-backup/legacy-20260930`, diabaikan Git, termasuk Git lama dan konfigurasi lama |
 | Data awal | Kosong; proyek dan tugas dibuat pemilik tanpa template wajib |
 | Tanggal | Tanggal proyek ditentukan pemilik; tidak ada rentang program wajib |
@@ -35,11 +35,11 @@ Tidak memakai database lama, menghapus tabel lamanya, atau membawa tag legacy ke
 
 ## Perubahan arah produk
 
-Pemilik mengganti konsep program 90 hari menjadi workspace proyek fleksibel. Endpoint dan pemasangan template dihapus dari runtime, tanpa menghapus data cloud yang sudah tersimpan. Rancangan lama dipindah ke `docs/arsip`; acuan aktif adalah PRD baru. Catatan terformat disimpan sebagai teks aman pada field `notes`; proyek memakai status/prioritas dengan default kompatibel. Tidak ada SQL baru untuk paket perubahan ini.
+Pemilik mengganti konsep program 90 hari menjadi workspace proyek fleksibel. Endpoint dan pemasangan template dihapus dari runtime, tanpa menghapus data cloud yang sudah tersimpan. Rancangan lama sudah digantikan PRD aktif; riwayat dokumennya dapat ditelusuri melalui Git. Catatan terformat disimpan sebagai teks aman pada field `notes`; proyek memakai status/prioritas dengan default kompatibel. Tidak ada SQL baru untuk paket perubahan ini.
 
 ## 1 Oktober 2026 — perluasan oleh pemilik
 
-Larangan lingkup anggota/stok pada rancangan sebelumnya dicabut sesuai permintaan terbaru. Empat domain pencatatan ditambahkan (total 20) pada enam tabel fisik. Migrasi kedua disiapkan dan diuji lokal; pemasangan cloud menunggu persetujuan. Desain aktif memakai tema studio, menggantikan rose/lavender. Pencatatan dipisahkan dari proyek/tugas agar mudah dijangkau. Kas sederhana dan opname manual; bukan POS atau akuntansi penuh.
+Larangan lingkup anggota/stok pada rancangan sebelumnya dicabut sesuai permintaan terbaru. Empat domain pencatatan ditambahkan (total 20) pada enam tabel fisik. Saat keputusan ini dibuat, migrasi kedua disiapkan dan diuji lokal; konfirmasi cloud berikutnya tercatat di STATUS. Desain aktif memakai tema studio, menggantikan rose/lavender. Pencatatan dipisahkan dari proyek/tugas agar mudah dijangkau. Kas sederhana dan opname manual; bukan POS atau akuntansi penuh.
 
 ## Referensi HP terakhir
 Palet oranye sebelumnya diganti oleh referensi terbaru pemilik: arang, hijau lembut, lavender. Aplikasi tetap satu pengguna. Data tim adalah catatan koordinasi, bukan akun/kolaborasi. Tata letak bersama berlaku ke semua rute; grafik hanya memakai data tersimpan. Tidak menambahkan jam tugas yang tidak ada pada skema.

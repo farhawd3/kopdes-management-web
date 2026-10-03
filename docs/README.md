@@ -1,22 +1,28 @@
 # Peta dokumentasi
 
-| Dokumen | Isi |
-|---|---|
-| [Status](STATUS.md) | Implementasi nyata, verifikasi, kendala, langkah berikut |
-| [Paket lanjutan AI](LANJUTAN-AI.md) | Serah terima konkret untuk navigasi, modal, status tugas, Harian, dan gaya |
-| [Perapian dashboard](RANCANGAN-DASHBOARD.md) | Arahan mempertahankan dashboard lama dan merapikan Perlu Perhatian |
-| [Desain antarmuka](DESAIN-ANTARMUKA.md) | Karakter visual, layout perangkat, bentuk komponen, dan alur inti |
-| [Kegiatan dan tugas](KEGIATAN-DAN-TUGAS.md) | Batas fitur, contoh pencatatan, dan arah Beranda |
-| [Migrasi SQL](MIGRASI-SQL.md) | Urutan migrasi, SQL instalasi bersih, dan batas cloud |
-| [Git untuk beberapa AI](GIT-KERJA-PARALEL.md) | Cabang, worktree, PR, konflik, dan batas deployment |
-| [Keputusan](KEPUTUSAN.md) | Pembaruan dari instruksi pemilik |
-| [PRD](PRD.md) | Kebutuhan dan kriteria terima |
-| [Checklist](CHECKLIST.md) | Implementasi, penerimaan dan backlog aktif |
-| [Workflow](WORKFLOW.md) | Alur kerja dan status |
-| [Pemetaan file](PEMETAAN-FILE.md) | Rujukan transformasi kode lama |
-| [Arsitektur](ARSITEKTUR.md) | Struktur runtime, domain data, keamanan dan batasan |
-| [Supabase](SUPABASE.md) | Panduan pengaturan, migrasi cloud dan PIN |
-| [Panduan AI](../AGENTS.md) | Aturan implementasi |
-| [Changelog](../CHANGELOG.md) | Perubahan aktual |
+Setiap panduan punya peran berbeda. Kebutuhan menjelaskan target; STATUS mencatat bukti; CHANGELOG menyimpan riwayat, bukan instruksi aktif. Dokumen program lama yang sudah digantikan dapat ditelusuri melalui Git.
 
-Dokumen kebutuhan menjelaskan target. Status menjelaskan hasil yang sudah diverifikasi.
+| Dokumen | Kegunaan |
+|---|---|
+| [README proyek](../README.md) | Memulai lokal, konfigurasi dan pemeriksaan |
+| [AGENTS](../AGENTS.md) | Aturan utama implementasi AI |
+| [Aturan alat AI](../.agents/rules/kopdes-rules.md) | Titik masuk alat menuju AGENTS |
+| [Skill clean-code](../.agents/skills/clean-code/SKILL.md) | Pedoman kode dan komponen |
+| [Serah terima AI](LANJUTAN-AI.md) | Konteks dan prioritas lanjutan |
+| [Status](STATUS.md) | Keadaan aktif, bukti dan batasan |
+| [Keputusan](KEPUTUSAN.md) | Arahan pemilik dan perubahan produk |
+| [PRD](PRD.md) | Kebutuhan dan batas produk |
+| [Checklist](CHECKLIST.md) | Implementasi dan penerimaan terbuka |
+| [Desain antarmuka](DESAIN-ANTARMUKA.md) | Tema, layout, komponen dan dashboard |
+| [Arsitektur](ARSITEKTUR.md) | Folder, data, keamanan, rute dan API |
+| [Workflow](WORKFLOW.md) | Pemakaian harian dan status |
+| [Kegiatan dan tugas](KEGIATAN-DAN-TUGAS.md) | Pembedaan catatan kejadian dan pekerjaan |
+| [Onboarding](PANDUAN-ONBOARDING.md) | Pencatatan rundown dan tindak lanjut |
+| [Pencatatan](PENCATATAN.md) | Anggota, kas, barang dan opname |
+| [Supabase](SUPABASE.md) | Konfigurasi server dan PIN |
+| [Migrasi SQL](MIGRASI-SQL.md) | Instalasi bersih dan perubahan skema |
+| [Reset database](RESET-DATABASE.md) | Reset terkendali dan pengaman data |
+| [Git paralel](GIT-KERJA-PARALEL.md) | Pemisahan checkout ketika kerja paralel diizinkan |
+| [Changelog](../CHANGELOG.md) | Riwayat perubahan dan pemeriksaan |
+
+Peta ini sendiri menjadi indeks dokumentasi. Cadangan pribadi dan Markdown dependensi bukan panduan repo aktif.

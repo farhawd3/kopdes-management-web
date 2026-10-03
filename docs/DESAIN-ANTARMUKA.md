@@ -44,3 +44,13 @@ Uji 360, 768, 1024, 1440 px pada tema terang dan gelap untuk Beranda, Tugas, det
 Perbaikan yang masih terbuka ada di `LANJUTAN-AI.md`: navigasi ponsel, sidebar ciut, modal sempit, konsistensi status/aksi tugas, serta sumber glow merah. Jangan mengubah acuan ini menjadi klaim bahwa masalah tersebut telah selesai.
 
 Masukan visual terbaru pemilik juga tercatat di bagian **Detail visual tugas dan kalender** pada `LANJUTAN-AI.md`: judul lebih utama dari kode, checklist simetris, pill proyek tenang, tombol navigasi jelas, tautan rapat dari kegiatan, dan animasi dialog dengan arah yang dapat dipahami.
+
+## Perlu Perhatian — arahan 3 Oktober 2026
+
+Pertahankan dashboard aplikasi saat ini. Perapian pengingat di atas terbatas pada:
+
+- Pengingat memakai permukaan dan border netral; warna status hanya pada ikon, tanpa gradien merah/hijau yang mendominasi.
+- Ringkasan menyebut jumlah pengingat dan jumlah mendesak. Judul catatan pertama tetap terlihat pada layar lebar; pada ponsel judul lengkap berada di Rincian agar banner pendek.
+- Jenis catatan dan alasan panjang tampil ketika membuka **Rincian**, bersama tautan sumber. Tanda mendesak tetap berupa teks.
+- Hapus margin tambahan keadaan tanpa pengingat yang menggandakan jarak sebelum filter proyek.
+- Pertahankan tata letak adaptif: ringkasan dan aksi membungkus di ponsel, target kontrol 44 px, label serta fokus keyboard tetap tersedia.
