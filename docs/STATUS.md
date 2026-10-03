@@ -7,6 +7,7 @@ Keadaan aktif dirangkum di sini; riwayat paket ada di [CHANGELOG](../CHANGELOG.m
 Konfigurasi lokal kini memakai `HUB_APP_ORIGIN=http://127.0.0.1:3000`, sesuai hostname `npm run dev` dan URL browser pemilik. Probe endpoint PIN dengan JSON sengaja tidak sah mendapat 400 (lolos pemeriksaan origin); `localhost` dan origin asing mendapat 403. Probe berhenti sebelum akses database, tidak memakai PIN atau menambah percobaan masuk. Login dengan PIN tetap perlu dicoba pemilik. Konfigurasi hosting tidak diubah.
 
 - Ruang kerja pribadi dengan proyek fleksibel, catatan terformat, milestone, tugas daftar/papan/harian/kalender/Gantt, subtugas, prasyarat dan pengulangan.
+- Detail proyek kini berstandar Notion/Linear: hero card bernuansa gradien lembut dan aksen border atas, grid kartu properti 4-kolom berikon (prioritas, penanggung jawab, target, tugas), kartu progres terintegrasi dengan fraksi selesai dan persentase, tab navigasi bagian proyek berikon (Tugas, Catatan, Milestone, Dokumen, Keputusan, Kendala), tombol kembali berikon `<ArrowLeft />`, serta accordion Langkah Berikutnya yang rapi.
 - Koordinasi, rapat bertautan pengguna dan ICS, dokumen, risiko, kegiatan, laporan snapshot, profil, PIN dan cadangan JSON.
 - Anggota, kas, barang dan opname memakai gerbang kemampuan database. Galat atau migrasi belum tersedia tidak ditampilkan sebagai data nol.
 - Dashboard mempertahankan style acuan e8fc8b4 dan tweak berikutnya. Tugas/kegiatan awal dibatasi tiga; grafik/rutinitas opsional. Perlu Perhatian memakai permukaan netral dan rincian yang dapat dibuka. Acuan ada di [DESAIN-ANTARMUKA](DESAIN-ANTARMUKA.md).
@@ -19,7 +20,12 @@ Konfigurasi lokal kini memakai `HUB_APP_ORIGIN=http://127.0.0.1:3000`, sesuai ho
 
 ## Bukti pemeriksaan terakhir
 
-Paket overhaul dropdown, subtugas, dan mobile dashboard: **171 tes dalam 23 berkas** lulus (`npm test`), **0 kesalahan typecheck** (`npm run typecheck`), dan Next.js production build (`npm run build`) berhasil.
+Paket overhaul detail proyek dan dropdown: **171 tes dalam 23 berkas** lulus (`npm test`), **0 kesalahan typecheck** (`npm run typecheck`), dan Next.js production build (`npm run build`) berhasil.
+- Halaman detail proyek terverifikasi rapi dan berimbang: hero card, grid properti, progress track, dan tab navigasi terstruktur tanpa ruang kosong hampa.
+- Dropdown kustom terverifikasi bersih pada seluruh halaman/modal/drawer: opsi hover dan status terpilih tampil terpadu tanpa border kotak kaku.
+- Detail tugas: pill status dan prioritas tidak lagi mendominasi kontainer secara penuh, form deskripsi dan tindakan memiliki jarak lega.
+- Bar progres subtugas: warna hijau emerald semantik dengan transisi mulus dan lencana persentase terintegrasi.
+- Dashboard mobile: kartu statistik bervariasi dengan kedalaman visual elegan dan tombol-tombol tidak merusak tata letak kartu.
 - Dropdown kustom terverifikasi bersih pada seluruh halaman/modal/drawer: opsi hover dan status terpilih tampil terpadu tanpa border kotak kaku.
 - Detail tugas: pill status dan prioritas tidak lagi mendominasi kontainer secara penuh, form deskripsi dan tindakan memiliki jarak lega.
 - Bar progres subtugas: warna hijau emerald semantik dengan transisi mulus dan lencana persentase terintegrasi.

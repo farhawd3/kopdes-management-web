@@ -1,5 +1,15 @@
 # Changelog
 
+## Overhaul tampilan detail proyek (Hero, Properties Grid, Tab Bar, Next Actions) — 4 Oktober 2026
+
+- Rombak total header detail proyek (`.project-cover`): ganti kartu putih polos yang kosong dengan hero card bernuansa gradien lembut, aksen border brand atas 4 px, bayangan melayang elegan, dan tata letak berdampingan untuk simbol proyek, kode tag (`OPS`), status pill semantik, judul h1, serta tombol `Ubah proyek` berikon `<Edit2 />`.
+- Ganti baris properti teks padat yang mepet (`Status`, `Prioritas`, `PIC`, `Target`, `Tugas`) menjadi grid kartu atribut modern 4-kolom (`.project-properties-grid`): setiap kartu memiliki ikon, label caption uppercase, dan value pill semantik (prioritas berwarna semantik, penanggung jawab dengan ikon user, target tanggal, total tugas).
+- Desain ulang progress meter proyek: bukan lagi garis tipis terisolasi dengan teks 0% melayang di ujung kanan, melainkan kartu progres terintegrasi dengan judul, fraksi selesai (`X / Y tugas selesai`), lencana persentase emerald, dan bar progres hijau emerald bercahaya halus.
+- Perbarui navigasi bagian proyek (`.project-section-nav`): ubah deretan link teks polos menjadi tab segmented modern berikon (Tugas, Catatan, Milestone, Dokumen, Keputusan, Kendala) dengan lencana penghitung pill yang rapi.
+- Perbaiki tombol kembali `Semua proyek`: ubah tombol teks polos menjadi breadcrumb nav berikon `<ArrowLeft />` dengan transisi hover halus.
+- Perbaiki kartu `Langkah berikutnya`: ganti tampilan default `<details>` kaku dengan kartu interaktif berikon `<Sparkles />`, lencana tugas aktif, chevron animasi rotasi, dan daftar tugas berstatus dengan tautan rapi.
+- Verifikasi lengkap: 171 tes dalam 23 berkas lulus (`npm test`), 0 kesalahan TypeScript (`npm run typecheck`), dan Next.js production build sukses (`npm run build`).
+
 ## Overhaul dropdown, progress bar subtugas, inline-actions, dan dashboard mobile — 4 Oktober 2026
 
 - Perbaiki `.subtasks-progress-bar .bar-fill` dan `.subtask-mini-fill`: ganti garis diagonal hitam kaku dengan gradien hijau emerald modern (`linear-gradient(90deg, #10b981 0%, #059669 100%)`), pendaran bayangan lembut, animasi transisi lebar halus, serta lencana persentase pill pastel emerald.

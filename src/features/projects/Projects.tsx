@@ -5,18 +5,28 @@ import Link from 'next/link';
 import {
   FolderOpen,
   ArrowUpRight,
+  ArrowLeft,
   Plus,
   Flag,
   FileText,
   Scale,
-  AlertCircle,
   Calendar,
   CheckCircle2,
   Search,
   X,
   Layers,
-  ShieldCheck,
   Clock,
+  Edit2,
+  User,
+  CheckSquare,
+  TrendingUp,
+  ListTodo,
+  FileCode,
+  AlertTriangle,
+  AlertCircle,
+  ShieldCheck,
+  ChevronDown,
+  Sparkles,
 } from 'lucide-react';
 import { ProjectNotes } from './ProjectNotes';
 import { Editor } from '../Editor';
@@ -28,6 +38,7 @@ import { formatDate, today } from '@/lib/date';
 import { Meter } from '@/components/charts/Charts';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { recordHref } from '../workspace/workspace-navigation';
+import { formatChoiceLabel } from '../catalog';
 
 export function Projects({ data, refresh }: { data: Workspace; refresh: () => Promise<void> }) {
   const query = useSearchParams(),
@@ -64,89 +75,206 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
     <>
       {selected ? (
         <>
-          <button className="text-button" onClick={() => router.push('/proyek')}>
-            ← Semua proyek
-          </button>
+          <div className="project-detail-header-nav">
+            <button
+              type="button"
+              className="btn-back-project"
+              onClick={() => router.push('/proyek')}
+            >
+              <ArrowLeft size={15} />
+              <span>Semua proyek</span>
+            </button>
+            <span className="project-breadcrumb-sep">/</span>
+            <span className="project-breadcrumb-title">{String(selected.data.title)}</span>
+          </div>
+
           <section className="project-cover">
-            <span className="project-symbol">
-              <FolderOpen size={26} />
-            </span>
-            <div className="section-head">
-              <div>
-                <span className="eyebrow">{String(selected.data.code)}</span>
-                <h2>{String(selected.data.title)}</h2>
+            <div className="project-hero-header">
+              <div className="project-hero-main">
+                <div
+                  className="project-symbol-box"
+                  style={{
+                    backgroundColor: selected.data.color
+                      ? `color-mix(in srgb, ${selected.data.color} 15%, var(--brand-soft))`
+                      : undefined,
+                    color: selected.data.color ? String(selected.data.color) : undefined,
+                  }}
+                >
+                  <FolderOpen size={28} />
+                </div>
+                <div className="project-hero-info">
+                  <div className="project-hero-tags">
+                    <span className="project-code-tag">{String(selected.data.code || 'PROYEK')}</span>
+                    <span className={`project-status-tag status-${selected.data.status || 'rencana'}`}>
+                      <span className="status-dot" />
+                      {formatChoiceLabel(String(selected.data.status || 'rencana'))}
+                    </span>
+                  </div>
+                  <h1 className="project-hero-title">{String(selected.data.title)}</h1>
+                </div>
               </div>
-              <button onClick={() => setEdit(selected)}>Ubah proyek</button>
+              <button
+                type="button"
+                className="btn-edit-project"
+                onClick={() => setEdit(selected)}
+              >
+                <Edit2 size={15} />
+                <span>Ubah proyek</span>
+              </button>
             </div>
-            <p>{String(selected.data.description || 'Belum ada deskripsi proyek.')}</p>
-            <div className="project-properties">
-              <span>
-                Status<strong className="badge">{String(selected.data.status || 'rencana')}</strong>
-              </span>
-              <span>
-                Prioritas<strong>{String(selected.data.priority || 'normal')}</strong>
-              </span>
-              <span>
-                Penanggung jawab{' '}
-                <strong>{String(selected.data.assignee || 'Belum ditentukan')}</strong>
-              </span>
-              <span>
-                Target{' '}
-                <strong>
+
+            <p className={`project-hero-desc ${!selected.data.description ? 'is-empty' : ''}`}>
+              {String(selected.data.description || 'Belum ada deskripsi proyek.')}
+            </p>
+
+            <div className="project-properties project-properties-grid">
+              <div className="project-prop-card">
+                <span className="prop-caption">
+                  <Flag size={12} className="prop-icon" /> PRIORITAS
+                </span>
+                <span className={`prop-pill priority-${selected.data.priority || 'normal'}`}>
+                  {formatChoiceLabel(String(selected.data.priority || 'normal'))}
+                </span>
+              </div>
+
+              <div className="project-prop-card">
+                <span className="prop-caption">
+                  <User size={12} className="prop-icon" /> PENANGGUNG JAWAB
+                </span>
+                <strong className="prop-value">
+                  {String(selected.data.assignee || 'Belum ditentukan')}
+                </strong>
+              </div>
+
+              <div className="project-prop-card">
+                <span className="prop-caption">
+                  <Calendar size={12} className="prop-icon" /> TARGET SELESAI
+                </span>
+                <strong className="prop-value">
                   {selected.data.target_date
                     ? formatDate(String(selected.data.target_date))
                     : 'Belum ditentukan'}
                 </strong>
-              </span>
-              <span>
-                Tugas <strong>{tasksFor(selected.id).length} catatan</strong>
-              </span>
+              </div>
+
+              <div className="project-prop-card">
+                <span className="prop-caption">
+                  <CheckSquare size={12} className="prop-icon" /> TOTAL TUGAS
+                </span>
+                <strong className="prop-value">
+                  {tasksFor(selected.id).length} catatan
+                </strong>
+              </div>
             </div>
-            <Meter value={scopeProgress(tasksFor(selected.id))} />
+
+            <div className="project-progress-card">
+              <div className="project-progress-meta">
+                <div className="progress-title-wrap">
+                  <TrendingUp size={15} className="progress-icon" />
+                  <span className="progress-title">Progres Tugas Terhubung</span>
+                </div>
+                <div className="progress-stats-wrap">
+                  <span className="progress-fraction">
+                    {tasksFor(selected.id).filter((t) => t.status === 'selesai').length} / {tasksFor(selected.id).length} tugas selesai
+                  </span>
+                  <span className="progress-badge">
+                    {scopeProgress(tasksFor(selected.id))}%
+                  </span>
+                </div>
+              </div>
+              <div className="project-progress-track">
+                <div
+                  className="project-progress-fill"
+                  style={{ width: `${scopeProgress(tasksFor(selected.id))}%` }}
+                />
+              </div>
+            </div>
+
+            <div className="sr-only" aria-hidden="true">
+              <Meter value={scopeProgress(tasksFor(selected.id))} />
+            </div>
           </section>
 
           <nav className="project-section-nav" aria-label="Bagian proyek">
-            <a href="#project-tasks">
-              Tugas <span>{tasksFor(selected.id).length}</span>
+            <a href="#project-tasks" className="project-nav-link">
+              <ListTodo size={15} />
+              <span>Tugas</span>
+              <span className="nav-counter">{tasksFor(selected.id).length}</span>
             </a>
-            <a href="#project-notes">Catatan</a>
-            <a href="#project-milestones">Milestone</a>
-            <a href="#project-documents">Dokumen</a>
-            <a href="#project-decisions">Keputusan</a>
-            <a href="#project-obstacles">
-              Kendala <span>{relatedIssues.length}</span>
+            <a href="#project-notes" className="project-nav-link">
+              <FileText size={15} />
+              <span>Catatan</span>
+            </a>
+            <a href="#project-milestones" className="project-nav-link">
+              <Flag size={15} />
+              <span>Milestone</span>
+              <span className="nav-counter">
+                {(data.milestones || []).filter((row) => row.data.workstream_id === selected.id).length}
+              </span>
+            </a>
+            <a href="#project-documents" className="project-nav-link">
+              <FileCode size={15} />
+              <span>Dokumen</span>
+              <span className="nav-counter">{relatedDocuments.length}</span>
+            </a>
+            <a href="#project-decisions" className="project-nav-link">
+              <Scale size={15} />
+              <span>Keputusan</span>
+              <span className="nav-counter">{relatedDecisions.length}</span>
+            </a>
+            <a href="#project-obstacles" className="project-nav-link">
+              <AlertTriangle size={15} />
+              <span>Kendala</span>
+              <span className="nav-counter">{relatedIssues.length}</span>
             </a>
           </nav>
 
           <details className="card project-next-actions">
-            <summary>Langkah berikutnya</summary>
-            <p>
-              <small>
+            <summary className="project-next-summary">
+              <div className="next-summary-title">
+                <Sparkles size={16} className="next-icon" />
+                <span>Langkah Berikutnya</span>
+                <span className="next-count-pill">
+                  {projectTasks.filter((row) => !['selesai', 'dibatalkan'].includes(String(row.data.status))).length} tugas aktif
+                </span>
+              </div>
+              <ChevronDown size={16} className="next-chevron" />
+            </summary>
+            <div className="project-next-body">
+              <p className="project-next-desc">
                 Tiga tugas aktif dengan tenggat terdekat dari catatan proyek yang dimuat.
-              </small>
-            </p>
-            {[...projectTasks]
-              .filter((row) => !['selesai', 'dibatalkan'].includes(String(row.data.status)))
-              .sort((a, b) =>
-                String(a.data.due_date || '9999').localeCompare(String(b.data.due_date || '9999')),
-              )
-              .slice(0, 3)
-              .map((row) => (
-                <Link key={row.id} href={recordHref('work-items', row)}>
-                  <strong>{String(row.data.title)}</strong>
-                  <small>
-                    {row.data.due_date ? formatDate(String(row.data.due_date)) : 'Tanpa tenggat'}
-                  </small>
-                </Link>
-              ))}
-            {!projectTasks.some(
-              (row) => !['selesai', 'dibatalkan'].includes(String(row.data.status)),
-            ) && (
-              <p>
-                Belum ada tugas aktif.{' '}
-                <a href="#project-tasks">Tambah tugas di bagian tugas proyek →</a>
               </p>
-            )}
+              <div className="project-next-list">
+                {[...projectTasks]
+                  .filter((row) => !['selesai', 'dibatalkan'].includes(String(row.data.status)))
+                  .sort((a, b) =>
+                    String(a.data.due_date || '9999').localeCompare(String(b.data.due_date || '9999')),
+                  )
+                  .slice(0, 3)
+                  .map((row) => (
+                    <Link key={row.id} href={recordHref('work-items', row)} className="project-next-item">
+                      <div className="next-item-main">
+                        <span className={`next-task-status-dot status-${row.data.status || 'rencana'}`} />
+                        <strong>{String(row.data.title)}</strong>
+                      </div>
+                      <div className="next-item-meta">
+                        <span className="next-due-date">
+                          {row.data.due_date ? formatDate(String(row.data.due_date)) : 'Tanpa tenggat'}
+                        </span>
+                        <ArrowUpRight size={14} className="next-arrow" />
+                      </div>
+                    </Link>
+                  ))}
+              </div>
+              {!projectTasks.some(
+                (row) => !['selesai', 'dibatalkan'].includes(String(row.data.status)),
+              ) && (
+                <div className="project-next-empty">
+                  <span>Belum ada tugas aktif.</span>{' '}
+                  <a href="#project-tasks" className="text-link">Tambah tugas di bagian tugas proyek →</a>
+                </div>
+              )}
+            </div>
           </details>
 
           <div className="project-context">
