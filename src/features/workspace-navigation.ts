@@ -18,15 +18,19 @@ export function recordHref(entity: Entity, row: Item) {
   return slug ? `/${slug}?bagian=${entity}&record=${encodeURIComponent(row.id)}` : '/proyek';
 }
 
-export function searchWorkspace(data: Workspace, text: string) {
+export function searchWorkspace(data: Workspace, text: string, scope = 'all') {
   const words = text.toLocaleLowerCase('id').trim().split(/\s+/).filter(Boolean);
   if (!words.length) return [];
   return (Object.keys(data) as Entity[])
+    .filter((entity) => scope === 'all' || entity === scope)
     .flatMap((entity) =>
       (data[entity] || [])
         .filter((row) => {
           // Search loaded records only. Nothing is sent to a third-party search service.
-          const content = Object.values(row.data)
+          const project = data.workstreams?.find(
+            (project) => project.id === row.data.workstream_id,
+          );
+          const content = [...Object.values(row.data), project?.data.title]
             .filter((value) => typeof value === 'string')
             .join(' ')
             .toLocaleLowerCase('id');
@@ -36,6 +40,11 @@ export function searchWorkspace(data: Workspace, text: string) {
           id: `${entity}:${row.id}`,
           title: String(row.data.title),
           kind: catalog[entity].title,
+          entity,
+          context: String(
+            data.workstreams?.find((project) => project.id === row.data.workstream_id)?.data
+              .title || '',
+          ),
           href: recordHref(entity, row),
         })),
     )

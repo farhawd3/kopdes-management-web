@@ -1,5 +1,13 @@
 # Checklist produk aktif
 
+## Redesain ruang kerja 3 Oktober
+- [x] Perbarui token visual, sidebar arang, radius/kontrol, kartu, tab, dan hierarki judul bersama.
+- [x] Pencarian berscope dengan konteks proyek, tautan sumber, dan batas data dimuat yang jelas.
+- [x] Navigasi bagian detail proyek dan relasi dokumen/keputusan/kendala melalui tugas, disertai tes isolasi antarproyek.
+- [ ] Audit visual ulang seluruh modul pada 360/768/1024/1440 px, terang dan gelap setelah paket ini.
+- [ ] Selesaikan 9 galat lint lama dan periksa ulang lint seluruh repo.
+- [ ] UAT interaksi pencarian/proyek dengan data nyata serta audit rinci desain setiap modul.
+
 ## Perapian 2 Oktober
 - [x] Hilangkan dua blok `!important` duplikat (Section 6.1 & 6.5) yang menimpa rail tablet dan memicu overflow di 768px; beri `max-width:100%` pada skeleton/nav cards; naikkan tombol aksi ke 44px untuk mobile.
 - [x] Kurangi aturan `margin-left`/`width` yang saling menimpa pada breakpoint: hapus blok media 768–1100 duplikat (sidebar 205px) yang tertimpa blok tablet-rail; satu breakpoint kini satu aturan untuk topbar/main/sidebar.

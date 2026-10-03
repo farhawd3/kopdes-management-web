@@ -39,7 +39,7 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { usePreference } from '@/lib/usePreference';
-import { searchWorkspace } from '@/features/workspace-navigation';
+import { WorkspaceSearch } from '@/features/WorkspaceSearch';
 import { Star, ChevronDown, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { ManagerActionModal } from './ManagerActionModal';
 
@@ -75,7 +75,11 @@ const sections = [
     'blue',
   ],
   ['Kegiatan Lapangan', ['/jurnal'], 'amber'],
-  ['Pencatatan Buku', ['/pencatatan', '/keuangan', '/barang', '/stok-opname', '/anggota'], 'emerald'],
+  [
+    'Pencatatan Buku',
+    ['/pencatatan', '/keuangan', '/barang', '/stok-opname', '/anggota'],
+    'emerald',
+  ],
   ['Operasional Gerai', ['/gerai', '/kesiapan', '/risiko', '/laporan'], 'purple'],
   ['Koordinasi & Berkas', ['/rapat', '/dokumen', '/mitra', '/tim'], 'rose'],
   ['Sistem & Bantuan', ['/pengaturan', '/panduan'], 'blue'],
@@ -142,7 +146,6 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
   const { theme, toggleTheme } = useTheme();
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
   const [menu, setMenu] = useState(false),
-    [search, setSearch] = useState(''),
     [error, setError] = useState(''),
     [actionModalOpen, setActionModalOpen] = useState(false);
   const dialog = useRef<HTMLDialogElement>(null);
@@ -185,9 +188,7 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
   const name = String(workspace?.organization?.[0]?.data.manager || 'Manajer');
   const current = navigation.find(([href]) => href === path)?.[1] || 'Beranda';
   return (
-    <div
-      className={`manager-shell ${desktopSidebarHidden === 'true' ? 'sidebar-collapsed' : ''}`}
-    >
+    <div className={`manager-shell ${desktopSidebarHidden === 'true' ? 'sidebar-collapsed' : ''}`}>
       <a className="skip" href="#main">
         Lewati navigasi
       </a>
@@ -209,10 +210,17 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
             {desktopSidebarHidden === 'true' ? <PanelLeftOpen size={18} /> : <Menu size={18} />}
             <span className="topbar-menu-label">Menu</span>
           </button>
-          <Link href="/beranda" className="manager-profile" aria-label={`Kembali ke Beranda (${name})`} title={`Kembali ke Beranda (${name})`}>
+          <Link
+            href="/beranda"
+            className="manager-profile"
+            aria-label={`Kembali ke Beranda (${name})`}
+            title={`Kembali ke Beranda (${name})`}
+          >
             <span className="manager-avatar-badge">{name[0] || 'M'}</span>
           </Link>
-          <span className="topbar-crumb-sep" aria-hidden="true">/</span>
+          <span className="topbar-crumb-sep" aria-hidden="true">
+            /
+          </span>
           <div className="manager-location-wrap">
             <span className="manager-location-dot" aria-hidden="true" />
             <span className="manager-location">{current}</span>
@@ -252,7 +260,10 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
           >
             <Plus size={18} />
           </button>
-          <button aria-label="Cari halaman" onClick={() => dialog.current?.showModal()}>
+          <button
+            aria-label="Cari halaman atau catatan"
+            onClick={() => dialog.current?.showModal()}
+          >
             <Search size={19} />
           </button>
 
@@ -334,8 +345,13 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
             <div className="sidebar-brand-emblem">
               <span>KD</span>
             </div>
-            <div className="sidebar-brand-info" title={String(workspace?.organization?.[0]?.data.title || 'Koperasi')}>
-              <strong>{getCoopShortName(String(workspace?.organization?.[0]?.data.title || ''))}</strong>
+            <div
+              className="sidebar-brand-info"
+              title={String(workspace?.organization?.[0]?.data.title || 'Koperasi')}
+            >
+              <strong>
+                {getCoopShortName(String(workspace?.organization?.[0]?.data.title || ''))}
+              </strong>
               <small>Ruang Kerja Manajer</small>
             </div>
           </Link>
@@ -369,7 +385,7 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
         >
           <Search size={14} />
           <span>Cari cepat...</span>
-          <kbd>⌘K</kbd>
+          <kbd>Ctrl K</kbd>
         </button>
 
         <div className="manager-sidebar-nav-scroll">
@@ -580,7 +596,10 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
             <span className="mobile-sheet-avatar">{name[0] || 'M'}</span>
             <div className="mobile-sheet-user-info">
               <strong>{name}</strong>
-              <small>{getCoopShortName(String(workspace?.organization?.[0]?.data.title || ''))} · Ruang Kerja</small>
+              <small>
+                {getCoopShortName(String(workspace?.organization?.[0]?.data.title || ''))} · Ruang
+                Kerja
+              </small>
             </div>
           </div>
           <div className="mobile-sheet-header-actions">
@@ -642,11 +661,7 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
           ))}
 
           <div className="mobile-sheet-footer">
-            <button
-              type="button"
-              className="mobile-sheet-footer-btn"
-              onClick={toggleTheme}
-            >
+            <button type="button" className="mobile-sheet-footer-btn" onClick={toggleTheme}>
               {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
               <span>Mode {theme === 'dark' ? 'Terang' : 'Gelap'}</span>
             </button>
@@ -699,59 +714,13 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
             <ArrowUpRight size={14} />
           </button>
         </div>
-        <input
-          autoFocus
-          aria-label="Cari halaman atau isi catatan"
-          type="search"
-          placeholder="Cari tugas, anggota, dokumen, atau halaman…"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+        <WorkspaceSearch
+          workspace={workspace}
+          onNavigate={() => {
+            dialog.current?.close();
+            setMenu(false);
+          }}
         />
-        <div className="command-results">
-          {search.trim() && workspace && (
-            <>
-              <small className="search-group-label">Catatan</small>
-              {searchWorkspace(workspace, search).map((result) => (
-                <Link
-                  key={result.id}
-                  href={result.href}
-                  onClick={() => {
-                    dialog.current?.close();
-                    setMenu(false);
-                  }}
-                >
-                  <span>
-                    <strong>{result.title}</strong>
-                    <small>{result.kind}</small>
-                  </span>
-                  <ArrowUpRight size={16} />
-                </Link>
-              ))}
-              {!searchWorkspace(workspace, search).length && <p>Tidak ada catatan yang cocok.</p>}
-            </>
-          )}
-          {search.trim() && !workspace && (
-            <p>Catatan belum dimuat. Pencarian halaman tetap tersedia.</p>
-          )}
-          <small className="search-group-label">Halaman</small>
-          {navigation
-            .filter(([, label]) =>
-              label.toLocaleLowerCase('id').includes(search.toLocaleLowerCase('id')),
-            )
-            .map(([href, label]) => (
-              <Link
-                key={href}
-                href={href}
-                onClick={() => {
-                  dialog.current?.close();
-                  setMenu(false);
-                }}
-              >
-                {label}
-                <ArrowUpRight size={16} />
-              </Link>
-            ))}
-        </div>
       </dialog>
     </div>
   );

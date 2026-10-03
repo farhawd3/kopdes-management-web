@@ -2,11 +2,7 @@ import type { Metadata } from 'next';
 import '@fontsource-variable/inter';
 import '@fontsource-variable/plus-jakarta-sans';
 import './globals.css';
-import './workspace.css';
-import './studio.css';
 import './personal.css';
-import './polish.css';
-import './responsive-finish.css';
 export const metadata: Metadata = {
   title: 'Kopdes Management Web',
   description: 'Ruang kerja pribadi manajer koperasi: rencana, koordinasi, kesiapan, dan laporan.',

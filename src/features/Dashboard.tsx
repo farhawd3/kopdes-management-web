@@ -221,8 +221,8 @@ export function Dashboard({ data }: { data: Workspace }) {
     <div className="manager-home">
       <header className="home-heading">
         <div>
-          <span className="home-eyebrow">Dasbor Manajer — KDMP Puntukrejo</span>
-          <h1>Dasbor Operasional</h1>
+          <span className="home-eyebrow">Ruang kerja</span>
+          <h1>Ringkasan pekerjaan</h1>
         </div>
         <div className="home-heading-actions">
           <Link href="/tugas?baru=1" className="home-action-btn">

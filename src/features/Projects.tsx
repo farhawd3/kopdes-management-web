@@ -27,6 +27,7 @@ import { scopeProgress } from '@/lib/progress';
 import { formatDate, today } from '@/lib/date';
 import { Meter } from '@/components/charts/Charts';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { recordHref } from './workspace-navigation';
 
 export function Projects({ data, refresh }: { data: Workspace; refresh: () => Promise<void> }) {
   const query = useSearchParams(),
@@ -36,6 +37,21 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
   const [status, setStatus] = useState('');
   const projects = data.workstreams || [];
   const selected = projects.find((row) => row.id === query.get('id'));
+  const projectTasks = selected
+    ? (data['work-items'] || []).filter((row) => row.data.workstream_id === selected.id)
+    : [];
+  // These domains link through tasks, rather than having a project field of their own.
+  const relatedDocuments = (data.documents || []).filter((row) =>
+    projectTasks.some((task) => task.data.document_id === row.id),
+  );
+  const relatedDecisions = (data.decisions || []).filter(
+    (row) =>
+      row.data.meeting_id &&
+      projectTasks.some((task) => task.data.meeting_id === row.data.meeting_id),
+  );
+  const relatedIssues = (data.issues || []).filter((row) =>
+    projectTasks.some((task) => task.data.issue_id === row.id),
+  );
 
   const tasksFor = (id: string) =>
     (data['work-items'] || [])
@@ -89,12 +105,30 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
             <Meter value={scopeProgress(tasksFor(selected.id))} />
           </section>
 
+          <nav className="project-section-nav" aria-label="Bagian proyek">
+            <a href="#project-tasks">
+              Tugas <span>{tasksFor(selected.id).length}</span>
+            </a>
+            <a href="#project-notes">Catatan</a>
+            <a href="#project-milestones">Milestone</a>
+            <a href="#project-documents">Dokumen</a>
+            <a href="#project-decisions">Keputusan</a>
+            <a href="#project-obstacles">
+              Kendala <span>{relatedIssues.length}</span>
+            </a>
+          </nav>
+
           <div className="project-context">
             {/* Project Notes */}
-            <ProjectNotes key={selected.id} project={selected} refresh={refresh} />
+            <div id="project-notes" className="project-section-anchor">
+              <ProjectNotes key={selected.id} project={selected} refresh={refresh} />
+            </div>
 
             {/* Related Milestones */}
-            <section className="card project-related-card">
+            <section
+              id="project-milestones"
+              className="card project-related-card project-section-anchor"
+            >
               <h3>
                 <Flag size={18} /> Milestone terkait
               </h3>
@@ -119,27 +153,34 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
             </section>
 
             {/* Related Documents */}
-            <section className="card project-related-card">
+            <section
+              id="project-documents"
+              className="card project-related-card project-section-anchor"
+            >
               <h3>
                 <FileText size={18} /> Dokumen & Perizinan Terkait
               </h3>
-              {(data.documents || []).filter((row) => row.data.workstream_id === selected.id)
-                .length ? (
-                (data.documents || [])
-                  .filter((row) => row.data.workstream_id === selected.id)
-                  .map((row) => (
-                    <div className="attention doc-item-row" key={row.id}>
-                      <div>
+              {relatedDocuments.length ? (
+                relatedDocuments.map((row) => (
+                  <div className="attention doc-item-row" key={row.id}>
+                    <div>
+                      <Link href={recordHref('documents', row)}>
                         <strong>{String(row.data.title)}</strong>
-                        <small>{String(row.data.category || 'Dokumen')}</small>
-                      </div>
-                      {Boolean(row.data.link) && (
-                        <a href={String(row.data.link)} target="_blank" rel="noreferrer" className="text-link">
-                          Buka berkas ↗
-                        </a>
-                      )}
+                      </Link>
+                      <small>{String(row.data.category || 'Dokumen')}</small>
                     </div>
-                  ))
+                    {Boolean(row.data.link) && (
+                      <a
+                        href={String(row.data.link)}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-link"
+                      >
+                        Buka berkas ↗
+                      </a>
+                    )}
+                  </div>
+                ))
               ) : (
                 <p>Belum ada dokumen yang ditautkan ke proyek ini.</p>
               )}
@@ -149,20 +190,22 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
             </section>
 
             {/* Related Decisions */}
-            <section className="card project-related-card">
+            <section
+              id="project-decisions"
+              className="card project-related-card project-section-anchor"
+            >
               <h3>
                 <Scale size={18} /> Keputusan Strategis
               </h3>
-              {(data.decisions || []).filter((row) => row.data.workstream_id === selected.id)
-                .length ? (
-                (data.decisions || [])
-                  .filter((row) => row.data.workstream_id === selected.id)
-                  .map((row) => (
-                    <div className="attention decision-item-row" key={row.id}>
+              {relatedDecisions.length ? (
+                relatedDecisions.map((row) => (
+                  <div className="attention decision-item-row" key={row.id}>
+                    <Link href={recordHref('decisions', row)}>
                       <strong>{String(row.data.title)}</strong>
-                      {Boolean(row.data.reason) && <small>{String(row.data.reason)}</small>}
-                    </div>
-                  ))
+                    </Link>
+                    {Boolean(row.data.reason) && <small>{String(row.data.reason)}</small>}
+                  </div>
+                ))
               ) : (
                 <p>Belum ada keputusan formal yang dicatat untuk proyek ini.</p>
               )}
@@ -170,23 +213,52 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
                 Buka buku keputusan →
               </Link>
             </section>
+            <section
+              id="project-obstacles"
+              className="card project-related-card project-section-anchor"
+            >
+              <h3>
+                <ShieldCheck size={18} /> Kendala terkait tugas
+              </h3>
+              {relatedIssues.map((row) => (
+                <Link
+                  className="project-obstacle-link"
+                  key={row.id}
+                  href={recordHref('issues', row)}
+                >
+                  <span>
+                    <strong>{String(row.data.title)}</strong>
+                    <small>Kendala · {String(row.data.status || 'Belum ditentukan')}</small>
+                  </span>
+                  <ArrowUpRight size={16} aria-hidden="true" />
+                </Link>
+              ))}
+              {!relatedIssues.length && (
+                <p>Belum ada kendala yang ditautkan melalui tugas proyek ini.</p>
+              )}
+              <Link className="text-link" href="/risiko">
+                Kelola kendala & risiko →
+              </Link>
+            </section>
           </div>
 
-          <Records
-            key={selected.id}
-            entity="work-items"
-            workspace={data}
-            refresh={refresh}
-            scopeId={selected.id}
-          />
+          <div id="project-tasks" className="project-section-anchor">
+            <Records
+              key={selected.id}
+              entity="work-items"
+              workspace={data}
+              refresh={refresh}
+              scopeId={selected.id}
+            />
+          </div>
         </>
       ) : (
         <>
           <section className="workspace-intro projects-intro-banner">
             <div>
-              <span className="eyebrow">INISIATIF & BIDANG KERJA</span>
+              <span className="eyebrow">Ruang proyek</span>
               <h2>Proyek Anda</h2>
-              <p>Kelola target utama, pembagian tugas tim, mitigasi kendala, dan capaian inisiatif koperasi.</p>
+              <p>Tugas, milestone, dan catatan untuk setiap proyek.</p>
             </div>
             <button className="primary" onClick={() => setEdit(null)}>
               <Plus size={18} /> Proyek baru
@@ -196,14 +268,18 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
           {/* Project Summary KPI Bar */}
           <div className="projects-kpi-grid">
             <div className="project-kpi-card">
-              <span className="kpi-icon-wrap"><FolderOpen size={18} /></span>
+              <span className="kpi-icon-wrap">
+                <FolderOpen size={18} />
+              </span>
               <div className="kpi-info">
                 <strong>{projects.length}</strong>
                 <small>Total Proyek</small>
               </div>
             </div>
             <div className="project-kpi-card">
-              <span className="kpi-icon-wrap kpi-active"><Clock size={18} /></span>
+              <span className="kpi-icon-wrap kpi-active">
+                <Clock size={18} />
+              </span>
               <div className="kpi-info">
                 <strong>
                   {projects.filter((p) => (p.data.status || 'rencana') === 'aktif').length}
@@ -212,18 +288,22 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
               </div>
             </div>
             <div className="project-kpi-card">
-              <span className="kpi-icon-wrap kpi-done"><CheckCircle2 size={18} /></span>
+              <span className="kpi-icon-wrap kpi-done">
+                <CheckCircle2 size={18} />
+              </span>
               <div className="kpi-info">
-                <strong>
-                  {projects.filter((p) => p.data.status === 'selesai').length}
-                </strong>
+                <strong>{projects.filter((p) => p.data.status === 'selesai').length}</strong>
                 <small>Proyek Selesai</small>
               </div>
             </div>
             <div className="project-kpi-card">
-              <span className="kpi-icon-wrap kpi-tasks"><Layers size={18} /></span>
+              <span className="kpi-icon-wrap kpi-tasks">
+                <Layers size={18} />
+              </span>
               <div className="kpi-info">
-                <strong>{(data['work-items'] || []).filter((t) => Boolean(t.data.workstream_id)).length}</strong>
+                <strong>
+                  {(data['work-items'] || []).filter((t) => Boolean(t.data.workstream_id)).length}
+                </strong>
                 <small>Tugas Terhubung</small>
               </div>
             </div>
@@ -291,7 +371,12 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
               .map((row) => {
                 const tasks = tasksFor(row.id);
                 const openIssues = (data.issues || []).filter(
-                  (i) => i.data.workstream_id === row.id && i.data.status !== 'ditutup',
+                  (issue) =>
+                    issue.data.status !== 'ditutup' &&
+                    (data['work-items'] || []).some(
+                      (task) =>
+                        task.data.workstream_id === row.id && task.data.issue_id === issue.id,
+                    ),
                 );
                 const nextTask = tasks
                   .filter((t) => !['selesai', 'dibatalkan'].includes(t.status) && t.due_date >= now)
@@ -347,7 +432,8 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
                         <CheckCircle2 size={12} />
                         <span>
                           {tasks.filter((task) => task.status === 'selesai').length} /{' '}
-                          {tasks.filter((task) => task.status !== 'dibatalkan').length} tugas selesai
+                          {tasks.filter((task) => task.status !== 'dibatalkan').length} tugas
+                          selesai
                         </span>
                       </span>
                       {openIssues.length > 0 ? (

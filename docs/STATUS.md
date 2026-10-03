@@ -1,5 +1,15 @@
 # Status proyek — 3 Oktober 2026
 
+## Redesain ruang kerja dan konteks proyek (3 Oktober 2026)
+
+- Cabang kerja: `codex/workspace-redesign`. Konsolidasi CSS yang sudah ada saat mulai bekerja dipertahankan; impor aktif tetap `globals.css` dan `personal.css`.
+- Sistem visual bersama diperbarui: kanvas netral kehijauan, aksen lime lembut, sidebar arang dengan token lokal yang kontras, radius komponen, ukuran kontrol, judul Beranda, tab, kartu, dan topbar. Mode gelap tetap memakai token tema.
+- Pencarian memiliki penyaring Semua/Tugas/Proyek/Dokumen/Rapat; tugas dapat ditemukan melalui nama proyek terkait. Hasil menampilkan konteks proyek, tautan sumber, dan batas cakupan data yang sudah dimuat (maksimal 30 hasil). Penyaring diterapkan sebelum batas hasil.
+- Detail proyek mempunyai navigasi ke tugas, catatan, milestone, dokumen, keputusan, dan kendala. Dokumen/kendala diambil lewat referensi tugas; keputusan melalui rapat terkait tugas. Tidak menggunakan `workstream_id` fiktif pada domain yang tidak memilikinya. Keputusan dimuat dalam scope halaman proyek. Indikator kendala di galeri memakai hubungan yang sama.
+- Verifikasi: 151 tes pada 20 berkas lulus, typecheck dan build lulus. Empat tes baru memeriksa pencarian, pembatasan hasil, cakupan data, serta isolasi hubungan antarproyek. Lint pada berkas pencarian/proyek/navigasi yang diubah lulus; lint penuh gagal dengan 9 galat dan 10 peringatan yang sudah terdapat pada kode lama (efek pembaruan state dan `any` pada editor).
+- **Belum diverifikasi secara visual:** 360/768/1024/1440 px dan tema terang/gelap setelah perubahan ini. Alat browser lokal gagal menghubungkan tab (timeout CDP), sehingga tidak ada klaim pemeriksaan viewport atau perangkat fisik baru. Belum deployment atau migrasi cloud.
+- Paket lanjutan: audit render seluruh modul; pemeriksaan navigasi/sidebar dan dialog; selesaikan galat lint lama; UAT data nyata. Pembaruan komponen bersama bukan bukti redesain rinci setiap modul telah selesai.
+
 ## Lapisan Polish UI (3 Oktober 2026)
 - Dasbor beranda diperhalus untuk tampilan segar & bersih: elevasi kartu seragam (`--shadow-xs`), kartu KPI setinggi & teralur, lajur judul beranda bernapas.
 - Komponen keseluruhan: fokus `focus-visible` 2px aksen brand; bottom bar mobile diberi `env(safe-area-inset-bottom)` agar label tak terpotong; bar follow-up compact sekarang melipat rapi tanpa memotong label di 360px.

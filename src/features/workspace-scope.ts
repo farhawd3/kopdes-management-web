@@ -34,6 +34,7 @@ export function pageEntities(slug: string): Entity[] {
       'issues',
     ],
     proyek: [
+      'decisions',
       'work-items',
       'milestones',
       'sprints',

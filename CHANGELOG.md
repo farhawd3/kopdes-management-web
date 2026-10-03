@@ -1,5 +1,12 @@
 # Changelog
 
+### Redesain ruang kerja dan konteks proyek (3 Oktober 2026)
+
+- Pertahankan konsolidasi stylesheet yang sudah ada; perbarui palet netral/hijau lembut, sidebar arang, radius, kontrol, kartu, tab, topbar, dan hierarki judul Beranda.
+- Rapikan pencarian dengan penyaring jenis, pencocokan nama proyek, konteks hasil, dan keterangan cakupan data yang dimuat.
+- Tambah pintasan bagian detail proyek; perbaiki relasi dokumen, keputusan rapat, dan kendala melalui referensi tugas serta tautan ke sumber.
+- Verifikasi: 151 tes, typecheck, build, dan lint khusus berkas fitur baru lulus. Lint seluruh repo masih gagal pada 9 galat lama. Audit browser empat ukuran belum berhasil karena koneksi alat browser mengalami timeout; desain rinci seluruh modul dan UAT masih terbuka.
+
 ### Perbaikan Layout Semua Device & Sentuh Target (3 Oktober 2026)
 
 - Hilangkan dua blok `!important` duplikat `.manager-main`/` .manager-sidebar` (Section 6.1 & 6.5) yang saling menimpa aturan rail tablet dan memicu overflow horizontal di 768px.
