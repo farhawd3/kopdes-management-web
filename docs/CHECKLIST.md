@@ -4,6 +4,8 @@ Implementasi dan penerimaan dipisahkan. Bukti terakhir ada di [STATUS](STATUS.md
 
 ## Implementasi tersedia
 
+- [x] PLAN-ASTRA fase 1: audit AST seluruh kontrol HTML, inventaris rute/overlay, CSS dan selector berulang yang dapat dibuat ulang.
+
 - [x] Contoh konfigurasi/panduan lokal memakai host yang sama dengan server; penolakan origin lokal diperbaiki dan diprobe tanpa mutasi database.
 
 - [x] Proyek fleksibel, properti, catatan terformat, milestone dan tugas terhubung.
