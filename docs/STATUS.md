@@ -1,5 +1,11 @@
 # Status proyek — 3 Oktober 2026
 
+## Lapisan Polish UI (3 Oktober 2026)
+- Dasbor beranda diperhalus untuk tampilan segar & bersih: elevasi kartu seragam (`--shadow-xs`), kartu KPI setinggi & teralur, lajur judul beranda bernapas.
+- Komponen keseluruhan: fokus `focus-visible` 2px aksen brand; bottom bar mobile diberi `env(safe-area-inset-bottom)` agar label tak terpotong; bar follow-up compact sekarang melipat rapi tanpa memotong label di 360px.
+- 0 overflow horizontal — 11 halaman dipindai di 360/768/1024/1440 px (browser nyata, light & dark).
+- Verifikasi: 147 tes (19 berkas) lulus, `tsc --noEmit` 0 error, `next build` sukses.
+
 ## Perbaikan Layout Semua Device & Sentuh Target (3 Oktober 2026)
 
 - **Akar overflow tablet (768px)**: menghapus dua blok `.manager-main` duplikat berkualifikasi `!important` (Section 6.1 dan 6.5 dengan media `max-width: 1023px`) yang menimpa rail tablet dan memicu scroll horizontal dokumen. Kini satu aturan layout per breakpoint: base 244px, rail 76px di 768–1100, 0 di ponsel.

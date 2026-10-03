@@ -14,6 +14,12 @@
 - Kini satu breakpoint = satu aturan untuk topbar, konten utama, dan sidebar; tidak ada dua blok media berrentang sama yang saling menimpa.
 - Verifikasi: 147 tes (19 berkas), `tsc --noEmit`, dan `next build` lulus.
 
+### Perbaikan Polished UI Layer (3 Oktober 2026)
+- Tambah aturan padding-safe-area untuk bottom bar mobile biarkan labels tidak *clip*; safe-area-inset-bottom.
+- Sempurna follow-up compact bar: wrap tepat, badge overflow-wrap break-word, actions fleksibel tanpa truncasi.
+- Sempurna stat KPI: padding & gap card mobile lebih nyaman; ring tetap, card height stabil.
+- Focus-visible ring bersih: `2px solid var(--brand)` pada semua elemen interaktif.
+
 ### Rombak Total Tampilan Agenda Kalender: Eliminasi Header Ganda & Kartu Tugas Modern Elegan (3 Oktober 2026)
 
 - **Eliminasi Redundansi Header Box-in-a-Box (`TaskCalendar.tsx` & `personal.css`)**:

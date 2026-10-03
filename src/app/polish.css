@@ -4,13 +4,13 @@
   --brand-hover: #aed43b;
   --brand-soft: #f2f8d9;
   --brand-soft-border: #d4e997;
-  --brand-text: #222b13;
+  --brand-text: #111215;
   --pill-active: #c5e64d;
 }
 :root.dark[data-theme-color='lime'] {
   --brand: #c5e64d;
   --brand-soft: #2b3620;
-  --brand-text: #1b2612;
+  --brand-text: #eef1f6;
 }
 .manager-topbar {
   border-bottom: 1px solid var(--line);
@@ -1318,3 +1318,107 @@
 [data-theme='dark'] .journal-view-all {
   color: var(--brand);
 }
+
+/* ==========================================================================
+   REDESIGN POLISH — fresh & clean finishing layer (strict polish on top of
+   working layout). No function removed; only spacing, rhythm, consistency.
+   ========================================================================== */
+
+/* ── Soften elevation: single quiet shadow for all cards, consistent radius ─ */
+.manager-main :is(.card, .home-panel, .task-database, .project-card,
+  .today-view-wrapper, .follow-up-panel, .follow-up-compact-bar,
+  .domain-records, .ledger-wrap, .settings-container, .stats-grid, .card-row) {
+  box-shadow: var(--shadow-xs);
+}
+
+/* ── Dashboard stat cards: equal height & aligned grid ────────────── */
+.dash-stats-row {
+  align-items: stretch;
+}
+.dash-stat-card {
+  height: 100%;
+  align-self: stretch;
+  min-height: 108px;
+}
+.dash-stat-card .dash-stat-value {
+  margin-top: auto;
+}
+.dash-stat-card > :last-child {
+  margin-top: auto;
+}
+
+/* ── Home heading: more breathing room, actions breathe on mobile ── */
+.home-heading {
+  gap: 14px !important;
+}
+.home-heading h1 {
+  letter-spacing: -0.03em !important;
+}
+.home-date-chip {
+  box-shadow: none !important;
+}
+
+/* ── Follow-up compact bar: never truncate chip label ─────────────── */
+.follow-up-compact-bar {
+  flex-wrap: wrap;
+}
+.follow-up-compact-bar .compact-bar-main-line {
+  flex-wrap: wrap;
+  gap: 6px 10px;
+}
+.follow-up-compact-bar .compact-bar-badge,
+.follow-up-compact-bar .compact-bar-snippet,
+.follow-up-compact-bar .compact-bar-actions {
+  max-width: 100%;
+}
+.follow-up-compact-bar .compact-bar-badge {
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+.follow-up-compact-bar .compact-bar-actions {
+  flex-wrap: wrap;
+  gap: 8px;
+  flex-shrink: 1;
+}
+.follow-up-compact-bar .compact-bar-snippet {
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
+
+/* ── Empty-state helper text trimmed for compact mobile ───────────── */
+@media (max-width: 600px) {
+  .dash-stat-card {
+    min-height: 96px;
+    padding: 14px 16px;
+    gap: 4px;
+  }
+  .home-heading {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+    margin-bottom: 18px !important;
+  }
+  .home-heading-actions {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .home-heading-actions .home-action-btn {
+    flex: 1 1 auto;
+  }
+}
+
+/* ── Bottom mobile nav: safe-area padding so labels never clip ────── */
+.manager-dock,
+.mobile-nav-bar,
+.bottom-nav {
+  padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+}
+
+/* ── Focus ring: clear and consistent (a11y, no removal of function) ─ */
+.manager-main :is(button, a, input, select):focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
