@@ -1,14 +1,11 @@
 'use client';
 import { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { useWorkspace } from './useWorkspace';
 import { pages, catalog } from './catalog';
 import { Records } from './Records';
 import { Dashboard } from './Dashboard';
-import { Roadmap } from './Roadmap';
-import { Settings } from './Settings';
-import { Reports } from './Reports';
 import { Editor } from './Editor';
-import { Projects } from './Projects';
 import { Operations, recordingPaths } from './Operations';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FollowUps } from './FollowUps';
@@ -18,6 +15,18 @@ import { schemas } from './schemas';
 import { today } from '@/lib/date';
 import { SkeletonLoading } from '@/components/ui/SkeletonLoading';
 import { pageEntities } from './workspace-scope';
+const Roadmap = dynamic(() => import('./Roadmap').then((module) => module.Roadmap), {
+  loading: () => <SkeletonLoading slug="roadmap" />,
+});
+const Settings = dynamic(() => import('./Settings').then((module) => module.Settings), {
+  loading: () => <SkeletonLoading slug="pengaturan" />,
+});
+const Reports = dynamic(() => import('./Reports').then((module) => module.Reports), {
+  loading: () => <SkeletonLoading slug="laporan" />,
+});
+const Projects = dynamic(() => import('./Projects').then((module) => module.Projects), {
+  loading: () => <SkeletonLoading slug="proyek" />,
+});
 export function WorkspacePage({ slug }: { slug: string }) {
   const query = useSearchParams();
   const router = useRouter();

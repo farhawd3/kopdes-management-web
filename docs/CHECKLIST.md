@@ -1,5 +1,15 @@
 # Checklist produk aktif
 
+
+## Pembersihan sumber dan state — 3 Oktober
+- [x] Validasi penggunaan dan hapus tiga komponen mati serta ekspor ProgressRing.
+- [x] Perbaiki pagination, cache halaman tambahan, permintaan ganda, dan galat scope lama.
+- [x] Pisahkan pemuatan modul proyek/laporan/pengaturan/Gantt.
+- [x] Satukan rumus progres; kecualikan pembatalan dan tenggat kosong.
+- [x] Periksa toolbar harian dan kartu periode dengan fixture terang pada 360/768/1024/1440 px.
+- [x] Jalankan 166 tes, typecheck, lint, build, serta audit sumber.
+- [ ] Benchmark kecepatan/bundle dan UAT data nyata belum dilakukan.
+
 ## Tweak dashboard, mempertahankan style acuan — 3 Oktober
 - [x] Pertahankan style/navigasi cabang acuan; buang folder stylesheet eksperimen.
 - [x] Batasi tugas/kegiatan awal ke tiga catatan, tutup grafik/rutinitas secara bawaan, dan satukan pengingat stok di Perlu Perhatian.

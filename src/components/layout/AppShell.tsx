@@ -114,12 +114,9 @@ function getNavSubtitle(href: string): string {
 }
 
 function getCoopShortName(title?: string): string {
-  if (!title) return 'KDMP Puntukrejo';
+  if (!title?.trim()) return 'Koperasi';
   const clean = title.trim();
   if (clean.length > 18) {
-    if (/desa mandiri penuh/i.test(clean)) {
-      return 'KDMP Puntukrejo';
-    }
     if (/koperasi produsen/i.test(clean)) {
       return clean.replace(/koperasi produsen/i, 'Kop. Produsen').trim();
     }

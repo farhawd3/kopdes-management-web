@@ -2,7 +2,6 @@ import { beforeEach, describe, it, expect, vi, afterEach } from 'vitest';
 import { render, screen, fireEvent, cleanup, within } from '@testing-library/react';
 import { DailyTasksView } from '@/features/DailyTasksView';
 import { TaskDetailDrawer } from '@/features/TaskDetailDrawer';
-import { DateRangePicker } from '@/components/ui/DateRangePicker';
 import { SprintCard } from '@/features/SprintCard';
 import { ScrumBoardView } from '@/features/ScrumBoardView';
 import { TodayView } from '@/features/TodayView';
@@ -118,15 +117,6 @@ describe('Fitur Redesain Behance', () => {
     expect(screen.getByText('Mengerjakan tugas di Lark')).toBeTruthy();
   });
 
-  it('DateRangePicker menghitung rentang hari dan mengubah bulan aktif', () => {
-    const onChange = vi.fn();
-    render(<DateRangePicker startDate="2026-10-01" endDate="2026-10-16" onChange={onChange} />);
-
-    expect(screen.getByText('16 hari')).toBeTruthy();
-    fireEvent.click(screen.getByRole('button', { name: /November/ }));
-    expect(screen.getByRole('heading', { level: 3, name: 'November 2026' })).toBeTruthy();
-  });
-
   it('TaskDetailDrawer menampilkan metadata pribadi dan aktivitas tugas', async () => {
     const task: Item = {
       id: 'task-detail-1',
@@ -207,7 +197,7 @@ describe('Fitur Redesain Behance', () => {
     render(
       <SprintCard
         sprint={sprint}
-        tasks={[taskDone, taskPlan]}
+        tasks={[taskDone, taskPlan, { ...taskPlan, id: 'cancelled', data: { ...taskPlan.data, status: 'dibatalkan' } }]}
         onEdit={vi.fn()}
         onRefresh={vi.fn().mockResolvedValue(undefined)}
       />,

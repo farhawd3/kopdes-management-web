@@ -1,10 +1,13 @@
 import type { Task, Checklist } from '@/features/schemas';
+export function subtaskProgress(subtasks: readonly { done: boolean }[]): number {
+  return subtasks.length
+    ? Math.round((subtasks.filter((item) => item.done).length / subtasks.length) * 100)
+    : 0;
+}
 export function taskProgress(task: Pick<Task, 'status' | 'subtasks'>): number {
   if (task.status === 'selesai') return 100;
   if (task.status === 'dibatalkan') return 0;
-  return task.subtasks.length
-    ? Math.round((task.subtasks.filter((item) => item.done).length / task.subtasks.length) * 100)
-    : 0;
+  return subtaskProgress(task.subtasks);
 }
 export function planProgress(tasks: Pick<Task, 'status'>[]): number {
   const active = tasks.filter((item) => item.status !== 'dibatalkan');
@@ -27,7 +30,9 @@ export function scopeProgress(tasks: Pick<Task, 'status' | 'subtasks'>[]): numbe
     : 0;
 }
 export function isOverdue(task: Pick<Task, 'status' | 'due_date'>, date: string) {
-  return !['selesai', 'dibatalkan'].includes(task.status) && task.due_date < date;
+  return (
+    !!task.due_date && !['selesai', 'dibatalkan'].includes(task.status) && task.due_date < date
+  );
 }
 export function dependencyConflict(task: Task, tasks: Task[]) {
   return task.dependencies.some((id) => {

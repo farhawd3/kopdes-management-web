@@ -419,7 +419,7 @@ export function Reports() {
                 try {
                   const text = [
                     `*${selected.title.toUpperCase()}*`,
-                    `Koperasi: *${selected.snapshot.organization}*`,
+                    `Koperasi: *${String(selected.snapshot.organization || 'Koperasi')}*`,
                     `Status: *${isCurrentDraft ? 'DRAF KERJA' : 'DOKUMEN RESMI'}*`,
                     `Periode: ${formatDate(selected.period_start)} — ${formatDate(selected.period_end)}`,
                     ``,
@@ -512,10 +512,7 @@ export function Reports() {
               <Building2 size={36} />
             </div>
             <div className="kop-text">
-              <span className="kop-instansi">KOPERASI DESA MERDEKA PUNTUKREJO (KDMP)</span>
-              <span className="kop-address">
-                Desa Puntukrejo, Kec. Ngargoyoso, Kab. Karanganyar, Jawa Tengah 57793
-              </span>
+              <span className="kop-instansi">{String(selected.snapshot.organization || 'Koperasi')}</span>
               <div className="kop-divider" />
               <h1 className="kop-doc-title">
                 {isCurrentDraft
@@ -679,7 +676,7 @@ export function Reports() {
             <div className="signature-col">
               <p className="sig-pre">Mengetahui,</p>
               <strong className="sig-role">Pengurus & Badan Pengawas</strong>
-              <span className="sig-org">Koperasi Desa Merdeka Puntukrejo</span>
+              <span className="sig-org">{String(selected.snapshot.organization || 'Koperasi')}</span>
               <div className="sig-space" />
               <div className="sig-line">
                 ( ..................................................................... )
@@ -688,14 +685,14 @@ export function Reports() {
             </div>
 
             <div className="signature-col">
-              <p className="sig-pre">Puntukrejo, {formatDate(selected.period_end)}</p>
+              <p className="sig-pre">{formatDate(selected.period_end)}</p>
               <strong className="sig-role">Disusun & Dilaporkan Oleh,</strong>
               <span className="sig-org">Manajer Operasional Koperasi</span>
               <div className="sig-space" />
               <div className="sig-line">
                 ( ..................................................................... )
               </div>
-              <span className="sig-desc">Manajer KDMP Puntukrejo</span>
+              <span className="sig-desc">Manajer {String(selected.snapshot.organization || 'Koperasi')}</span>
             </div>
           </footer>
         </article>

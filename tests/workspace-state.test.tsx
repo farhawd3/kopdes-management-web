@@ -193,3 +193,69 @@ it('at 1024px the menu toggles the desktop sidebar and closed mobile navigation 
   const links = document.querySelectorAll('.sidebar-nav-item');
   expect([...links].every((link) => Boolean(link.getAttribute('aria-label')))).toBe(true);
 });
+
+it('pagination deduplicates records and preserves loaded pages when revisiting a scope', async () => {
+  mocks.api.mockImplementation(async (path: string) => {
+    if (path === 'capabilities') return { operations: false };
+    if (path.startsWith('work-items?') && path.includes('scope=current')) {
+      if (path.includes('offset=50'))
+        return {
+          items: [task('a', 'Awal'), task('b', 'Lanjutan')],
+          hasMore: true,
+          nextOffset: 100,
+        };
+      return { items: [task('a', 'Awal')], hasMore: true, nextOffset: 50 };
+    }
+    return { items: [], hasMore: false, nextOffset: 0 };
+  });
+  const hook = renderHook(({ scope }) => useWorkspace('tugas', { scope }), {
+    initialProps: { scope: 'current' as 'current' | 'history' },
+  });
+  await waitFor(() => expect(hook.result.current.loading).toBe(false));
+  await act(async () => {
+    await Promise.all([
+      hook.result.current.loadMore('work-items'),
+      hook.result.current.loadMore('work-items'),
+    ]);
+  });
+  expect(hook.result.current.data['work-items']?.map((row) => row.id)).toEqual(['a', 'b']);
+  expect(mocks.api.mock.calls.filter(([path]) => String(path).includes('offset=50'))).toHaveLength(
+    1,
+  );
+  hook.rerender({ scope: 'history' });
+  await waitFor(() => expect(hook.result.current.loading).toBe(false));
+  hook.rerender({ scope: 'current' });
+  expect(hook.result.current.data['work-items']?.map((row) => row.id)).toEqual(['a', 'b']);
+  expect(hook.result.current.more['work-items']).toBe(100);
+});
+
+it('a rejected pagination request from an obsolete scope cannot replace the current page error', async () => {
+  let rejectPage: (reason: Error) => void = () => {};
+  mocks.api.mockImplementation(async (path: string) => {
+    if (path === 'capabilities') return { operations: false };
+    if (path.startsWith('work-items?') && path.includes('scope=current')) {
+      if (path.includes('offset=50'))
+        return new Promise((_, reject) => {
+          rejectPage = reject;
+        });
+      return { items: [task('a', 'Awal')], hasMore: true, nextOffset: 50 };
+    }
+    return { items: [], hasMore: false, nextOffset: 0 };
+  });
+  const hook = renderHook(({ scope }) => useWorkspace('tugas', { scope }), {
+    initialProps: { scope: 'current' as 'current' | 'history' },
+  });
+  await waitFor(() => expect(hook.result.current.loading).toBe(false));
+  let pending: Promise<void>;
+  act(() => {
+    pending = hook.result.current.loadMore('work-items');
+  });
+  hook.rerender({ scope: 'history' });
+  await waitFor(() => expect(hook.result.current.loading).toBe(false));
+  await act(async () => {
+    rejectPage(new Error('Galat halaman lama'));
+    await pending;
+  });
+  expect(hook.result.current.error).toBe('');
+  expect(hook.result.current.fetching).toBeNull();
+});

@@ -1,29 +1,6 @@
 import { AlertTriangle, ShieldAlert, ShieldCheck } from 'lucide-react';
 import type { Item } from '@/features/schemas';
 
-export function ProgressRing({ value, label }: { value: number; label: string }) {
-  return (
-    <div className="progress-ring" role="img" aria-label={`${label}: ${value}%`}>
-      <svg viewBox="0 0 120 120">
-        <circle cx="60" cy="60" r="48" fill="none" stroke="var(--line)" strokeWidth="10" />
-        <circle
-          cx="60"
-          cy="60"
-          r="48"
-          fill="none"
-          stroke="var(--brand)"
-          strokeWidth="10"
-          strokeDasharray={`${value * 3.016} 301.6`}
-          strokeLinecap="round"
-          transform="rotate(-90 60 60)"
-        />
-      </svg>
-      <strong>{value}%</strong>
-      <span>{label}</span>
-    </div>
-  );
-}
-
 export function Meter({ value }: { value: number | null }) {
   return (
     <div className="meter-row">

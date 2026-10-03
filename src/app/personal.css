@@ -9823,12 +9823,12 @@ textarea.text-input {
 }
 
 .daily-nav-arrow-btn {
-  width: 32px;
-  height: 32px;
-  min-width: 32px !important;
-  min-height: 32px !important;
-  max-width: 32px;
-  max-height: 32px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px !important;
+  min-height: 44px !important;
+  max-width: 44px;
+  max-height: 44px;
   border-radius: 50% !important;
   padding: 0 !important;
   background: transparent !important;
@@ -9982,7 +9982,7 @@ textarea.text-input {
 }
 
 .btn-mode-tab {
-  min-height: 32px !important;
+  min-height: 44px !important;
   padding: 0 12px !important;
   border-radius: var(--radius-pill) !important;
   background: transparent !important;
@@ -10009,7 +10009,7 @@ textarea.text-input {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  min-height: 38px !important;
+  min-height: 44px !important;
   padding: 0 16px !important;
   border-radius: var(--radius-pill) !important;
   background: var(--brand) !important;
@@ -10025,6 +10025,23 @@ textarea.text-input {
 .btn-add-task-day-primary:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px color-mix(in srgb, var(--brand) 40%, transparent);
+}
+
+@media (max-width: 767px) {
+  .daily-nav-left {
+    flex-basis: 100%;
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+  .daily-week-strip {
+    flex-basis: 100%;
+    min-width: 0;
+  }
+  .daily-nav-right {
+    flex-wrap: wrap;
+    width: 100%;
+    min-width: 0;
+  }
 }
 
 /* ── Focused Active Day Card ─────────────────────────────────────── */

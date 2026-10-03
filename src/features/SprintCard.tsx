@@ -1,6 +1,7 @@
 'use client';
 import { Calendar, Edit2, Trash2 } from 'lucide-react';
-import { type Item } from './schemas';
+import { schemas, type Item } from './schemas';
+import { planProgress } from '@/lib/progress';
 import { formatDate } from '@/lib/date';
 import { api } from '@/lib/client';
 
@@ -16,10 +17,15 @@ export function SprintCard({
   onRefresh: () => Promise<void>;
 }) {
   const data = sprint.data;
-  const sprintTasks = tasks.filter((t) => t.data.sprint_id === sprint.id);
+  const sprintTasks = tasks.filter(
+    (t) => t.data.sprint_id === sprint.id && t.data.status !== 'dibatalkan',
+  );
   const doneTasks = sprintTasks.filter((t) => t.data.status === 'selesai');
-  const percent =
-    sprintTasks.length > 0 ? Math.round((doneTasks.length / sprintTasks.length) * 100) : 0;
+  const percent = planProgress(
+    sprintTasks.map((task) => ({
+      status: schemas['work-items'].shape.status.parse(task.data.status),
+    })),
+  );
 
   async function handleDelete(e: React.MouseEvent) {
     e.stopPropagation();

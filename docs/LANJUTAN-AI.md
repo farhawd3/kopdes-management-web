@@ -6,6 +6,8 @@ Baca juga `KEGIATAN-DAN-TUGAS.md` untuk memisahkan catatan kejadian dari pekerja
 
 ## Keadaan terbaru — 3 Oktober 2026
 
+- Paket pembersihan sumber/state selesai: tiga komponen mati dihapus; cache pagination diperbaiki/dibatasi, empat modul halaman dimuat terpisah, rumus progres disatukan, fallback identitas netral, toolbar harian responsif. 166 tes lulus (satu worker). Lihat STATUS untuk cakupan visual dan batasan; style acuan dipertahankan.
+
 - Arahan pemilik terbaru membatalkan penggantian style total: pertahankan tema cabang ini pada `e8fc8b4`, lakukan tweak kecil karena dashboard terlalu ramai. CSS eksperimen serta route pratinjau sementara sudah dihapus.
 - Beranda menampilkan tiga tugas/kegiatan awal, grafik/rutinitas ditutup secara bawaan, pengingat stok tidak diduplikasi. Sematan ada dalam rincian opsional halaman Perlu Perhatian; langkah berikutnya opsional di detail proyek. Pengingat rapat aktif mencakup tujuh hari.
 - Browser kini dapat dipakai: dashboard diperiksa dengan fixture lokal pada empat lebar, termasuk mode gelap 1440 px dan terang 360/768/1024 px. Ini bukan UAT dengan data nyata; jangan menandai audit semua modul/tema selesai.

@@ -12,7 +12,8 @@ import {
   AlertCircle,
   Clock,
 } from 'lucide-react';
-import { type Item } from './schemas';
+import { schemas, type Item } from './schemas';
+import { planProgress } from '@/lib/progress';
 import type { Workspace } from './useWorkspace';
 import { addDays, formatDate, today } from '@/lib/date';
 import { toggleTaskStatus } from '@/lib/task-status';
@@ -84,8 +85,12 @@ export function DailyTasksView({
   // Active day tasks
   const activeDayTasks = tasks.filter((t) => t.data.due_date === selectedDate);
   const activeDayDoneCount = activeDayTasks.filter((t) => t.data.status === 'selesai').length;
-  const activeDayProgressPercent =
-    activeDayTasks.length > 0 ? Math.round((activeDayDoneCount / activeDayTasks.length) * 100) : 0;
+  const activeDayCount = activeDayTasks.filter((task) => task.data.status !== 'dibatalkan').length;
+  const activeDayProgressPercent = planProgress(
+    activeDayTasks.map((task) => ({
+      status: schemas['work-items'].shape.status.parse(task.data.status),
+    })),
+  );
 
   async function toggleComplete(task: Item, e: React.MouseEvent) {
     e.stopPropagation();
@@ -396,7 +401,7 @@ export function DailyTasksView({
                 <p className="active-day-subtext">
                   {activeDayTasks.length === 0
                     ? 'Belum ada agenda tugas terdaftar pada tanggal ini.'
-                    : `${activeDayDoneCount} dari ${activeDayTasks.length} tugas telah selesai (${activeDayProgressPercent}%)`}
+                    : `${activeDayDoneCount} dari ${activeDayCount} tugas selain dibatalkan telah selesai (${activeDayProgressPercent}%)`}
                 </p>
               </div>
             </div>

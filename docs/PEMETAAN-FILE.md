@@ -4,7 +4,9 @@ Kode dan dokumen lama berada di `.local-backup/legacy-20260930` yang tidak masuk
 
 ## Yang dikeluarkan dari runtime
 
-Halaman dan API anggota, stok dagang, keuangan, omzet, kinerja berbasis pendapatan, integrasi kunci AI, login lama, reset-password, repository monolitik, tipe transaksi lama, dan SQL reset lama. Pengujian yang hanya memverifikasi kontrak lama diarsip bersama kode lama.
+Implementasi lama untuk anggota, stok dagang, keuangan, omzet, kinerja berbasis pendapatan, integrasi kunci AI, login/reset-password, repository monolitik, tipe transaksi lama, dan SQL reset lama dikeluarkan. Buku anggota, kas, barang, dan opname aktif memakai domain baru `hub_records`, bukan implementasi lama. Pengujian kontrak lama diarsip bersama kode lama.
+
+Audit 3 Oktober menghapus `Burnup.tsx`, `InfluenceMap.tsx`, `DateRangePicker.tsx`, serta ekspor `ProgressRing` yang tidak digunakan runtime. Tes widget DateRangePicker ikut dilepas; referensi historis dalam arsip tetap disimpan. Cadangan dan migrasi SQL tidak termasuk pembersihan.
 
 ## Peta rute baru
 
@@ -18,7 +20,9 @@ Halaman dan API anggota, stok dagang, keuangan, omzet, kinerja berbasis pendapat
 | `/proyek` | Galeri proyek, tujuan/catatan, progres, milestone, tugas dalam lingkup proyek |
 | `/roadmap` | Gantt interaktif, rentang/skala, geser/resize jadwal, milestone |
 | `/kesiapan`, `/gerai` | Checklist dan kesiapan lima dimensi |
-| `/pemangku`, `/rapat` | Kontak/interaksi, rapat/keputusan/tindak lanjut |
+| `/mitra`, `/rapat` | Kontak/interaksi, rapat/keputusan/tindak lanjut |
+| `/tindak-lanjut` | Pengingat dan catatan sematan |
+| `/pencatatan`, `/anggota`, `/keuangan`, `/barang`, `/stok-opname` | Ringkasan buku, anggota, kas, barang, snapshot opname; memerlukan migrasi pencatatan aktif |
 | `/dokumen`, `/risiko` | Registri dokumen, risiko/isu |
 | `/tim`, `/jurnal` | Petugas/pelatihan dan catatan kerja |
 | `/laporan` | Snapshot, cetak/PDF, salin teks |

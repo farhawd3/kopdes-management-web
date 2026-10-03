@@ -21,6 +21,7 @@ import {
 import { schemas, type Item } from './schemas';
 import type { Workspace } from './useWorkspace';
 import { api } from '@/lib/client';
+import { subtaskProgress } from '@/lib/progress';
 import { formatDate, today } from '@/lib/date';
 import { toggleTaskStatus, selectTaskStatus, type TaskStatus } from '@/lib/task-status';
 import { RecursiveScheduleModal } from './RecursiveScheduleModal';
@@ -96,8 +97,7 @@ export function TaskDetailDrawer({
     : [];
 
   const completedSubtasks = subtasks.filter((s) => s.done).length;
-  const subtasksPercent =
-    subtasks.length > 0 ? Math.round((completedSubtasks / subtasks.length) * 100) : 0;
+  const subtasksPercent = subtaskProgress(subtasks);
 
   // Activities & coordination comments
   const activities: ActivityItem[] =

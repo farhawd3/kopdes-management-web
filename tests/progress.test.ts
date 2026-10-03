@@ -34,6 +34,8 @@ describe('Rumus yang dipakai semua halaman', () => {
     expect(readiness([])).toBeNull());
   it('tugas selesai tidak terlambat', () =>
     expect(isOverdue({ status: 'selesai', due_date: '2026-09-01' }, '2026-09-30')).toBe(false));
+  it('tugas tanpa tenggat tidak masuk daftar terlambat', () =>
+    expect(isOverdue({ status: 'rencana', due_date: '' }, '2026-09-30')).toBe(false));
   it('tenggat hari ini bukan terlambat', () =>
     expect(isOverdue({ status: 'rencana', due_date: '2026-09-30' }, '2026-09-30')).toBe(false));
 });

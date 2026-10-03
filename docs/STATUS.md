@@ -1,5 +1,15 @@
 # Status proyek — 3 Oktober 2026
 
+## Pembersihan sumber dan perbaikan state — 3 Oktober 2026
+
+- Hapus tiga komponen tidak digunakan runtime (Burnup, InfluenceMap, DateRangePicker) dan ekspor ProgressRing mati; tes widget DateRangePicker dilepas. Audit sumber: 71/71 berkas terjangkau, tanpa kandidat tersisa. Arsip, cadangan, SQL, dan dependensi aktif dipertahankan.
+- Pagination menyimpan halaman/cursor tambahan dalam cache, deduplikasi ID memakai Set, menolak permintaan ganda, dan mengabaikan galat scope lama. Cache dibatasi 24 lingkup; kunjungan ulang tetap melakukan refresh server.
+- Proyek, laporan, pengaturan, dan Gantt memakai pemuatan modul terpisah dengan skeleton. Tidak ada klaim angka peningkatan kecepatan karena benchmark belum dilakukan.
+- Rumus subtugas disatukan di lib/progress.ts; progres harian/periode mengecualikan pembatalan. Tugas tanpa tenggat tidak dinilai terlambat. Nama koperasi pada shell berasal dari profil, dengan fallback netral. Kop/tanda tangan laporan memakai identitas snapshot; alamat/lokasi hardcoded dihapus.
+- Toolbar harian tidak melebar keluar layar 360 px, kontrol mode/tambah/arah hari minimal 44 px. Tema/style acuan tetap dipakai. Pemeriksaan fixture terang kartu periode dan tugas harian pada 360/768/1024/1440 px; tidak ada overflow horizontal halaman. Route fixture dihapus. Ini bukan UAT data nyata atau audit seluruh modul/tema.
+- Verifikasi: 166 tes/22 berkas lulus dengan satu worker; percobaan dua worker bersamaan verifikasi lain timeout pada dua tes UI. Asersi/batas waktu tidak diubah. Typecheck, lint, build produksi, audit sumber, dan diff-check lulus. Tidak ada SQL cloud atau deployment.
+
+
 ## Tweak dashboard, mempertahankan style acuan (3 Oktober 2026)
 
 Pemeriksaan akhir: typecheck, lint (0 galat/0 peringatan), build produksi, dan `git diff --check` lulus. Route pratinjau tidak masuk build produksi.

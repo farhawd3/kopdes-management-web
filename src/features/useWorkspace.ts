@@ -11,10 +11,19 @@ type WorkspaceCacheEntry = {
   data: Workspace;
   more: Partial<Record<Entity, number>>;
   operations: boolean;
-  timestamp: number;
 };
 
 const workspaceCache = new Map<string, WorkspaceCacheEntry>();
+const MAX_CACHED_SCOPES = 24;
+
+function cacheWorkspace(key: string, entry: WorkspaceCacheEntry) {
+  workspaceCache.delete(key);
+  workspaceCache.set(key, entry);
+  while (workspaceCache.size > MAX_CACHED_SCOPES) {
+    const oldest = workspaceCache.keys().next().value;
+    if (oldest !== undefined) workspaceCache.delete(oldest);
+  }
+}
 
 export function invalidateWorkspaceCache(pattern?: string) {
   if (!pattern) {
@@ -54,6 +63,7 @@ export function useWorkspace(
     setFetching(null);
   }
   const generation = useRef(0);
+  const paginationRequest = useRef<number | null>(null);
   const pathFor = useCallback(
     (entity: Entity, offset = 0) => {
       const selection: LoadScope = JSON.parse(scopeKey);
@@ -77,6 +87,7 @@ export function useWorkspace(
   );
   const refresh = useCallback(async () => {
     const current = ++generation.current;
+    setFetching(null);
     try {
       const capabilities = await api<{ operations: boolean }>('capabilities');
       const entries = await Promise.all(
@@ -103,11 +114,10 @@ export function useWorkspace(
       );
       setData(next);
       setMore(nextMore);
-      workspaceCache.set(cacheKey, {
+      cacheWorkspace(cacheKey, {
         data: next,
         more: nextMore,
         operations: capabilities.operations,
-        timestamp: Date.now(),
       });
       window.dispatchEvent(new CustomEvent('hub-workspace', { detail: next }));
       setOperations(capabilities.operations);
@@ -122,35 +132,39 @@ export function useWorkspace(
     }
   }, [slug, pathFor, recordKey, cacheKey]);
   const loadMore = async (entity: Entity) => {
-    if (fetching || more[entity] === undefined) return;
+    if (
+      loading ||
+      fetching ||
+      paginationRequest.current === generation.current ||
+      more[entity] === undefined
+    )
+      return;
     const current = generation.current;
+    paginationRequest.current = current;
     setFetching(entity);
     setError('');
     try {
       const page = await api<Page>(pathFor(entity, more[entity]));
       if (current !== generation.current) return;
-      setData((previous) => {
-        const next = {
-          ...previous,
-          [entity]: [
-            ...(previous[entity] || []),
-            ...page.items.filter(
-              (row) => !previous[entity]?.some((existing) => existing.id === row.id),
-            ),
-          ],
-        };
-        window.dispatchEvent(new CustomEvent('hub-workspace', { detail: next }));
-        return next;
-      });
-      setMore((previous) => {
-        const next = { ...previous };
-        if (page.hasMore) next[entity] = page.nextOffset;
-        else delete next[entity];
-        return next;
-      });
+      const existingIds = new Set((data[entity] || []).map((row) => row.id));
+      const next = {
+        ...data,
+        [entity]: [
+          ...(data[entity] || []),
+          ...page.items.filter((row) => !existingIds.has(row.id)),
+        ],
+      };
+      const nextMore = { ...more };
+      if (page.hasMore) nextMore[entity] = page.nextOffset;
+      else delete nextMore[entity];
+      setData(next);
+      setMore(nextMore);
+      cacheWorkspace(cacheKey, { data: next, more: nextMore, operations });
+      window.dispatchEvent(new CustomEvent('hub-workspace', { detail: next }));
     } catch (e) {
-      setError((e as Error).message);
+      if (current === generation.current) setError((e as Error).message);
     } finally {
+      if (paginationRequest.current === current) paginationRequest.current = null;
       if (current === generation.current) setFetching(null);
     }
   };

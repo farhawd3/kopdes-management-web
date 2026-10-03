@@ -12,7 +12,7 @@ import { Editor } from './Editor';
 import { api } from '@/lib/client';
 import { today, addDays, formatDate } from '@/lib/date';
 import { selectTaskStatus, taskStatusChange, isActiveTask, type TaskStatus } from '@/lib/task-status';
-import { readiness } from '@/lib/progress';
+import { readiness, subtaskProgress } from '@/lib/progress';
 import { Meter, RiskMatrix } from '@/components/charts/Charts';
 import { TaskCalendar } from './TaskCalendar';
 import { ReadinessRadar } from '@/components/charts/ReadinessRadar';
@@ -873,8 +873,7 @@ export function Records({
       ? (row.data.subtasks as { title: string; done: boolean }[])
       : [];
     const doneSubtasks = subtasks.filter((s) => s.done).length;
-    const progressPct =
-      subtasks.length > 0 ? Math.round((doneSubtasks / subtasks.length) * 100) : 0;
+    const progressPct = subtaskProgress(subtasks);
     const project = workspace.workstreams?.find((p) => p.id === row.data.workstream_id);
     const isLate = String(row.data.due_date) < today() && isActiveTask(row.data.status);
     const isToday = String(row.data.due_date) === today() && isActiveTask(row.data.status);
