@@ -113,6 +113,12 @@ export function TaskDetailDrawer({
     setTimeout(() => setCopiedLink(false), 2000);
   }
 
+  async function handleRemoveSubmissionLink() {
+    if (!window.confirm('Hapus link pengumpulan dari tugas ini?')) return;
+    setSubmissionLink('');
+    await saveChanges({ link: '' }, 'menghapus link pengumpulan');
+  }
+
   async function handleDelete() {
     if (onDelete) {
       /* Confirmation and persistence handled in parent via onDelete prop */
@@ -317,10 +323,10 @@ export function TaskDetailDrawer({
                 {String(project.data.title)}
               </Link>
             )}
-            <div className="drawer-status-select-wrap">
+            <div className={`drawer-status-select-wrap status-${data.status || 'rencana'}`}>
               <select
                 aria-label="Ubah status tugas"
-                className={`drawer-status-select status-${data.status || 'rencana'}`}
+                className="drawer-status-select"
                 value={String(data.status || 'rencana')}
                 disabled={busy}
                 onChange={async (e) => {
@@ -344,11 +350,11 @@ export function TaskDetailDrawer({
                 <option value="dibatalkan">Dibatalkan</option>
               </select>
             </div>
-            <div className="drawer-priority-select-wrap">
+            <div className={`drawer-priority-select-wrap priority-${data.priority || 'normal'}`}>
               <Flag size={12} className="priority-flag-icon" />
               <select
                 aria-label="Ubah prioritas tugas"
-                className={`drawer-priority-select priority-${data.priority || 'normal'}`}
+                className="drawer-priority-select"
                 value={String(data.priority || 'normal')}
                 disabled={busy}
                 onChange={async (e) => {
@@ -560,29 +566,32 @@ export function TaskDetailDrawer({
           )}
         </div>
         {/* Link Pengumpulan & Bukti Hasil Tugas */}
+        {/* Link Pengumpulan & Bukti Hasil Tugas */}
         <div className="task-submission-card">
           <div className="submission-card-head">
             <div className="submission-title-group">
-              <Link2 size={16} className="submission-icon" />
-              <strong>Link Pengumpulan / Bukti Hasil</strong>
+              <div className="submission-icon-badge" aria-hidden="true">
+                <Link2 size={15} />
+              </div>
+              <span className="submission-section-title">Link Pengumpulan & Bukti Hasil</span>
             </div>
-            {!isEditingLink && (
-              <button
-                type="button"
-                className="btn-edit-submission"
-                onClick={() => setIsEditingLink(true)}
-              >
-                {data.link ? 'Ubah link' : '+ Pasang link pengumpulan'}
-              </button>
+            {data.link ? (
+              <span className="submission-status-pill is-connected">
+                <Check size={11} strokeWidth={2.8} />
+                <span>Terpasang</span>
+              </span>
+            ) : (
+              <span className="submission-status-pill is-empty">Belum Ada Tautan</span>
             )}
           </div>
+
           {isEditingLink ? (
             <div className="submission-edit-wrap">
               <input
                 type="url"
                 value={submissionLink}
                 onChange={(e) => setSubmissionLink(e.target.value)}
-                placeholder="https://... (contoh: folder Google Drive, dokumen hasil, portal)"
+                placeholder="https://... (contoh: folder Google Drive, dokumen hasil, portal tugas)"
                 className="submission-url-input"
                 autoFocus
               />
@@ -613,7 +622,7 @@ export function TaskDetailDrawer({
                     }
                   }}
                 >
-                  Simpan Link
+                  Simpan Tautan
                 </button>
               </div>
             </div>
@@ -649,6 +658,15 @@ export function TaskDetailDrawer({
                   <Edit2 size={13} />
                   <span>Ubah</span>
                 </button>
+                <button
+                  type="button"
+                  className="btn-tiny-delete"
+                  onClick={handleRemoveSubmissionLink}
+                  title="Hapus tautan pengumpulan"
+                >
+                  <Trash2 size={13} />
+                  <span>Hapus</span>
+                </button>
               </div>
             </div>
           ) : (
@@ -661,8 +679,8 @@ export function TaskDetailDrawer({
                 className="btn-add-submission-quick"
                 onClick={() => setIsEditingLink(true)}
               >
-                <Plus size={13} />
-                <span>Tambah Link Bukti / Hasil</span>
+                <Plus size={14} />
+                <span>Pasang Link Pengumpulan</span>
               </button>
             </div>
           )}

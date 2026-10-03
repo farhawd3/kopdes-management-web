@@ -166,6 +166,16 @@ describe('Fitur Redesain Behance', () => {
     expect(screen.getByText('PENANGGUNG JAWAB')).toBeTruthy();
     expect(screen.queryByText('PEMANGKU / TIM')).toBeNull();
     expect(screen.getByText(/membuat tugas ini/)).toBeTruthy();
+
+    // Verify status & priority select controls
+    expect(screen.getByLabelText(/Ubah status tugas/i)).toBeTruthy();
+    expect(screen.getByLabelText(/Ubah prioritas tugas/i)).toBeTruthy();
+
+    // Verify submission card renders cleanly with exactly one setup button (no duplicates)
+    expect(screen.getByText('Link Pengumpulan & Bukti Hasil')).toBeTruthy();
+    expect(screen.getByText('Belum Ada Tautan')).toBeTruthy();
+    const addLinkBtns = screen.getAllByRole('button', { name: /Pasang Link Pengumpulan/i });
+    expect(addLinkBtns.length).toBe(1);
   });
 
   it('SprintCard merangkum progres dan jumlah tugas dalam sprint', () => {

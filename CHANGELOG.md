@@ -1,5 +1,22 @@
 # Changelog
 
+### Penyempurnaan Detail Tugas: Dropdown Prioritas Rapi, Kartu Bukti Pengumpulan Bersih & Konsistensi Kotak Centang (3 Oktober 2026)
+
+- **Perapihan Dropdown Prioritas & Status (`TaskDetailDrawer.tsx` & `personal.css`)**:
+  - Mengatasi teks bertumpuk, ikon bendera mepet, dan garis dobel pada dropdown prioritas dengan menerapkan kontrol pill terpadu berdimensi `height: 32px`, `padding: 0 28px 0 28px` (jarak aman untuk ikon bendera di kiri dan panah dropdown di kanan).
+  - Menyelaraskan warna ikon bendera dinamis sesuai tingkat urgensi (Rendah: slate `#64748b`, Normal: biru `#0284c7`, Tinggi: amber `#b45309`, Mendesak: merah `#dc2626`).
+  - Menstandarkan dropdown status dan prioritas dengan bingkai halus tunggal dan latar warna pastel yang serasi dengan tema.
+- **Rombak Total Bagian Link Pengumpulan / Bukti Hasil (`TaskDetailDrawer.tsx` & `personal.css`)**:
+  - Mengeliminasi tombol ganda yang sebelumnya muncul bertumpuk (*+ Pasang link pengumpulan* dan *+ Tambah Link Bukti / Hasil* pada saat bersamaan).
+  - Mengubah bagian link pengumpulan menjadi kartu metadata mandiri berbingkai rapi (`.task-submission-card`) lengkap dengan lencana status ("Terpasang" / "Belum Ada Tautan").
+  - Menghadirkan kotak kosong (*empty state box*) dengan deskripsi informatif dan satu tombol utama yang elegan: `+ Pasang Link Pengumpulan`.
+  - Menyediakan tombol aksi terpadu saat link terpasang: Buka Hasil ↗, Salin Tautan (dengan toast konfirmasi), Ubah Link, dan Hapus Link.
+- **Perapihan Bilah Tanggal Tenggat & Kotak Centang Subtugas (`TaskDetailDrawer.tsx` & `personal.css`)**:
+  - Mengubah bilah tenggat dari pil hitam raksasa menjadi kartu metadata rapi berlatar `var(--surface)` dengan input tanggal berbingkai rapi.
+  - Mengunci kotak centang subtugas (`.subtask-check-circle`) menjadi lingkaran presisi `18px x 18px` dan menonaktifkan pseudo-element `::after` yang sebelumnya menyebabkan bentuk lonjong.
+- **Verifikasi Kualitas**:
+  - Seluruh 144 unit tes lulus 100% (19 berkas), 0 error TypeScript, dan kompilasi Next.js sukses.
+
 ### Rombak Desain Tugas Harian Tanpa Dropdown & Koreksi Checkbox Bulat Sempurna (3 Oktober 2026)
 
 - **Desain Tugas Harian Tanpa Dropdown / Accordion (`DailyTasksView.tsx` & `personal.css`)**:
