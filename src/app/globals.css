@@ -154,7 +154,7 @@ a {
   color: inherit;
   text-decoration: none;
 }
-button,
+button:not(.subtask-round-check):not(.subtask-toggle):not(.custom-select-option):not(.btn-icon):not(.close-drawer-btn),
 .button,
 .primary {
   display: inline-flex;
@@ -171,7 +171,7 @@ button,
   cursor: pointer;
   gap: 8px;
 }
-button:hover,
+button:not(.subtask-round-check):not(.subtask-toggle):not(.custom-select-option):not(.btn-icon):not(.close-drawer-btn):hover,
 .button:hover {
   background: var(--canvas);
 }
