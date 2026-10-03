@@ -1,5 +1,17 @@
 # Changelog
 
+## Standarisasi jarak komponen dan tombol di seluruh halaman — 4 Oktober 2026
+
+- Perlebar jarak tombol aksi inline (`.inline-actions`, `.title-edit-form`, `.desc-edit-form`):
+  - Berikan celah 14 px antar tombol `Batal` dan `Simpan`, tinggi sentuh nyaman 38–42 px, radius membulat 12 px, margin atas 14 px dari input, dan margin bawah 26–28 px sebelum kartu berikutnya sehingga tombol tidak lagi menempel rapat atau menimpa kartu di bawahnya.
+- Berikan jarak napas lega antar kelompok tombol di bilah atas drawer (`.drawer-top-bar`):
+  - Celah 10–12 px antar kelompok kontrol kiri (`Tandai Selesai`, `Jadwal`, `Formulir`) dan kanan (`[ < | > ]`, `Hapus`, `Tutup`), serta garis pembatas berjarak 18–20 px di bawahnya.
+- Harmonisasikan margin bawah dan celah antar komponen di seluruh halaman:
+  - **Beranda/Dashboard**: tajuk halaman 24–28 px, kartu ringkasan 24–28 px dengan celah 16–18 px, kartu Agenda Rapat 26–28 px, dan bilah filter fokus tugas 20 px dengan celah 8 px.
+  - **Panel Detail Tugas**: properties grid 22–26 px, kotak deskripsi 24–26 px, tautan bukti hasil 24–26 px, subtugas 26–30 px dengan celah pohon 8–10 px, dan riwayat aktivitas 24–26 px.
+  - **Halaman Proyek & Form**: cover hero 28 px, kartu kpi 24–28 px, navigasi tab 24–28 px, dan tombol aksi form (`.form-actions`, `.editor-form-actions`) dengan padding atas 18–20 px dan celah 12–14 px.
+- Verifikasi lengkap: 171 tes dalam 23 berkas lulus (`npm test`), 0 kesalahan TypeScript (`npm run typecheck`), dan Next.js production build berhasil (`npm run build`).
+
 ## Overhaul panel detail tugas (Hierarki Judul, Properties Grid Notion-Style, dan Top Bar) — 4 Oktober 2026
 
 - Perbaiki hierarki visual TaskDetailDrawer: pindahkan judul tugas (`.task-detail-title`) ke posisi teratas tepat di bawah badge kode tugas (`TGS-F2A4`) dan link proyek. Menghilangkan masalah dropdown status/prioritas raksasa 100% yang sebelumnya mendominasi dan mendorong judul ke bawah secara canggung.

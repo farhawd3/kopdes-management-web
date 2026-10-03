@@ -3538,97 +3538,103 @@ tr:last-child td {
 }
 
 .title-edit-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-  margin-bottom: 20px;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+  width: 100% !important;
+  margin-top: 6px !important;
+  margin-bottom: 28px !important;
 }
 
 .title-edit-form .title-input-field {
-  width: 100%;
-  font-size: 19px;
-  font-weight: 700;
-  padding: 10px 14px;
-  border-radius: var(--radius-md);
-  border: 1.5px solid var(--brand);
-  background: var(--surface);
-  color: var(--ink-heading);
-  box-shadow: 0 0 0 3px rgba(11, 143, 94, 0.12);
-  outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  width: 100% !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  padding: 12px 16px !important;
+  border-radius: 12px !important;
+  border: 1.5px solid var(--brand) !important;
+  background: var(--surface) !important;
+  color: var(--ink-heading) !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15) !important;
+  outline: none !important;
+  box-sizing: border-box !important;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
 }
 
 .desc-edit-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-  margin-bottom: 20px;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+  width: 100% !important;
+  margin-top: 10px !important;
+  margin-bottom: 26px !important;
 }
 
 .desc-edit-form .desc-textarea-field {
-  width: 100%;
-  font-size: 14px;
-  line-height: 1.6;
-  padding: 10px 14px;
-  border-radius: var(--radius-md);
-  border: 1.5px solid var(--brand);
-  background: var(--surface);
-  color: var(--ink-heading);
-  box-shadow: 0 0 0 3px rgba(11, 143, 94, 0.12);
-  outline: none;
-  resize: vertical;
+  width: 100% !important;
+  font-size: 14px !important;
+  line-height: 1.65 !important;
+  padding: 12px 16px !important;
+  border-radius: 12px !important;
+  border: 1.5px solid var(--brand) !important;
+  background: var(--surface) !important;
+  color: var(--ink-heading) !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15) !important;
+  outline: none !important;
+  resize: vertical !important;
+  box-sizing: border-box !important;
 }
 
 .btn-tiny-save {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 32px;
-  padding: 0 16px;
-  font-size: 13px;
-  font-weight: 600;
-  border-radius: var(--radius-md);
-  background: var(--brand);
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  padding: 0 20px !important;
+  font-size: 13.5px !important;
+  font-weight: 650 !important;
+  border-radius: 12px !important;
+  background: var(--brand) !important;
   color: var(--brand-contrast) !important;
-  border: none;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  border: none !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.25) !important;
 }
 
 .btn-tiny-save:hover:not(:disabled) {
-  background: var(--brand-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+  background: var(--brand-hover) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35) !important;
 }
 
 .btn-tiny-save:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
+  opacity: 0.55 !important;
+  cursor: not-allowed !important;
 }
 
 .btn-tiny-cancel {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 32px;
-  padding: 0 14px;
-  font-size: 13px;
-  font-weight: 500;
-  border-radius: var(--radius-md);
-  background: var(--surface);
-  color: var(--ink-muted);
-  border: 1px solid var(--line);
-  cursor: pointer;
-  transition: all 0.15s ease;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  padding: 0 16px !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  border-radius: 12px !important;
+  background: var(--surface) !important;
+  color: var(--ink) !important;
+  border: 1.5px solid var(--line-strong, var(--line)) !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
 }
 
 .btn-tiny-cancel:hover {
-  background: var(--surface-subtle);
-  color: var(--ink-heading);
-  border-color: var(--line-strong);
+  background: var(--surface-subtle) !important;
+  color: var(--ink-heading) !important;
+  border-color: var(--ink-muted) !important;
 }
 
 .drawer-description-box {
@@ -22662,10 +22668,10 @@ button.close-drawer-btn:hover,
   flex-wrap: wrap !important;
   align-items: center !important;
   justify-content: flex-end !important;
-  gap: 10px !important;
+  gap: 14px !important;
   min-width: 0 !important;
-  margin-top: 8px !important;
-  margin-bottom: 18px !important;
+  margin-top: 14px !important;
+  margin-bottom: 26px !important;
 }
 .inline-actions > * { margin: 0 !important; }
 .inline-actions > :is(input, textarea, .custom-select-wrap) { flex: 1 1 160px; min-width: 0; }
@@ -23450,10 +23456,11 @@ button.close-drawer-btn:hover,
     box-shadow: none !important;
   }
   .btn-tiny-save, .btn-tiny-cancel {
-    height: 34px !important;
-    min-height: 34px !important;
-    padding: 0 14px !important;
-    font-size: 13px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    padding: 0 18px !important;
+    font-size: 13.5px !important;
+    border-radius: 12px !important;
   }
   .focus-open {
     width: 30px !important;
@@ -23463,12 +23470,17 @@ button.close-drawer-btn:hover,
     border-radius: 50% !important;
   }
   .inline-actions {
+    display: flex !important;
+    align-items: center !important;
     justify-content: flex-end !important;
-    margin-top: 8px !important;
-    margin-bottom: 16px !important;
+    gap: 14px !important;
+    margin-top: 14px !important;
+    margin-bottom: 26px !important;
+    width: 100% !important;
   }
   .inline-actions > button {
-    flex: 0 0 auto !important;
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
   }
 
   .manager-main :is(.form-grid, .guide-steps, .project-context) { grid-template-columns: minmax(0, 1fr); }
@@ -24134,3 +24146,175 @@ details[open] .next-chevron {
     gap: 6px !important;
   }
 }
+
+/* ==========================================================================
+   Comprehensive Page & Component Spacing Polish (No Cramped Buttons/Cards)
+   ========================================================================== */
+
+/* Universal button group spacing */
+:is(.form-actions, .editor-form-actions, .inline-actions, .actions-row, .modal-actions, .dialog-actions, .toolbar-actions, .record-actions, .submission-quick-actions, .home-heading-actions) {
+  gap: 12px !important;
+}
+
+:is(.form-actions, .editor-form-actions, .modal-actions, .dialog-actions) {
+  margin-top: 24px !important;
+  padding-top: 18px !important;
+}
+
+/* Ensure generous bottom margins on major page sections */
+.manager-main .page-heading {
+  margin-bottom: 24px !important;
+}
+
+.home-heading {
+  margin-bottom: 24px !important;
+}
+
+.dash-stats-row {
+  margin-bottom: 24px !important;
+  gap: 16px !important;
+}
+
+.next-meeting {
+  margin-bottom: 26px !important;
+}
+
+.focus-filters {
+  margin-bottom: 20px !important;
+  gap: 8px !important;
+}
+
+.focus-task-container {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  margin-bottom: 24px !important;
+}
+
+.follow-up-compact-bar {
+  margin-bottom: 22px !important;
+}
+
+/* Task Detail Drawer Spacing */
+.task-detail-panel {
+  gap: 22px !important;
+}
+
+.drawer-top-bar {
+  padding-bottom: 16px !important;
+  margin-bottom: 18px !important;
+}
+
+.drawer-top-bar .left-controls,
+.drawer-top-bar .right-controls {
+  gap: 10px !important;
+}
+
+.drawer-header-section {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+}
+
+.drawer-properties-grid {
+  margin-top: 6px !important;
+  margin-bottom: 22px !important;
+  padding: 16px 18px !important;
+  row-gap: 12px !important;
+  column-gap: 16px !important;
+}
+
+.drawer-description-box {
+  margin-top: 0 !important;
+  margin-bottom: 24px !important;
+  padding: 18px 20px !important;
+}
+
+.task-submission-card {
+  margin-bottom: 24px !important;
+  padding: 18px 20px !important;
+  gap: 14px !important;
+}
+
+.submission-quick-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  margin-top: 12px !important;
+}
+
+.subtasks-section {
+  margin-bottom: 26px !important;
+}
+
+.subtasks-header {
+  margin-bottom: 14px !important;
+}
+
+.subtasks-progress-bar {
+  margin-bottom: 14px !important;
+}
+
+.subtasks-tree-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  margin-bottom: 14px !important;
+}
+
+.subtask-tree-row {
+  padding: 10px 14px !important;
+  gap: 12px !important;
+}
+
+.add-subtask-form {
+  gap: 10px !important;
+  margin-top: 14px !important;
+}
+
+.activity-summary-section {
+  margin-bottom: 24px !important;
+}
+
+.timeline-feed {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+}
+
+.timeline-event {
+  gap: 12px !important;
+}
+
+.comment-composer-box {
+  margin-top: 16px !important;
+}
+
+.composer-input-row {
+  gap: 12px !important;
+}
+
+/* Records Toolbar & Filter Spacing */
+.records-toolbar-strip,
+.records-filter-group {
+  gap: 12px !important;
+  margin-bottom: 20px !important;
+}
+
+/* Project Detail Sections */
+.project-cover {
+  margin-bottom: 24px !important;
+}
+
+.project-properties-grid {
+  margin-bottom: 24px !important;
+}
+
+.project-progress-card {
+  margin-bottom: 24px !important;
+}
+
+.project-section-nav {
+  margin-bottom: 24px !important;
+}
+
