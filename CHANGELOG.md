@@ -1,5 +1,21 @@
 # Changelog
 
+## Standarisasi konsistensi geometris tombol dan dropdown ("Kotak dengan Sedikit Rounded") — 4 Oktober 2026
+
+- Standarisasikan geometri seluruh tombol dan pemicu dropdown menjadi **"kotak dengan sedikit rounded"** (`border-radius: 10px` standar, `8px` ringkas/tabel), menghilangkan inkonsistensi bentuk oval kapsul (`9999px`), lingkaran/telur terdistorsi (`50%`), dan tombol yang saling bertabrakan gaya.
+- Perbaiki tombol tutup formulir modal dan drawer (`.editor-close-btn`, `.close-btn`, `.close-drawer-btn`, `.action-modal-close`):
+  - Kunci dimensi simetris 36 × 36 px dengan `aspect-ratio: 1 / 1 !important`, padding 0, dan `border-radius: 10px !important;`.
+  - Kecualikan pemilih tombol tutup pada `globals.css` dari aturan universal `min-height: 44px` agar tombol `[ ✕ ]` tidak lagi tertarik vertikal menjadi bentuk telur/oval gepeng seperti yang dilaporkan pengguna.
+- Selaraskan seluruh pemicu dropdown (`.custom-select-trigger`, elemen `select` asli, `.task-status-custom-select .custom-select-trigger`, `.drawer-status-select-wrap .custom-select-trigger`):
+  - Ganti nilai `var(--radius-pill)` dan `9999px` menjadi `border-radius: 10px !important` untuk formulir dan filter, serta `8px !important` untuk baris tabel dan properti drawer ringkas.
+  - Hilangkan perbedaan antara dropdown berbentuk kapsul lonjong dengan dropdown kotak.
+- Selaraskan seluruh tombol aksi (`.primary`, `.button`, `.btn-mark-complete`, `.btn-editor-cancel`, `.btn-editor-submit`, `.btn-drawer-action`, `.btn-add-submission-quick`, `.btn-clear-range`, `.btn-apply-range`, `.btn-submit-comment`):
+  - Seragamkan radius sudut menjadi `10px !important`, dengan tombol mini (`.btn-add-subtask`, `.btn-tiny-save`, `.btn-tiny-cancel`, `.btn-quick-add-day`) memakai `8px !important`.
+  - Harmonisasikan token `--radius-pill` dan `--btn-radius-pill` di `:root` dari 9999 px menjadi 10 px.
+- Selaraskan badge, chip, dan tag metadata (`.prop-user-chip`, `.prop-text-badge`, `.project-badge`, `.priority-badge`, `.card-priority-pill`, `.submission-status-pill`):
+  - Terapkan geometri rounded-rectangle modern (8 px / 6 px) yang selaras dengan bahasa desain Notion/Linear.
+- Verifikasi lengkap: 171 tes dalam 23 berkas lulus (`npm test`), 0 kesalahan TypeScript (`npm run typecheck`), dan Next.js production build berhasil (`npm run build`).
+
 ## Standarisasi jarak komponen dan tombol di seluruh halaman — 4 Oktober 2026
 
 - Perlebar jarak tombol aksi inline (`.inline-actions`, `.title-edit-form`, `.desc-edit-form`):

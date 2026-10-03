@@ -154,7 +154,7 @@ a {
   color: inherit;
   text-decoration: none;
 }
-button:not(.subtask-round-check):not(.subtask-toggle):not(.custom-select-option):not(.btn-icon):not(.close-drawer-btn),
+button:not(.subtask-round-check):not(.subtask-toggle):not(.custom-select-option):not(.btn-icon):not(.close-drawer-btn):not(.editor-close-btn):not(.close-btn):not(.action-modal-close):not(.btn-modal-close):not(.close-picker-btn):not(.sprint-action-btn):not(.btn-quick-add-day),
 .button,
 .primary {
   display: inline-flex;
@@ -171,7 +171,7 @@ button:not(.subtask-round-check):not(.subtask-toggle):not(.custom-select-option)
   cursor: pointer;
   gap: 8px;
 }
-button:not(.subtask-round-check):not(.subtask-toggle):not(.custom-select-option):not(.btn-icon):not(.close-drawer-btn):hover,
+button:not(.subtask-round-check):not(.subtask-toggle):not(.custom-select-option):not(.btn-icon):not(.close-drawer-btn):not(.editor-close-btn):not(.close-btn):not(.action-modal-close):not(.btn-modal-close):not(.close-picker-btn):not(.sprint-action-btn):not(.btn-quick-add-day):hover,
 .button:hover {
   background: var(--canvas);
 }
