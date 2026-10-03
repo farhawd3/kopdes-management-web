@@ -1,5 +1,22 @@
 # Status proyek — 3 Oktober 2026
 
+## Rombak Desain Tugas Harian Tanpa Dropdown & Koreksi Checkbox Bulat Sempurna (3 Oktober 2026)
+
+- **Desain Tugas Harian Tanpa Dropdown / Accordion (`DailyTasksView.tsx` & `personal.css`)**:
+  - Mengganti sistem pelipatan accordion dropdown kebawah dengan perencana harian terbuka (*Open Day-Planner*): seluruh tugas hari terpilih langsung tersaji terbuka, jelas, dan modern tanpa perlu mengklik panah ekspansi.
+  - Menghilangkan seluruh tombol chevron lipat-buka (`<ChevronDown>`, `<ChevronRight>`, `.toggle-collapse-btn`) pada hari kerja, tugas terlewat, dan tugas mendatang.
+  - Menambahkan kontrol lompat hari cepat (`← Hari Sebelumnya`, tombol `Hari Ini`, dan `→ Hari Berikutnya`) serta bilah tab 7-hari interaktif yang otomatis tersinkronisasi dengan pekan aktif.
+  - Menghadirkan dua mode tampilan: **Fokus Hari** (tampilan utama kartu hari aktif lengkap dengan judul tanggal bahasa Indonesia `Sabtu, 3 Oktober 2026`, lencana status, indikator progress bar penyelesaian, dan tombol `+ Tambah Tugas`), serta **Semua Pekan** (seluruh 7 hari ditampilkan mengalir terbuka tanpa dropdown).
+  - Menyajikan bagian tugas terlewat (*overdue*) dan tugas mendatang (*upcoming*) dalam kartu peringatan terbuka yang selalu terlihat dan tidak berisiko terlewatkan.
+- **Koreksi Bentuk Checkbox Bulat Sempurna (`personal.css`)**:
+  - Mengatasi bentuk lonjong / oval pada checkbox tugas utama yang sebelumnya terjadi karena elemen `<button>` mewarisi `min-height: 44px` dari aturan global.
+  - Menerapkan kuncian dimensi lingkaran presisi `22px x 22px` (`aspect-ratio: 1 / 1 !important`, `min-width: 22px !important`, `min-height: 22px !important`, `border-radius: 50% !important`, `padding: 0 !important`).
+  - Menghapus pseudo-element `::after` yang bertabrakan dengan ikon SVG `<Check />` dari Lucide, sehingga ikon centang tampil bersih dan pas di tengah.
+  - Menyelaraskan checkbox subtugas (`.subtask-round-check`) menjadi lingkaran presisi `18px x 18px` dengan konektor pohon subtugas yang lembut dan terpadu.
+- **Verifikasi Kualitas & Unit Test (`tests/redesign.test.tsx`)**:
+  - Menambahkan pengujian khusus `DailyTasksView menggunakan desain terbuka tanpa dropdown accordion`.
+  - 144/144 unit tes lulus 100% (19 berkas), 0 kesalahan TypeScript (`tsc --noEmit`), dan kompilasi produksi Next.js berjalan sukses tanpa kendala.
+
 ## Paket Perombakan UI & Interaksi: Pintasan Terhubung, Navigasi Multiplatform, Perampingan Tugas, dan Desain Dashboard Pastel (3 Oktober 2026)
 
 - **Pintasan Cepat Buat Baru pada Formulir Terhubung (`Editor.tsx`)**:

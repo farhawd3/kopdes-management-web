@@ -64,6 +64,60 @@ describe('Fitur Redesain Behance', () => {
     expect(screen.getByText('Cek rak display')).toBeTruthy();
   });
 
+  it('DailyTasksView menggunakan desain terbuka tanpa dropdown accordion', () => {
+    const todayStr = today();
+    const taskToday: Item = {
+      id: 'task-today-1',
+      created_at: '',
+      updated_at: '',
+      data: {
+        title: 'Mengerjakan tugas di Lark',
+        due_date: todayStr,
+        status: 'rencana',
+        code: 'TGS-F2A4',
+      },
+    };
+    const overdueTask: Item = {
+      id: 'task-overdue-1',
+      created_at: '',
+      updated_at: '',
+      data: {
+        title: 'Audit stok beras',
+        due_date: addDays(todayStr, -10),
+        status: 'rencana',
+        code: 'TGS-OLD1',
+      },
+    };
+
+    render(
+      <DailyTasksView
+        tasks={[taskToday, overdueTask]}
+        workspace={{}}
+        onOpenTask={vi.fn()}
+        onCreateTask={vi.fn()}
+        onRefresh={vi.fn().mockResolvedValue(undefined)}
+      />,
+    );
+
+    // No collapsible accordion dropdown chevron buttons
+    expect(screen.queryByLabelText(/buka tutup/i)).toBeNull();
+
+    // Active day and tasks are directly rendered open
+    expect(screen.getByText('Mengerjakan tugas di Lark')).toBeTruthy();
+    expect(screen.getByText('TGS-F2A4')).toBeTruthy();
+
+    // Overdue tasks are displayed in open card without accordion dropdown
+    expect(screen.getByText(/Tugas Terlewat \/ Perlu Tindak Lanjut/i)).toBeTruthy();
+    expect(screen.getByText('Audit stok beras')).toBeTruthy();
+
+    // View mode switch to 'Semua Pekan' displays all days openly
+    const allWeekTab = screen.getByRole('button', { name: /Semua Pekan/i });
+    fireEvent.click(allWeekTab);
+    expect(screen.getByText('Senin')).toBeTruthy();
+    expect(screen.getByText('Minggu')).toBeTruthy();
+    expect(screen.getByText('Mengerjakan tugas di Lark')).toBeTruthy();
+  });
+
   it('DateRangePicker menghitung rentang hari dan mengubah bulan aktif', () => {
     const onChange = vi.fn();
     render(<DateRangePicker startDate="2026-10-01" endDate="2026-10-16" onChange={onChange} />);
