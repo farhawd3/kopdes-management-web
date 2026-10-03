@@ -1,6 +1,7 @@
 # Checklist produk aktif
 
 ## Perapian 2 Oktober
+- [x] Hilangkan dua blok `!important` duplikat (Section 6.1 & 6.5) yang menimpa rail tablet dan memicu overflow di 768px; beri `max-width:100%` pada skeleton/nav cards; naikkan tombol aksi ke 44px untuk mobile.
 - [x] Kurangi aturan `margin-left`/`width` yang saling menimpa pada breakpoint: hapus blok media 768–1100 duplikat (sidebar 205px) yang tertimpa blok tablet-rail; satu breakpoint kini satu aturan untuk topbar/main/sidebar.
 - [x] Desain ulang tabel tugas (task-table-wrap): padding flush, quick check circle, pill status dengan dot warna, avatar PIC, footer status bar.
 - [x] Eliminasi menu redundant: pelabelan unik dan pembedaan peran Hari Ini (kokpit harian), Daftar Tugas (backlog master), Perlu Perhatian (audit anomali), Linimasa Gantt, dan Ringkasan Buku.

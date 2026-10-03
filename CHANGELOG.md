@@ -1,5 +1,12 @@
 # Changelog
 
+### Perbaikan Layout Semua Device & Sentuh Target (3 Oktober 2026)
+
+- Hilangkan dua blok `!important` duplikat `.manager-main`/` .manager-sidebar` (Section 6.1 & 6.5) yang saling menimpa aturan rail tablet dan memicu overflow horizontal di 768px.
+- Tambah `max-width: 100%; min-width: 0; box-sizing: border-box` pada `.skeleton-work-col` dan turunannya serta `.mobile-nav-cards-grid`/`.mobile-nav-card` agar tidak melebar melebihi viewport ponsel/tablet.
+- Naikkan `min-height` `.home-action-btn` (Buat tugas/Catat kegiatan) menjadi 44px untuk orientasi mobile.
+- Verifikasi: 0 horizontal overflow dokumen pada 11 halaman di 360/768/1024/1440px di browser nyata, 147 tes, `tsc --noEmit`, dan `next build` lulus.
+
 ### Pembersihan Aturan Layout Navigasi (3 Oktober 2026)
 
 - Hapus blok media `@media (min-width: 768px) and (max-width: 1100px)` duplikat di `src/app/personal.css` yang menetapkan sidebar `width: 205px` dan `margin-left: 205px`. Blok tersebut tertimpa penuh oleh blok tablet-rail belakangan, sehingga jadi aturan mati.

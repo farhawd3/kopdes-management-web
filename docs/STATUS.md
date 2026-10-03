@@ -1,5 +1,14 @@
 # Status proyek — 3 Oktober 2026
 
+## Perbaikan Layout Semua Device & Sentuh Target (3 Oktober 2026)
+
+- **Akar overflow tablet (768px)**: menghapus dua blok `.manager-main` duplikat berkualifikasi `!important` (Section 6.1 dan 6.5 dengan media `max-width: 1023px`) yang menimpa rail tablet dan memicu scroll horizontal dokumen. Kini satu aturan layout per breakpoint: base 244px, rail 76px di 768–1100, 0 di ponsel.
+- **Overflow skeleton loader**: beri `max-width: 100%; min-width: 0; box-sizing: border-box` pada `.skeleton-work-col` dan turunannya, sehingga halaman Pencatatan/Stok/Barang/Anggota tidak melebar melebihi viewport.
+- **Overflow nav sheet mobile**: `.mobile-nav-cards-grid` dan `.mobile-nav-card` mendapat `max-width: 100%; min-width: 0` sehingga grid 2-kolom tidak bocor keluar 360/768px.
+- **Sentuh target mobile**: `.home-action-btn` (Buat tugas/Catat kegiatan) dinaikkan ke `min-height: 44px` (dari 38px) agar mudah disentuh ibu jari.
+- **Verifikasi** di browser nyata (localhost, PIN login): 0 horizontal overflow dokumen pada 11 halaman di 360, 768, 1024, dan 1440px.
+- Pemeriksaan ulang: 147 tes lulus (ada 1 jalur dengan 145 lulus saat dua `npm test` berjalan paralel — flaky, bukan regresi CSS; jalur mandiri 147/147), `tsc --noEmit` 0 error, `next build` sukses.
+
 ## Pembersihan Aturan Layout Navigasi (3 Oktober 2026)
 
 - Menghapus blok `@media (min-width: 768px) and (max-width: 1100px)` ganda pada `src/app/personal.css` yang menetapkan `margin-left: 205px` dan `width: 205px` untuk sidebar. Blok tersebut sudah tertimpa penuh oleh blok tablet-rail yang lebih akhir (sidebar 280px overlay + rail 76px + `margin-left: 76px`), sehingga menjadi aturan mati yang membingungkan.
