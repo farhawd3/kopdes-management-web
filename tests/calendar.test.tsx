@@ -33,3 +33,38 @@ it('menjelaskan bulan kosong', () => {
   fireEvent.click(screen.getByRole('button', { name: 'Hari ini' }));
   expect(screen.getByText('Tidak ada tugas pada tanggal ini.')).toBeTruthy();
 });
+
+it('menampilkan indikator titik tugas mobile dan ringkasan info agenda', () => {
+  const date = today();
+  const task1 = {
+    id: 't-1',
+    created_at: '',
+    updated_at: '',
+    data: { title: 'Tugas Penting', due_date: date, status: 'proses', priority: 'tinggi' },
+  } as Item;
+  const task2 = {
+    id: 't-2',
+    created_at: '',
+    updated_at: '',
+    data: { title: 'Tugas Mendesak', due_date: date, status: 'rencana', priority: 'mendesak' },
+  } as Item;
+
+  const { container } = render(
+    <TaskCalendar
+      items={[task1, task2]}
+      render={(row) => <div key={row.id}>{String(row.data.title)}</div>}
+    />,
+  );
+
+  // Check mobile dots are rendered in the cell
+  const dotsContainer = container.querySelector('.calendar-mobile-dots');
+  expect(dotsContainer).toBeTruthy();
+  expect(container.querySelector('.cal-mobile-dot.dot-high')).toBeTruthy();
+  expect(container.querySelector('.cal-mobile-dot.dot-urgent')).toBeTruthy();
+
+  // Select today
+  fireEvent.click(screen.getByRole('button', { name: 'Hari ini' }));
+  expect(screen.getAllByText('2 catatan').length).toBeGreaterThan(0);
+  expect(screen.getAllByText('Tugas Penting').length).toBeGreaterThan(0);
+  expect(screen.getAllByText('Tugas Mendesak').length).toBeGreaterThan(0);
+});

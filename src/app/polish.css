@@ -537,36 +537,135 @@
     display: grid !important;
     grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
     min-width: 0 !important;
-    width: 100%;
-    gap: 1px !important;
+    width: 100% !important;
+    gap: 4px !important;
+  }
+  .manager-main .task-calendar .calendar-week {
+    padding-inline: 0 !important;
+    margin-bottom: 2px !important;
+  }
+  .manager-main .task-calendar .calendar-week strong {
+    letter-spacing: 0.04em !important;
+    font-size: 10.5px !important;
+    font-weight: 750 !important;
+    text-transform: uppercase !important;
+    color: var(--ink-muted) !important;
+    text-align: center !important;
+    padding: 2px 0 !important;
   }
   .manager-main .task-calendar .calendar-days > section.calendar-day-cell {
     min-width: 0 !important;
-    min-height: 44px !important;
-    height: 46px !important;
-    padding: 0 !important;
-    display: grid !important;
-    place-items: center !important;
+    min-height: 50px !important;
+    height: 52px !important;
+    padding: 3px 2px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
     border-radius: 9px !important;
-    overflow: hidden;
+    background: var(--surface) !important;
+    border: 1px solid var(--line) !important;
+    position: relative !important;
+    cursor: pointer !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+    gap: 2px !important;
+    transition: all 0.15s ease !important;
   }
   .manager-main .task-calendar .calendar-day-header {
-    width: 100%;
-    display: grid;
-    place-items: center;
-  }
-  .manager-main .calendar-mode-day .calendar-days {
-    grid-template-columns: 1fr !important;
-  }
-  .manager-main .calendar-mode-day .calendar-week {
-    display: none !important;
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: unset !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
   }
   .manager-main .task-calendar .calendar-day-number {
-    width: 100%;
-    min-width: 0;
-    min-height: 44px;
-    height: 44px;
-    border-radius: 8px;
+    width: 26px !important;
+    height: 26px !important;
+    min-width: 26px !important;
+    min-height: 26px !important;
+    max-width: 26px !important;
+    max-height: 26px !important;
+    border-radius: 50% !important;
+    font-size: 12px !important;
+    font-weight: 650 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: var(--ink) !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 auto !important;
+    line-height: 1 !important;
+    box-sizing: border-box !important;
+    cursor: pointer !important;
+  }
+  /* Today state on mobile */
+  .manager-main .task-calendar .calendar-today:not(.calendar-selected) .calendar-day-number {
+    background: color-mix(in srgb, var(--brand) 18%, var(--surface)) !important;
+    border: 1.5px solid var(--brand) !important;
+    color: var(--brand) !important;
+    font-weight: 800 !important;
+  }
+  .manager-main .task-calendar .calendar-today:not(.calendar-selected) {
+    border-color: color-mix(in srgb, var(--brand) 45%, var(--line)) !important;
+  }
+  /* Selected day state on mobile */
+  .manager-main .task-calendar .calendar-selected {
+    border: 2px solid var(--brand) !important;
+    background: color-mix(in srgb, var(--brand) 12%, var(--surface)) !important;
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand) 28%, transparent) !important;
+  }
+  .manager-main .task-calendar .calendar-selected .calendar-day-number {
+    background: var(--brand) !important;
+    color: #111215 !important;
+    font-weight: 800 !important;
+    border: none !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25) !important;
+  }
+  /* Outside month on mobile */
+  .manager-main .task-calendar .calendar-outside {
+    opacity: 0.3 !important;
+    background: var(--canvas) !important;
+  }
+  /* Mobile Event Dots Indicator */
+  .manager-main .task-calendar .calendar-mobile-dots {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 3px !important;
+    height: 6px !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
+  .manager-main .task-calendar .cal-mobile-dot {
+    width: 4px !important;
+    height: 4px !important;
+    border-radius: 50% !important;
+    flex-shrink: 0 !important;
+    display: inline-block !important;
+  }
+  .manager-main .task-calendar .cal-mobile-dot.dot-normal {
+    background: var(--brand) !important;
+  }
+  .manager-main .task-calendar .cal-mobile-dot.dot-high {
+    background: #f59e0b !important;
+  }
+  .manager-main .task-calendar .cal-mobile-dot.dot-urgent {
+    background: #ef4444 !important;
+  }
+  .manager-main .task-calendar .cal-mobile-dot.dot-done {
+    background: #3b82f6 !important;
+  }
+  .manager-main .task-calendar .cal-mobile-more {
+    font-size: 7.5px !important;
+    font-weight: 800 !important;
+    color: var(--ink-muted) !important;
+    line-height: 1 !important;
   }
   .manager-main .task-calendar .calendar-events-wrap,
   .manager-main .task-calendar .calendar-add {
@@ -575,12 +674,11 @@
   .manager-main .task-calendar .calendar-toolbar {
     padding-inline: 0 !important;
   }
-  .manager-main .task-calendar .calendar-week {
-    padding-inline: 0 !important;
+  .manager-main .calendar-mode-day .calendar-days {
+    grid-template-columns: 1fr !important;
   }
-  .manager-main .task-calendar .calendar-week strong {
-    letter-spacing: 0 !important;
-    font-size: 10px !important;
+  .manager-main .calendar-mode-day .calendar-week {
+    display: none !important;
   }
   .timeline-mobile-toggle {
     display: inline-flex;

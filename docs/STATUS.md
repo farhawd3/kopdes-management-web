@@ -1,5 +1,26 @@
 # Status proyek — 3 Oktober 2026
 
+## Perbaikan Tampilan Kalender Mobile: Sel Simetris Rapi, Indikator Titik Info Tugas & Header Agenda Responsif (3 Oktober 2026)
+
+- **Perbaikan Bentuk Sel Tanggal Mobile Sempurna Simetris (`polish.css` & `personal.css`)**:
+  - Mengatasi masalah kapsul hitam dan kapsul lime lonjong 28px x 44px yang sebelumnya menempel canggung di sisi kiri setiap sel tanggal akibat konflik aturan CSS (`max-width: 28px` vs `height: 44px` dan `background: var(--canvas)`).
+  - Menstandarkan sel tanggal mobile berdimensi `height: 52px` dengan tata letak flex terpusat simetris dan lingkaran angka tanggal bundar sempurna `26px x 26px`.
+  - Memberikan indikator hari ini (*Today*) berupa lingkaran pastel aksen bertema emerald lembut, dan indikator tanggal terpilih (*Selected*) berupa lingkaran solid dengan kontras tinggi serta kartu aktif bercahaya halus.
+  - Memperbaiki jarak antar-sel grid dari `1px` menjadi `4px` sehingga setiap kotak tanggal memiliki batas kartu yang bersih, terpisah, dan tidak berhimpitan.
+- **Penyajian Info Tugas Langsung pada Kalender Mobile (`TaskCalendar.tsx`, `polish.css`, & `personal.css`)**:
+  - Menghilangkan masalah kalender mobile yang sebelumnya tidak menampilkan informasi tugas apapun akibat disembunyikan total (`display: none`).
+  - Menambahkan indikator titik tugas mobile (`.calendar-mobile-dots`) tepat di bawah angka tanggal untuk setiap hari yang memiliki aktivitas:
+    - Titik **Merah** (`.dot-urgent`): Tugas mendesak / tenggat terlewat.
+    - Titik **Amber** (`.dot-high`): Tugas prioritas tinggi.
+    - Titik **Emerald** (`.dot-normal`): Tugas reguler aktif / dalam proses.
+    - Titik **Biru** (`.dot-done`): Tugas selesai.
+    - Lencana angka `+N` jika terdapat lebih dari 3 tugas dalam satu tanggal.
+- **Penyempurnaan Header & Kontrol Agenda Tanggal Terpilih (`TaskCalendar.tsx` & `personal.css`)**:
+  - Menyediakan ringkasan jumlah tugas pada tanggal terpilih (`N catatan`) dan tombol pintasan `Semua tanggal` untuk kembali ke ikhtisar penuh bulan ini.
+- **Verifikasi Kualitas**:
+  - Menambahkan pengujian `menampilkan indikator titik tugas mobile dan ringkasan info agenda` di `tests/calendar.test.tsx`.
+  - Seluruh 146 unit tes lulus 100% (19 berkas), 0 kesalahan TypeScript, dan kompilasi produksi Next.js sukses tanpa error.
+
 ## Penataan Ulang Kartu Tugas Papan (Scrum/Kanban) Lebih Efisien, Rapi & Elegan (3 Oktober 2026)
 
 - **Restrukturisasi Layout Kartu 3 Bagian Terpadu (`ScrumBoardView.tsx` & `personal.css`)**:

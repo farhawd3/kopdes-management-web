@@ -201,6 +201,34 @@ export function TaskCalendar({
                     </button>
                   )}
                 </div>
+                {/* Mobile Event Dots Indicator */}
+                {hasTasks && (
+                  <div className="calendar-mobile-dots" aria-hidden="true">
+                    {dayTasks.slice(0, 3).map((task, idx) => {
+                      const priority = String(task.data?.priority || 'normal');
+                      const status = String(task.data?.status || 'rencana');
+                      const isUrgent = priority === 'mendesak';
+                      const isHigh = priority === 'tinggi';
+                      const isDone = status === 'selesai';
+                      const dotType = isUrgent
+                        ? 'urgent'
+                        : isHigh
+                          ? 'high'
+                          : isDone
+                            ? 'done'
+                            : 'normal';
+                      return (
+                        <span
+                          key={task.id || idx}
+                          className={`cal-mobile-dot dot-${dotType}`}
+                        />
+                      );
+                    })}
+                    {dayTasks.length > 3 && (
+                      <span className="cal-mobile-more">+{dayTasks.length - 3}</span>
+                    )}
+                  </div>
+                )}
                 <div className="calendar-events-wrap">
                   {dayTasks.map((item) => (
                     <button
@@ -227,30 +255,43 @@ export function TaskCalendar({
       </div>
       <div className="calendar-agenda">
         <div className="section-head">
-          <h3>
-            {selected
-              ? formatDate(selected)
-              : mode === 'month'
-                ? 'Agenda bulan ini'
-                : mode === 'week'
-                  ? 'Agenda minggu ini'
-                  : 'Agenda hari ini'}
-          </h3>
-          {onCreate && (
-            <button
-              type="button"
-              className="calendar-agenda-add-btn"
-              onClick={() => onCreate(selected || anchor)}
-            >
-              <Plus size={15} strokeWidth={2.2} />
-              <span>Tambah tugas</span>
-            </button>
-          )}
-          {selected && (
-            <button type="button" onClick={() => setSelected(null)}>
-              Semua tanggal
-            </button>
-          )}
+          <div className="calendar-agenda-title-group">
+            <h3>
+              {selected
+                ? formatDate(selected)
+                : mode === 'month'
+                  ? 'Agenda bulan ini'
+                  : mode === 'week'
+                    ? 'Agenda minggu ini'
+                    : 'Agenda hari ini'}
+            </h3>
+            {selected && (
+              <span className="calendar-agenda-task-count">
+                {items.filter((item) => getItemDate(item) === selected).length} catatan
+              </span>
+            )}
+          </div>
+          <div className="calendar-agenda-actions">
+            {onCreate && (
+              <button
+                type="button"
+                className="calendar-agenda-add-btn"
+                onClick={() => onCreate(selected || anchor)}
+              >
+                <Plus size={15} strokeWidth={2.2} />
+                <span>Tambah tugas</span>
+              </button>
+            )}
+            {selected && (
+              <button
+                type="button"
+                className="calendar-agenda-clear-btn"
+                onClick={() => setSelected(null)}
+              >
+                Semua tanggal
+              </button>
+            )}
+          </div>
         </div>
         {(selected
           ? !items.some((item) => getItemDate(item) === selected)
