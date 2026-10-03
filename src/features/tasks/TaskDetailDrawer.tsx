@@ -29,6 +29,7 @@ import { RecursiveScheduleModal } from './RecursiveScheduleModal';
 import { meetingJoinUrl } from '../meetings/meeting';
 import { formatDisplayCode } from './task-code';
 import { SubtaskToggle } from './SubtaskToggle';
+import { Select } from '@/components/ui/Select';
 
 type ActivityItem = {
   id: string;
@@ -360,54 +361,50 @@ export function TaskDetailDrawer({
                 {String(project.data.title)}
               </Link>
             )}
-            <div className={`drawer-status-select-wrap status-${data.status || 'rencana'}`}>
-              <select
-                aria-label="Ubah status tugas"
-                className="drawer-status-select"
-                value={String(data.status || 'rencana')}
-                disabled={busy}
-                onChange={async (e) => {
-                  const nextStatus = e.target.value as TaskStatus;
-                  const statusChanges = selectTaskStatus(nextStatus);
-                  const labelMap: Record<string, string> = {
-                    rencana: 'Rencana',
-                    proses: 'Dikerjakan',
-                    selesai: 'Selesai',
-                    dibatalkan: 'Dibatalkan',
-                  };
-                  await saveChanges(
-                    statusChanges,
-                    `mengubah status tugas menjadi "${labelMap[nextStatus] || nextStatus}"`,
-                  );
-                }}
-              >
-                <option value="rencana">Rencana</option>
-                <option value="proses">Dikerjakan</option>
-                <option value="selesai">Selesai</option>
-                <option value="dibatalkan">Dibatalkan</option>
-              </select>
-            </div>
-            <div className={`drawer-priority-select-wrap priority-${data.priority || 'normal'}`}>
-              <Flag size={12} className="priority-flag-icon" />
-              <select
-                aria-label="Ubah prioritas tugas"
-                className="drawer-priority-select"
-                value={String(data.priority || 'normal')}
-                disabled={busy}
-                onChange={async (e) => {
-                  const nextPriority = e.target.value;
-                  await saveChanges(
-                    { priority: nextPriority },
-                    `mengubah prioritas menjadi "${nextPriority}"`,
-                  );
-                }}
-              >
-                <option value="rendah">Rendah</option>
-                <option value="normal">Normal</option>
-                <option value="tinggi">Tinggi</option>
-                <option value="mendesak">Mendesak</option>
-              </select>
-            </div>
+            <Select
+              className={`drawer-status-select-wrap status-${data.status || 'rencana'}`}
+              value={String(data.status || 'rencana')}
+              disabled={busy}
+              onChange={async (nextVal) => {
+                const nextStatus = nextVal as TaskStatus;
+                const statusChanges = selectTaskStatus(nextStatus);
+                const labelMap: Record<string, string> = {
+                  rencana: 'Rencana',
+                  proses: 'Dikerjakan',
+                  selesai: 'Selesai',
+                  dibatalkan: 'Dibatalkan',
+                };
+                await saveChanges(
+                  statusChanges,
+                  `mengubah status tugas menjadi "${labelMap[nextStatus] || nextStatus}"`,
+                );
+              }}
+              options={[
+                { value: 'rencana', label: 'Rencana' },
+                { value: 'proses', label: 'Dikerjakan' },
+                { value: 'selesai', label: 'Selesai' },
+                { value: 'dibatalkan', label: 'Dibatalkan' },
+              ]}
+              ariaLabel="Ubah status tugas"
+            />
+            <Select
+              className={`drawer-priority-select-wrap priority-${data.priority || 'normal'}`}
+              value={String(data.priority || 'normal')}
+              disabled={busy}
+              onChange={async (nextPriority) => {
+                await saveChanges(
+                  { priority: nextPriority },
+                  `mengubah prioritas menjadi "${nextPriority}"`,
+                );
+              }}
+              options={[
+                { value: 'rendah', label: 'Rendah', icon: <Flag size={12} className="priority-flag-icon" /> },
+                { value: 'normal', label: 'Normal', icon: <Flag size={12} className="priority-flag-icon" /> },
+                { value: 'tinggi', label: 'Tinggi', icon: <Flag size={12} className="priority-flag-icon" /> },
+                { value: 'mendesak', label: 'Mendesak', icon: <Flag size={12} className="priority-flag-icon" /> },
+              ]}
+              ariaLabel="Ubah prioritas tugas"
+            />
           </div>
 
           {isEditingTitle ? (

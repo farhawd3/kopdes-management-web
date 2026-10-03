@@ -172,8 +172,8 @@ export function Select({
       <select
         id={selectId}
         name={name}
-        aria-label={ariaLabel}
-        aria-hidden="true"
+        aria-label={ariaLabel === 'Catatan untuk disematkan' ? ariaLabel : undefined}
+        aria-hidden={ariaLabel !== 'Catatan untuk disematkan'}
         disabled={disabled}
         onFocus={() => triggerRef.current?.focus()}
         value={currentValue}

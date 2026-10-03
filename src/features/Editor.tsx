@@ -21,6 +21,7 @@ import { today } from '@/lib/date';
 import { api } from '@/lib/client';
 import { ZodError } from 'zod';
 import { DateField } from '@/components/ui/DateField';
+import { Select } from '@/components/ui/Select';
 
 const STAKEHOLDER_PRESETS = [
   {
@@ -811,18 +812,19 @@ export function Editor({
                         <div className="inline-creator-row">
                           <label className="inline-creator-field">
                             <span>Mode Rapat</span>
-                            <select
+                            <Select
                               value={inlineMode}
-                              onChange={(e) => {
-                                const mode = e.target.value;
-                                if (mode === 'online' || mode === 'tatap muka' || mode === 'hybrid')
-                                  setInlineMode(mode);
+                              onChange={(val) => {
+                                if (val === 'online' || val === 'tatap muka' || val === 'hybrid')
+                                  setInlineMode(val);
                               }}
-                            >
-                              <option value="online">Online Penuh (Google Meet / Zoom)</option>
-                              <option value="tatap muka">Tatap Muka Langsung</option>
-                              <option value="hybrid">Hybrid (Tatap Muka + Daring)</option>
-                            </select>
+                              options={[
+                                { value: 'online', label: 'Online Penuh (Google Meet / Zoom)' },
+                                { value: 'tatap muka', label: 'Tatap Muka Langsung' },
+                                { value: 'hybrid', label: 'Hybrid (Tatap Muka + Daring)' },
+                              ]}
+                              ariaLabel="Mode Rapat"
+                            />
                           </label>
                           <label className="inline-creator-field">
                             <span>Tautan Daring (URL Rapat)</span>
@@ -927,15 +929,17 @@ export function Editor({
                           </label>
                           <label className="inline-creator-field">
                             <span>Jenis Dokumen</span>
-                            <select
+                            <Select
                               value={inlineDocKind}
-                              onChange={(e) => setInlineDocKind(e.target.value)}
-                            >
-                              <option value="kontrak">Perjanjian / Kontrak</option>
-                              <option value="legalitas">Legalitas / Izin</option>
-                              <option value="laporan">Laporan / Notulen</option>
-                              <option value="lainnya">Lainnya</option>
-                            </select>
+                              onChange={(val) => setInlineDocKind(val)}
+                              options={[
+                                { value: 'kontrak', label: 'Perjanjian / Kontrak' },
+                                { value: 'legalitas', label: 'Legalitas / Izin' },
+                                { value: 'laporan', label: 'Laporan / Notulen' },
+                                { value: 'lainnya', label: 'Lainnya' },
+                              ]}
+                              ariaLabel="Jenis Dokumen"
+                            />
                           </label>
                         </div>
                         <label className="inline-creator-field">
@@ -1016,15 +1020,17 @@ export function Editor({
                           </label>
                           <label className="inline-creator-field">
                             <span>Prioritas</span>
-                            <select
+                            <Select
                               value={inlinePriority}
-                              onChange={(e) => setInlinePriority(e.target.value)}
-                            >
-                              <option value="rendah">Rendah</option>
-                              <option value="normal">Normal</option>
-                              <option value="tinggi">Tinggi</option>
-                              <option value="mendesak">Mendesak</option>
-                            </select>
+                              onChange={(val) => setInlinePriority(val)}
+                              options={[
+                                { value: 'rendah', label: 'Rendah' },
+                                { value: 'normal', label: 'Normal' },
+                                { value: 'tinggi', label: 'Tinggi' },
+                                { value: 'mendesak', label: 'Mendesak' },
+                              ]}
+                              ariaLabel="Prioritas"
+                            />
                           </label>
                         </div>
                       </div>
@@ -1167,17 +1173,19 @@ export function Editor({
                         <div className="inline-creator-row">
                           <label className="inline-creator-field">
                             <span>Kategori</span>
-                            <select
+                            <Select
                               value={inlineCategory}
-                              onChange={(e) => setInlineCategory(e.target.value)}
-                            >
-                              <option value="Agrinas">Agrinas</option>
-                              <option value="PIC lapangan / Babinsa">PIC lapangan / Babinsa</option>
-                              <option value="Pengurus dan pengawas koperasi">Pengurus dan pengawas koperasi</option>
-                              <option value="Pemerintah desa">Pemerintah desa</option>
-                              <option value="Mitra">Mitra / Rekanan Usaha</option>
-                              <option value="Warga / Petani">Warga / Petani</option>
-                            </select>
+                              onChange={(val) => setInlineCategory(val)}
+                              options={[
+                                { value: 'Agrinas', label: 'Agrinas' },
+                                { value: 'PIC lapangan / Babinsa', label: 'PIC lapangan / Babinsa' },
+                                { value: 'Pengurus dan pengawas koperasi', label: 'Pengurus dan pengawas koperasi' },
+                                { value: 'Pemerintah desa', label: 'Pemerintah desa' },
+                                { value: 'Mitra', label: 'Mitra / Rekanan Usaha' },
+                                { value: 'Warga / Petani', label: 'Warga / Petani' },
+                              ]}
+                              ariaLabel="Kategori pihak terkait"
+                            />
                           </label>
                           <label className="inline-creator-field">
                             <span>Kontak (WA / Telepon)</span>

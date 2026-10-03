@@ -1609,26 +1609,25 @@ export function Records({
                 >
                   +1 minggu
                 </button>
-                <label className="inline-label">
-                  Status
-                  <select
+                <div className="inline-label">
+                  <span>Status</span>
+                  <Select
                     value={String(row.data.status)}
                     disabled={busy}
-                    onChange={(e) =>
+                    onChange={(val) =>
                       void update(row, {
                         ...(entity === 'work-items'
-                          ? selectTaskStatus(e.target.value as TaskStatus)
-                          : { status: e.target.value }),
+                          ? selectTaskStatus(val as TaskStatus)
+                          : { status: val }),
                       })
                     }
-                  >
-                    {options['work-items.status'].map((value) => (
-                      <option key={value} value={value}>
-                        {formatChoiceLabel(value)}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                    options={options['work-items.status'].map((value) => ({
+                      value,
+                      label: formatChoiceLabel(value),
+                    }))}
+                    ariaLabel="Status"
+                  />
+                </div>
               </>
             )}
             {(entity === 'meetings' || entity === 'issues') && (
@@ -2222,23 +2221,21 @@ export function Records({
                         </div>
                       </td>
                       <td className="col-task-status">
-                        <label className="task-status-field">
-                          <span className="sr-only">Status {String(row.data.title)}</span>
-                          <select
+                        <div className="task-status-field">
+                          <Select
                             disabled={busy}
-                            className={`task-status-select status-${row.data.status}`}
+                            className={`task-status-custom-select status-${row.data.status}`}
                             value={String(row.data.status)}
-                            onChange={(event) =>
-                              void update(row, selectTaskStatus(event.target.value as TaskStatus))
+                            onChange={(val) =>
+                              void update(row, selectTaskStatus(val as TaskStatus))
                             }
-                          >
-                            {options['work-items.status'].map((value) => (
-                              <option key={value} value={value}>
-                                {formatChoiceLabel(value)}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
+                            options={options['work-items.status'].map((value) => ({
+                              value,
+                              label: formatChoiceLabel(value),
+                            }))}
+                            ariaLabel={`Status ${String(row.data.title)}`}
+                          />
+                        </div>
                       </td>
                       <td className="col-task-priority">
                         <span

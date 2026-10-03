@@ -1,5 +1,15 @@
 # Changelog
 
+## Overhaul dropdown, progress bar subtugas, inline-actions, dan dashboard mobile — 4 Oktober 2026
+
+- Perbaiki `.subtasks-progress-bar .bar-fill` dan `.subtask-mini-fill`: ganti garis diagonal hitam kaku dengan gradien hijau emerald modern (`linear-gradient(90deg, #10b981 0%, #059669 100%)`), pendaran bayangan lembut, animasi transisi lebar halus, serta lencana persentase pill pastel emerald.
+- Beri jarak aman pada `.inline-actions`, `.title-edit-form`, `.desc-edit-form`, dan `.drawer-description-box`: tambah margin bawah 18–20 px dan jarak atas 8–12 px sehingga tombol aksi tidak mepet atau bertabrakan dengan kartu dan konten di bawahnya.
+- Rombak total menu dropdown (`.custom-select-menu` dan `.custom-select-option`): hilangkan border kotak dan margin bawaan tombol opsi, terapkan reset penuh (`all: unset`), sudut membulat 8 px saat hover, latar hijau lembut aktif, tanda centang emerald, dan bayangan popover mengambang yang bersih (`box-shadow: 0 16px 36px -4px rgba(0,0,0,0.14)`).
+- Ganti select bawaan OS pada status/prioritas TaskDetailDrawer dan tabel Records dengan komponen custom `Select`: status dan prioritas kini tampil sebagai pil anggun dengan warna semantik (rencana, dikerjakan, selesai, dibatalkan; rendah, normal, tinggi, mendesak) tanpa melebarkan kontainer menjadi tumpukan kotak kaku.
+- Rombak kedalaman mobile dashboard: ganti kartu statistik flat dengan gradien pastel bernuansa (biru lembut, emerald, amber, dan sage), bayangan halus, cincin fokus aktif, tipografi angka yang tegas, serta tata letak bar Perlu Perhatian yang terstruktur.
+- Proteksi proporsi kontrol kecil ponsel: cegah checkbox subtugas bundar (`.subtask-round-check`) dan tombol ikon/tutup (`.btn-icon`, `.close-drawer-btn`) terdistorsi atau memanjang oleh aturan target sentuh 44 px.
+- Verifikasi lengkap: 171 tes dalam 23 berkas lulus (`npm test`), 0 kesalahan TypeScript (`npm run typecheck`), dan Next.js production build berhasil (`npm run build`).
+
 ## Koreksi kepadatan dan font mobile — 3 Oktober 2026
 
 - Satukan skala judul/control mobile lewat token global; hapus prioritas tipografi dan aturan mobile yang bertentangan. Input/dropdown 14 px, judul halaman/bagian/kartu 20/17/15 px; target sentuh tetap 44 px.
