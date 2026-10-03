@@ -1,6 +1,25 @@
 # Changelog
 
-### Dukungan Penuh Dark Mode & Harmonisasi Kontras Komponen (3 Oktober 2026)
+### Rombak Total Tampilan Agenda Kalender: Eliminasi Header Ganda & Kartu Tugas Modern Elegan (3 Oktober 2026)
+
+- **Eliminasi Redundansi Header Box-in-a-Box (`TaskCalendar.tsx` & `personal.css`)**:
+  - Mengatasi masalah duplikasi header pada tampilan tanggal terpilih (*selected date view*), di mana tanggal dan jumlah catatan sebelumnya ditampilkan dua kali secara bertumpuk (pada bilah header atas dan pada kartu pembungkus `.calendar-agenda-day-head`).
+  - Menghilangkan bingkai kotak bersarang (*nested box*) dengan menerapkan mode `.is-selected-view` yang bersih, flat, dan menyatu langsung dengan aliran kartu tugas.
+  - Memperbarui bilah header agenda dengan kotak ikon kalender modern (`.calendar-agenda-header-icon`), tipografi judul tebal 17px yang jelas, pill hitungan catatan beraksen pastel, dan tombol aksi terpadu (`+ Tambah tugas` & `Semua tanggal`).
+- **Desain Ulang Kartu Tugas Agenda Kalender (`Records.tsx` & `personal.css`)**:
+  - Menggantikan tampilan kartu lama yang kaku, kosong, dan tidak beraturan dengan kartu tugas terpadu (`.calendar-task-card`):
+    - **Header Metadata**: Checkbox lingkaran cepat (`.task-round-check` 22px), kode monospace tugas (`TGS-F2A4`), pill proyek terhubung dengan titik warna indikator, lencana tingkat prioritas berikon (`Flame` / `AlertCircle`), serta status pill dinamis.
+    - **Judul & Cuplikan Deskripsi**: Judul tugas tebal 15.5px interaktif (membuka laci detail tugas `TaskDetailDrawer` saat diklik), efek coret saat selesai, dan cuplikan deskripsi jika ada.
+    - **Daftar Subtugas**: Mini progress bar horizontal persentase penyelesaian, ringkasan `done/total`, dan checkbox bulat subtugas (`.subtask-round-check` 18px) interaktif dengan efek coret teks tanpa muat ulang halaman.
+    - **Footer Aksi Terpadu**: Avatar inisial penanggung jawab (`Manajer`), pill tanggal tenggat berikon, tombol penundaan cepat `+1 hari`, tombol buka rincian `Buka catatan` (`<ExternalLink size={13} />`), tombol status utama `✓ Selesai` / `↺ Buka lagi`, serta menu dropdown melayang titik tiga (`<MoreHorizontal />`) untuk opsi `+1 minggu` dan `Hapus tugas`.
+- **Dukungan Dark Mode Penuh**:
+  - Seluruh komponen kartu agenda kalender memiliki penataan warna dan kontras tinggi di mode gelap (`.dark` dan `[data-theme='dark']`).
+- **Verifikasi Kualitas**:
+  - Menambahkan pengujian khusus `Records mode kalender menampilkan agenda terpilih dan calendar-task-card modern` di `tests/redesign.test.tsx`.
+  - Seluruh 147 unit test (19 berkas) lulus 100%.
+  - Pemeriksaan tipe TypeScript (`tsc --noEmit`) 0 error.
+  - Kompilasi produksi Next.js (`npm run build`) sukses tanpa kendala.
+
 
 - **Sinkronisasi Selector Atribut Ganda (`ThemeContext.tsx` & `AppShell.tsx`)**:
   - Memperbaiki `ThemeProvider` agar menyetel atribut `data-theme="dark"` pada `document.documentElement` secara simultan dengan class `.dark`. Sebelumnya, ketiadaan atribut `data-theme` menyebabkan puluhan selektor bertarget `[data-theme='dark']` gagal diaplikasikan.

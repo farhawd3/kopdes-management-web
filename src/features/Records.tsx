@@ -52,6 +52,12 @@ import {
   User,
   CheckSquare,
   Flag,
+  Check,
+  RotateCcw,
+  ExternalLink,
+  Flame,
+  MoreHorizontal,
+  Trash2,
 } from 'lucide-react';
 import { TaskTimeline } from './TaskTimeline';
 import { downloadMeeting, meetingJoinUrl } from './meeting';
@@ -860,13 +866,262 @@ export function Records({
       setBusy(false);
     }
   };
-  const card = (row: Item) => (
-    <article
-      className="record card"
-      key={row.id}
-      draggable={entity === 'work-items' && view === 'papan'}
-      onDragStart={(e) => e.dataTransfer.setData('text/plain', row.id)}
-    >
+  const renderCalendarTaskCard = (row: Item) => {
+    const isDone = row.data.status === 'selesai';
+    const subtasks = Array.isArray(row.data.subtasks)
+      ? (row.data.subtasks as { title: string; done: boolean }[])
+      : [];
+    const doneSubtasks = subtasks.filter((s) => s.done).length;
+    const progressPct =
+      subtasks.length > 0 ? Math.round((doneSubtasks / subtasks.length) * 100) : 0;
+    const project = workspace.workstreams?.find((p) => p.id === row.data.workstream_id);
+    const isLate = String(row.data.due_date) < today() && isActiveTask(row.data.status);
+    const isToday = String(row.data.due_date) === today() && isActiveTask(row.data.status);
+    const assignee = String(
+      row.data.assignee || workspace.organization?.[0]?.data?.manager || 'Manajer',
+    ).trim();
+    const initials =
+      assignee
+        .split(' ')
+        .map((n) => n[0])
+        .slice(0, 2)
+        .join('')
+        .toUpperCase() || 'M';
+    const priority = String(row.data.priority || 'normal').toLowerCase();
+
+    return (
+      <article
+        key={row.id}
+        className={`calendar-task-card ${isDone ? 'is-completed' : ''}`}
+        draggable={view === 'papan'}
+        onDragStart={(e) => e.dataTransfer.setData('text/plain', row.id)}
+      >
+        {/* Top metadata strip */}
+        <div className="cal-card-top-row">
+          <div className="cal-card-top-left">
+            <button
+              type="button"
+              className={`task-round-check ${isDone ? 'checked' : ''}`}
+              disabled={busy}
+              onClick={() =>
+                void update(row, taskStatusChange(isDone ? 'reopen' : 'complete'))
+              }
+              title={isDone ? 'Tandai belum selesai' : 'Tandai selesai'}
+              aria-label={isDone ? 'Tandai belum selesai' : 'Tandai selesai'}
+            >
+              {isDone && <Check size={13} strokeWidth={2.8} />}
+            </button>
+            <span className="card-task-code">
+              {formatDisplayCode(String(row.data.code), 'work-items', row.id)}
+            </span>
+            {project && (
+              <span className="card-project-pill" title={String(project.data.title)}>
+                <span
+                  className="project-dot"
+                  style={{ backgroundColor: String(project.data.color || 'var(--brand)') }}
+                />
+                <span className="card-project-name">{String(project.data.title)}</span>
+              </span>
+            )}
+          </div>
+          <div className="cal-card-top-right">
+            {priority !== 'normal' && (
+              <span className={`card-priority-pill priority-${priority}`}>
+                {priority === 'tinggi' && <Flame size={11} className="inline-icon" />}
+                {priority === 'mendesak' && <AlertCircle size={11} className="inline-icon" />}
+                <span>{formatChoiceLabel(priority)}</span>
+              </span>
+            )}
+            <span className={`card-status-badge status-${row.data.status}`}>
+              {formatChoiceLabel(String(row.data.status || 'rencana'))}
+            </span>
+          </div>
+        </div>
+
+        {/* Title and description */}
+        <div className="cal-card-title-wrap">
+          <h4
+            className={`cal-card-title ${isDone ? 'is-done-text' : ''}`}
+            onClick={() => setDetailTask(row)}
+            title="Buka rincian tugas"
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                setDetailTask(row);
+              }
+            }}
+          >
+            {String(row.data.title)}
+          </h4>
+          {Boolean(row.data.description) && (
+            <p className="cal-card-desc">{String(row.data.description)}</p>
+          )}
+        </div>
+
+        {/* Subtasks checklist with round check and mini progress */}
+        {subtasks.length > 0 && (
+          <div className="cal-card-subtasks-section">
+            <div className="cal-subtasks-header">
+              <div className="cal-subtasks-label">
+                <CheckSquare size={13} className="subtask-icon" />
+                <span>
+                  {doneSubtasks}/{subtasks.length} subtugas selesai ({progressPct}%)
+                </span>
+              </div>
+              <div className="subtask-mini-track">
+                <div
+                  className="subtask-mini-fill"
+                  style={{ width: `${progressPct}%` }}
+                />
+              </div>
+            </div>
+            <div className="cal-subtasks-list">
+              {subtasks.map((task, index) => (
+                <div
+                  key={index}
+                  className={`cal-subtask-item ${task.done ? 'is-done' : ''}`}
+                >
+                  <button
+                    type="button"
+                    className={`subtask-round-check ${task.done ? 'checked' : ''}`}
+                    disabled={busy}
+                    onClick={() => {
+                      const newSubtasks = subtasks.map((s, i) =>
+                        i === index ? { ...s, done: !s.done } : s,
+                      );
+                      void update(row, { subtasks: newSubtasks });
+                    }}
+                    title={task.done ? 'Tandai belum selesai' : 'Tandai selesai'}
+                    aria-label={task.done ? 'Tandai belum selesai' : 'Tandai selesai'}
+                  >
+                    {task.done && <Check size={11} strokeWidth={2.8} />}
+                  </button>
+                  <span className="cal-subtask-title">{task.title}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Footer: Assignee, Due date & Actions */}
+        <div className="cal-card-footer">
+          <div className="cal-card-footer-left">
+            <span className="cal-assignee-pill" title={`Penanggung jawab: ${assignee}`}>
+              <span className="cal-assignee-avatar">{initials}</span>
+              <span className="cal-assignee-name">{assignee}</span>
+            </span>
+            {Boolean(row.data.due_date) && (
+              <span
+                className={`cal-due-pill ${isLate ? 'is-late' : isToday ? 'is-today' : ''}`}
+                title={`Tenggat: ${formatDate(String(row.data.due_date))}`}
+              >
+                <Calendar size={12} />
+                <span>{isToday ? 'Hari Ini' : formatDate(String(row.data.due_date))}</span>
+              </span>
+            )}
+          </div>
+
+          <div className="cal-card-footer-right">
+            <button
+              type="button"
+              className="cal-btn-action cal-btn-shift"
+              disabled={busy}
+              onClick={() =>
+                void update(row, { due_date: addDays(String(row.data.due_date || today()), 1) })
+              }
+              title="Tunda tenggat +1 hari"
+            >
+              +1 hari
+            </button>
+            <button
+              type="button"
+              className="cal-btn-action cal-btn-detail"
+              onClick={() => setDetailTask(row)}
+              title="Buka rincian lengkap tugas"
+            >
+              <ExternalLink size={13} />
+              <span>Buka catatan</span>
+            </button>
+            {!isDone ? (
+              <button
+                type="button"
+                className="cal-btn-action cal-btn-done"
+                disabled={busy}
+                onClick={() => void update(row, taskStatusChange('complete'))}
+                title="Tandai tugas ini selesai"
+              >
+                <Check size={13} strokeWidth={2.4} />
+                <span>Selesai</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="cal-btn-action cal-btn-reopen"
+                disabled={busy}
+                onClick={() => void update(row, taskStatusChange('reopen'))}
+                title="Buka kembali tugas ini"
+              >
+                <RotateCcw size={13} strokeWidth={2.4} />
+                <span>Buka lagi</span>
+              </button>
+            )}
+            <details className="cal-more-options">
+              <summary className="cal-more-summary" title="Opsi lainnya" aria-label="Opsi lainnya">
+                <MoreHorizontal size={15} />
+              </summary>
+              <div className="cal-more-menu">
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={(e) => {
+                    e.currentTarget.closest('details')?.removeAttribute('open');
+                    void update(row, { due_date: addDays(String(row.data.due_date || today()), 7) });
+                  }}
+                >
+                  +1 minggu
+                </button>
+                <div className="cal-more-divider" />
+                <button
+                  type="button"
+                  className="danger"
+                  disabled={busy}
+                  onClick={async (e) => {
+                    e.currentTarget.closest('details')?.removeAttribute('open');
+                    if (!confirm(`Hapus “${row.data.title}”?`)) return;
+                    setBusy(true);
+                    try {
+                      await api(entity, { id: row.id }, 'DELETE');
+                      await refresh();
+                    } catch (err) {
+                      setError((err as Error).message);
+                    } finally {
+                      setBusy(false);
+                    }
+                  }}
+                >
+                  <Trash2 size={13} />
+                  <span>Hapus tugas</span>
+                </button>
+              </div>
+            </details>
+          </div>
+        </div>
+      </article>
+    );
+  };
+  const card = (row: Item) => {
+    if ((entity as string) === 'work-items') {
+      return renderCalendarTaskCard(row);
+    }
+    return (
+      <article
+        className="record card"
+        key={row.id}
+        draggable={entity === 'work-items' && view === 'papan'}
+        onDragStart={(e) => e.dataTransfer.setData('text/plain', row.id)}
+      >
       <div className="section-head">
         <h3>
           {['work-items', 'journal'].includes(entity) && (
@@ -1421,7 +1676,8 @@ export function Records({
         </details>
       </div>
     </article>
-  );
+    );
+  };
   return (
     <section
       className={

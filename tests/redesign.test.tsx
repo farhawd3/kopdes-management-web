@@ -1,5 +1,5 @@
 import { beforeEach, describe, it, expect, vi, afterEach } from 'vitest';
-import { render, screen, fireEvent, cleanup } from '@testing-library/react';
+import { render, screen, fireEvent, cleanup, within } from '@testing-library/react';
 import { DailyTasksView } from '@/features/DailyTasksView';
 import { TaskDetailDrawer } from '@/features/TaskDetailDrawer';
 import { DateRangePicker } from '@/components/ui/DateRangePicker';
@@ -448,4 +448,52 @@ describe('Fitur Redesain Behance', () => {
     expect(screen.getByText('+ Rp 150.000')).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Ubah' })).toBeTruthy();
   });
+
+  it('Records mode kalender menampilkan agenda terpilih dan calendar-task-card modern', () => {
+    const todayStr = today();
+    const task: Item = {
+      id: 'task-cal-1',
+      created_at: '',
+      updated_at: '',
+      data: {
+        title: 'Mengerjakan tugas di Lark',
+        due_date: todayStr,
+        status: 'rencana',
+        priority: 'tinggi',
+        code: 'TGS-F2A4',
+        subtasks: [{ title: 'teest', done: false }],
+      },
+    };
+
+    const { container } = render(
+      <Records
+        entity="work-items"
+        workspace={{
+          'work-items': [task],
+          workstreams: [{ id: 'p-1', created_at: '', updated_at: '', data: { title: 'KDMP Mart', color: '#10b981' } } as Item],
+        }}
+        refresh={vi.fn().mockResolvedValue(undefined)}
+      />,
+    );
+
+    // Switch to kalender view
+    fireEvent.click(screen.getByRole('button', { name: 'Kalender' }));
+
+    // Select today
+    fireEvent.click(screen.getByRole('button', { name: 'Hari ini' }));
+
+    // Check modern calendar task card is rendered
+    const taskCard = container.querySelector('.calendar-task-card') as HTMLElement;
+    expect(taskCard).toBeTruthy();
+    expect(within(taskCard).getByText('TGS-F2A4')).toBeTruthy();
+    expect(within(taskCard).getByText('Mengerjakan tugas di Lark')).toBeTruthy();
+    expect(within(taskCard).getByText('teest')).toBeTruthy();
+    expect(within(taskCard).getByText('0/1 subtugas selesai (0%)')).toBeTruthy();
+
+    // Check action buttons
+    expect(screen.getByRole('button', { name: '+1 hari' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Buka catatan' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Selesai' })).toBeTruthy();
+  });
 });
+

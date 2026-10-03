@@ -254,8 +254,11 @@ export function TaskCalendar({
         </div>
       </div>
       <div className="calendar-agenda">
-        <div className="section-head">
+        <div className="section-head calendar-agenda-header">
           <div className="calendar-agenda-title-group">
+            <span className="calendar-agenda-header-icon" aria-hidden="true">
+              <CalendarDays size={18} />
+            </span>
             <h3>
               {selected
                 ? formatDate(selected)
@@ -319,13 +322,18 @@ export function TaskCalendar({
         )
           .sort()
           .map((date) => (
-            <section key={date} className="calendar-agenda-day-group">
-              <div className="calendar-agenda-day-head">
-                <span className="agenda-day-pill">{formatDate(date)}</span>
-                <span className="agenda-day-count">
-                  {items.filter((item) => getItemDate(item) === date).length} catatan
-                </span>
-              </div>
+            <section
+              key={date}
+              className={`calendar-agenda-day-group ${selected ? 'is-selected-view' : ''}`}
+            >
+              {!selected && (
+                <div className="calendar-agenda-day-head">
+                  <span className="agenda-day-pill">{formatDate(date)}</span>
+                  <span className="agenda-day-count">
+                    {items.filter((item) => getItemDate(item) === date).length} catatan
+                  </span>
+                </div>
+              )}
               <div className="calendar-agenda-compact-list records">
                 {items
                   .filter((item) => getItemDate(item) === date)
