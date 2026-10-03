@@ -4,6 +4,8 @@ Dokumen ini merangkum bentuk produk yang disetujui pemilik; **kode dan hasil ren
 
 ## Karakter visual
 
+Arahan pemilik 3 Oktober 2026: gunakan tampilan cabang `codex/workspace-redesign` pada commit `e8fc8b4` sebagai acuan; pemilik lebih menyukai tampilan ini daripada eksperimen penggantian CSS total. Lakukan tweak kecil dan kurangi keramaian dashboard. Pertahankan tema, kartu, navigasi, serta token yang sudah ada. Grafik dan rutinitas ditutup secara bawaan; tugas/kegiatan awal dibatasi tiga catatan. Fitur tambahan berada di halaman terkait, bukan semuanya ditambahkan ke Beranda.
+
 Ruang kerja pribadi manajer koperasi, terinspirasi aplikasi tugas profesional: bersih, mudah dipindai, sedikit ekspresif, tidak seperti template dashboard generik. Dasar terang berupa kanvas abu sangat muda, kartu putih, teks arang, aksen hijau lembut dan lavender; mode gelap tersedia. Kartu membulat, bayangan tipis, border halus, jarak konsisten. Aksen hanya menandai tindakan utama atau status, bukan menghias semua elemen. Hindari glow merah, angka ilustrasi, avatar tim palsu, slogan, dan ornamen tanpa fungsi.
 
 Token dasar ada di `src/app/personal.css`: `--canvas`, `--surface`, `--brand`, `--ink`, `--line`, skala radius, ukuran kontrol, dan tombol. Pilihan tema memakai `data-theme-color` (lime, peach, lavender, sage, sky; tambahan tema dapat ada di bawah file). **Jangan menyalin kode hex dari ringkasan ini**; CSS aktif mungkin menimpa token awal. `src/app/layout.tsx` menentukan urutan impor CSS. Saat ada gaya bertabrakan, rapikan sumbernya, jangan terus menambah lapisan `!important`.

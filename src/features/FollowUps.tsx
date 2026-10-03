@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { WeeklyReview } from './WeeklyReview';
+import { PinnedRecords } from './PinnedRecords';
 import { useState } from 'react';
 import {
   ArrowUpRight,
@@ -33,7 +34,7 @@ export function FollowUps({ data, compact = false }: { data: Workspace; compact?
                 <ShieldCheck size={16} />
               </span>
               <span className="compact-bar-text">
-                <strong>Semua terkendali:</strong> Tidak ada tugas terlambat atau stok kritis saat ini.
+                Tidak ada pengingat pada catatan yang sudah dimuat.
               </span>
             </div>
             <Link href="/tindak-lanjut" className="compact-bar-link">
@@ -127,7 +128,7 @@ export function FollowUps({ data, compact = false }: { data: Workspace; compact?
           </div>
         </div>
         <p className="follow-up-description">
-          Tugas, dokumen, kendala, dan persediaan yang memerlukan pemeriksaan atau tindakan manajer.
+          Pengingat tugas, rapat, dokumen, kendala, dan persediaan dari catatan yang sudah dimuat.
         </p>
 
         <div className="follow-up-toolbar">
@@ -182,12 +183,17 @@ export function FollowUps({ data, compact = false }: { data: Workspace; compact?
 
         <div className="follow-up-footer-note">
           <small>
-            Daftar mengikuti data tersimpan. Selisih opname tidak mengubah stok buku secara otomatis.
+            Daftar mengikuti data tersimpan. Selisih opname tidak mengubah stok buku secara
+            otomatis.
           </small>
         </div>
       </section>
 
       <WeeklyReview data={data} />
+      <details className="saved-records-details">
+        <summary>Catatan sematan</summary>
+        <PinnedRecords data={data} />
+      </details>
     </div>
   );
 }

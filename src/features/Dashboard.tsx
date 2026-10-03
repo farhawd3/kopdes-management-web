@@ -191,12 +191,7 @@ export function Dashboard({ data }: { data: Workspace }) {
   const cash = cashSummary(data['cash-entries'] || []);
   const journalRecent = [...(data.journal || [])]
     .sort((a, b) => String(b.data.date || '').localeCompare(String(a.data.date || '')))
-    .slice(0, 5);
-  const inventory = data['inventory-items'] || [];
-  const criticalStockItems = inventory.filter(
-    (item) => Number(item.data.book_quantity || 0) <= Number(item.data.minimum_quantity || 0),
-  );
-  const outOfStockItems = inventory.filter((item) => Number(item.data.book_quantity || 0) <= 0);
+    .slice(0, 3);
   const completedCount = tasks.filter((t) => t.status === 'selesai').length;
   const overdueCount = tasks.filter((t) => isOverdue(t, now)).length;
   const todayMeetingCount = (data.meetings || []).filter((m) => String(m.data.date) === now).length;
@@ -223,28 +218,6 @@ export function Dashboard({ data }: { data: Workspace }) {
         </div>
       </header>
 
-      {/* ── Critical Stock Alert Banner ───────────────────────── */}
-      {criticalStockItems.length > 0 && (
-        <div className="stock-alert-banner">
-          <div className="alert-content">
-            <AlertTriangle size={18} className="text-warning" />
-            <div>
-              <strong>
-                Peringatan Persediaan: {criticalStockItems.length} jenis barang menipis/habis
-              </strong>
-              <small>
-                {outOfStockItems.length > 0
-                  ? `${outOfStockItems.length} produk habis dan ${criticalStockItems.length - outOfStockItems.length} mendekati batas minimum gerai toko.`
-                  : `${criticalStockItems.length} jenis barang berada di bawah batas stok minimum gerai.`}
-              </small>
-            </div>
-          </div>
-          <Link href="/barang" className="alert-action-link">
-            Kelola Stok ↗
-          </Link>
-        </div>
-      )}
-
       {/* ── Prioritas Utama: Perlu Perhatian (Follow-ups) ────── */}
       <FollowUps data={data} compact />
 
@@ -267,9 +240,7 @@ export function Dashboard({ data }: { data: Workspace }) {
             ariaLabel="Proyek"
           />
         </label>
-        <p>
-          Grafik tugas mengikuti proyek pilihan. Klik status atau tanggal untuk melihat tugasnya.
-        </p>
+        <p>Ringkasan dan tugas mengikuti proyek pilihan.</p>
       </div>
 
       {/* ── Stat Cards Row ───────────────────────────────── */}
@@ -377,7 +348,7 @@ export function Dashboard({ data }: { data: Workspace }) {
           )}
 
           <div className="focus-task-list">
-            {visible.slice(0, 6).map((task, i) => (
+            {visible.slice(0, 3).map((task, i) => (
               <Link
                 href={`/tugas?task=${encodeURIComponent(task.id)}`}
                 key={task.id}
@@ -439,55 +410,58 @@ export function Dashboard({ data }: { data: Workspace }) {
 
         {/* ── Right Column: Daily Routine, Journal & Projects ─────────────── */}
         <aside className="home-overview">
-          {/* Rutinitas Kerja Manajer (Sisi Kanan) */}
-          <div className="home-routine-card">
-            <div className="routine-head">
-              <div className="routine-title-wrap">
-                <Clock size={16} className="routine-icon" />
-                <div>
-                  <h3>Rutinitas Manajer</h3>
-                  <small>Checklist operasional harian gerai</small>
+          <details className="dashboard-routines">
+            <summary>Rutinitas harian</summary>
+            {/* Rutinitas Kerja Manajer (Sisi Kanan) */}
+            <div className="home-routine-card">
+              <div className="routine-head">
+                <div className="routine-title-wrap">
+                  <Clock size={16} className="routine-icon" />
+                  <div>
+                    <h3>Rutinitas Manajer</h3>
+                    <small>Checklist operasional harian gerai</small>
+                  </div>
+                </div>
+                <div className="routine-head-actions">
+                  <button
+                    type="button"
+                    className="btn-routine-config"
+                    onClick={() => setShowRoutineModal(true)}
+                    title="Atur checklist rutinitas harian"
+                    aria-label="Atur rutinitas"
+                  >
+                    <SlidersHorizontal size={12} />
+                    <span>Atur</span>
+                  </button>
+                  <span className="routine-progress-pill">
+                    {routineCompletedCount}/{routines.length} selesai
+                  </span>
                 </div>
               </div>
-              <div className="routine-head-actions">
-                <button
-                  type="button"
-                  className="btn-routine-config"
-                  onClick={() => setShowRoutineModal(true)}
-                  title="Atur checklist rutinitas harian"
-                  aria-label="Atur rutinitas"
-                >
-                  <SlidersHorizontal size={12} />
-                  <span>Atur</span>
-                </button>
-                <span className="routine-progress-pill">
-                  {routineCompletedCount}/{routines.length} selesai
-                </span>
+              <div className="routine-list">
+                {routines.map((item) => {
+                  const isChecked = completedRoutines.includes(item.id);
+                  return (
+                    <label key={item.id} className={`routine-item ${isChecked ? 'is-done' : ''}`}>
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={() => toggleRoutine(item.id)}
+                      />
+                      <span className="routine-time">{item.time}</span>
+                      <span className="routine-text">{item.title}</span>
+                    </label>
+                  );
+                })}
+                {routines.length === 0 && (
+                  <p className="routine-empty-text">
+                    Belum ada rutinitas. Klik tombol <strong>Atur</strong> untuk menambahkan
+                    rutinitas harian gerai.
+                  </p>
+                )}
               </div>
             </div>
-            <div className="routine-list">
-              {routines.map((item) => {
-                const isChecked = completedRoutines.includes(item.id);
-                return (
-                  <label key={item.id} className={`routine-item ${isChecked ? 'is-done' : ''}`}>
-                    <input
-                      type="checkbox"
-                      checked={isChecked}
-                      onChange={() => toggleRoutine(item.id)}
-                    />
-                    <span className="routine-time">{item.time}</span>
-                    <span className="routine-text">{item.title}</span>
-                  </label>
-                );
-              })}
-              {routines.length === 0 && (
-                <p className="routine-empty-text">
-                  Belum ada rutinitas. Klik tombol <strong>Atur</strong> untuk menambahkan rutinitas
-                  harian gerai.
-                </p>
-              )}
-            </div>
-          </div>
+          </details>
 
           {/* Kegiatan Terbaru: Kronologi kejadian lapangan */}
           <section className="home-journal" aria-label="Kegiatan terbaru">
@@ -598,40 +572,43 @@ export function Dashboard({ data }: { data: Workspace }) {
         </aside>
       </div>
 
-      {/* ── Compact Analytics Row (Side by Side) ──────────── */}
-      <div className="dash-analytics-row">
-        <section className="home-panel analytics-panel">
-          <div className="section-head">
-            <h2>Penyelesaian 7 hari</h2>
-          </div>
-          <WeekBarChart
-            data={barData}
-            selectedDate={selectedDate}
-            onSelect={(date) => {
-              setSelectedDate(selectedDate === date ? '' : date);
-              setFilter('selesai');
-            }}
-          />
-          <Link className="home-text-link" href="/laporan">
-            Buka laporan <ArrowUpRight size={16} />
-          </Link>
-        </section>
+      <details className="dashboard-extra">
+        <summary>Grafik pekerjaan</summary>
+        {/* ── Compact Analytics Row (Side by Side) ──────────── */}
+        <div className="dash-analytics-row">
+          <section className="home-panel analytics-panel">
+            <div className="section-head">
+              <h2>Penyelesaian 7 hari</h2>
+            </div>
+            <WeekBarChart
+              data={barData}
+              selectedDate={selectedDate}
+              onSelect={(date) => {
+                setSelectedDate(selectedDate === date ? '' : date);
+                setFilter('selesai');
+              }}
+            />
+            <Link className="home-text-link" href="/laporan">
+              Buka laporan <ArrowUpRight size={16} />
+            </Link>
+          </section>
 
-        <section className="home-panel analytics-panel">
-          <div className="section-head">
-            <h2>Distribusi status tugas</h2>
-          </div>
-          <TaskDonutChart
-            slices={donutSlices}
-            total={totalTasks}
-            selected={filter}
-            onSelect={(status) => {
-              setFilter(status);
-              setSelectedDate('');
-            }}
-          />
-        </section>
-      </div>
+          <section className="home-panel analytics-panel">
+            <div className="section-head">
+              <h2>Distribusi status tugas</h2>
+            </div>
+            <TaskDonutChart
+              slices={donutSlices}
+              total={totalTasks}
+              selected={filter}
+              onSelect={(status) => {
+                setFilter(status);
+                setSelectedDate('');
+              }}
+            />
+          </section>
+        </div>
+      </details>
 
       {/* ── Records Section ───────────────────────────────── */}
       <section className="home-records">

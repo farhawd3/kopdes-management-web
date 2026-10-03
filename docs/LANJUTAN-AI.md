@@ -6,10 +6,14 @@ Baca juga `KEGIATAN-DAN-TUGAS.md` untuk memisahkan catatan kejadian dari pekerja
 
 ## Keadaan terbaru — 3 Oktober 2026
 
+- Arahan pemilik terbaru membatalkan penggantian style total: pertahankan tema cabang ini pada `e8fc8b4`, lakukan tweak kecil karena dashboard terlalu ramai. CSS eksperimen serta route pratinjau sementara sudah dihapus.
+- Beranda menampilkan tiga tugas/kegiatan awal, grafik/rutinitas ditutup secara bawaan, pengingat stok tidak diduplikasi. Sematan ada dalam rincian opsional halaman Perlu Perhatian; langkah berikutnya opsional di detail proyek. Pengingat rapat aktif mencakup tujuh hari.
+- Browser kini dapat dipakai: dashboard diperiksa dengan fixture lokal pada empat lebar, termasuk mode gelap 1440 px dan terang 360/768/1024 px. Ini bukan UAT dengan data nyata; jangan menandai audit semua modul/tema selesai.
+
 - Cabang aktif paket redesain: `codex/workspace-redesign`; selalu periksa Git kembali. Stylesheet aktif hanya `globals.css` dan `personal.css`; berkas workspace/studio/polish/responsive-finish sudah dikonsolidasikan dan dihapus pada paket sebelumnya.
 - Pencarian berkonteks proyek dan navigasi bagian proyek tersedia. Relasi dokumen/kendala mengikuti tugas; keputusan mengikuti rapat terkait tugas. Jangan menambahkan bidang proyek fiktif ke domain tersebut.
 - Paket lanjutan memperbaiki lint/state, dialog native target periode, preferensi rutinitas, batas tablet 768–1023/desktop 1024, nama aksesibel navigasi ciut, dan menu ponsel tertutup yang inert. Rincian hasil ada di STATUS dan CHANGELOG.
-- Audit render empat ukuran serta tema terang/gelap belum dilakukan setelah paket ini karena alat browser lokal gagal membuka tab (timeout CDP). Prioritas berikutnya adalah pemeriksaan browser, fokus/Escape/modal, navigasi/sidebar, dan UAT data nyata. Tes DOM tidak menggantikan bukti visual.
+- Paket sebelumnya belum memperoleh audit render karena timeout browser. Pada paket tweak, dashboard sudah diperiksa sesuai cakupan fixture di atas; audit rinci semua modul, fokus/Escape/modal, serta UAT data nyata tetap pekerjaan berikutnya. Tes DOM tidak menggantikan bukti visual.
 
 ## Catatan serah terima sebelumnya — 2 Oktober 2026
 

@@ -22,6 +22,7 @@ it('beranda memakai jumlah selesai nyata dan filter tenggat', () => {
       }}
     />,
   );
+  fireEvent.click(screen.getByText('Grafik pekerjaan'));
   expect(
     screen.getByRole('group', { name: new RegExp(`${formatDate(today())}: 1 selesai`) }),
   ).toBeTruthy();
@@ -102,6 +103,7 @@ it('filter proyek dan grafik status/tanggal menampilkan tugas yang sama tanpa st
   fireEvent.change(screen.getByLabelText('Proyek'), {
     target: { value: '11111111-1111-4111-8111-111111111111' },
   });
+  fireEvent.click(screen.getByText('Grafik pekerjaan'));
   expect(within(screen.getByRole('region', { name: 'Tugas pilihan' })).queryByRole('link', { name: /Aktif administrasi/ })).toBeNull();
   fireEvent.click(screen.getByRole('button', { name: 'Dikerjakan 1' }));
   expect(within(screen.getByRole('region', { name: 'Tugas pilihan' })).getByRole('link', { name: /Aktif gerai/ })).toBeTruthy();

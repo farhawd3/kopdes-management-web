@@ -1,5 +1,14 @@
 # Status proyek — 3 Oktober 2026
 
+## Tweak dashboard, mempertahankan style acuan (3 Oktober 2026)
+
+Pemeriksaan akhir: typecheck, lint (0 galat/0 peringatan), build produksi, dan `git diff --check` lulus. Route pratinjau tidak masuk build produksi.
+
+- Arahan terbaru pemilik: pertahankan tampilan `codex/workspace-redesign` pada `e8fc8b4`; eksperimen CSS total dibuang. Token, font, kartu, serta navigasi acuan tetap digunakan. Folder CSS eksperimen dan route pratinjau sementara dihapus; cadangan, arsip, dan SQL tetap dipertahankan.
+- Beranda membatasi tugas/kegiatan awal ke tiga catatan. Grafik dan rutinitas memakai rincian native yang ditutup secara bawaan. Pengingat stok disatukan melalui Perlu Perhatian; ringkasan pengingat ponsel diperbaiki agar judul tidak menyempit menjadi satu kata per baris.
+- Pengingat rapat aktif mencakup hari ini sampai tujuh hari ke depan. Sematan proyek/tugas/dokumen disimpan di peramban dan tersedia dalam bagian opsional Perlu Perhatian; referensi yang belum dimuat tidak dibuang diam-diam. Detail proyek menyediakan tiga langkah berikutnya berdasarkan tenggat dalam rincian opsional.
+- **164 tes pada 22 berkas lulus** melalui `npm test -- --maxWorkers=2`. Tes baru memeriksa persistensi/hapus sematan, identitas antarentitas, referensi belum dimuat, preferensi rusak, batas pengingat rapat, serta dashboard ringkas. Pengujian visual dashboard menggunakan fixture lokal: gelap 1440 px, terang 1024/768/360 px; tidak ada overflow horizontal halaman pada ukuran yang diperiksa. Membuka grafik opsional diperiksa di 360 px. Ini bukan UAT data koperasi nyata atau audit semua modul/tema. Tidak ada SQL cloud maupun deployment produksi.
+
 ## Lanjutan redesain: navigasi, dialog, dan state (3 Oktober 2026)
 
 - Sembilan galat lint dan seluruh peringatan lama diperbaiki tanpa menonaktifkan aturan: scope tugas mengikuti URL; tampilan tugas mengikuti perubahan query tanpa menghapus filter lokal; pergantian detail tugas memperbarui judul/deskripsi/tautan; cache workspace dipisahkan per scope sebelum render; `any` pada editor dihapus dan impor mati dibersihkan.

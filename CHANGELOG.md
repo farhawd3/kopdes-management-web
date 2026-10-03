@@ -1,5 +1,14 @@
 # Changelog
 
+### Tweak dashboard, mempertahankan style acuan (3 Oktober 2026)
+
+- Typecheck, lint tanpa galat/peringatan, build produksi, serta pemeriksaan whitespace lulus; route pratinjau tidak masuk produksi.
+
+- Ikuti koreksi pemilik: pertahankan style/navigasi cabang `codex/workspace-redesign`, batalkan penggantian CSS total, dan hapus folder eksperimen/pratinjau sementara.
+- Ringkas daftar tugas/kegiatan menjadi tiga catatan awal; grafik/rutinitas ditutup secara bawaan. Hilangkan duplikasi peringatan stok dan perbaiki pengingat pada ponsel.
+- Tambah pengingat rapat tujuh hari, sematan catatan opsional di Perlu Perhatian, serta langkah berikutnya opsional pada detail proyek. Jumlah/ringkasan tetap mengikuti data yang dimuat.
+- 164 tes/22 berkas lulus dengan dua worker. Pemeriksaan visual dashboard memakai fixture, bukan data nyata, pada 360/768/1024/1440 px. Audit lengkap semua modul/tema dan UAT masih terbuka.
+
 ### Lanjutan redesain: navigasi, dialog, dan state (3 Oktober 2026)
 
 - Perbaiki galat lint dan hapus `any`/impor mati; scope tugas mengikuti URL, query tampilan mempertahankan filter lokal, field detail mengikuti tugas terpilih, dan cache scope lama tidak tampil saat berpindah scope.

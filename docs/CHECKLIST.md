@@ -1,5 +1,14 @@
 # Checklist produk aktif
 
+## Tweak dashboard, mempertahankan style acuan — 3 Oktober
+- [x] Pertahankan style/navigasi cabang acuan; buang folder stylesheet eksperimen.
+- [x] Batasi tugas/kegiatan awal ke tiga catatan, tutup grafik/rutinitas secara bawaan, dan satukan pengingat stok di Perlu Perhatian.
+- [x] Perbaiki ringkasan pengingat pada 360 px tanpa mengganti tema.
+- [x] Tambahkan pengingat rapat tujuh hari dan catatan sematan opsional di Perlu Perhatian.
+- [x] Tambahkan langkah berikutnya yang dapat dibuka pada detail proyek.
+- [x] Periksa dashboard melalui pratinjau fixture di 360/768/1024/1440 px; tema terang dan gelap diperiksa pada ukuran yang dicatat di STATUS.
+- [ ] UAT dengan data koperasi nyata; audit seluruh modul/tema tetap belum lengkap.
+
 ## Redesain ruang kerja 3 Oktober
 - [x] Perbarui token visual, sidebar arang, radius/kontrol, kartu, tab, dan hierarki judul bersama.
 - [x] Pencarian berscope dengan konteks proyek, tautan sumber, dan batas data dimuat yang jelas.

@@ -73,6 +73,7 @@ export function getFollowUps(data: Workspace, date: string): FollowUp[] {
   for (const row of data['work-items'] || []) {
     if (
       !['selesai', 'dibatalkan'].includes(String(row.data.status)) &&
+      row.data.due_date &&
       String(row.data.due_date) <= date
     )
       add(
@@ -81,6 +82,15 @@ export function getFollowUps(data: Workspace, date: string): FollowUp[] {
         row.data.due_date === date ? 'Tenggat hari ini' : 'Tenggat terlewat',
         row.data.due_date !== date,
       );
+  }
+  for (const row of data.meetings || []) {
+    const meetingDate = String(row.data.date || '');
+    if (
+      meetingDate >= date &&
+      meetingDate <= addDays(date, 7) &&
+      !['selesai', 'dibatalkan'].includes(String(row.data.status))
+    )
+      add('meetings', row, meetingDate === date ? 'Rapat hari ini' : `Rapat pada ${meetingDate}`);
   }
   for (const row of data.documents || []) {
     const expiry = String(row.data.expires_date || '');

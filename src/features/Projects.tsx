@@ -118,6 +118,37 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
             </a>
           </nav>
 
+          <details className="card project-next-actions">
+            <summary>Langkah berikutnya</summary>
+            <p>
+              <small>
+                Tiga tugas aktif dengan tenggat terdekat dari catatan proyek yang dimuat.
+              </small>
+            </p>
+            {[...projectTasks]
+              .filter((row) => !['selesai', 'dibatalkan'].includes(String(row.data.status)))
+              .sort((a, b) =>
+                String(a.data.due_date || '9999').localeCompare(String(b.data.due_date || '9999')),
+              )
+              .slice(0, 3)
+              .map((row) => (
+                <Link key={row.id} href={recordHref('work-items', row)}>
+                  <strong>{String(row.data.title)}</strong>
+                  <small>
+                    {row.data.due_date ? formatDate(String(row.data.due_date)) : 'Tanpa tenggat'}
+                  </small>
+                </Link>
+              ))}
+            {!projectTasks.some(
+              (row) => !['selesai', 'dibatalkan'].includes(String(row.data.status)),
+            ) && (
+              <p>
+                Belum ada tugas aktif.{' '}
+                <a href="#project-tasks">Tambah tugas di bagian tugas proyek →</a>
+              </p>
+            )}
+          </details>
+
           <div className="project-context">
             {/* Project Notes */}
             <div id="project-notes" className="project-section-anchor">

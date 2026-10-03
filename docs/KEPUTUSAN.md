@@ -6,6 +6,10 @@ Pemilik meminta memakai kembali `mqycnhebhzqaziouipet` dan meresetnya karena bel
 
 Instruksi pemilik terbaru menjadi acuan jika berbeda dari rancangan awal PRD.
 
+## 3 Oktober 2026 — pertahankan style cabang redesain
+
+Pemilik membatalkan arah penggantian style total setelah menilai tampilan sebelumnya lebih baik. Acuan: `https://github.com/halimxn/kopdes-management-web/tree/codex/workspace-redesign`, commit lokal/remote `e8fc8b4` saat arahan diterima. Pertahankan karakter visual tersebut dan lakukan tweak untuk dashboard yang lebih ringkas. Eksperimen CSS baru dibuang; penambahan fitur tidak boleh membuat Beranda semakin ramai.
+
 | Hal | Keputusan |
 |---|---|
 | Repositori | Privat `halimxn/kopdes-management-web`, riwayat baru tanpa induk |

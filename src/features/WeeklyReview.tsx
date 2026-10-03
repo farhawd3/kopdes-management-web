@@ -37,7 +37,7 @@ export function WeeklyReview({ data }: { data: Workspace }) {
       <div className="weekly-review-grid">
         <section>
           <h3>{completed.length} tugas selesai</h3>
-          <p>Pekerjaan yang selesai dalam tujuh hari terakhir.</p>
+          <p>Pekerjaan yang selesai dalam tujuh hari terakhir, dari catatan yang dimuat.</p>
           {completed.slice(0, 5).map((row) => (
             <Link key={row.id} href={recordHref('work-items', row)}>
               {String(row.data.title)}
@@ -47,7 +47,7 @@ export function WeeklyReview({ data }: { data: Workspace }) {
         </section>
         <section>
           <h3>{upcoming.length} tugas mendatang</h3>
-          <p>Tenggat dalam tujuh hari berikutnya.</p>
+          <p>Tenggat dalam tujuh hari berikutnya, dari catatan yang dimuat.</p>
           {upcoming.slice(0, 5).map((row) => (
             <Link key={row.id} href={recordHref('work-items', row)}>
               <span>{String(row.data.title)}</span>

@@ -22325,3 +22325,47 @@ input[type='time']:hover::-webkit-calendar-picker-indicator {
     min-height: 44px;
   }
 }
+
+/* Tweak dashboard: keep the approved theme and disclose optional details. */
+.dashboard-extra > summary,
+.dashboard-routines > summary,
+.saved-records-details > summary,
+.project-next-actions > summary {
+  min-height: 44px;
+  padding: 12px 16px;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+}
+.dashboard-extra[open] > summary,
+.dashboard-routines[open] > summary,
+.saved-records-details[open] > summary { margin-bottom: 14px; }
+.project-next-actions { margin-bottom: 20px; }
+.project-next-actions > summary { border: 0; padding-inline: 0; }
+.project-next-actions a { display: flex; justify-content: space-between; gap: 12px; padding-block: 12px; border-top: 1px solid var(--line); }
+.project-next-actions small { color: var(--ink-muted); }
+.pinned-records { padding: 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; }
+.pinned-toolbar { display: flex; gap: 10px; margin-block: 16px; }
+.pinned-toolbar .custom-select-wrap { flex: 1; min-width: 0; }
+.pinned-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.pinned-row { display: flex; gap: 8px; align-items: center; padding: 12px; border: 1px solid var(--line); border-radius: 12px; }
+.pinned-row a, .pinned-row > span { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.pinned-row small { display: block; color: var(--ink-muted); }
+.pinned-row button { min-width: 44px; min-height: 44px; flex-shrink: 0; }
+@media (max-width: 767px) {
+  .pinned-list { grid-template-columns: 1fr; }
+  .pinned-toolbar { flex-wrap: wrap; }
+  .project-next-actions a { flex-wrap: wrap; }
+}
+@media (max-width: 767px) {
+  .manager-home .follow-up-compact-bar { flex-direction: column; align-items: stretch; gap: 12px; }
+  .manager-home .compact-bar-info { width: 100%; min-width: 0; }
+  .manager-home .compact-bar-text-group { flex: 1; min-width: 0; }
+  .manager-home .compact-bar-main-line { flex-wrap: wrap; gap: 8px; }
+  .manager-home .compact-bar-badge { white-space: nowrap; }
+  .manager-home .compact-bar-snippet { width: 100%; min-width: 0; white-space: normal; overflow-wrap: anywhere; }
+  .manager-home .compact-bar-actions { width: 100%; justify-content: flex-end; flex-wrap: wrap; }
+}
