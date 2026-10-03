@@ -823,3 +823,7 @@ Implementasi awal belum berarti seluruh target PRD atau UAT selesai. Batas dan h
 
 Audit UI yang dapat dibuat ulang mencatat seluruh kontrol JSX beserta baris, rute/overlay dan metrik CSS. Baseline dan batas pemeriksaan ada di docs/LAPORAN-ASTRA.md. Seluruh 171 tes, typecheck, lint, build dan audit sumber lulus.
 
+# 4 Oktober 2026 — PLAN-ASTRA fondasi token
+
+Token geometri, motion dan warna semantik memakai sumber tema aktif. Penjaga stylelint berlaku untuk CSS baru; legacy masih dilaporkan terpisah. 171 tes, typecheck, lint, lint:ui dan build lulus.
+

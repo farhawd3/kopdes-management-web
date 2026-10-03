@@ -14,3 +14,13 @@
 ## Tahap berikutnya
 
 Fase 2–8 belum selesai. Bukti perangkat fisik dan Lighthouse tidak boleh disimpulkan dari tes DOM/build.
+
+## Fase 2 — fondasi token dan penjaga CSS
+
+- `tokens.css` menambah empat radius, enam peran font, kontrol, spasi, ikon, motion dan alias warna ke pastel/tema aktif. `ui.css` menyiapkan primitive berawalan ui tanpa important/hex.
+- Stylelint terpasang sebagai satu devDependency yang diizinkan rencana; `lint:ui` melarang hex, important dan radius/font tanpa token pada CSS baru. Legacy tetap diaudit terpisah agar utang lama tidak tersamarkan.
+- Verifikasi: 171 tes/23 berkas, typecheck, lint, lint:ui dan build lulus. CSS baru memiliki empat nilai radius token dan enam peran font; belum ada klaim kontras seluruh tema.
+- Keputusan: font isi mobile 14, bukan 13,5, mengikuti permintaan menghapus ukuran pecahan; kontrol mobile 48 menjaga minimum sentuh 44. Warna tidak diduplikasi. Pemeriksaan visual menyeluruh menyusul galeri komponen.
+- [x] Fondasi token dan stylelint tersedia.
+- [ ] Penjaga elemen mentah diaktifkan setelah migrasi fase 3.
+- [ ] Normalisasi seluruh CSS legacy dan kontras seluruh tema.
