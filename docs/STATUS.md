@@ -1,5 +1,12 @@
 # Status proyek — 3 Oktober 2026
 
+## Pembersihan Aturan Layout Navigasi (3 Oktober 2026)
+
+- Menghapus blok `@media (min-width: 768px) and (max-width: 1100px)` ganda pada `src/app/personal.css` yang menetapkan `margin-left: 205px` dan `width: 205px` untuk sidebar. Blok tersebut sudah tertimpa penuh oleh blok tablet-rail yang lebih akhir (sidebar 280px overlay + rail 76px + `margin-left: 76px`), sehingga menjadi aturan mati yang membingungkan.
+- Memindahkan satu-satunya aturan yang masih berlaku dari blok lama (`.home-grid` satu kolom di tablet) ke blok tablet-rail yang menang, agar tata letak beranda tidak sempit setelah rail 76px.
+- Hasil: satu breakpoint = satu aturan untuk `.manager-topbar`, `.manager-main`, dan `.manager-sidebar`; tidak ada lagi dua blok media dengan rentang penuh yang sama saling menimpa.
+- Verifikasi: 147 tes (19 berkas) lulus, `tsc --noEmit` 0 error, `next build` sukses. Pemeriksaan visual pasca-login pada 360/768/1024/1440 px masih memerlukan PIN pemilik.
+
 ## Rombak Total Tampilan Agenda Kalender: Eliminasi Header Ganda & Kartu Tugas Modern Elegan (3 Oktober 2026)
 
 - **Eliminasi Redundansi Header Box-in-a-Box (`TaskCalendar.tsx` & `personal.css`)**:

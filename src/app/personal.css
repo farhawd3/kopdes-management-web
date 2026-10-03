@@ -3937,29 +3937,6 @@ select option {
 .metadata-cards-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
-@media (min-width: 768px) and (max-width: 1100px) {
-  .manager-sidebar {
-    width: 205px;
-  }
-  .manager-topbar,
-  .manager-main {
-    margin-left: 205px;
-  }
-  .manager-main {
-    padding: 24px;
-  }
-  .home-grid {
-    grid-template-columns: 1fr;
-  }
-  .home-overview {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
-  }
-  .home-record-links {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
 @media (max-width: 767px) {
   body {
     background: var(--surface);
@@ -12963,6 +12940,8 @@ button.donut-legend-row[aria-pressed='true'] {
   .manager-sidebar.is-open { transform:none; }
   .close-navigation { display:grid; place-items:center; min-width:44px; }
   .manager-shade { display:block; position:fixed; inset:0; background:#0006; border:0; border-radius:0; z-index:85; }
+  /* Konten beranda satu kolom agar tidak sempit di tablet setelah rail 76px. */
+  .home-grid { grid-template-columns: 1fr; }
 }
 @media (min-width:768px) {
   :root[data-density=compact] .manager-main :is(td,th) { padding-block:8px; }
