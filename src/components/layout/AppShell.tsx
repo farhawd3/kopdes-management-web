@@ -139,7 +139,7 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
     .split('|')
     .filter((href) => navigation.some(([url]) => url === href));
   const collapsed = collapsedText.split('|').filter(Boolean);
-  const { preference, setTheme } = useTheme();
+  const { theme, toggleTheme } = useTheme();
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
   const [menu, setMenu] = useState(false),
     [search, setSearch] = useState(''),
@@ -258,9 +258,10 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
 
           <button
             aria-label="Ganti tema"
-            onClick={() => setTheme(preference === 'dark' ? 'light' : 'dark')}
+            title={theme === 'dark' ? 'Beralih ke mode terang' : 'Beralih ke mode gelap'}
+            onClick={toggleTheme}
           >
-            {preference === 'dark' ? <Sun size={19} /> : <Moon size={19} />}
+            {theme === 'dark' ? <Sun size={19} /> : <Moon size={19} />}
           </button>
           <button
             className="desktop-lock"
@@ -644,10 +645,10 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
             <button
               type="button"
               className="mobile-sheet-footer-btn"
-              onClick={() => setTheme(preference === 'dark' ? 'light' : 'dark')}
+              onClick={toggleTheme}
             >
-              {preference === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
-              <span>Mode {preference === 'dark' ? 'Terang' : 'Gelap'}</span>
+              {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+              <span>Mode {theme === 'dark' ? 'Terang' : 'Gelap'}</span>
             </button>
             <button
               type="button"

@@ -1,6 +1,24 @@
 # Changelog
 
-### Perbaikan Tampilan Kalender Mobile: Sel Simetris Rapi, Indikator Titik Info Tugas & Header Agenda Responsif (3 Oktober 2026)
+### Dukungan Penuh Dark Mode & Harmonisasi Kontras Komponen (3 Oktober 2026)
+
+- **Sinkronisasi Selector Atribut Ganda (`ThemeContext.tsx` & `AppShell.tsx`)**:
+  - Memperbaiki `ThemeProvider` agar menyetel atribut `data-theme="dark"` pada `document.documentElement` secara simultan dengan class `.dark`. Sebelumnya, ketiadaan atribut `data-theme` menyebabkan puluhan selektor bertarget `[data-theme='dark']` gagal diaplikasikan.
+  - Memperbaiki script inisialisasi awal di `layout.tsx` (`<head>`) untuk membaca `localStorage` dan preferensi sistem sebelum hidrasi, sehingga transisi tema bebas kedip (*flash-free*).
+  - Menyinkronkan tombol pengubah tema bilah atas dan bilah bawah mobile dengan status tema aktif riil (`theme` vs `preference`), menampilkan ikon Matahari (<Sun />) saat mode gelap dan Bulan (<Moon />) saat mode terang.
+- **Perbaikan Kontras Ekstrem & Teks Tak Terbaca (`personal.css` & `polish.css`)**:
+  - Mengeliminasi penggunaan warna teks gelap statis (`var(--brand-text)` / `#111215`) di atas kontainer gelap dalam mode malam:
+    - `.routine-time`, `.journal-join-link`, `.journal-join-chip`, `.j-meeting`, `.journal-view-all` kini menggunakan warna terang kontras tinggi (`var(--brand)`).
+    - `.quick-add-icon`, `.member-pill`, `.item-pill`, `.round-arrow`, `.range-days-pill`, `.action-modal-badge` disesuaikan kontrasnya agar tajam dan terbaca sempurna.
+  - Memperbaiki lencana status tabel dan pencatatan (`.badge-active`, `.badge-income`, `.badge-expense`, `.badge-diff-zero`, `.badge-diff-minus`, `.badge-diff-plus`, `.badge-late`, `.table-amount`, `.table-num`, `.table-btn-done`) dengan warna latar lembut gelap dan teks berpendar kontras.
+  - Memperbaiki dropdown `CustomSelect` (`.custom-select-menu`, `.custom-select-option:hover`, `.is-selected`, `.custom-select-check`) agar menggunakan palet permukaan gelap `#181922` dan bingkai `#2e3242`.
+  - Mengimplementasikan penataan lengkap komponen `.csv-dropzone` untuk mode terang dan gelap dengan garis putus-putus beraksen, teks bantuan abu-abu seimbang, dan badge konfirmasi hijau emerald kontras.
+  - Menyesuaikan indikator pemilih waktu `input[type="time"]::-webkit-calendar-picker-indicator` dengan filter invert pada dark mode.
+- **Verifikasi Kualitas**:
+  - Seluruh 146 unit pengujian vitest (19 berkas) lulus 100%.
+  - Pemeriksaan tipe TypeScript (`tsc --noEmit`) 0 error.
+  - Kompilasi produksi Next.js (`npm run build`) sukses tanpa kendala.
+
 
 - **Perbaikan Bentuk Sel Tanggal Mobile Sempurna Simetris (`polish.css` & `personal.css`)**:
   - Mengatasi masalah kapsul hitam dan kapsul lime lonjong 28px x 44px yang sebelumnya menempel canggung di sisi kiri setiap sel tanggal akibat konflik aturan CSS (`max-width: 28px` vs `height: 44px` dan `background: var(--canvas)`).
