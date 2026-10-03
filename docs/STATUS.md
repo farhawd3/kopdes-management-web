@@ -10,11 +10,13 @@ Konfigurasi lokal kini memakai `HUB_APP_ORIGIN=http://127.0.0.1:3000`, sesuai ho
 - Koordinasi, rapat bertautan pengguna dan ICS, dokumen, risiko, kegiatan, laporan snapshot, profil, PIN dan cadangan JSON.
 - Anggota, kas, barang dan opname memakai gerbang kemampuan database. Galat atau migrasi belum tersedia tidak ditampilkan sebagai data nol.
 - Dashboard mempertahankan style acuan e8fc8b4 dan tweak berikutnya. Tugas/kegiatan awal dibatasi tiga; grafik/rutinitas opsional. Perlu Perhatian memakai permukaan netral dan rincian yang dapat dibuka. Acuan ada di [DESAIN-ANTARMUKA](DESAIN-ANTARMUKA.md).
-- Font memakai token global; dropdown, tanggal, aksi dan subtugas memakai style/komponen bersama. Kalender mengutamakan atas dan dibatasi area panel yang terlihat. Kartu proyek, panduan Onboarding Manajer, form mobile dan kontras tombol tema gelap dirapikan tanpa mengganti acuan visual.
+- Font memakai token global; mobile memakai input/dropdown 14 px, judul halaman 20 px, judul bagian 17 px dan kartu 15 px. Kalender membuka ke bawah sesuai koreksi pemilik dan dibatasi area panel. Intro form tugas, toolbar linimasa, kartu dashboard/Hari Ini dan label proyek panjang diringkas; indikator simpan subtugas memakai hijau tema.
 - Sepuluh folder domain dan enam kontrak/form bersama; tes dipisah menjadi unit, UI, database dan keamanan. Peta ada di [ARSITEKTUR](ARSITEKTUR.md).
 - Sumber mati, CSS eksperimen, pratinjau ditolak dan screenshot sementara dibersihkan. Pagination/cache diperbaiki, modul besar dimuat terpisah dan progres memakai utilitas bersama.
 
 ## Bukti pemeriksaan terakhir
+
+Koreksi mobile lanjutan: 171 tes/23 berkas, typecheck, lint, build dan audit sumber 74/74 lulus. Fixture 22 halaman pada 360 px dalam dua tema; 21 form Editor dalam dua tema tanpa luapan, seluruh input terlihat 14 px. Intro form tugas sekitar 70 px setelah basis flex 200 px yang menjadi tinggi kolom dibuang. Lima halaman inti diperiksa pada 360/393/768/1024/1440 px dalam dua tema. Linimasa diperiksa juga pada 338 px sesuai screenshot; toolbar ponsel sekitar 199 px, tanggal lengkap, tanpa luapan. Pending subtugas gelap terverifikasi hijau; kalender detail terverifikasi membuka ke bawah. Belum mencakup perangkat fisik atau seluruh keadaan/interaksi data nyata.
 
 Paket mobile/kontrol bersama: **171 tes dalam 23 berkas**, typecheck, lint, build dan audit sumber **74/74** lulus. Tes baru memeriksa pilihan dropdown, fokus/Escape kalender, batas tanggal/form dan pencegahan pengiriman ulang subtugas. Perubahan awal next-env.d.ts dipertahankan.
 

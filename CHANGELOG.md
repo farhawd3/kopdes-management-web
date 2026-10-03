@@ -1,5 +1,12 @@
 # Changelog
 
+## Koreksi kepadatan dan font mobile — 3 Oktober 2026
+
+- Satukan skala judul/control mobile lewat token global; hapus prioritas tipografi dan aturan mobile yang bertentangan. Input/dropdown 14 px, judul halaman/bagian/kartu 20/17/15 px; target sentuh tetap 44 px.
+- Perbaiki basis flex paragraf intro tugas yang menjadi tinggi 200 px pada layout kolom; ringkas tombol detail. Rapikan gutter/kartu dashboard, ringkasan Hari Ini dua kolom dan label proyek panjang.
+- Toolbar linimasa menjadi grid ringkas dengan tanggal lengkap; kalender membuka ke bawah sesuai koreksi pemilik. Indikator simpan subtugas menggunakan hijau tema, termasuk dark mode.
+- Verifikasi 171 tes/23 berkas, typecheck, lint, build dan audit 74 sumber. Fixture 22 halaman dan 21 form pada 360 px dalam dua tema; semua input form terlihat 14 px. Lima halaman inti diperiksa pada 360/393/768/1024/1440 px; linimasa juga 338 px. Tidak memeriksa perangkat fisik, mengubah data cloud atau deployment; perubahan awal next-env.d.ts dipertahankan.
+
 ## Rapikan mobile, kontrol dan tema — 3 Oktober 2026
 
 - Satukan keluarga font, ukuran input/dropdown dan teks tombol ke token global; bersihkan aturan kontrol lama yang bertentangan. Pilihan dropdown lebih tenang dan membungkus label panjang; warna tombol mengikuti tema.

@@ -126,6 +126,7 @@ export function TaskTimeline({
           />
         </label>
         <button
+          className="timeline-fit-button"
           onClick={() => {
             if (!tasks.length) return;
             const dates = tasks

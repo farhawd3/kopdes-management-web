@@ -149,7 +149,7 @@ export function TodayView({
             {formatDate(now)}
           </span>
           <h1>Fokus Kerja Hari Ini</h1>
-          <p>Kelola agenda kerja, selesaikan tugas jatuh tempo, dan koordinasikan rapat harian.</p>
+          <p>Tugas, tenggat, dan rapat hari ini.</p>
         </div>
 
         {/* Quick Stats Grid */}

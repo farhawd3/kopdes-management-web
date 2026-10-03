@@ -1,8 +1,8 @@
 'use client';
 import { useLayoutEffect, useRef } from 'react';
 
-/** Kalender mengutamakan atas; menu mengikuti ruang yang tersedia dalam dialog. */
-export function usePopoverPlacement(open: boolean, preferAbove = false) {
+/** Kalender membuka ke bawah; dropdown mengikuti ruang panel yang terlihat. */
+export function usePopoverPlacement(open: boolean, calendar = false) {
   const root = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => {
     if (!open) return;
@@ -25,7 +25,7 @@ export function usePopoverPlacement(open: boolean, preferAbove = false) {
           right: Math.min(bounds.right, area.left + parent.clientLeft + parent.clientWidth),
         };
       }
-      if (preferAbove) {
+      if (calendar) {
         const width = Math.min(344, window.innerWidth - 16, bounds.right - bounds.left - 16);
         menu.style.setProperty('--popover-width', `${width}px`);
         const left = bounds.left + 8;
@@ -40,7 +40,7 @@ export function usePopoverPlacement(open: boolean, preferAbove = false) {
       const above = rect.top - top - 8;
       const below = bottom - rect.bottom - 8;
       const height = Math.min(menu.scrollHeight, 360);
-      const up = preferAbove ? above >= height || above > below : below < height && above > below;
+      const up = !calendar && below < height && above > below;
       node.dataset.popoverSide = up ? 'above' : 'below';
       menu.style.setProperty('--popover-available-height', `${Math.max(44, up ? above : below)}px`);
     };
@@ -51,6 +51,6 @@ export function usePopoverPlacement(open: boolean, preferAbove = false) {
       window.removeEventListener('resize', position);
       window.removeEventListener('scroll', position, true);
     };
-  }, [open, preferAbove]);
+  }, [open, calendar]);
   return root;
 }

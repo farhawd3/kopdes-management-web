@@ -10,7 +10,7 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-it('kalender memilih ruang atas dan Escape hanya menutup kalender', () => {
+it('kalender membuka ke bawah dan Escape hanya menutup kalender', () => {
   vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (
     this: HTMLElement,
   ) {
@@ -30,7 +30,7 @@ it('kalender memilih ruang atas dan Escape hanya menutup kalender', () => {
   const trigger = screen.getByRole('button', { name: 'Pilih tanggal kegiatan' });
   fireEvent.click(trigger);
   const menu = screen.getByRole('group', { name: 'Kalender Tanggal kegiatan' });
-  expect(menu.parentElement?.dataset.popoverSide).toBe('above');
+  expect(menu.parentElement?.dataset.popoverSide).toBe('below');
   fireEvent.keyDown(menu, { key: 'Escape' });
   expect(screen.queryByRole('group')).toBeNull();
   expect(document.activeElement).toBe(trigger);

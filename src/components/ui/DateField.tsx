@@ -103,11 +103,15 @@ export function DateInput({
           aria-label={`Pilih ${(label || ariaLabel || 'tanggal').toLowerCase()}`}
           aria-expanded={open}
           aria-controls={id + '-picker'}
+          aria-describedby={value ? id + '-value' : undefined}
           onClick={() => {
             setMonth((value || today()).slice(0, 7));
             setOpen(!open);
           }}
         >
+          <span id={id + '-value'} className="date-trigger-value">
+            {value ? formatDate(value) : 'Pilih tanggal'}
+          </span>
           <CalendarDays size={18} />
         </button>
       </div>

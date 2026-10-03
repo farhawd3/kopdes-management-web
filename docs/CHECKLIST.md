@@ -21,6 +21,7 @@ Implementasi dan penerimaan dipisahkan. Bukti terakhir ada di [STATUS](STATUS.md
 - [x] Panduan Markdown diindeks; duplikasi digabung dan rujukan usang diperbaiki.
 - [x] Font/token kontrol bersama, dropdown lebih tenang, kalender adaptif, aksi/subtugas dan panduan onboarding dirapikan.
 - [x] Sweep fixture 22 halaman/21 form mobile dalam dua tema; Proyek/Panduan/Risiko/Tugas pada empat lebar. Bukti dan batas pemeriksaan ada di STATUS.
+- [x] Koreksi ukuran font mobile, intro tugas berlebihan, toolbar/tanggal linimasa, kepadatan dashboard/Hari Ini, kalender ke bawah dan warna pending subtugas; bukti render ada di STATUS.
 
 ## Cloud dan penerimaan
 

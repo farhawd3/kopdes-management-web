@@ -8,6 +8,7 @@ Baca [AGENTS](../AGENTS.md), [STATUS](STATUS.md), [KEPUTUSAN](KEPUTUSAN.md), [PR
 - Pemilik memilih dashboard aplikasi saat ini. Pertahankan acuan e8fc8b4 dan tweak berikutnya, tanpa redesain total atau pratinjau baru.
 - Stylesheet aktif: src/app/globals.css dan src/app/personal.css. Fitur di src/features/<domain>/, kontrak/form bersama di akar features; lihat [ARSITEKTUR](ARSITEKTUR.md).
 - Font/ukuran kontrol memakai token global; style kontrol aktif di akhir personal.css. Gunakan DateInput/DateField, Select dan SubtaskToggle bersama. Posisi menu memakai usePopoverPlacement yang memperhitungkan batas panel bergulir. Panduan onboarding berada di ManagerGuide.
+- Koreksi terbaru pemilik: kalender ke bawah, input/dropdown mobile 14 px; skala mobile dimiliki token globals.css. Basis flex 200 px intro tugas dibuang karena berubah menjadi tinggi pada layout kolom. Dashboard/Hari Ini memakai ringkasan dua kolom dan label proyek panjang membungkus. Hindari menambah aturan tipografi !important atau mengembalikan bleed kalender di ponsel.
 - Status tugas sudah memiliki utilitas src/lib/task-status.ts; progres di src/lib/progress.ts. Periksa pemanggil sebelum membuat logika baru.
 - Harian memakai tampilan hari/minggu. Instruksi lama tentang accordion Selasa sudah usang. Kalender telah mengutamakan judul dan menjadikan kode metadata.
 - Bukti tes, viewport dan cloud ada di STATUS. Tes lokal tidak membuktikan UAT atau penerapan SQL cloud.

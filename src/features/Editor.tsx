@@ -387,9 +387,10 @@ export function Editor({
               <button
                 type="button"
                 className="btn-toggle-task-details"
+                title="Opsi lanjutan, kendala dan subtugas"
                 onClick={() => setShowTaskDetails(true)}
               >
-                Detail lainnya: opsi lanjutan, kendala & subtugas
+                Detail lainnya
               </button>
             </div>
           )}
