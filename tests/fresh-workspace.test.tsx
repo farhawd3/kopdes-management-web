@@ -5,6 +5,7 @@ import { getFollowUps } from '@/features/workspace-navigation';
 import type { Item } from '@/features/schemas';
 import { schemas } from '@/features/schemas';
 import { Dashboard } from '@/features/Dashboard';
+import { FollowUps } from '@/features/FollowUps';
 
 const row = (id: string, data: Record<string, unknown>): Item => ({
   id,
@@ -90,4 +91,32 @@ it('reminds about active meetings through seven days without reviving past or cl
   expect(reminders.map((item) => item.id).sort()).toEqual(['meetings:edge', 'meetings:today']);
   expect(reminders.find((item) => item.id === 'meetings:today')?.reason).toBe('Rapat hari ini');
   expect(reminders[0].href).toContain('/rapat?bagian=meetings&record=');
+});
+
+it('compact reminders keep reasons in expandable details while preserving urgency and source links', () => {
+  render(
+    <FollowUps
+      compact
+      data={{
+        'work-items': [
+          row('reminder', {
+            title: 'Tugas pengingat uji',
+            due_date: '2000-01-01',
+            status: 'rencana',
+          }),
+        ],
+      }}
+    />,
+  );
+  expect(screen.getByText('Perlu perhatian · 1 · 1 mendesak')).toBeTruthy();
+  expect(screen.queryByText('Tenggat terlewat')).toBeNull();
+  fireEvent.click(screen.getByRole('button', { name: 'Rincian (1)' }));
+  expect(screen.getByText('Tenggat terlewat')).toBeTruthy();
+  expect(
+    screen
+      .getByRole('link', { name: /Tugas pengingat uji.*Tenggat terlewat/ })
+      .getAttribute('href'),
+  ).toBe('/tugas?task=reminder');
+  fireEvent.click(screen.getByRole('button', { name: 'Ringkas' }));
+  expect(screen.queryByText('Tenggat terlewat')).toBeNull();
 });

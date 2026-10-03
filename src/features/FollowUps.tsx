@@ -55,11 +55,11 @@ export function FollowUps({ data, compact = false }: { data: Workspace; compact?
             <div className="compact-bar-text-group">
               <div className="compact-bar-main-line">
                 <span className="compact-bar-badge">
-                  {urgentCount > 0 ? `${urgentCount} Mendesak` : `${items.length} Perlu Perhatian`}
+                  Perlu perhatian · {items.length}
+                  {urgentCount > 0 ? ` · ${urgentCount} mendesak` : ''}
                 </span>
                 <span className="compact-bar-snippet">
-                  <strong>{items[0].kind}:</strong> {items[0].title} —{' '}
-                  <span className="reason-text">{items[0].reason}</span>
+                  {items[0].title}
                 </span>
               </div>
             </div>

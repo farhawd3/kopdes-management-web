@@ -18575,13 +18575,12 @@ dialog.editor textarea:focus,
   transition: all 0.2s ease;
 }
 .follow-up-compact-bar.is-urgent {
-  border-color: rgba(239, 68, 68, 0.4);
-  background: linear-gradient(90deg, rgba(239, 68, 68, 0.06), var(--surface) 60%);
+  border-color: var(--line);
+  background: var(--surface);
 }
 .follow-up-compact-bar.is-clean {
-  border-color: rgba(16, 185, 129, 0.3);
-  background: linear-gradient(90deg, rgba(16, 185, 129, 0.05), var(--surface) 60%);
-  margin-bottom: 20px;
+  border-color: var(--line);
+  background: var(--surface);
 }
 .compact-bar-info {
   display: flex;
@@ -18628,8 +18627,8 @@ dialog.editor textarea:focus,
   letter-spacing: 0.02em;
   padding: 2px 8px;
   border-radius: 6px;
-  background: rgba(239, 68, 68, 0.12);
-  color: #ef4444;
+  background: var(--surface-subtle);
+  color: var(--ink);
   white-space: nowrap;
 }
 .compact-bar-snippet {
@@ -18637,9 +18636,6 @@ dialog.editor textarea:focus,
   text-overflow: ellipsis;
   white-space: nowrap;
   color: var(--ink);
-}
-.compact-bar-snippet .reason-text {
-  color: var(--ink-muted);
 }
 .compact-bar-actions {
   display: flex;
@@ -22383,6 +22379,6 @@ input[type='time']:hover::-webkit-calendar-picker-indicator {
   .manager-home .compact-bar-text-group { flex: 1; min-width: 0; }
   .manager-home .compact-bar-main-line { flex-wrap: wrap; gap: 8px; }
   .manager-home .compact-bar-badge { white-space: nowrap; }
-  .manager-home .compact-bar-snippet { width: 100%; min-width: 0; white-space: normal; overflow-wrap: anywhere; }
+  .manager-home .compact-bar-snippet { display: none; }
   .manager-home .compact-bar-actions { width: 100%; justify-content: flex-end; flex-wrap: wrap; }
 }

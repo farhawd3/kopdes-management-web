@@ -6,6 +6,8 @@ Baca juga `KEGIATAN-DAN-TUGAS.md` untuk memisahkan catatan kejadian dari pekerja
 
 ## Keadaan terbaru — 3 Oktober 2026
 
+- Arahan terakhir: pemilik menyukai dashboard aplikasi saat ini; hanya pengingat Perlu Perhatian di atas yang mengganjal. Tweak banner netral/ringkas, tanpa redesain dashboard. Pratinjau HTML yang ditolak dibuang; arah perapian ada di RANCANGAN-DASHBOARD.md. Screenshot lokal lama dan folder __preview kosong dihapus.
+
 - Paket pembersihan sumber/state selesai: tiga komponen mati dihapus; cache pagination diperbaiki/dibatasi, empat modul halaman dimuat terpisah, rumus progres disatukan, fallback identitas netral, toolbar harian responsif. 166 tes lulus (satu worker). Lihat STATUS untuk cakupan visual dan batasan; style acuan dipertahankan.
 
 - Arahan pemilik terbaru membatalkan penggantian style total: pertahankan tema cabang ini pada `e8fc8b4`, lakukan tweak kecil karena dashboard terlalu ramai. CSS eksperimen serta route pratinjau sementara sudah dihapus.

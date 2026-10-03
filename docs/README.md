@@ -4,6 +4,7 @@
 |---|---|
 | [Status](STATUS.md) | Implementasi nyata, verifikasi, kendala, langkah berikut |
 | [Paket lanjutan AI](LANJUTAN-AI.md) | Serah terima konkret untuk navigasi, modal, status tugas, Harian, dan gaya |
+| [Perapian dashboard](RANCANGAN-DASHBOARD.md) | Arahan mempertahankan dashboard lama dan merapikan Perlu Perhatian |
 | [Desain antarmuka](DESAIN-ANTARMUKA.md) | Karakter visual, layout perangkat, bentuk komponen, dan alur inti |
 | [Kegiatan dan tugas](KEGIATAN-DAN-TUGAS.md) | Batas fitur, contoh pencatatan, dan arah Beranda |
 | [Migrasi SQL](MIGRASI-SQL.md) | Urutan migrasi, SQL instalasi bersih, dan batas cloud |

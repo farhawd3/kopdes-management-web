@@ -1,5 +1,13 @@
 # Status proyek — 3 Oktober 2026
 
+## Pembersihan lokal dan tweak Perlu Perhatian — 3 Oktober 2026
+
+- Hapus 14 screenshot lama dalam artifacts (tidak dirujuk runtime/dokumen), folder kosong src/app/__preview, dan cache TypeScript yang dapat dibuat ulang. Audit sumber 71/71 terjangkau; sumber aktif, cadangan, arsip, konfigurasi, dependensi, dan SQL dipertahankan.
+- Pemilik memilih dashboard aplikasi saat ini dan meminta tweak pada Perlu Perhatian di atas. Rancangan HTML baru dibatalkan/dihapus; arahan terbatas tercatat di RANCANGAN-DASHBOARD.md.
+- Banner memakai permukaan/border netral; gradien merah/hijau dan margin tambahan keadaan kosong dihapus. Ringkasan mempertahankan jumlah/mendesak. Jenis/alasan tampil pada Rincian; ponsel menyembunyikan cuplikan judul panjang agar bar lebih pendek. Tautan sumber tetap tersedia dalam rincian.
+- 167 tes/22 berkas lulus dengan satu worker; typecheck, lint, build produksi (tanpa route pratinjau), audit sumber, dan diff-check lulus. Fixture terang pengingat diperiksa pada 360/768/1024/1440 px tanpa overflow horizontal. Rincian dan keadaan kosong diperiksa pada ponsel; UAT data nyata dan tema gelap belum diperiksa pada paket ini. Tidak ada cloud SQL atau deployment.
+
+
 ## Pembersihan sumber dan perbaikan state — 3 Oktober 2026
 
 - Hapus tiga komponen tidak digunakan runtime (Burnup, InfluenceMap, DateRangePicker) dan ekspor ProgressRing mati; tes widget DateRangePicker dilepas. Audit sumber: 71/71 berkas terjangkau, tanpa kandidat tersisa. Arsip, cadangan, SQL, dan dependensi aktif dipertahankan.

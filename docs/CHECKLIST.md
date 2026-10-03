@@ -1,6 +1,14 @@
 # Checklist produk aktif
 
 
+## Pembersihan dan Perlu Perhatian — 3 Oktober
+- [x] Hapus screenshot lokal lama dan folder pratinjau kosong yang tidak dirujuk.
+- [x] Pertahankan dashboard lama; batalkan rancangan HTML terpisah.
+- [x] Netralisasi banner, hapus jarak ganda keadaan kosong, dan pindahkan alasan panjang ke rincian.
+- [x] Verifikasi 167 tes, typecheck/lint/build, audit sumber, serta fixture pengingat terang pada 360/768/1024/1440 px.
+- [ ] UAT data nyata dan pemeriksaan tema gelap untuk tweak ini.
+
+
 ## Pembersihan sumber dan state — 3 Oktober
 - [x] Validasi penggunaan dan hapus tiga komponen mati serta ekspor ProgressRing.
 - [x] Perbaiki pagination, cache halaman tambahan, permintaan ganda, dan galat scope lama.
