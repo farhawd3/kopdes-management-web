@@ -1,5 +1,12 @@
 # Status proyek — 3 Oktober 2026
 
+## Perapian struktur folder — 3 Oktober 2026
+
+- Pindahkan 31 modul fitur ke 10 folder domain dan 22 berkas tes ke unit/UI/database/keamanan. Enam kontrak/form lintas-domain tetap di akar features. Komponen bersama, lib/server, fixture, skrip, SQL, CSS, dan rute tetap pada tempatnya.
+- Sesuaikan 131 rujukan modul (impor, impor dinamis, mock tes dan fixture) tanpa barrel/shim kompatibilitas. Tidak ada perubahan isi bisnis, tampilan, atau kontrak API.
+- Perbarui peta arsitektur, README, pemetaan file, dan skill clean-code agar merujuk lokasi sebenarnya. Verifikasi: 167 tes/22 berkas, typecheck, lint, build produksi, audit sumber (71/71), dan diff-check lulus. Pemeriksaan isi 53 berkas yang dipindahkan tidak menemukan perubahan selain rujukan modul. Tidak ada perubahan UI/CSS, SQL cloud, atau deployment; tidak ada audit visual baru pada paket pemindahan ini.
+
+
 ## Pembersihan lokal dan tweak Perlu Perhatian — 3 Oktober 2026
 
 - Hapus 14 screenshot lama dalam artifacts (tidak dirujuk runtime/dokumen), folder kosong src/app/__preview, dan cache TypeScript yang dapat dibuat ulang. Audit sumber 71/71 terjangkau; sumber aktif, cadangan, arsip, konfigurasi, dependensi, dan SQL dipertahankan.

@@ -8,6 +8,10 @@ Implementasi lama untuk anggota, stok dagang, keuangan, omzet, kinerja berbasis 
 
 Audit 3 Oktober menghapus `Burnup.tsx`, `InfluenceMap.tsx`, `DateRangePicker.tsx`, serta ekspor `ProgressRing` yang tidak digunakan runtime. Tes widget DateRangePicker ikut dilepas; referensi historis dalam arsip tetap disimpan. Cadangan dan migrasi SQL tidak termasuk pembersihan.
 
+## Pengelompokan sumber — 3 Oktober 2026
+
+31 modul fitur dipindahkan ke subfolder domain, dan 22 berkas tes ke unit/UI/database/keamanan. Nama komponen, route, serta kontrak API tetap. Lokasi rinci tersedia di [ARSITEKTUR](ARSITEKTUR.md#struktur-folder-aktif). Impor statis, dinamis, mock tes, serta fixture telah disesuaikan tanpa shim lokasi lama.
+
 ## Peta rute baru
 
 | Rute | Implementasi |

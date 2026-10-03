@@ -1,6 +1,12 @@
 # Checklist produk aktif
 
 
+## Perapian struktur folder — 3 Oktober
+- [x] Kelompokkan 31 modul fitur dan 22 berkas tes berdasarkan tanggung jawab.
+- [x] Perbarui impor statis/dinamis, mock, fixture, dan rujukan dokumentasi aktif.
+- [x] Verifikasi 167 tes, typecheck, lint, build, audit sumber (71/71), dan diff-check setelah pemindahan.
+
+
 ## Pembersihan dan Perlu Perhatian — 3 Oktober
 - [x] Hapus screenshot lokal lama dan folder pratinjau kosong yang tidak dirujuk.
 - [x] Pertahankan dashboard lama; batalkan rancangan HTML terpisah.

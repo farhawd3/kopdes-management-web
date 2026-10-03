@@ -5,16 +5,16 @@ import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { catalog, labels, options, formatChoiceLabel } from './catalog';
 import { schemas, type Entity, type Item } from './schemas';
-import type { Workspace } from './useWorkspace';
-import { SavedTaskViews, type TaskView } from './SavedTaskViews';
-import { TaskBatchActions } from './TaskBatchActions';
+import type { Workspace } from './workspace/useWorkspace';
+import { SavedTaskViews, type TaskView } from './tasks/SavedTaskViews';
+import { TaskBatchActions } from './tasks/TaskBatchActions';
 import { Editor } from './Editor';
 import { api } from '@/lib/client';
 import { today, addDays, formatDate } from '@/lib/date';
 import { selectTaskStatus, taskStatusChange, isActiveTask, type TaskStatus } from '@/lib/task-status';
 import { readiness, subtaskProgress } from '@/lib/progress';
 import { Meter, RiskMatrix } from '@/components/charts/Charts';
-import { TaskCalendar } from './TaskCalendar';
+import { TaskCalendar } from './tasks/TaskCalendar';
 import { ReadinessRadar } from '@/components/charts/ReadinessRadar';
 import { Select } from '@/components/ui/Select';
 import {
@@ -59,15 +59,15 @@ import {
   MoreHorizontal,
   Trash2,
 } from 'lucide-react';
-import { TaskTimeline } from './TaskTimeline';
-import { downloadMeeting, meetingJoinUrl } from './meeting';
-import { DailyTasksView } from './DailyTasksView';
-import { TaskDetailDrawer } from './TaskDetailDrawer';
-import { SprintModal } from './SprintModal';
-import { SprintCard } from './SprintCard';
+import { TaskTimeline } from './tasks/TaskTimeline';
+import { downloadMeeting, meetingJoinUrl } from './meetings/meeting';
+import { DailyTasksView } from './tasks/DailyTasksView';
+import { TaskDetailDrawer } from './tasks/TaskDetailDrawer';
+import { SprintModal } from './projects/SprintModal';
+import { SprintCard } from './projects/SprintCard';
 import { CsvDropzone } from '@/components/ui/CsvDropzone';
-import { ScrumBoardView } from './ScrumBoardView';
-import { formatDisplayCode } from './task-code';
+import { ScrumBoardView } from './tasks/ScrumBoardView';
+import { formatDisplayCode } from './tasks/task-code';
 import { EmptyState } from '@/components/ui/EmptyState';
 
 function getStakeholderCategoryClass(category: string) {

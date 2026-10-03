@@ -6,6 +6,8 @@ Baca juga `KEGIATAN-DAN-TUGAS.md` untuk memisahkan catatan kejadian dari pekerja
 
 ## Keadaan terbaru — 3 Oktober 2026
 
+- Lokasi modul kini src/features/<domain> dan tes di tests/{unit,ui,database,security}. Lihat tabel ARSITEKTUR untuk peta aktual. Enam kontrak/form bersama tetap di akar features. Catatan historis di bawah dapat menyebut lokasi lama; jangan membuat wrapper untuk mengembalikannya.
+
 - Arahan terakhir: pemilik menyukai dashboard aplikasi saat ini; hanya pengingat Perlu Perhatian di atas yang mengganjal. Tweak banner netral/ringkas, tanpa redesain dashboard. Pratinjau HTML yang ditolak dibuang; arah perapian ada di RANCANGAN-DASHBOARD.md. Screenshot lokal lama dan folder __preview kosong dihapus.
 
 - Paket pembersihan sumber/state selesai: tiga komponen mati dihapus; cache pagination diperbaiki/dibatasi, empat modul halaman dimuat terpisah, rumus progres disatukan, fallback identitas netral, toolbar harian responsif. 166 tes lulus (satu worker). Lihat STATUS untuk cakupan visual dan batasan; style acuan dipertahankan.

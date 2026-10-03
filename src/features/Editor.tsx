@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { schemas, type Entity, type Item } from './schemas';
 import { catalog, formatChoiceLabel, labels, options, references } from './catalog';
-import type { Workspace } from './useWorkspace';
+import type { Workspace } from './workspace/useWorkspace';
 import { today } from '@/lib/date';
 import { api } from '@/lib/client';
 import { ZodError } from 'zod';

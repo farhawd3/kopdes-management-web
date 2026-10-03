@@ -36,11 +36,11 @@ Tes database memakai PostgreSQL lokal PGlite dan tidak mengubah Supabase cloud. 
 | Lokasi | Tanggung jawab |
 |---|---|
 | `src/app` | Rute Next.js, API, dan layout |
-| `src/features` | Skema domain, layanan data, form, dan halaman kerja |
+| `src/features/<domain>` | Modul tugas, proyek, dashboard, pencatatan, laporan, dan ruang kerja; kontrak/form bersama tetap di akar features |
 | `src/components` | Navigasi, tombol, dan grafik bersama |
 | `src/lib` | Tanggal, progres, timeline, tema, dan keamanan |
-| `supabase/migrations` | Satu migrasi awal khusus proyek baru |
-| `tests` | Validasi domain, keamanan API, transaksi PostgreSQL |
+| `supabase/migrations` | Migrasi skema dan kompatibilitas secara berurutan; penerapan cloud mengikuti persetujuan |
+| `tests/{unit,ui,database,security}` | Validasi domain, keamanan API, transaksi PostgreSQL |
 | `docs` | Kebutuhan, keputusan, arsitektur, panduan, status |
 
 Next.js 16, React 19, TypeScript strict, Tailwind 3, Zod, Supabase. Font Inter dan Plus Jakarta Sans dibundel lokal. Layout dirancang untuk ponsel 360 px, tablet, dan desktop; status pengujian ada di dokumentasi.

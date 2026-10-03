@@ -24,7 +24,7 @@ src/
 │   ├── <entity>/         # Schema, service, views (Tasks, Projects, Records, dsb.)
 │   ├── catalog.ts        # Katalog entitas, definisi bidang, navigasi
 │   ├── schemas.ts        # Validasi Zod seluruh entitas
-│   └── useWorkspace.ts   # Hook utama dengan SWR in-memory cache
+│   └── workspace/useWorkspace.ts # Hook utama dengan SWR in-memory cache
 └── lib/                  # Utilitas murni & pustaka bersama
     ├── client.ts         # Wrapper API client & penanganan galat
     ├── date.ts           # Kalender bersama & kalkulasi tanggal zona Asia/Jakarta
@@ -33,7 +33,7 @@ src/
 ```
 
 ### Aturan Arsitektur:
-1. **Rute Tipis**: `app/[slug]/page.tsx` hanya meneruskan parameter ke `features/WorkspacePage.tsx`. Hindari meletakkan logika bisnis di dalam `app/`.
+1. **Rute Tipis**: `app/[slug]/page.tsx` hanya meneruskan parameter ke `features/workspace/WorkspacePage.tsx`. Hindari meletakkan logika bisnis di dalam `app/`.
 2. **Hindari Abstraksi Spekulatif**: Jangan membuat generic repository atau factory yang tidak dibutuhkan. Gunakan fungsi konkret dengan nama yang menjelaskan aksi bisnis.
 3. **Satu Sumber Progres**: Semua perhitungan persentase, bobot, dan kesiapan WAJIB memanggil `src/lib/progress.ts`. Dilarang menduplikasi rumus kalkulasi di komponen view.
 

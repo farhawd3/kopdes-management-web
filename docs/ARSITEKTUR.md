@@ -28,11 +28,30 @@ Kontrak API dan skema memisahkan kebutuhan UI dari penyimpanan. Bila skala membu
 - `features/service.ts`: baca/simpan domain, pemeriksaan relasi dan dependensi.
 - `features/Editor.tsx`: form lengkap atau tambah cepat; skema yang sama dipakai sebelum permintaan.
 - `features/Records.tsx`: daftar/papan/aksi catatan. Kalender dipisah dalam `TaskCalendar`.
-- `features/Dashboard`, `Roadmap`, `Reports`, `Settings`: logika tampilan per kebutuhan.
-- `features/report-snapshot.ts`: pemilihan periode laporan yang dipakai server.
+- `features/<domain>/`: komponen dan utilitas dikelompokkan berdasarkan domain sesuai tabel berikut.
+- `features/reports/report-snapshot.ts`: pemilihan periode laporan yang dipakai server.
 - `lib/progress.ts`: rumus bersama. Tanpa checklist wajib berarti belum dinilai, bukan 100% siap.
 - `lib/date.ts`: tanggal kalender dan WIB, termasuk pengulangan bulanan pada akhir bulan.
 - `tests/fixtures/legacy-plan`: rencana historis untuk uji kompatibilitas transaksi SQL; tidak diimpor runtime.
+
+## Struktur folder aktif
+
+| Folder | Tanggung jawab |
+|---|---|
+| `src/features/dashboard/` | Beranda dan Hari Ini |
+| `src/features/tasks/` | Daftar, papan, kalender, detail, jadwal berulang dan kode tugas |
+| `src/features/projects/` | Proyek, catatan, milestone dan target periode |
+| `src/features/follow-ups/` | Pengingat, sematan dan tinjauan mingguan |
+| `src/features/operations/` | Buku pencatatan dan rumus kas/stok |
+| `src/features/meetings/` | Tautan rapat dan ekspor kalender |
+| `src/features/reports/` | Tampilan dan snapshot laporan |
+| `src/features/settings/` | Pengaturan profil, PIN dan cadangan |
+| `src/features/roadmap/` | Halaman Gantt |
+| `src/features/workspace/` | Orkestrasi halaman, cache, pencarian, lingkup dan navigasi |
+
+Enam berkas lintas-domain tetap di akar features: schemas.ts, catalog.ts, query.ts, service.ts, Editor.tsx, dan Records.tsx. Komponen umum tetap di components, utilitas umum di lib, keamanan server di lib/server. Tidak ada barrel atau wrapper kompatibilitas; pemanggil memakai lokasi modul yang sebenarnya.
+
+Tes dikelompokkan menjadi tests/unit, tests/ui, tests/database, dan tests/security. Fixture historis tetap di tests/fixtures; setup dan stub server-only tetap di akar tests karena dirujuk konfigurasi Vitest. SQL, skrip instalasi/reset, rute Next.js, dan stylesheet tidak dipindah.
 
 ## Transaksi dan keamanan
 

@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { ThemeProvider, useTheme } from '@/lib/ThemeContext';
 import { api, resetAuthNavigation } from '@/lib/client';
 import { navigation } from '@/features/catalog';
-import type { Workspace } from '@/features/useWorkspace';
+import type { Workspace } from '@/features/workspace/useWorkspace';
 import {
   House,
   CheckCheck,
@@ -39,7 +39,7 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { usePreference } from '@/lib/usePreference';
-import { WorkspaceSearch } from '@/features/WorkspaceSearch';
+import { WorkspaceSearch } from '@/features/workspace/WorkspaceSearch';
 import { Star, ChevronDown, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { ManagerActionModal } from './ManagerActionModal';
 
