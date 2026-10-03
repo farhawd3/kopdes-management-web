@@ -65,25 +65,25 @@ it('form tugas menawarkan mitra tanpa mewajibkan kode tugas', () => {
       onSaved={vi.fn()}
     />,
   );
-  const contact = screen.getByRole('combobox', { name: 'Mitra atau kontak' }) as HTMLSelectElement;
+  const contact = screen.getByLabelText('Mitra atau kontak') as HTMLSelectElement;
   expect(contact.querySelector(`option[value="${contactId}"]`)?.textContent).toBe('Agrinas');
   expect(
     screen
-      .getByRole('combobox', { name: 'Dokumen atau kontrak' })
+      .getByLabelText('Dokumen atau kontrak')
       .querySelector(`option[value="${documentId}"]`)?.textContent,
   ).toBe('Kontrak Agrinas');
   expect(screen.queryByRole('textbox', { name: /kode tugas/i })).toBeNull();
-  const milestone = screen.getByRole('combobox', { name: 'Milestone' }) as HTMLSelectElement;
+  const milestone = screen.getByLabelText('Milestone') as HTMLSelectElement;
   expect(milestone.disabled).toBe(true);
-  fireEvent.change(screen.getByRole('combobox', { name: 'Proyek / bidang kerja' }), {
+  fireEvent.change(screen.getByLabelText('Proyek / bidang kerja'), {
     target: { value: projectId },
   });
-  expect((screen.getByRole('combobox', { name: 'Milestone' }) as HTMLSelectElement).disabled).toBe(
+  expect((screen.getByLabelText('Milestone') as HTMLSelectElement).disabled).toBe(
     false,
   );
   expect(
     screen
-      .getByRole('combobox', { name: 'Milestone' })
+      .getByLabelText('Milestone')
       .querySelector(`option[value="${milestoneId}"]`),
   ).toBeTruthy();
   fireEvent.change(screen.getByRole('textbox', { name: 'Nama / judul' }), {
@@ -96,7 +96,7 @@ it('form tugas menawarkan mitra tanpa mewajibkan kode tugas', () => {
   expect(
     (document.querySelector('input[name="recurrence_time"]') as HTMLInputElement).disabled,
   ).toBe(true);
-  fireEvent.change(screen.getByRole('combobox', { name: 'Pengulangan' }), {
+  fireEvent.change(screen.getByLabelText('Pengulangan'), {
     target: { value: 'harian' },
   });
   expect(
@@ -110,3 +110,4 @@ it('form tugas menawarkan mitra tanpa mewajibkan kode tugas', () => {
     }).stakeholder_id,
   ).toBe(contactId);
 });
+

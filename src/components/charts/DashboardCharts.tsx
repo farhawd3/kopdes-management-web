@@ -1,4 +1,5 @@
 'use client';
+import { Button } from '@/components/ui/Button';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
@@ -55,7 +56,7 @@ export function WeekBarChart({
           </div>
         </div>
         {selectedDate && (
-          <button
+          <Button
             type="button"
             className="week-filter-reset-chip"
             onClick={() => onSelect?.('')}
@@ -63,7 +64,7 @@ export function WeekBarChart({
           >
             <span>{activeDay?.dateLabel || selectedDate}</span>
             <span className="reset-x">✕</span>
-          </button>
+          </Button>
         )}
       </div>
 
@@ -78,7 +79,7 @@ export function WeekBarChart({
           const dayNum = d.date ? Number(d.date.slice(-2)) : '';
 
           return (
-            <button
+            <Button
               type="button"
               aria-pressed={isSelected}
               aria-label={(d.dateLabel || d.label) + ': ' + d.value + ' selesai'}
@@ -108,7 +109,7 @@ export function WeekBarChart({
                 {dayNum && <span className="dash-bar-daynum">{dayNum}</span>}
               </div>
               {d.isToday && <span className="today-badge-dot" title="Hari ini" />}
-            </button>
+            </Button>
           );
         })}
       </div>
@@ -193,7 +194,7 @@ export function TaskDonutChart({
       </div>
       <div className="dash-donut-legend">
         {slices.map((s) => (
-          <button
+          <Button
             type="button"
             key={s.label}
             className="donut-legend-row"
@@ -220,7 +221,7 @@ export function TaskDonutChart({
             <span className="donut-dot" style={{ background: s.color }} />
             <span className="donut-legend-label">{s.label}</span>
             <strong className="donut-legend-val">{s.value}</strong>
-          </button>
+          </Button>
         ))}
       </div>
     </div>

@@ -1,5 +1,8 @@
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { DateNav } from '@/components/ui/DateNav';
 import { useState } from 'react';
-import { CalendarDays, ChevronLeft, ChevronRight, Plus } from 'lucide-react';
+import { CalendarDays, Plus } from 'lucide-react';
 import { addDays, formatDate, today } from '@/lib/date';
 import type { Item } from '../schemas';
 export function TaskCalendar({
@@ -75,47 +78,15 @@ export function TaskCalendar({
             <small>{periodItems.length} tugas · pribadi</small>
           </div>
         </div>
-        <div className="calendar-controls">
-          <button
-            type="button"
-            aria-label={
-              mode === 'month'
-                ? 'Bulan sebelumnya'
-                : mode === 'week'
-                  ? 'Minggu sebelumnya'
-                  : 'Hari sebelumnya'
-            }
-            onClick={() => moveMonth(-1)}
-          >
-            <ChevronLeft size={18} />
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setMonth(today().slice(0, 7));
-              setSelected(today());
-              setAnchor(today());
-            }}
-          >
-            Hari ini
-          </button>
-          <button
-            type="button"
-            aria-label={
-              mode === 'month'
-                ? 'Bulan berikutnya'
-                : mode === 'week'
-                  ? 'Minggu berikutnya'
-                  : 'Hari berikutnya'
-            }
-            onClick={() => moveMonth(1)}
-          >
-            <ChevronRight size={18} />
-          </button>
-        </div>
+        <DateNav
+          previousLabel={mode === 'month' ? 'Bulan sebelumnya' : mode === 'week' ? 'Minggu sebelumnya' : 'Hari sebelumnya'}
+          nextLabel={mode === 'month' ? 'Bulan berikutnya' : mode === 'week' ? 'Minggu berikutnya' : 'Hari berikutnya'}
+          onPrevious={() => moveMonth(-1)} onNext={() => moveMonth(1)}
+          onToday={() => { setMonth(today().slice(0, 7)); setSelected(today()); setAnchor(today()); }}
+        />
         <div className="calendar-modes" aria-label="Rentang kalender">
           {(['month', 'week', 'day'] as const).map((value) => (
-            <button
+            <Button
               key={value}
               type="button"
               aria-pressed={mode === value}
@@ -125,13 +96,13 @@ export function TaskCalendar({
               }}
             >
               {value === 'month' ? 'Bulan' : value === 'week' ? 'Minggu' : 'Hari'}
-            </button>
+            </Button>
           ))}
         </div>
 
         <label className="calendar-month">
           Bulan
-          <input
+          <Input
             aria-label="Bulan kalender"
             type="month"
             value={month}
@@ -171,7 +142,7 @@ export function TaskCalendar({
                 }}
               >
                 <div className="calendar-day-header">
-                  <button
+                  <Button
                     type="button"
                     className="calendar-day-number"
                     aria-label={formatDate(date)}
@@ -185,9 +156,9 @@ export function TaskCalendar({
                     }}
                   >
                     {Number(date.slice(-2))}
-                  </button>
+                  </Button>
                   {onCreate && (
-                    <button
+                    <Button
                       className="calendar-add"
                       type="button"
                       title={`Tambah tugas ${formatDate(date)}`}
@@ -198,7 +169,7 @@ export function TaskCalendar({
                       }}
                     >
                       <Plus size={14} strokeWidth={2} />
-                    </button>
+                    </Button>
                   )}
                 </div>
                 {/* Mobile Event Dots Indicator */}
@@ -231,7 +202,7 @@ export function TaskCalendar({
                 )}
                 <div className="calendar-events-wrap">
                   {dayTasks.map((item) => (
-                    <button
+                    <Button
                       type="button"
                       className="calendar-event"
                       data-status={String(item.data.status)}
@@ -245,7 +216,7 @@ export function TaskCalendar({
                     >
                       <span className="cal-task-dot" aria-hidden="true" />
                       <span className="cal-task-title">{String(item.data.title)}</span>
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </section>
@@ -276,23 +247,23 @@ export function TaskCalendar({
           </div>
           <div className="calendar-agenda-actions">
             {onCreate && (
-              <button
+              <Button
                 type="button"
                 className="calendar-agenda-add-btn"
                 onClick={() => onCreate(selected || anchor)}
               >
                 <Plus size={15} strokeWidth={2.2} />
                 <span>Tambah tugas</span>
-              </button>
+              </Button>
             )}
             {selected && (
-              <button
+              <Button
                 type="button"
                 className="calendar-agenda-clear-btn"
                 onClick={() => setSelected(null)}
               >
                 Semua tanggal
-              </button>
+              </Button>
             )}
           </div>
         </div>

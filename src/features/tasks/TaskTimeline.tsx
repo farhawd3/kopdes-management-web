@@ -1,7 +1,9 @@
 'use client';
+import { Button } from '@/components/ui/Button';
+import { DateNav } from '@/components/ui/DateNav';
 import { DateInput } from '@/components/ui/DateField';
 import { useRef, useState } from 'react';
-import { ChevronLeft, ChevronRight, CalendarDays, MoveHorizontal, Flag, Plus } from 'lucide-react';
+import { ChevronRight, CalendarDays, MoveHorizontal, Flag, Plus } from 'lucide-react';
 import { addDays, daysBetween, formatDate, today } from '@/lib/date';
 import { timelineBar, shiftSchedule, scheduleConflicts } from '@/lib/timeline';
 import { api } from '@/lib/client';
@@ -80,15 +82,7 @@ export function TaskTimeline({
   return (
     <section className={`timeline-panel ${showMobileChart ? 'mobile-chart-open' : ''}`}>
       <div className="timeline-toolbar">
-        <div className="actions">
-          <button aria-label="Periode sebelumnya" onClick={() => setStart(addDays(start, -days))}>
-            <ChevronLeft size={16} />
-          </button>
-          <button onClick={() => setStart(addDays(today(), -7))}>Hari ini</button>
-          <button aria-label="Periode berikutnya" onClick={() => setStart(addDays(start, days))}>
-            <ChevronRight size={16} />
-          </button>
-        </div>
+        <DateNav onPrevious={() => setStart(addDays(start, -days))} onToday={() => setStart(addDays(today(), -7))} onNext={() => setStart(addDays(start, days))} />
         <label>
           Mulai
           <DateInput
@@ -125,7 +119,7 @@ export function TaskTimeline({
             ariaLabel="Skala waktu"
           />
         </label>
-        <button
+        <Button
           className="timeline-fit-button"
           onClick={() => {
             if (!tasks.length) return;
@@ -138,11 +132,11 @@ export function TaskTimeline({
           }}
         >
           Lihat jadwal
-        </button>
-        <button className="primary" onClick={newTask}>
+        </Button>
+        <Button className="primary" onClick={newTask}>
           <Plus size={16} />
           Tugas
-        </button>
+        </Button>
       </div>
       <div className="timeline-legend">
         <span>
@@ -178,10 +172,10 @@ export function TaskTimeline({
             <small>Perubahan belum disimpan. Jadwal tugas lain tidak digeser otomatis.</small>
           </div>
           <div className="actions">
-            <button disabled={busy} onClick={() => setPending(null)}>
+            <Button disabled={busy} onClick={() => setPending(null)}>
               Batal
-            </button>
-            <button
+            </Button>
+            <Button
               className="primary"
               disabled={busy}
               onClick={async () => {
@@ -207,7 +201,7 @@ export function TaskTimeline({
               }}
             >
               {busy ? 'Menyimpan…' : 'Simpan jadwal'}
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -221,14 +215,14 @@ export function TaskTimeline({
           {message}
         </p>
       )}
-      <button
+      <Button
         type="button"
         className="timeline-mobile-toggle"
         aria-expanded={showMobileChart}
         onClick={() => setShowMobileChart((value) => !value)}
       >
         {showMobileChart ? 'Lihat daftar jadwal' : 'Lihat bagan Gantt'}
-      </button>
+      </Button>
       <div
         className="timeline-scroll"
         tabIndex={0}
@@ -252,13 +246,13 @@ export function TaskTimeline({
             const conflicts = scheduleConflicts(task, allTasks);
             return (
               <div className="timeline-line" key={item.id}>
-                <button className="timeline-name" onClick={() => setEdit(item)}>
+                <Button className="timeline-name" onClick={() => setEdit(item)}>
                   <strong>{task.title}</strong>
                   <small>
                     {task.assignee || 'Tanpa PIC'}
                     {conflicts.length ? ' · Jadwal bertabrakan' : ''}
                   </small>
-                </button>
+                </Button>
                 <div
                   className="timeline-track"
                   style={{ backgroundSize: `${(step / days) * 100}% 100%` }}
@@ -269,7 +263,7 @@ export function TaskTimeline({
                       style={{ left: `${(daysBetween(start, today()) / days) * 100}%` }}
                     />
                   )}
-                  <button
+                  <Button
                     disabled={busy}
                     className={`timeline-bar ${task.status}`}
                     style={{ left: `${bar.left}%`, width: `${bar.width}%` }}
@@ -330,17 +324,17 @@ export function TaskTimeline({
                     <span data-resize="true" className="resize-grip" aria-hidden>
                       ⋮
                     </span>
-                  </button>
+                  </Button>
                 </div>
               </div>
             );
           })}
           {milestones.map((item) => (
             <div className="timeline-line" key={item.id}>
-              <button className="timeline-name" onClick={() => setEdit(item)}>
+              <Button className="timeline-name" onClick={() => setEdit(item)}>
                 <strong>◇ {String(item.data.title)}</strong>
                 <small>{formatDate(String(item.data.due_date))}</small>
-              </button>
+              </Button>
               <div className="timeline-track">
                 <span
                   className="milestone-pin"
@@ -375,7 +369,7 @@ export function TaskTimeline({
       </p>
       <div className="timeline-mobile-list">
         {visible.map(({ item, task }) => (
-          <button key={item.id} onClick={() => setEdit(item)}>
+          <Button key={item.id} onClick={() => setEdit(item)}>
             <span className={`status-dot ${task.status}`} />
             <span>
               <strong>{task.title}</strong>
@@ -384,7 +378,7 @@ export function TaskTimeline({
               </small>
             </span>
             <ChevronRight size={16} />
-          </button>
+          </Button>
         ))}
       </div>
       {edit && (

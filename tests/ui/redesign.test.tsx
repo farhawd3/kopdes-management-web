@@ -153,13 +153,13 @@ describe('Fitur Redesain Behance', () => {
 
     expect(screen.getByText('KD-44006')).toBeTruthy();
     expect(screen.getByText('DIBUAT OLEH')).toBeTruthy();
-    expect(screen.getByText('PENANGGUNG JAWAB')).toBeTruthy();
+    expect(screen.getByText('Penanggung jawab')).toBeTruthy();
     expect(screen.queryByText('PEMANGKU / TIM')).toBeNull();
     expect(screen.getByText(/membuat tugas ini/)).toBeTruthy();
 
     // Verify status & priority select controls
-    expect(screen.getByLabelText(/Ubah status tugas/i)).toBeTruthy();
-    expect(screen.getByLabelText(/Ubah prioritas tugas/i)).toBeTruthy();
+    expect(screen.getByRole('button', { name: /Ubah status tugas/i })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /Ubah prioritas tugas/i })).toBeTruthy();
 
     // Verify submission card renders cleanly with exactly one setup button (no duplicates)
     expect(screen.getByText('Link Pengumpulan & Bukti Hasil')).toBeTruthy();
@@ -347,7 +347,7 @@ describe('Fitur Redesain Behance', () => {
     expect(screen.getByText('Jenis kontak')).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: 'Agrinas' }));
     expect((screen.getByLabelText(/Nama orang atau lembaga/i) as HTMLInputElement).value).toBe('');
-    expect((screen.getByLabelText(/Kategori/i) as HTMLSelectElement).value).toBe('Agrinas');
+    expect((screen.getByLabelText('Kategori', { exact: true }) as HTMLSelectElement).value).toBe('Agrinas');
     expect(screen.queryByLabelText(/Tingkat wewenang/i)).toBeNull();
   });
 
@@ -396,7 +396,7 @@ describe('Fitur Redesain Behance', () => {
     expect(screen.queryByLabelText(/Tautan Rapat Online/i)).toBeNull();
 
     // Switch to 'online': meeting_url is shown, location is hidden
-    const modeSelect = screen.getByLabelText(/Format Rapat/i) as HTMLSelectElement;
+    const modeSelect = screen.getByLabelText('Format Rapat', { exact: true }) as HTMLSelectElement;
     fireEvent.change(modeSelect, { target: { value: 'online' } });
 
     expect(screen.getByLabelText(/Tautan Rapat Online/i)).toBeTruthy();
@@ -486,4 +486,6 @@ describe('Fitur Redesain Behance', () => {
     expect(screen.getByRole('button', { name: 'Selesai' })).toBeTruthy();
   });
 });
+
+
 

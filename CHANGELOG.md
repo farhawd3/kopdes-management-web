@@ -827,3 +827,7 @@ Audit UI yang dapat dibuat ulang mencatat seluruh kontrol JSX beserta baris, rut
 
 Token geometri, motion dan warna semantik memakai sumber tema aktif. Penjaga stylelint berlaku untuk CSS baru; legacy masih dilaporkan terpisah. 171 tes, typecheck, lint, lint:ui dan build lulus.
 
+# 4 Oktober 2026 — PLAN-ASTRA kontrol bersama
+
+Migrasikan kontrol form/tombol ke pustaka UI, satukan pemicu tanggal dan navigasi tanggal, ekstrak dock lima item, serta gunakan permukaan dialog bersama. Hapus gaya tanggal/dock yang tidak dipakai; cegah gaya elemen legacy menimpa primitive baru. 175 tes dan pemeriksaan statis/build lulus; galeri mobile terang/gelap serta Beranda 360/768 diperiksa.
+

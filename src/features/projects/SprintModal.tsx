@@ -1,4 +1,8 @@
 'use client';
+import { DialogSurface } from '@/components/ui/Modal';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Textarea } from '@/components/ui/Input';
 import { DateInput } from '@/components/ui/DateField';
 import { useState, useEffect, useRef } from 'react';
 import { X, Target, Calendar, Clock } from 'lucide-react';
@@ -73,7 +77,7 @@ export function SprintModal({
   }
 
   const modalContent = (
-    <dialog
+    <DialogSurface
       ref={dialog}
       className="sprint-modal-dialog"
       aria-labelledby="sprint-modal-title"
@@ -93,7 +97,7 @@ export function SprintModal({
             </span>
             <h2 id="sprint-modal-title">{sprint?.id ? 'Ubah Target Periode' : 'Target Periode'}</h2>
           </div>
-          <button
+          <Button
             type="button"
             className="close-btn"
             onClick={onClose}
@@ -101,13 +105,13 @@ export function SprintModal({
             aria-label="Tutup modal"
           >
             <X size={18} />
-          </button>
+          </Button>
         </header>
 
         <form onSubmit={handleSubmit} className="sprint-form">
           <label className="field-group">
             <span className="field-label">Nama Target Periode *</span>
-            <input
+            <Input
               type="text"
               required
               value={title}
@@ -119,7 +123,7 @@ export function SprintModal({
 
           <label className="field-group">
             <span className="field-label">Tujuan Target</span>
-            <input
+            <Input
               type="text"
               value={goal}
               onChange={(e) => setGoal(e.target.value)}
@@ -194,7 +198,7 @@ export function SprintModal({
 
           <label className="field-group">
             <span className="field-label">Catatan Tambahan</span>
-            <textarea
+            <Textarea
               rows={2}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
@@ -210,17 +214,18 @@ export function SprintModal({
           )}
 
           <div className="sprint-form-actions">
-            <button type="button" className="btn-cancel" onClick={onClose} disabled={busy}>
+            <Button type="button" className="btn-cancel" onClick={onClose} disabled={busy}>
               Batal
-            </button>
-            <button type="submit" className="btn-save-sprint" disabled={busy}>
+            </Button>
+            <Button type="submit" className="btn-save-sprint" disabled={busy}>
               {busy ? 'Menyimpan…' : 'Simpan'}
-            </button>
+            </Button>
           </div>
         </form>
       </div>
-    </dialog>
+    </DialogSurface>
   );
 
   return modalContent;
 }
+

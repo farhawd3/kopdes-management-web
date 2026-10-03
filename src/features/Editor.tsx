@@ -1,4 +1,7 @@
 'use client';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Textarea } from '@/components/ui/Input';
 import { DateInput } from '@/components/ui/DateField';
 import { useEffect, useId, useRef, useState } from 'react';
 import {
@@ -310,7 +313,7 @@ export function Editor({
                         : `Tambah ${catalog[entity].title}`}
             </h2>
           </div>
-          <button
+          <Button
             type="button"
             className="editor-close-btn"
             aria-label="Tutup formulir"
@@ -318,13 +321,13 @@ export function Editor({
             onClick={requestClose}
           >
             <X size={20} strokeWidth={2.25} />
-          </button>
+          </Button>
         </div>
         <div className="editor-form-scroll">
           {savedDraft && (
           <div className="draft-notice">
             <p>Draf belum disimpan ditemukan di tab ini.</p>
-            <button
+            <Button
               type="button"
               onClick={() => {
                 setRestoredDraft(savedDraft);
@@ -340,8 +343,8 @@ export function Editor({
               }}
             >
               Lanjutkan draf
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               onClick={() => {
                 try {
@@ -351,7 +354,7 @@ export function Editor({
               }}
             >
               Abaikan draf
-            </button>
+            </Button>
           </div>
         )}
         {draftNotice && (
@@ -367,14 +370,14 @@ export function Editor({
             </div>
             <div className="preset-buttons">
               {STAKEHOLDER_PRESETS.map((p) => (
-                <button
+                <Button
                   key={p.label}
                   type="button"
                   className={`preset-chip ${stakeholderPreset?.label === p.label ? 'active' : ''}`}
                   onClick={() => setStakeholderPreset(p)}
                 >
                   {p.label}
-                </button>
+                </Button>
               ))}
             </div>
             <small className="preset-hint">
@@ -385,14 +388,14 @@ export function Editor({
           {entity === 'work-items' && !quick && !showTaskDetails && (
             <div className="task-form-intro">
               <p>Isi judul dan tenggat. Hubungkan proyek atau mitra jika ada.</p>
-              <button
+              <Button
                 type="button"
                 className="btn-toggle-task-details"
                 title="Opsi lanjutan, kendala dan subtugas"
                 onClick={() => setShowTaskDetails(true)}
               >
                 Detail lainnya
-              </button>
+              </Button>
             </div>
           )}
         <div className="form-grid">
@@ -482,7 +485,7 @@ export function Editor({
             if (field === 'required')
               return (
                 <label key={field} className="check field-item field-check">
-                  <input type="checkbox" name={field} defaultChecked={value !== false} />
+                  <Input type="checkbox" name={field} defaultChecked={value !== false} />
                   <span className="field-caption-check">Wajib diselesaikan</span>
                 </label>
               );
@@ -497,7 +500,7 @@ export function Editor({
                       .filter((id) => !(workspace['work-items'] || []).some((row) => row.id === id))
                       .map((id) => (
                         <label className="check" key={id}>
-                          <input type="checkbox" name={field} value={id} defaultChecked />
+                          <Input type="checkbox" name={field} value={id} defaultChecked />
                           <span>Tugas terkait di halaman lain ({id.slice(0, 8)})</span>
                         </label>
                       ))}
@@ -505,7 +508,7 @@ export function Editor({
                       .filter((row) => row.id !== item?.id)
                       .map((row) => (
                         <label className="check" key={row.id}>
-                          <input
+                          <Input
                             type="checkbox"
                             name={field}
                             value={row.id}
@@ -526,36 +529,21 @@ export function Editor({
               return (
                 <label key={field} className="field-item">
                   <span className="field-caption">{label}</span>
-                  <select
-                    key={stakeholderPreset ? `${field}-${String(presetVal)}` : field}
-                    name={field}
-                    className="field-select"
-                    defaultValue={String(value ?? 3)}
-                  >
-                    {field === 'influence' ? (
-                      <>
-                        <option value="5">
-                          5 — Sangat Tinggi (Kepala Desa / Pembuat Kebijakan)
-                        </option>
-                        <option value="4">4 — Tinggi (Babinsa, Bhabinkamtibmas, Pengawas)</option>
-                        <option value="3">3 — Sedang (Pengurus Bidang, Mitra Utama)</option>
-                        <option value="2">2 — Terbatas (Kelompok Warga, Pemasok Berkala)</option>
-                        <option value="1">1 — Rendah (Pemantau Umum)</option>
-                      </>
-                    ) : (
-                      <>
-                        <option value="5">
-                          5 — Sangat Tinggi (Sangat Aktif & Terdampak Langsung)
-                        </option>
-                        <option value="4">
-                          4 — Tinggi (Pengawasan Rutin & Koordinasi Berkala)
-                        </option>
-                        <option value="3">3 — Sedang (Perlu Laporan & Update Periodik)</option>
-                        <option value="2">2 — Rendah (Cukup Diinformasikan Saat Perlu)</option>
-                        <option value="1">1 — Minimal (Hanya Bila Diperlukan)</option>
-                      </>
-                    )}
-                  </select>
+                  <Select
+                    key={stakeholderPreset ? field + String(presetVal) : field}
+                    name={field} ariaLabel={label} defaultValue={String(value ?? 3)}
+                    options={(field === 'influence' ? [
+                      'Sangat Tinggi (Kepala Desa / Pembuat Kebijakan)',
+                      'Tinggi (Babinsa, Bhabinkamtibmas, Pengawas)',
+                      'Sedang (Pengurus Bidang, Mitra Utama)',
+                      'Terbatas (Kelompok Warga, Pemasok Berkala)', 'Rendah (Pemantau Umum)',
+                    ] : [
+                      'Sangat Tinggi (Sangat Aktif & Terdampak Langsung)',
+                      'Tinggi (Pengawasan Rutin & Koordinasi Berkala)',
+                      'Sedang (Perlu Laporan & Update Periodik)',
+                      'Rendah (Cukup Diinformasikan Saat Perlu)', 'Minimal (Hanya Bila Diperlukan)',
+                    ]).map((title, index) => ({ value: String(5 - index), label: String(5 - index) + ' — ' + title }))}
+                  />
                   <small className="field-helper">
                     {field === 'influence'
                       ? 'Wewenang atau pengaruh tokoh ini terhadap perizinan & kelancaran koperasi.'
@@ -568,16 +556,12 @@ export function Editor({
               return (
                 <label key={field} className="field-item">
                   <span className="field-caption">{label}</span>
-                  <select
-                    name={field}
-                    className="field-select"
-                    value={meetingMode}
-                    onChange={(event) => setMeetingMode(event.target.value)}
-                  >
-                    <option value="tatap muka">Tatap Muka (Pertemuan Langsung di Lokasi)</option>
-                    <option value="online">Online Penuh (Google Meet / Zoom)</option>
-                    <option value="hybrid">Hybrid (Fisik di Lokasi + Tautan Online)</option>
-                  </select>
+                  <Select name={field} ariaLabel={label} value={meetingMode} onChange={setMeetingMode}
+                    options={[
+                      { value: 'tatap muka', label: 'Tatap Muka (Pertemuan Langsung di Lokasi)' },
+                      { value: 'online', label: 'Online Penuh (Google Meet / Zoom)' },
+                      { value: 'hybrid', label: 'Hybrid (Fisik di Lokasi + Tautan Online)' },
+                    ]} />
                   <small className="field-helper">
                     {meetingMode === 'tatap muka'
                       ? 'Rapat berlangsung secara fisik di balai desa, kantor, atau gerai koperasi.'
@@ -606,7 +590,7 @@ export function Editor({
                   <div className="field-caption-row">
                     <span className="field-caption">{label}</span>
                     {reference === 'workstreams' && (
-                      <button
+                      <Button
                         type="button"
                         className="field-inline-create-btn"
                         onClick={() => {
@@ -618,10 +602,10 @@ export function Editor({
                         }}
                       >
                         {inlineCreator === 'workstreams' ? 'Tutup Form' : '+ Proyek Baru'}
-                      </button>
+                      </Button>
                     )}
                     {reference === 'stakeholders' && (
-                      <button
+                      <Button
                         type="button"
                         className="field-inline-create-btn"
                         onClick={() => {
@@ -633,10 +617,10 @@ export function Editor({
                         }}
                       >
                         {inlineCreator === 'stakeholders' ? 'Tutup Form' : '+ Mitra Baru'}
-                      </button>
+                      </Button>
                     )}
                     {reference === 'milestones' && Boolean(projectId) && (
-                      <button
+                      <Button
                         type="button"
                         className="field-inline-create-btn"
                         onClick={() => {
@@ -647,10 +631,10 @@ export function Editor({
                         }}
                       >
                         {inlineCreator === 'milestones' ? 'Tutup Form' : '+ Milestone Baru'}
-                      </button>
+                      </Button>
                     )}
                     {reference === 'meetings' && (
-                      <button
+                      <Button
                         type="button"
                         className="field-inline-create-btn"
                         onClick={() => {
@@ -661,10 +645,10 @@ export function Editor({
                         }}
                       >
                         {inlineCreator === 'meetings' ? 'Tutup Form' : '+ Rapat Baru'}
-                      </button>
+                      </Button>
                     )}
                     {reference === 'documents' && (
-                      <button
+                      <Button
                         type="button"
                         className="field-inline-create-btn"
                         onClick={() => {
@@ -676,10 +660,10 @@ export function Editor({
                         }}
                       >
                         {inlineCreator === 'documents' ? 'Tutup Form' : '+ Dokumen Baru'}
-                      </button>
+                      </Button>
                     )}
                     {entity === 'journal' && field === 'work_item_id' && (
-                      <button
+                      <Button
                         type="button"
                         className="field-inline-create-btn"
                         onClick={() => {
@@ -689,107 +673,36 @@ export function Editor({
                         }}
                       >
                         {inlineCreator === 'work-items' ? 'Tutup Form' : '+ Tugas Baru'}
-                      </button>
+                      </Button>
                     )}
                   </div>
-                  <select
-                    key={
-                      field === 'category' && stakeholderPreset
-                        ? `${field}-${stakeholderPreset.category}`
-                        : entity === 'work-items' && field === 'milestone_id'
-                          ? `${field}-${projectId}`
-                          : field
-                    }
-                    name={field}
-                    aria-label={label}
-                    className="field-select"
+                  <Select
+                    key={field === 'category' && stakeholderPreset ? field + stakeholderPreset.category : entity === 'work-items' && field === 'milestone_id' ? field + projectId : field}
+                    name={field} ariaLabel={label}
                     required={entity === 'stock-counts' && field === 'item_id'}
                     disabled={entity === 'work-items' && field === 'milestone_id' && !projectId}
                     value={selectedRefs[field] ?? String(selectedValue ?? allChoices?.[0] ?? '')}
-                    onChange={(event) => {
-                      setSelectedRefs((prev) => ({ ...prev, [field]: event.target.value }));
-                      if (field === 'item_id') setStockItem(event.target.value);
-                      else if (entity === 'work-items' && field === 'workstream_id') setProjectId(event.target.value);
-                      else if (entity === 'work-items' && field === 'recurrence') setRecurrence(event.target.value);
+                    onChange={(next) => {
+                      setSelectedRefs((prev) => ({ ...prev, [field]: next }));
+                      if (field === 'item_id') setStockItem(next);
+                      else if (entity === 'work-items' && field === 'workstream_id') setProjectId(next);
+                      else if (entity === 'work-items' && field === 'recurrence') setRecurrence(next);
                     }}
-                  >
-                    {reference && <option value="">Belum Ditentukan</option>}
-                    {reference &&
-                      Boolean(selectedValue) &&
-                      !refItems.some((row) => row.id === selectedValue) && (
-                        <option value={String(selectedValue)}>
-                          Catatan terkait yang belum dimuat ({String(selectedValue).slice(0, 8)})
-                        </option>
-                      )}
-                    {allChoices ? (
-                      allChoices.map((choice) => (
-                        <option key={choice} value={choice}>
-                          {formatChoiceLabel(choice)}
-                        </option>
-                      ))
-                    ) : reference === 'workstreams' ? (
-                      (() => {
-                        const activeProjects = refItems.filter(
-                          (row) =>
-                            String(row.data.status) !== 'selesai' &&
-                            String(row.data.status) !== 'diarsipkan',
-                        );
-                        const historyProjects = refItems.filter(
-                          (row) =>
-                            String(row.data.status) === 'selesai' ||
-                            String(row.data.status) === 'diarsipkan',
-                        );
-                        return (
-                          <>
-                            {activeProjects.length > 0 && (
-                              <optgroup label="Proyek Aktif">
-                                {activeProjects.map((row) => (
-                                  <option key={row.id} value={row.id}>
-                                    {String(row.data.title)}
-                                    {row.data.code ? ` [${String(row.data.code)}]` : ''}
-                                  </option>
-                                ))}
-                              </optgroup>
-                            )}
-                            {historyProjects.length > 0 && (
-                              <optgroup label="Riwayat / Selesai">
-                                {historyProjects.map((row) => (
-                                  <option key={row.id} value={row.id}>
-                                    {String(row.data.title)} (Riwayat/Selesai)
-                                  </option>
-                                ))}
-                              </optgroup>
-                            )}
-                          </>
-                        );
-                      })()
-                    ) : (
-                      refItems
-                        .filter(
-                          (row) =>
-                            entity !== 'work-items' ||
-                            field !== 'milestone_id' ||
-                            row.data.workstream_id === projectId,
-                        )
-                        .map((row) => {
-                          const title = String(row.data.title);
-                          const subtitle =
-                            reference === 'members' && row.data.member_number
-                              ? ` (No: ${row.data.member_number})`
-                              : reference === 'inventory-items'
-                                ? ` [Stok: ${Number(row.data.book_quantity || 0)} ${String(row.data.measurement || 'unit')}]`
-                                : reference === 'meetings' && row.data.mode
-                                  ? ` [${String(row.data.mode).toUpperCase()}${row.data.meeting_url ? ' · Tautan Online' : ''}]`
-                                  : '';
-                          return (
-                            <option key={row.id} value={row.id}>
-                              {title}
-                              {subtitle}
-                            </option>
-                          );
-                        })
-                    )}
-                  </select>
+                    options={[
+                      ...(reference ? [{ value: '', label: 'Belum Ditentukan' }] : []),
+                      ...(reference && selectedValue && !refItems.some((row) => row.id === selectedValue)
+                        ? [{ value: String(selectedValue), label: 'Catatan terkait yang belum dimuat (' + String(selectedValue).slice(0, 8) + ')' }] : []),
+                      ...(allChoices ? allChoices.map((choice) => ({ value: choice, label: formatChoiceLabel(choice) }))
+                        : refItems.filter((row) => entity !== 'work-items' || field !== 'milestone_id' || row.data.workstream_id === projectId)
+                          .map((row) => ({ value: row.id, label: String(row.data.title) + (
+                            reference === 'workstreams'
+                              ? (['selesai', 'diarsipkan'].includes(String(row.data.status)) ? ' (Riwayat/Selesai)' : row.data.code ? ' [' + String(row.data.code) + ']' : '')
+                              : reference === 'members' && row.data.member_number ? ' (No: ' + String(row.data.member_number) + ')'
+                              : reference === 'inventory-items' ? ' [Stok: ' + Number(row.data.book_quantity || 0) + ' ' + String(row.data.measurement || 'unit') + ']'
+                              : reference === 'meetings' && row.data.mode ? ' [' + String(row.data.mode).toUpperCase() + (row.data.meeting_url ? ' · Tautan Online' : '') + ']' : ''
+                          ) }))),
+                    ]}
+                  />
 
                   {/* Inline Quick Creators */}
                   {inlineCreator === 'meetings' && reference === 'meetings' && (
@@ -801,7 +714,7 @@ export function Editor({
                       <div className="inline-creator-grid">
                         <label className="inline-creator-field">
                           <span>Nama / Agenda Rapat *</span>
-                          <input
+                          <Input
                             type="text"
                             value={inlineTitle}
                             onChange={(e) => setInlineTitle(e.target.value)}
@@ -828,7 +741,7 @@ export function Editor({
                           </label>
                           <label className="inline-creator-field">
                             <span>Tautan Daring (URL Rapat)</span>
-                            <input
+                            <Input
                               type="url"
                               value={inlineUrl}
                               onChange={(e) => setInlineUrl(e.target.value)}
@@ -846,7 +759,7 @@ export function Editor({
                           </label>
                           <label className="inline-creator-field">
                             <span>Waktu Mulai</span>
-                            <input
+                            <Input
                               type="time"
                               value={inlineTime}
                               onChange={(e) => setInlineTime(e.target.value)}
@@ -856,10 +769,10 @@ export function Editor({
                       </div>
                       {inlineNotice && <p className="inline-creator-notice">{inlineNotice}</p>}
                       <div className="inline-creator-actions">
-                        <button type="button" onClick={() => setInlineCreator(null)}>
+                        <Button type="button" onClick={() => setInlineCreator(null)}>
                           Batal
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           type="button"
                           className="primary"
                           disabled={inlineBusy || !inlineTitle.trim()}
@@ -895,7 +808,7 @@ export function Editor({
                           }}
                         >
                           {inlineBusy ? 'Menyimpan…' : 'Simpan & Pilih Rapat'}
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   )}
@@ -909,7 +822,7 @@ export function Editor({
                       <div className="inline-creator-grid">
                         <label className="inline-creator-field">
                           <span>Judul Dokumen *</span>
-                          <input
+                          <Input
                             type="text"
                             value={inlineTitle}
                             onChange={(e) => setInlineTitle(e.target.value)}
@@ -920,7 +833,7 @@ export function Editor({
                         <div className="inline-creator-row">
                           <label className="inline-creator-field">
                             <span>Nomor Dokumen</span>
-                            <input
+                            <Input
                               type="text"
                               value={inlineDocNumber}
                               onChange={(e) => setInlineDocNumber(e.target.value)}
@@ -944,7 +857,7 @@ export function Editor({
                         </div>
                         <label className="inline-creator-field">
                           <span>Tautan Berkas (Google Drive / URL)</span>
-                          <input
+                          <Input
                             type="url"
                             value={inlineUrl}
                             onChange={(e) => setInlineUrl(e.target.value)}
@@ -954,10 +867,10 @@ export function Editor({
                       </div>
                       {inlineNotice && <p className="inline-creator-notice">{inlineNotice}</p>}
                       <div className="inline-creator-actions">
-                        <button type="button" onClick={() => setInlineCreator(null)}>
+                        <Button type="button" onClick={() => setInlineCreator(null)}>
                           Batal
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           type="button"
                           className="primary"
                           disabled={inlineBusy || !inlineTitle.trim()}
@@ -988,7 +901,7 @@ export function Editor({
                           }}
                         >
                           {inlineBusy ? 'Menyimpan…' : 'Simpan & Pilih Dokumen'}
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   )}
@@ -1002,7 +915,7 @@ export function Editor({
                       <div className="inline-creator-grid">
                         <label className="inline-creator-field">
                           <span>Nama Tugas *</span>
-                          <input
+                          <Input
                             type="text"
                             value={inlineTitle}
                             onChange={(e) => setInlineTitle(e.target.value)}
@@ -1036,10 +949,10 @@ export function Editor({
                       </div>
                       {inlineNotice && <p className="inline-creator-notice">{inlineNotice}</p>}
                       <div className="inline-creator-actions">
-                        <button type="button" onClick={() => setInlineCreator(null)}>
+                        <Button type="button" onClick={() => setInlineCreator(null)}>
                           Batal
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           type="button"
                           className="primary"
                           disabled={inlineBusy || !inlineTitle.trim()}
@@ -1069,7 +982,7 @@ export function Editor({
                           }}
                         >
                           {inlineBusy ? 'Menyimpan…' : 'Simpan & Pilih Tugas'}
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   )}
@@ -1083,7 +996,7 @@ export function Editor({
                       <div className="inline-creator-grid">
                         <label className="inline-creator-field">
                           <span>Nama / Judul Proyek *</span>
-                          <input
+                          <Input
                             type="text"
                             value={inlineTitle}
                             onChange={(e) => setInlineTitle(e.target.value)}
@@ -1094,7 +1007,7 @@ export function Editor({
                         <div className="inline-creator-row">
                           <label className="inline-creator-field">
                             <span>Kode Singkat (Opsional)</span>
-                            <input
+                            <Input
                               type="text"
                               value={inlineCode}
                               onChange={(e) => setInlineCode(e.target.value)}
@@ -1113,10 +1026,10 @@ export function Editor({
                       </div>
                       {inlineNotice && <p className="inline-creator-notice">{inlineNotice}</p>}
                       <div className="inline-creator-actions">
-                        <button type="button" onClick={() => setInlineCreator(null)}>
+                        <Button type="button" onClick={() => setInlineCreator(null)}>
                           Batal
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           type="button"
                           className="primary"
                           disabled={inlineBusy || !inlineTitle.trim()}
@@ -1148,7 +1061,7 @@ export function Editor({
                           }}
                         >
                           {inlineBusy ? 'Menyimpan…' : 'Simpan & Pilih Proyek'}
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   )}
@@ -1162,7 +1075,7 @@ export function Editor({
                       <div className="inline-creator-grid">
                         <label className="inline-creator-field">
                           <span>Nama Orang atau Lembaga *</span>
-                          <input
+                          <Input
                             type="text"
                             value={inlineTitle}
                             onChange={(e) => setInlineTitle(e.target.value)}
@@ -1189,7 +1102,7 @@ export function Editor({
                           </label>
                           <label className="inline-creator-field">
                             <span>Kontak (WA / Telepon)</span>
-                            <input
+                            <Input
                               type="tel"
                               value={inlineContact}
                               onChange={(e) => setInlineContact(e.target.value)}
@@ -1200,10 +1113,10 @@ export function Editor({
                       </div>
                       {inlineNotice && <p className="inline-creator-notice">{inlineNotice}</p>}
                       <div className="inline-creator-actions">
-                        <button type="button" onClick={() => setInlineCreator(null)}>
+                        <Button type="button" onClick={() => setInlineCreator(null)}>
                           Batal
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           type="button"
                           className="primary"
                           disabled={inlineBusy || !inlineTitle.trim()}
@@ -1234,7 +1147,7 @@ export function Editor({
                           }}
                         >
                           {inlineBusy ? 'Menyimpan…' : 'Simpan & Pilih Mitra'}
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   )}
@@ -1248,7 +1161,7 @@ export function Editor({
                       <div className="inline-creator-grid">
                         <label className="inline-creator-field">
                           <span>Judul Milestone *</span>
-                          <input
+                          <Input
                             type="text"
                             value={inlineTitle}
                             onChange={(e) => setInlineTitle(e.target.value)}
@@ -1266,10 +1179,10 @@ export function Editor({
                       </div>
                       {inlineNotice && <p className="inline-creator-notice">{inlineNotice}</p>}
                       <div className="inline-creator-actions">
-                        <button type="button" onClick={() => setInlineCreator(null)}>
+                        <Button type="button" onClick={() => setInlineCreator(null)}>
                           Batal
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           type="button"
                           className="primary"
                           disabled={inlineBusy || !inlineTitle.trim()}
@@ -1298,7 +1211,7 @@ export function Editor({
                           }}
                         >
                           {inlineBusy ? 'Menyimpan…' : 'Simpan & Pilih Milestone'}
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   )}
@@ -1360,7 +1273,7 @@ export function Editor({
               return (
                 <label className="wide field-item field-wide" key={field}>
                   <span className="field-caption">{label}</span>
-                  <textarea
+                  <Textarea
                     name={field}
                     rows={field === 'subtasks' ? 4 : 3}
                     className="field-textarea"
@@ -1396,7 +1309,7 @@ export function Editor({
             return (
               <label key={field} className="field-item">
                 <span className="field-caption">{label}</span>
-                <input
+                <Input
                   key={
                     field === 'book_quantity'
                       ? stockItem
@@ -1562,12 +1475,12 @@ export function Editor({
           </p>
         )}
         <div className="form-actions editor-form-actions">
-          <button type="button" className="btn-editor-cancel" onClick={requestClose}>
+          <Button type="button" className="btn-editor-cancel" onClick={requestClose}>
             Batal
-          </button>
-          <button className="primary btn-editor-submit" disabled={busy}>
+          </Button>
+          <Button className="primary btn-editor-submit" disabled={busy}>
             {busy ? 'Menyimpan…' : 'Simpan'}
-          </button>
+          </Button>
         </div>
       </form>
     </dialog>

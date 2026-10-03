@@ -1,4 +1,8 @@
 'use client';
+import { DialogSurface } from '@/components/ui/Modal';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Textarea } from '@/components/ui/Input';
 import { DateInput } from '@/components/ui/DateField';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
@@ -238,7 +242,7 @@ export function TaskDetailDrawer({
   }
 
   return (
-    <dialog
+    <DialogSurface
       ref={dialog}
       className="task-detail-drawer"
       aria-label="Detail Tugas"
@@ -255,7 +259,7 @@ export function TaskDetailDrawer({
         {/* Top Control Bar */}
         <div className="drawer-top-bar">
           <div className="left-controls">
-            <button
+            <Button
               type="button"
               className={`btn-mark-complete ${isComplete ? 'completed' : ''}`}
               onClick={toggleComplete}
@@ -263,8 +267,8 @@ export function TaskDetailDrawer({
             >
               <Check size={15} />
               <span>{isComplete ? 'Selesai' : 'Tandai Selesai'}</span>
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               className="btn-drawer-action"
               title="Atur Jadwal Berkala"
@@ -272,9 +276,9 @@ export function TaskDetailDrawer({
             >
               <Repeat size={14} />
               <span>Jadwal</span>
-            </button>
+            </Button>
             {onFullEdit && (
-              <button
+              <Button
                 type="button"
                 className="btn-drawer-action"
                 title="Buka formulir lengkap untuk mengubah semua data"
@@ -285,7 +289,7 @@ export function TaskDetailDrawer({
               >
                 <Edit2 size={13} />
                 <span>Formulir</span>
-              </button>
+              </Button>
             )}
           </div>
 
@@ -293,7 +297,7 @@ export function TaskDetailDrawer({
             {(onPrev || onNext) && (
               <div className="drawer-nav-group" role="group" aria-label="Navigasi tugas">
                 {onPrev && (
-                  <button
+                  <Button
                     type="button"
                     className="btn-icon btn-nav-prev"
                     title="Tugas Sebelumnya"
@@ -301,10 +305,10 @@ export function TaskDetailDrawer({
                     disabled={busy}
                   >
                     <ChevronLeft size={16} />
-                  </button>
+                  </Button>
                 )}
                 {onNext && (
-                  <button
+                  <Button
                     type="button"
                     className="btn-icon btn-nav-next"
                     title="Tugas Berikutnya"
@@ -312,11 +316,11 @@ export function TaskDetailDrawer({
                     disabled={busy}
                   >
                     <ChevronRight size={16} />
-                  </button>
+                  </Button>
                 )}
               </div>
             )}
-            <button
+            <Button
               type="button"
               className="btn-drawer-action btn-danger-action"
               title="Hapus tugas ini"
@@ -325,15 +329,15 @@ export function TaskDetailDrawer({
             >
               <Trash2 size={14} />
               <span>Hapus</span>
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               className="btn-icon close-drawer-btn"
               title="Tutup"
               onClick={onClose}
             >
               <X size={18} />
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -372,7 +376,7 @@ export function TaskDetailDrawer({
           {/* Title */}
           {isEditingTitle ? (
             <div className="title-edit-form">
-              <input
+              <Input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
@@ -397,7 +401,7 @@ export function TaskDetailDrawer({
                 className="title-input-field"
               />
               <div className="inline-actions">
-                <button
+                <Button
                   type="button"
                   className="btn-tiny-cancel"
                   onClick={() => {
@@ -406,8 +410,8 @@ export function TaskDetailDrawer({
                   }}
                 >
                   Batal
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
                   className="btn-tiny-save"
                   disabled={busy || !title.trim()}
@@ -423,15 +427,15 @@ export function TaskDetailDrawer({
                   }}
                 >
                   Simpan
-                </button>
+                </Button>
               </div>
             </div>
           ) : (
             <h2 className="task-detail-title" onClick={() => setIsEditingTitle(true)}>
               <span>{String(data.title)}</span>
-              <button type="button" className="inline-edit-icon" title="Ubah Judul">
+              <Button type="button" className="inline-edit-icon" title="Ubah Judul">
                 <Edit2 size={16} />
-              </button>
+              </Button>
             </h2>
           )}
 
@@ -519,7 +523,7 @@ export function TaskDetailDrawer({
 
             {/* Penanggung Jawab */}
             <div className="drawer-prop-row">
-              <span className="drawer-prop-label">PENANGGUNG JAWAB</span>
+              <span className="drawer-prop-label">Penanggung jawab</span>
               <div className="drawer-prop-control prop-user-chip">
                 <span className="prop-avatar prop-avatar-assignee">
                   {String(data.assignee || managerName).charAt(0).toUpperCase()}
@@ -590,19 +594,19 @@ export function TaskDetailDrawer({
             <div className="box-title-row">
               <span className="section-label">Deskripsi</span>
               {!isEditingDesc && (
-                <button
+                <Button
                   type="button"
                   className="edit-pencil-btn"
                   onClick={() => setIsEditingDesc(true)}
                   title="Ubah Deskripsi"
                 >
                   <Edit2 size={13} />
-                </button>
+                </Button>
               )}
             </div>
             {isEditingDesc ? (
               <div className="desc-edit-form">
-                <textarea
+                <Textarea
                   rows={3}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
@@ -610,7 +614,7 @@ export function TaskDetailDrawer({
                   className="desc-textarea-field"
                 />
                 <div className="inline-actions">
-                  <button
+                  <Button
                     type="button"
                     className="btn-tiny-cancel"
                     onClick={() => {
@@ -619,8 +623,8 @@ export function TaskDetailDrawer({
                     }}
                   >
                     Batal
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
                     className="btn-tiny-save"
                     disabled={busy}
@@ -632,7 +636,7 @@ export function TaskDetailDrawer({
                     }}
                   >
                     Simpan
-                  </button>
+                  </Button>
                 </div>
               </div>
             ) : (
@@ -664,7 +668,7 @@ export function TaskDetailDrawer({
 
           {isEditingLink ? (
             <div className="submission-edit-wrap">
-              <input
+              <Input
                 type="url"
                 value={submissionLink}
                 onChange={(e) => setSubmissionLink(e.target.value)}
@@ -673,7 +677,7 @@ export function TaskDetailDrawer({
                 autoFocus
               />
               <div className="inline-actions">
-                <button
+                <Button
                   type="button"
                   className="btn-tiny-cancel"
                   onClick={() => {
@@ -682,8 +686,8 @@ export function TaskDetailDrawer({
                   }}
                 >
                   Batal
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
                   className="btn-tiny-save"
                   disabled={busy}
@@ -700,7 +704,7 @@ export function TaskDetailDrawer({
                   }}
                 >
                   Simpan Tautan
-                </button>
+                </Button>
               </div>
             </div>
           ) : data.link ? (
@@ -717,7 +721,7 @@ export function TaskDetailDrawer({
                 <span className="submission-open-badge">Buka Hasil ↗</span>
               </a>
               <div className="submission-quick-actions">
-                <button
+                <Button
                   type="button"
                   className="btn-tiny-copy"
                   onClick={handleCopySubmissionLink}
@@ -725,8 +729,8 @@ export function TaskDetailDrawer({
                 >
                   {copiedLink ? <CheckCheck size={13} /> : <Copy size={13} />}
                   <span>{copiedLink ? 'Tersalin' : 'Salin'}</span>
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
                   className="btn-tiny-edit"
                   onClick={() => setIsEditingLink(true)}
@@ -734,8 +738,8 @@ export function TaskDetailDrawer({
                 >
                   <Edit2 size={13} />
                   <span>Ubah</span>
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
                   className="btn-tiny-delete"
                   onClick={handleRemoveSubmissionLink}
@@ -743,7 +747,7 @@ export function TaskDetailDrawer({
                 >
                   <Trash2 size={13} />
                   <span>Hapus</span>
-                </button>
+                </Button>
               </div>
             </div>
           ) : (
@@ -752,14 +756,14 @@ export function TaskDetailDrawer({
                 Belum ada link pengumpulan terpasang. Tautkan Google Drive, lembar kerja, foto, atau
                 portal hasil tugas.
               </p>
-              <button
+              <Button
                 type="button"
                 className="btn-add-submission-quick"
                 onClick={() => setIsEditingLink(true)}
               >
                 <Plus size={14} />
                 <span>Pasang Link Pengumpulan</span>
-              </button>
+              </Button>
             </div>
           )}
         </div>
@@ -795,7 +799,7 @@ export function TaskDetailDrawer({
                 <span className="subtask-title-text" onClick={() => toggleSubtask(idx)}>
                   {sub.title}
                 </span>
-                <button
+                <Button
                   type="button"
                   className="subtask-delete-btn"
                   title="Hapus Subtugas"
@@ -804,14 +808,14 @@ export function TaskDetailDrawer({
                   onClick={() => removeSubtask(idx)}
                 >
                   <Trash2 size={13} />
-                </button>
+                </Button>
               </div>
             ))}
           </div>
 
           <form onSubmit={handleAddSubtask} className="add-subtask-form">
             <Plus size={15} />
-            <input
+            <Input
               type="text"
               value={newSubtaskTitle}
               onChange={(e) => setNewSubtaskTitle(e.target.value)}
@@ -819,9 +823,9 @@ export function TaskDetailDrawer({
               className="inline-subtask-input"
             />
             {newSubtaskTitle.trim() && (
-              <button type="submit" className="btn-add-subtask">
+              <Button type="submit" className="btn-add-subtask">
                 Tambah
-              </button>
+              </Button>
             )}
           </form>
         </div>
@@ -854,7 +858,7 @@ export function TaskDetailDrawer({
         {/* Bottom Rich Message / Comment Editor */}
         <div className="comment-composer-box">
           <form onSubmit={handleAddComment} className="composer-input-row">
-            <input
+            <Input
               aria-label="Catatan tugas"
               type="text"
               value={newCommentText}
@@ -862,14 +866,14 @@ export function TaskDetailDrawer({
               placeholder="Tulis catatan tugas…"
               className="composer-input-field"
             />
-            <button
+            <Button
               type="submit"
               disabled={busy || !newCommentText.trim()}
               className="btn-send-comment"
             >
               <Send size={15} />
               <span>Simpan catatan</span>
-            </button>
+            </Button>
           </form>
         </div>
       </div>
@@ -885,6 +889,7 @@ export function TaskDetailDrawer({
           }}
         />
       )}
-    </dialog>
+    </DialogSurface>
   );
 }
+

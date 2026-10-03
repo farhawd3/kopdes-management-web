@@ -6,6 +6,7 @@ Implementasi dan penerimaan dipisahkan. Bukti terakhir ada di [STATUS](STATUS.md
 
 - [x] PLAN-ASTRA fase 1: audit AST seluruh kontrol HTML, inventaris rute/overlay, CSS dan selector berulang yang dapat dibuat ulang.
 - [x] Fondasi token semantik dan stylelint CSS baru tanpa hex/important; migrasi legacy belum selesai.
+- [x] Primitive tombol/input, nol kontrol mentah luar UI; tanggal tunggal, DateNav, BottomNav, dialog bersama dan galeri development. Batas QA tercatat di LAPORAN-ASTRA.
 
 - [x] Contoh konfigurasi/panduan lokal memakai host yang sama dengan server; penolakan origin lokal diperbaiki dan diprobe tanpa mutasi database.
 

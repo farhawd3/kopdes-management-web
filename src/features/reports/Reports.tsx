@@ -1,4 +1,7 @@
 'use client';
+import { Input } from '@/components/ui/Input';
+import { Textarea } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
 import { DateInput } from '@/components/ui/DateField';
 import { useEffect, useState } from 'react';
 import {
@@ -208,7 +211,7 @@ export function Reports() {
           <div className="form-grid">
             <label className="field-item">
               <span className="field-caption">Judul Laporan</span>
-              <input
+              <Input
                 className="field-input"
                 name="title"
                 defaultValue="Laporan Perkembangan & Operasional Mingguan"
@@ -230,7 +233,7 @@ export function Reports() {
             </label>
             <label className="field-item field-wide wide">
               <span className="field-caption">Catatan manajer</span>
-              <textarea
+              <Textarea
                 className="field-textarea"
                 name="notes"
                 rows={3}
@@ -248,7 +251,7 @@ export function Reports() {
               </small>
             </div>
             <div className="action-buttons-group">
-              <button
+              <Button
                 type="submit"
                 name="action"
                 value="draft"
@@ -258,8 +261,8 @@ export function Reports() {
               >
                 <FilePenLine size={15} />
                 <span>{busy ? 'Menyimpan…' : 'Simpan sebagai Draf'}</span>
-              </button>
-              <button
+              </Button>
+              <Button
                 type="submit"
                 name="action"
                 value="final"
@@ -269,7 +272,7 @@ export function Reports() {
               >
                 <Sparkles size={15} />
                 <span>{busy ? 'Menerbitkan…' : 'Simpan laporan final'}</span>
-              </button>
+              </Button>
             </div>
           </div>
         </form>
@@ -291,27 +294,27 @@ export function Reports() {
         <section className="report-history-container no-print">
           <div className="history-filter-bar">
             <div className="history-filter-tabs">
-              <button
+              <Button
                 type="button"
                 className={`filter-tab ${filterTab === 'all' ? 'active' : ''}`}
                 onClick={() => setFilterTab('all')}
               >
                 Semua Arsip <span className="tab-count">{reports.length}</span>
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 className={`filter-tab ${filterTab === 'draft' ? 'active' : ''}`}
                 onClick={() => setFilterTab('draft')}
               >
                 Draf <span className="tab-count count-draft">{draftReports.length}</span>
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 className={`filter-tab ${filterTab === 'final' ? 'active' : ''}`}
                 onClick={() => setFilterTab('final')}
               >
                 Laporan final <span className="tab-count count-final">{finalReports.length}</span>
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -360,7 +363,7 @@ export function Reports() {
                 </div>
               </div>
               <div className="draft-banner-actions">
-                <button
+                <Button
                   type="button"
                   className="btn-banner-publish"
                   onClick={() => handlePublishDraft(selected)}
@@ -369,8 +372,8 @@ export function Reports() {
                 >
                   <Sparkles size={14} />
                   <span>Jadikan final</span>
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
                   className="btn-banner-delete"
                   onClick={() => setDeleteConfirmId(selected.id)}
@@ -379,7 +382,7 @@ export function Reports() {
                 >
                   <Trash2 size={14} />
                   <span>Hapus Draf</span>
-                </button>
+                </Button>
               </div>
             </div>
           ) : (
@@ -388,7 +391,7 @@ export function Reports() {
                 <Building2 size={16} />
                 <span>Laporan final Manajer KDMP — Telah Diterbitkan</span>
               </div>
-              <button
+              <Button
                 type="button"
                 className="btn-delete-report-subtle"
                 onClick={() => setDeleteConfirmId(selected.id)}
@@ -397,17 +400,17 @@ export function Reports() {
               >
                 <Trash2 size={13} />
                 <span>Hapus Laporan</span>
-              </button>
+              </Button>
             </div>
           )}
 
           {/* Action Toolbar */}
           <div className="report-toolbar no-print">
-            <button className="btn-toolbar-print" onClick={() => window.print()}>
+            <Button className="btn-toolbar-print" onClick={() => window.print()}>
               <Printer size={16} />
               <span>Cetak / PDF Resmi</span>
-            </button>
-            <button
+            </Button>
+            <Button
               className="btn-toolbar-wa"
               onClick={async () => {
                 try {
@@ -462,7 +465,7 @@ export function Reports() {
             >
               {copied ? <Check size={16} className="text-green" /> : <Share2 size={16} />}
               <span>{copied ? 'Format WhatsApp Tersalin!' : 'Salin Teks Ringkas (WhatsApp)'}</span>
-            </button>
+            </Button>
           </div>
 
           {/* Delete Confirmation Modal / Banner */}
@@ -478,7 +481,7 @@ export function Reports() {
                   data. Data tugas, buku kas, dan catatan koperasi tidak akan terpengaruh.
                 </p>
                 <div className="confirm-actions">
-                  <button
+                  <Button
                     type="button"
                     className="btn-danger-confirm"
                     onClick={() => handleDelete(deleteConfirmId)}
@@ -486,15 +489,15 @@ export function Reports() {
                   >
                     <Trash2 size={14} />
                     <span>Ya, Hapus {isCurrentDraft ? 'Draf' : 'Laporan'}</span>
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
                     className="btn-cancel"
                     onClick={() => setDeleteConfirmId(null)}
                     disabled={busy}
                   >
                     Batal
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>

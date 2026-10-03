@@ -19,6 +19,7 @@ export interface SelectProps {
   name?: string;
   id?: string;
   disabled?: boolean;
+  required?: boolean;
   className?: string;
   ariaLabel?: string;
   style?: React.CSSProperties;
@@ -33,6 +34,7 @@ export function Select({
   name,
   id: customId,
   disabled = false,
+  required = false,
   className = '',
   ariaLabel,
   style,
@@ -172,9 +174,15 @@ export function Select({
       <select
         id={selectId}
         name={name}
-        aria-label={ariaLabel === 'Catatan untuk disematkan' ? ariaLabel : undefined}
+        aria-label={ariaLabel}
         aria-hidden={ariaLabel !== 'Catatan untuk disematkan'}
         disabled={disabled}
+        required={required}
+        onInvalid={(event) => {
+          event.preventDefault();
+          setIsOpen(true);
+          triggerRef.current?.focus();
+        }}
         onFocus={() => triggerRef.current?.focus()}
         value={currentValue}
         onChange={(e) => handleSelect(e.target.value)}

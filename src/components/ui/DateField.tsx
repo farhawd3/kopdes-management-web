@@ -62,7 +62,7 @@ export function DateInput({
   }
   return (
     <div
-      className="date-field"
+      className="ui-date"
       ref={root}
       onKeyDown={(event) => {
         if (event.key === 'Escape' && open) {
@@ -74,18 +74,26 @@ export function DateInput({
       }}
     >
       {label && <label htmlFor={id}>{label}</label>}
-      <div className="date-input">
+      <div className="ui-date-control">
         <input
           id={id}
           aria-label={ariaLabel || label}
           name={name}
-          className={className}
+          className="ui-date-native"
+          tabIndex={-1}
+          aria-hidden="true"
           min={min}
           max={max}
           type="date"
           required={required}
           disabled={disabled}
           value={value}
+          onInvalid={(event) => {
+            event.preventDefault();
+            setMonth((value || today()).slice(0, 7));
+            setOpen(true);
+            trigger.current?.focus();
+          }}
           onClick={(event) => {
             event.preventDefault();
             setMonth((value || today()).slice(0, 7));
@@ -97,6 +105,7 @@ export function DateInput({
           }}
         />
         <button
+          className={`ui-btn ui-date-trigger ${className || ''}`}
           type="button"
           disabled={disabled}
           ref={trigger}
@@ -110,7 +119,7 @@ export function DateInput({
           }}
         >
           <span id={id + '-value'} className="date-trigger-value">
-            {value ? formatDate(value) : 'Pilih tanggal'}
+            {value ? value.split('-').reverse().join('/') : 'Pilih tanggal'}
           </span>
           <CalendarDays size={18} />
         </button>

@@ -13,7 +13,7 @@
 
 ## Tahap berikutnya
 
-Fase 2–8 belum selesai. Bukti perangkat fisik dan Lighthouse tidak boleh disimpulkan dari tes DOM/build.
+Migrasi visual penuh, interaktivitas, animasi dan QA menyeluruh masih berjalan. Bukti perangkat fisik dan Lighthouse tidak boleh disimpulkan dari tes DOM/build.
 
 ## Fase 2 — fondasi token dan penjaga CSS
 
@@ -24,3 +24,16 @@ Fase 2–8 belum selesai. Bukti perangkat fisik dan Lighthouse tidak boleh disim
 - [x] Fondasi token dan stylelint tersedia.
 - [ ] Penjaga elemen mentah diaktifkan setelah migrasi fase 3.
 - [ ] Normalisasi seluruh CSS legacy dan kontras seluruh tema.
+
+## Fase 3 — paket kontrol dan navigasi
+
+- Seluruh button/input/textarea pemanggil beralih ke primitive bersama; tiga select Editor beralih ke Select kustom. Handler, nilai form dan referensi dipertahankan. Tambahan Badge, Card, Field, DateNav, BottomNav dan permukaan dialog bersama.
+- DateInput menampilkan satu tanggal dd/mm/yyyy; native tersembunyi menjaga validasi/form, invalid mengembalikan fokus ke pemicu. Kalender tetap membuka ke bawah dan memperhitungkan scrollbar viewport.
+- DateNav dipakai kalender/Gantt; dock memakai lima struktur ikon/label setara. Modal berulang memakai dialog native dengan pemulihan fokus; tiga dialog lain memakai permukaan bersama tanpa mengganti lifecycle lama.
+- Metrik: kontrol mentah luar UI 289 → 0; important 2.353 → 2.278; duplikat 522 → 519. CSS keseluruhan 603.721 → 609.077 byte karena lapisan transisi; belum mencapai target akhir pembersihan.
+- Verifikasi: 175 tes/24 berkas, typecheck, lint, lint:ui, check:ui, build dan audit sumber 83/83 lulus. Galeri 360 terang/gelap: satu tanggal, popup, Escape, dock dan tanpa luapan; Beranda 360/768 terang diperiksa visual. Belum semua halaman/state/tema.
+- Keputusan: aturan elemen legacy mengecualikan primitive baru; blok tanggal/dock yang sudah tidak dipanggil dihapus. Galeri `/dev/komponen` hanya tersedia pada mode development, tanpa data/database.
+- [x] Nol kontrol mentah di luar UI, dijaga `check:ui`.
+- [x] DateField, DateNav, BottomNav dan tes regresi.
+- [ ] Migrasi lengkap Card/Badge/Field/Tabs/Toast/Tooltip/Legend ke semua pemanggil.
+- [ ] Semua state/halaman pada 320 px ke atas.

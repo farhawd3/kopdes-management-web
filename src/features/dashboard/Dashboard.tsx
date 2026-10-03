@@ -1,4 +1,6 @@
 'use client';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 import Link from 'next/link';
 import { useState } from 'react';
 import { z } from 'zod';
@@ -331,7 +333,7 @@ export function Dashboard({ data }: { data: Workspace }) {
               ['terlambat', 'Terlambat', tasks.filter((t) => isOverdue(t, now)).length],
               ['selesai', 'Selesai', tasks.filter((t) => t.status === 'selesai').length],
             ].map(([value, label, count]) => (
-              <button
+              <Button
                 key={String(value)}
                 aria-pressed={filter === value}
                 onClick={() => {
@@ -341,7 +343,7 @@ export function Dashboard({ data }: { data: Workspace }) {
               >
                 <span>{label}</span>
                 <span className="focus-filter-count">{count}</span>
-              </button>
+              </Button>
             ))}
           </div>
 
@@ -350,14 +352,14 @@ export function Dashboard({ data }: { data: Workspace }) {
               <span>
                 {selectedDate ? 'Selesai pada ' + formatDate(selectedDate) : 'Status: ' + filter}
               </span>
-              <button
+              <Button
                 onClick={() => {
                   setSelectedDate('');
                   setFilter('aktif');
                 }}
               >
                 Hapus pilihan
-              </button>
+              </Button>
             </div>
           )}
 
@@ -437,7 +439,7 @@ export function Dashboard({ data }: { data: Workspace }) {
                   </div>
                 </div>
                 <div className="routine-head-actions">
-                  <button
+                  <Button
                     type="button"
                     className="btn-routine-config"
                     onClick={() => setShowRoutineModal(true)}
@@ -446,7 +448,7 @@ export function Dashboard({ data }: { data: Workspace }) {
                   >
                     <SlidersHorizontal size={12} />
                     <span>Atur</span>
-                  </button>
+                  </Button>
                   <span className="routine-progress-pill">
                     {routineCompletedCount}/{routines.length} selesai
                   </span>
@@ -457,7 +459,7 @@ export function Dashboard({ data }: { data: Workspace }) {
                   const isChecked = completedRoutines.includes(item.id);
                   return (
                     <label key={item.id} className={`routine-item ${isChecked ? 'is-done' : ''}`}>
-                      <input
+                      <Input
                         type="checkbox"
                         checked={isChecked}
                         onChange={() => toggleRoutine(item.id)}
@@ -680,20 +682,20 @@ export function Dashboard({ data }: { data: Workspace }) {
                   </p>
                 </div>
               </div>
-              <button
+              <Button
                 type="button"
                 className="close-btn"
                 onClick={() => setShowRoutineModal(false)}
                 aria-label="Tutup"
               >
                 <X size={18} />
-              </button>
+              </Button>
             </div>
 
             <div className="routine-config-body">
               <form onSubmit={handleAddRoutine} className="routine-add-form">
                 <div className="routine-add-inputs">
-                  <input
+                  <Input
                     type="time"
                     value={newRoutineTime}
                     onChange={(e) => setNewRoutineTime(e.target.value)}
@@ -701,7 +703,7 @@ export function Dashboard({ data }: { data: Workspace }) {
                     title="Waktu rutinitas"
                     required
                   />
-                  <input
+                  <Input
                     type="text"
                     placeholder="Tambah rutinitas baru (misal: Cek suhu showcase)..."
                     value={newRoutineTitle}
@@ -711,10 +713,10 @@ export function Dashboard({ data }: { data: Workspace }) {
                     required
                   />
                 </div>
-                <button type="submit" className="btn-add-routine">
+                <Button type="submit" className="btn-add-routine">
                   <Plus size={15} />
                   <span>Tambah</span>
-                </button>
+                </Button>
               </form>
 
               <div className="routine-config-list">
@@ -722,7 +724,7 @@ export function Dashboard({ data }: { data: Workspace }) {
                   <div key={item.id} className="routine-config-item">
                     <span className="routine-time-badge">{item.time}</span>
                     <span className="routine-config-title">{item.title}</span>
-                    <button
+                    <Button
                       type="button"
                       className="btn-delete-routine"
                       onClick={() => handleDeleteRoutine(item.id)}
@@ -730,7 +732,7 @@ export function Dashboard({ data }: { data: Workspace }) {
                       aria-label={`Hapus ${item.title}`}
                     >
                       <Trash2 size={15} />
-                    </button>
+                    </Button>
                   </div>
                 ))}
                 {routines.length === 0 && (
@@ -740,7 +742,7 @@ export function Dashboard({ data }: { data: Workspace }) {
             </div>
 
             <div className="routine-modal-footer">
-              <button
+              <Button
                 type="button"
                 className="btn-reset-routine"
                 onClick={handleResetRoutines}
@@ -748,14 +750,14 @@ export function Dashboard({ data }: { data: Workspace }) {
               >
                 <RotateCcw size={13} />
                 <span>Kembalikan Bawaan</span>
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 className="btn-primary-finish"
                 onClick={() => setShowRoutineModal(false)}
               >
                 Selesai
-              </button>
+              </Button>
             </div>
           </div>
         </div>

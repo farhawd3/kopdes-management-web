@@ -80,3 +80,7 @@ const lines = [
 ];
 fs.writeFileSync('AUDIT.md', lines.join('\n'));
 console.log(JSON.stringify({ ...stats, rawOutsideUi: raw.filter((row) => !row.ui).length, duplicateSelectors: duplicates.length }, null, 2));
+if (process.argv.includes('--check') && raw.some((row) => !row.ui)) {
+  console.error('Kontrol HTML mentah di luar components/ui tidak diizinkan.');
+  process.exitCode = 1;
+}

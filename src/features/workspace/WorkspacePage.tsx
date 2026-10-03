@@ -1,4 +1,5 @@
 'use client';
+import { Button } from '@/components/ui/Button';
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useWorkspace } from './useWorkspace';
@@ -79,7 +80,7 @@ export function WorkspacePage({ slug }: { slug: string }) {
       <section className="card empty">
         <h1>Ruang kerja belum dapat dimuat</h1>
         <p role="alert">{error}</p>
-        <button onClick={() => void refresh()}>Coba lagi</button>
+        <Button onClick={() => void refresh()}>Coba lagi</Button>
         <p>
           Data kosong tidak ditampilkan sebagai capaian. Periksa koneksi dan konfigurasi server.
         </p>
@@ -89,7 +90,7 @@ export function WorkspacePage({ slug }: { slug: string }) {
     <div className={`workspace-page page-${slug}`}>
       {slug === 'tugas' && (
         <div className="workspace-scope-control" role="group" aria-label="Rentang tugas">
-          <button
+          <Button
             type="button"
             aria-pressed={taskScope === 'current'}
             onClick={() => {
@@ -99,8 +100,8 @@ export function WorkspacePage({ slug }: { slug: string }) {
             }}
           >
             Aktif dan terbaru
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             aria-pressed={taskScope === 'history'}
             onClick={() => {
@@ -110,7 +111,7 @@ export function WorkspacePage({ slug }: { slug: string }) {
             }}
           >
             Riwayat selesai
-          </button>
+          </Button>
         </div>
       )}
       {Object.keys(more).length > 0 && (
@@ -140,7 +141,7 @@ export function WorkspacePage({ slug }: { slug: string }) {
           {pages[slug].length > 1 && (
             <div className="tabs" role="tablist" aria-label="Bagian halaman">
               {pages[slug].map((entity, index) => (
-                <button
+                <Button
                   role="tab"
                   aria-selected={tab === index}
                   key={entity}
@@ -165,7 +166,7 @@ export function WorkspacePage({ slug }: { slug: string }) {
                                   : entity === 'staff'
                                     ? 'Tim'
                                     : 'Mitra & kontak'}
-                </button>
+                </Button>
               ))}
             </div>
           )}
@@ -176,7 +177,7 @@ export function WorkspacePage({ slug }: { slug: string }) {
             refresh={refresh}
           />
           {more[pages[slug][tab]] !== undefined && (
-            <button
+            <Button
               className="workspace-load-more"
               type="button"
               disabled={fetching !== null}
@@ -185,26 +186,26 @@ export function WorkspacePage({ slug }: { slug: string }) {
               {fetching === pages[slug][tab]
                 ? 'Memuat…'
                 : `Muat 50 ${pages[slug][tab] === 'work-items' ? 'tugas' : 'catatan'} lagi`}
-            </button>
+            </Button>
           )}
         </>
       )}
       {slug === 'beranda' && more['work-items'] !== undefined && (
-        <button
+        <Button
           className="workspace-load-more"
           type="button"
           disabled={fetching !== null}
           onClick={() => void loadMore('work-items')}
         >
           {fetching === 'work-items' ? 'Memuat…' : 'Muat 50 tugas lagi'}
-        </button>
+        </Button>
       )}
       {!pages[slug] && slug !== 'beranda' && Object.keys(more).length > 0 && (
         <details className="workspace-more-details">
           <summary>Catatan lain yang belum dimuat</summary>
           <div className="workspace-more-actions">
             {(Object.keys(more) as Entity[]).map((entity) => (
-              <button
+              <Button
                 className="workspace-load-more"
                 key={entity}
                 type="button"
@@ -214,7 +215,7 @@ export function WorkspacePage({ slug }: { slug: string }) {
                 {fetching === entity
                   ? 'Memuat…'
                   : `Muat 50 ${catalog[entity].title.toLowerCase()} lagi`}
-              </button>
+              </Button>
             ))}
           </div>
         </details>

@@ -1,6 +1,9 @@
 'use client';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 import { DateInput } from '@/components/ui/DateField';
-import { useState, useEffect } from 'react';
+import { Modal } from '@/components/ui/Modal';
+import { useState } from 'react';
 import { X, Repeat, Clock, Calendar } from 'lucide-react';
 import { Select } from '@/components/ui/Select';
 
@@ -28,13 +31,7 @@ export function RecursiveScheduleModal({
   const [endDate, setEndDate] = useState(currentEndDate);
   const enabled = repeatType !== 'tidak';
 
-  useEffect(() => {
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') onClose();
-    }
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onClose]);
+
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -47,14 +44,7 @@ export function RecursiveScheduleModal({
   }
 
   return (
-    <div
-      className="sprint-modal-backdrop"
-      role="dialog"
-      aria-labelledby="recursive-title"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-    >
+    <Modal aria-labelledby="recursive-title" onDismiss={onClose}>
       <div className="sprint-modal-card">
         <header className="sprint-modal-head">
           <div className="title-with-badge">
@@ -63,9 +53,9 @@ export function RecursiveScheduleModal({
             </span>
             <h2 id="recursive-title">Jadwal berulang</h2>
           </div>
-          <button type="button" className="close-btn" onClick={onClose} aria-label="Tutup">
+          <Button type="button" className="close-btn" onClick={onClose} aria-label="Tutup">
             <X size={18} />
-          </button>
+          </Button>
         </header>
 
         <form onSubmit={handleSubmit} className="sprint-form">
@@ -88,7 +78,7 @@ export function RecursiveScheduleModal({
             <span className="field-label">
               <Clock size={16} aria-hidden="true" /> Jam catatan (WIB)
             </span>
-            <input
+            <Input
               type="time"
               value={time}
               onChange={(e) => setTime(e.target.value)}
@@ -116,15 +106,15 @@ export function RecursiveScheduleModal({
               : 'Pilih pola pengulangan untuk mengatur jam dan batas tanggal.'}
           </p>
           <div className="sprint-form-actions">
-            <button type="button" className="btn-cancel" onClick={onClose}>
+            <Button type="button" className="btn-cancel" onClick={onClose}>
               Batal
-            </button>
-            <button type="submit" className="btn-save-sprint">
+            </Button>
+            <Button type="submit" className="btn-save-sprint">
               Simpan pengulangan
-            </button>
+            </Button>
           </div>
         </form>
       </div>
-    </div>
+    </Modal>
   );
 }

@@ -1,4 +1,5 @@
 'use client';
+import { Button } from '@/components/ui/Button';
 import { useState } from 'react';
 import Link from 'next/link';
 import { Plus, AlertCircle, CheckCircle2, Calendar, Flame, CheckSquare } from 'lucide-react';
@@ -162,7 +163,7 @@ export function ScrumBoardView({
         <span className="scrum-board-hint">
           Seret kartu antar-kolom untuk mengubah status pekerjaan.
         </span>
-        <button
+        <Button
           type="button"
           className="scrum-toggle-archive-btn"
           aria-pressed={showArchiveCols}
@@ -171,7 +172,7 @@ export function ScrumBoardView({
           {showArchiveCols
             ? 'Sembunyikan Kolom Arsip di Papan'
             : 'Tampilkan Kolom Selesai di Papan'}
-        </button>
+        </Button>
       </div>
 
       <div className={`scrum-board-columns cols-${columnsToRender.length}`}>
@@ -207,7 +208,7 @@ export function ScrumBoardView({
                 <div className="scrum-col-header-actions">
                   <span className="scrum-count-pill">{colTasks.length}</span>
                   {col.key !== 'selesai' && col.key !== 'dibatalkan' && (
-                    <button
+                    <Button
                       type="button"
                       className="scrum-col-add-btn"
                       onClick={() => onCreateTask(col.key)}
@@ -216,7 +217,7 @@ export function ScrumBoardView({
                     >
                       <Plus size={15} strokeWidth={2.4} />
                       <span className="sr-only">Tambah tugas</span>
-                    </button>
+                    </Button>
                   )}
                 </div>
               </div>
@@ -359,7 +360,7 @@ export function ScrumBoardView({
                             onClick={(e) => e.stopPropagation()}
                           >
                             {data.status === 'rencana' && (
-                              <button
+                              <Button
                                 type="button"
                                 className="card-quick-move-btn move-forward"
                                 disabled={busyId === task.id}
@@ -368,11 +369,11 @@ export function ScrumBoardView({
                                 aria-label="Mulai kerjakan tugas ini"
                               >
                                 <span>Mulai Kerja →</span>
-                              </button>
+                              </Button>
                             )}
                             {data.status === 'proses' && (
                               <div className="card-quick-move-group">
-                                <button
+                                <Button
                                   type="button"
                                   className="card-quick-move-btn move-back"
                                   disabled={busyId === task.id}
@@ -381,8 +382,8 @@ export function ScrumBoardView({
                                   aria-label="Kembalikan ke rencana"
                                 >
                                   <span>← Rencana</span>
-                                </button>
-                                <button
+                                </Button>
+                                <Button
                                   type="button"
                                   className="card-quick-move-btn move-done"
                                   disabled={busyId === task.id}
@@ -391,11 +392,11 @@ export function ScrumBoardView({
                                   aria-label="Tandai tugas selesai"
                                 >
                                   <span>✓ Selesai</span>
-                                </button>
+                                </Button>
                               </div>
                             )}
                             {data.status === 'selesai' && (
-                              <button
+                              <Button
                                 type="button"
                                 className="card-quick-move-btn move-reopen"
                                 disabled={busyId === task.id}
@@ -404,7 +405,7 @@ export function ScrumBoardView({
                                 aria-label="Buka kembali pekerjaan"
                               >
                                 <span>↺ Buka Lagi</span>
-                              </button>
+                              </Button>
                             )}
                           </div>
                         </div>

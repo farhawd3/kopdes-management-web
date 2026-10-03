@@ -1,4 +1,6 @@
 'use client';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 import React from 'react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -205,28 +207,28 @@ function CompletedTimelineView({
                         <span className="task-code-tag">
                           {formatDisplayCode(String(row.data.code), 'work-items', row.id)}
                         </span>
-                        <button
+                        <Button
                           type="button"
                           className="timeline-task-title-btn"
                           onClick={() => onOpenTask(row)}
                           title="Buka rincian tugas"
                         >
                           {String(row.data.title)}
-                        </button>
+                        </Button>
                         {project && (
                           <span className="task-project-name has-project">
                             {String(project.data.title)}
                           </span>
                         )}
                       </div>
-                      <button
+                      <Button
                         type="button"
                         className="table-btn-reopen"
                         title="Buka kembali tugas ini ke daftar tugas aktif"
                         onClick={() => onReopenTask(row)}
                       >
                         Buka Kembali ↩
-                      </button>
+                      </Button>
                     </div>
                     <div className="timeline-bubble-meta">
                       <span className="meta-chip meta-chip-date" title="Tanggal diselesaikan">
@@ -375,7 +377,7 @@ function JournalBoardView({
                 </div>
                 <div className="scrum-col-header-actions">
                   <span className="scrum-count-pill">{colItems.length}</span>
-                  <button
+                  <Button
                     type="button"
                     className="scrum-col-add-btn"
                     onClick={() => onCreateItem(col.defaultDate)}
@@ -383,7 +385,7 @@ function JournalBoardView({
                     aria-label={`Tambah kegiatan di ${col.title}`}
                   >
                     <Plus size={15} strokeWidth={2.4} />
-                  </button>
+                  </Button>
                 </div>
               </div>
 
@@ -515,14 +517,14 @@ function JournalTimelineView({
                         item.id,
                       )}
                     </span>
-                    <button
+                    <Button
                       type="button"
                       className="timeline-task-title-btn"
                       onClick={() => onOpenItem(item)}
                       title="Lihat / ubah rincian kegiatan"
                     >
                       {String(item.data.title)}
-                    </button>
+                    </Button>
                     {unit && (
                       <span className="task-project-name has-project">
                         {String(unit.data.title)}
@@ -608,7 +610,7 @@ function JournalTableView({
                 </td>
                 <td className="col-journal-main">
                   <div className="journal-main-cell">
-                    <button
+                    <Button
                       type="button"
                       className="journal-title-btn"
                       onClick={() => onOpenItem(row)}
@@ -622,7 +624,7 @@ function JournalTableView({
                         )}
                       </span>
                       <strong className="journal-title-text">{String(row.data.title)}</strong>
-                    </button>
+                    </Button>
                     {Boolean(row.data.notes) && (
                       <p className="journal-notes-preview">{String(row.data.notes)}</p>
                     )}
@@ -649,7 +651,7 @@ function JournalTableView({
                         </span>
                       </Link>
                     ) : (
-                      <button
+                      <Button
                         type="button"
                         className="relation-pill-btn-add"
                         title="Buat tugas tindak lanjut langsung dari kegiatan ini"
@@ -667,7 +669,7 @@ function JournalTableView({
                       >
                         <Plus size={11} />
                         <span>+ Tindak Lanjut</span>
-                      </button>
+                      </Button>
                     )}
                     {stakeholder && (
                       <span className="relation-pill pill-stakeholder" title={`Mitra: ${String(stakeholder.data.title)}`}>
@@ -690,13 +692,13 @@ function JournalTableView({
                   </div>
                 </td>
                 <td className="col-journal-action">
-                  <button
+                  <Button
                     type="button"
                     className="table-btn-done btn-journal-open"
                     onClick={() => onOpenItem(row)}
                   >
                     Buka
-                  </button>
+                  </Button>
                 </td>
               </tr>
             );
@@ -899,7 +901,7 @@ export function Records({
         {/* Top metadata strip */}
         <div className="cal-card-top-row">
           <div className="cal-card-top-left">
-            <button
+            <Button
               type="button"
               className={`task-round-check ${isDone ? 'checked' : ''}`}
               disabled={busy}
@@ -910,7 +912,7 @@ export function Records({
               aria-label={isDone ? 'Tandai belum selesai' : 'Tandai selesai'}
             >
               {isDone && <Check size={13} strokeWidth={2.8} />}
-            </button>
+            </Button>
             <span className="card-task-code">
               {formatDisplayCode(String(row.data.code), 'work-items', row.id)}
             </span>
@@ -983,7 +985,7 @@ export function Records({
                   key={index}
                   className={`cal-subtask-item ${task.done ? 'is-done' : ''}`}
                 >
-                  <button
+                  <Button
                     type="button"
                     className={`subtask-round-check ${task.done ? 'checked' : ''}`}
                     disabled={busy}
@@ -997,7 +999,7 @@ export function Records({
                     aria-label={task.done ? 'Tandai belum selesai' : 'Tandai selesai'}
                   >
                     {task.done && <Check size={11} strokeWidth={2.8} />}
-                  </button>
+                  </Button>
                   <span className="cal-subtask-title">{task.title}</span>
                 </div>
               ))}
@@ -1024,7 +1026,7 @@ export function Records({
           </div>
 
           <div className="cal-card-footer-right">
-            <button
+            <Button
               type="button"
               className="cal-btn-action cal-btn-shift"
               disabled={busy}
@@ -1034,8 +1036,8 @@ export function Records({
               title="Tunda tenggat +1 hari"
             >
               +1 hari
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               className="cal-btn-action cal-btn-detail"
               onClick={() => setDetailTask(row)}
@@ -1043,9 +1045,9 @@ export function Records({
             >
               <ExternalLink size={13} />
               <span>Buka catatan</span>
-            </button>
+            </Button>
             {!isDone ? (
-              <button
+              <Button
                 type="button"
                 className="cal-btn-action cal-btn-done"
                 disabled={busy}
@@ -1054,9 +1056,9 @@ export function Records({
               >
                 <Check size={13} strokeWidth={2.4} />
                 <span>Selesai</span>
-              </button>
+              </Button>
             ) : (
-              <button
+              <Button
                 type="button"
                 className="cal-btn-action cal-btn-reopen"
                 disabled={busy}
@@ -1065,14 +1067,14 @@ export function Records({
               >
                 <RotateCcw size={13} strokeWidth={2.4} />
                 <span>Buka lagi</span>
-              </button>
+              </Button>
             )}
             <details className="cal-more-options">
               <summary className="cal-more-summary" title="Opsi lainnya" aria-label="Opsi lainnya">
                 <MoreHorizontal size={15} />
               </summary>
               <div className="cal-more-menu">
-                <button
+                <Button
                   type="button"
                   disabled={busy}
                   onClick={(e) => {
@@ -1081,9 +1083,9 @@ export function Records({
                   }}
                 >
                   +1 minggu
-                </button>
+                </Button>
                 <div className="cal-more-divider" />
-                <button
+                <Button
                   type="button"
                   className="danger"
                   disabled={busy}
@@ -1103,7 +1105,7 @@ export function Records({
                 >
                   <Trash2 size={13} />
                   <span>Hapus tugas</span>
-                </button>
+                </Button>
               </div>
             </details>
           </div>
@@ -1492,14 +1494,14 @@ export function Records({
                       Masuk Rapat Online ↗
                     </a>
                   )}
-                <button
+                <Button
                   className="button meeting-join btn-download-ics"
                   onClick={() => downloadMeeting(row)}
                   title="Unduh jadwal rapat .ics"
                 >
                   Unduh Jadwal (.ics)
-                </button>
-                <button
+                </Button>
+                <Button
                   className="button meeting-followup-btn"
                   onClick={() => {
                     window.dispatchEvent(
@@ -1516,7 +1518,7 @@ export function Records({
                   title="Buat tugas tindak lanjut rapat"
                 >
                   + Tindak Lanjut
-                </button>
+                </Button>
               </div>
             </div>
           );
@@ -1531,7 +1533,7 @@ export function Records({
             </small>
             {(row.data.subtasks as { title: string; done: boolean }[]).map((task, index) => (
               <label className="check" key={index}>
-                <input
+                <Input
                   type="checkbox"
                   checked={task.done}
                   disabled={busy}
@@ -1550,11 +1552,11 @@ export function Records({
           </div>
         )}
       <div className="actions">
-        <button onClick={() => (entity === 'work-items' ? setDetailTask(row) : setEdit(row))}>
+        <Button onClick={() => (entity === 'work-items' ? setDetailTask(row) : setEdit(row))}>
           Buka catatan
-        </button>
+        </Button>
         {entity === 'journal' && (
-          <button
+          <Button
             type="button"
             className="btn-journal-followup"
             onClick={() => {
@@ -1572,10 +1574,10 @@ export function Records({
             title="Buat tugas tindak lanjut dari kegiatan ini"
           >
             + Tindak lanjut
-          </button>
+          </Button>
         )}
         {(entity === 'work-items' || entity === 'checklist') && row.data.status !== 'selesai' && (
-          <button
+          <Button
             disabled={busy}
             onClick={() =>
               void update(row, {
@@ -1586,29 +1588,29 @@ export function Records({
             }
           >
             Selesai
-          </button>
+          </Button>
         )}
         <details className="record-options">
           <summary>Opsi lainnya</summary>
           <div className="actions">
             {entity === 'work-items' && (
               <>
-                <button
+                <Button
                   disabled={busy}
                   onClick={() =>
                     void update(row, { due_date: addDays(String(row.data.due_date), 1) })
                   }
                 >
                   +1 hari
-                </button>
-                <button
+                </Button>
+                <Button
                   disabled={busy}
                   onClick={() =>
                     void update(row, { due_date: addDays(String(row.data.due_date), 7) })
                   }
                 >
                   +1 minggu
-                </button>
+                </Button>
                 <div className="inline-label">
                   <span>Status</span>
                   <Select
@@ -1631,7 +1633,7 @@ export function Records({
               </>
             )}
             {(entity === 'meetings' || entity === 'issues') && (
-              <button
+              <Button
                 onClick={() => {
                   window.dispatchEvent(
                     new CustomEvent('hub-task', {
@@ -1649,10 +1651,10 @@ export function Records({
                 }}
               >
                 + Tindak lanjut
-              </button>
+              </Button>
             )}
             {!['organization', 'workstreams'].includes(entity) && (
-              <button
+              <Button
                 className="danger"
                 disabled={busy}
                 onClick={async () => {
@@ -1669,7 +1671,7 @@ export function Records({
                 }}
               >
                 Hapus
-              </button>
+              </Button>
             )}
           </div>
         </details>
@@ -1712,7 +1714,7 @@ export function Records({
             <h2>{catalog[entity].title}</h2>
             <p>{catalog[entity].description}</p>
           </div>
-          <button
+          <Button
             className="primary"
             onClick={() =>
               setEdit(
@@ -1739,7 +1741,7 @@ export function Records({
               : entity === 'work-items'
                 ? 'Tugas baru'
                 : 'Tambah'}
-          </button>
+          </Button>
         </div>
       )}
       {(entity === 'work-items' || entity === 'journal') && !isCompletedArchive && (
@@ -1765,14 +1767,14 @@ export function Records({
             ).map(([value, label, Icon]) => {
               const ViewIcon = Icon as typeof ListTodo;
               return (
-                <button
+                <Button
                   key={String(value)}
                   aria-pressed={view === value}
                   onClick={() => handleViewChange(String(value))}
                 >
                   <ViewIcon size={17} />
                   {String(label)}
-                </button>
+                </Button>
               );
             })}
             <span>
@@ -1787,7 +1789,7 @@ export function Records({
                 <ChevronDown size={13} className="extra-chevron" />
               </summary>
               <div className="view-extra-menu">
-                <button
+                <Button
                   type="button"
                   className="btn-sprint-trigger"
                   title="Kelola Target Periode (Sprint)"
@@ -1798,8 +1800,8 @@ export function Records({
                 >
                   <Target size={15} />
                   <span>Periode kerja</span>
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
                   className="btn-csv-trigger"
                   title="Tarik & Lepas File CSV"
@@ -1810,7 +1812,7 @@ export function Records({
                 >
                   <UploadCloud size={15} />
                   <span>Impor CSV</span>
-                </button>
+                </Button>
               </div>
             </details>
           )}
@@ -1858,7 +1860,7 @@ export function Records({
         >
           <div className="quick-add-input-wrap">
             <Plus size={18} className="quick-add-icon" />
-            <input
+            <Input
               type="text"
               aria-label="Tulis tugas baru"
               value={quickTitle}
@@ -1869,32 +1871,32 @@ export function Records({
             />
           </div>
           <div className="quick-add-actions">
-            <button
+            <Button
               type="submit"
               className="btn-quick-submit"
               disabled={busy || !quickTitle.trim()}
             >
               {busy ? 'Menyimpan…' : 'Tambah'}
-            </button>
+            </Button>
           </div>
         </form>
       )}
       {view !== 'harian' && (
         <>
-          <button
+          <Button
             type="button"
             className="mobile-filter-toggle"
             aria-expanded={filtersOpen}
             onClick={() => setFiltersOpen(!filtersOpen)}
           >
             Cari & filter{search || effectiveFilter || workstream || priority ? ' · aktif' : ''}
-          </button>
+          </Button>
           <div className={`filters ${filtersOpen ? 'filters-expanded' : ''}`}>
         <label>
           <span className="field-caption">
             <Search size={14} /> Cari
           </span>
-          <input
+          <Input
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -2188,7 +2190,7 @@ export function Records({
                     <tr key={row.id} className={isDone ? 'row-completed' : ''}>
                       <td className="col-task-title">
                         <div className="task-title-cell">
-                          <button
+                          <Button
                             type="button"
                             className={`task-title-btn ${isDone ? 'is-done-text' : ''}`}
                             onClick={() => setDetailTask(row)}
@@ -2217,7 +2219,7 @@ export function Records({
                                 </span>
                               )}
                             </span>
-                          </button>
+                          </Button>
                         </div>
                       </td>
                       <td className="col-task-status">
@@ -2280,7 +2282,7 @@ export function Records({
                       </td>
                       <td className="col-task-action">
                         {!isDone ? (
-                          <button
+                          <Button
                             type="button"
                             className="table-btn-done"
                             disabled={busy}
@@ -2288,9 +2290,9 @@ export function Records({
                             title="Tandai tugas selesai"
                           >
                             Selesai
-                          </button>
+                          </Button>
                         ) : isCompletedArchive ? (
-                          <button
+                          <Button
                             type="button"
                             className="table-btn-reopen"
                             disabled={busy}
@@ -2298,7 +2300,7 @@ export function Records({
                             title="Buka kembali tugas ini (kembalikan ke rencana)"
                           >
                             Buka Kembali ↩
-                          </button>
+                          </Button>
                         ) : (
                           <span className="task-done-label">Selesai</span>
                         )}
@@ -2432,14 +2434,14 @@ export function Records({
                 </span>
                 <h2 id="csv-modal-title">Impor File CSV — {catalog[entity].title}</h2>
               </div>
-              <button
+              <Button
                 type="button"
                 className="close-btn"
                 onClick={() => setShowCsvModal(false)}
                 aria-label="Tutup modal"
               >
                 <X size={18} />
-              </button>
+              </Button>
             </header>
             <p className="dialog-sub">
               Unggah file CSV dengan kolom sesuai format data untuk menambahkan data secara

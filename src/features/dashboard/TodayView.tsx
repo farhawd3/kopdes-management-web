@@ -1,4 +1,6 @@
 'use client';
+import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
 import { useState } from 'react';
 import {
   CalendarDays,
@@ -181,7 +183,7 @@ export function TodayView({
       <form className="today-quick-add-card" onSubmit={handleQuickAdd}>
         <div className="quick-add-input-wrap">
           <Plus size={18} className="quick-add-icon" />
-          <input
+          <Input
             type="text"
             value={quickTitle}
             onChange={(e) => setQuickTitle(e.target.value)}
@@ -190,22 +192,22 @@ export function TodayView({
           />
         </div>
         <div className="quick-add-actions">
-          <button
+          <Button
             type="submit"
             className="btn-quick-submit"
             disabled={!quickTitle.trim() || busyId === 'quick-add'}
           >
             <Plus size={15} strokeWidth={2.5} />
             <span>{busyId === 'quick-add' ? 'Menyimpan…' : 'Tambah'}</span>
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             className="btn-open-full-modal"
             onClick={() => setShowCreateModal(true)}
             title="Buka formulir lengkap dengan rincian dan subtugas"
           >
             Form lengkap
-          </button>
+          </Button>
         </div>
       </form>
 
@@ -254,7 +256,7 @@ export function TodayView({
                         }
                       }}
                     >
-                      <button
+                      <Button
                         type="button"
                         className="today-check-circle"
                         onClick={(e) => toggleComplete(task, e)}
@@ -262,7 +264,7 @@ export function TodayView({
                         aria-label={`Tandai ${String(task.data.title)} selesai`}
                       >
                         <Check size={14} className="check-mark" />
-                      </button>
+                      </Button>
 
                       <div className="task-info-content">
                         <div className="task-title-row">
@@ -292,7 +294,7 @@ export function TodayView({
                       </div>
 
                       <div className="task-actions-right">
-                        <button
+                        <Button
                           type="button"
                           className="btn-reschedule-today"
                           onClick={(e) => rescheduleToToday(task, e)}
@@ -300,7 +302,7 @@ export function TodayView({
                         >
                           <RotateCcw size={13} />
                           <span>Ke Hari Ini</span>
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   );
@@ -331,13 +333,13 @@ export function TodayView({
                   Tambahkan tugas langsung lewat kolom di atas atau tentukan prioritas kerja Anda
                   hari ini.
                 </p>
-                <button
+                <Button
                   type="button"
                   className="btn-create-today"
                   onClick={() => setShowCreateModal(true)}
                 >
                   <Plus size={16} /> Tambah tugas baru
-                </button>
+                </Button>
               </div>
             ) : (
               <div className="today-task-cards-list">
@@ -363,7 +365,7 @@ export function TodayView({
                         }
                       }}
                     >
-                      <button
+                      <Button
                         type="button"
                         className={`today-check-circle ${isDone ? 'checked' : ''}`}
                         onClick={(e) => toggleComplete(task, e)}
@@ -371,7 +373,7 @@ export function TodayView({
                         aria-label={`${isDone ? 'Tandai belum selesai' : 'Tandai selesai'}: ${String(task.data.title)}`}
                       >
                         <Check size={17} className="check-mark" />
-                      </button>
+                      </Button>
 
                       <div className="task-info-content">
                         <div className="task-title-row">
@@ -479,14 +481,14 @@ export function TodayView({
                             <ExternalLink size={13} /> Masuk Rapat
                           </a>
                         )}
-                        <button
+                        <Button
                           type="button"
                           className="btn-download-ics"
                           onClick={() => downloadMeeting(meeting)}
                           title="Unduh jadwal (.ics) ke kalender perangkat"
                         >
                           <Download size={13} /> Unduh (.ics)
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   );
@@ -601,7 +603,7 @@ export function TodayView({
         />
       )}
       {/* Mobile Floating Action Button */}
-      <button
+      <Button
         type="button"
         className="fab-today-add"
         onClick={() => setShowCreateModal(true)}
@@ -610,7 +612,7 @@ export function TodayView({
       >
         <Plus size={20} strokeWidth={2.5} />
         <span className="fab-today-label">Tugas Baru</span>
-      </button>
+      </Button>
     </div>
   );
 }

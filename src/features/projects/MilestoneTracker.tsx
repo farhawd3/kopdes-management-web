@@ -1,4 +1,5 @@
 'use client';
+import { Button } from '@/components/ui/Button';
 import { useState } from 'react';
 import { Flag, CheckCircle2, Calendar, Plus, Edit3, RotateCcw, Check, Layers } from 'lucide-react';
 import type { Workspace } from '../workspace/useWorkspace';
@@ -95,7 +96,7 @@ export function MilestoneTracker({
 
         <div className="milestone-head-actions">
           <div className="milestone-filter-pills" role="tablist" aria-label="Filter milestone">
-            <button
+            <Button
               type="button"
               role="tab"
               aria-selected={filter === 'semua'}
@@ -103,8 +104,8 @@ export function MilestoneTracker({
               onClick={() => setFilter('semua')}
             >
               Semua <small>{milestonesWithStats.length}</small>
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               role="tab"
               aria-selected={filter === 'mendatang'}
@@ -112,8 +113,8 @@ export function MilestoneTracker({
               onClick={() => setFilter('mendatang')}
             >
               Mendatang <small>{upcomingCount}</small>
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               role="tab"
               aria-selected={filter === 'tercapai'}
@@ -121,13 +122,13 @@ export function MilestoneTracker({
               onClick={() => setFilter('tercapai')}
             >
               Tercapai <small>{achievedCount}</small>
-            </button>
+            </Button>
           </div>
 
-          <button type="button" className="btn-add-milestone" onClick={() => setEditItem(null)}>
+          <Button type="button" className="btn-add-milestone" onClick={() => setEditItem(null)}>
             <Plus size={15} />
             <span>Milestone Baru</span>
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -143,13 +144,13 @@ export function MilestoneTracker({
           </h4>
           <p>Tentukan titik capaian penting untuk memastikan proyek Anda bergerak sesuai target.</p>
           {filter === 'semua' && (
-            <button
+            <Button
               type="button"
               className="btn-create-first-milestone"
               onClick={() => setEditItem(null)}
             >
               <Plus size={15} /> Buat Milestone Pertama
-            </button>
+            </Button>
           )}
         </div>
       ) : (
@@ -217,7 +218,7 @@ export function MilestoneTracker({
                 </div>
 
                 <div className="milestone-card-actions">
-                  <button
+                  <Button
                     type="button"
                     className={`btn-milestone-toggle ${isAchieved ? 'btn-reopen' : 'btn-complete'}`}
                     disabled={busyId === milestone.id}
@@ -234,9 +235,9 @@ export function MilestoneTracker({
                         <span>Tandai Tercapai</span>
                       </>
                     )}
-                  </button>
+                  </Button>
 
-                  <button
+                  <Button
                     type="button"
                     className="btn-milestone-edit"
                     onClick={() => setEditItem(milestone)}
@@ -244,7 +245,7 @@ export function MilestoneTracker({
                   >
                     <Edit3 size={13} />
                     <span>Edit</span>
-                  </button>
+                  </Button>
                 </div>
               </article>
             ),

@@ -1,4 +1,6 @@
 'use client';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 import Link from 'next/link';
 import { useState } from 'react';
 import { api, resetAuthNavigation } from '@/lib/client';
@@ -55,7 +57,7 @@ export function Settings({ refresh }: { refresh: () => Promise<void> }) {
 
       {/* ── Settings Subnavigation Tabs ─────────────────────────── */}
       <div className="settings-tabs-row" role="tablist" aria-label="Kategori Pengaturan">
-        <button
+        <Button
           type="button"
           role="tab"
           aria-selected={activeTab === 'tampilan'}
@@ -64,8 +66,8 @@ export function Settings({ refresh }: { refresh: () => Promise<void> }) {
         >
           <Palette size={16} />
           <span>Tampilan & Tema</span>
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           role="tab"
           aria-selected={activeTab === 'profil'}
@@ -74,8 +76,8 @@ export function Settings({ refresh }: { refresh: () => Promise<void> }) {
         >
           <Building size={16} />
           <span>Profil Koperasi</span>
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           role="tab"
           aria-selected={activeTab === 'keamanan'}
@@ -84,8 +86,8 @@ export function Settings({ refresh }: { refresh: () => Promise<void> }) {
         >
           <ShieldCheck size={16} />
           <span>Keamanan PIN</span>
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           role="tab"
           aria-selected={activeTab === 'cadangan'}
@@ -94,7 +96,7 @@ export function Settings({ refresh }: { refresh: () => Promise<void> }) {
         >
           <Database size={16} />
           <span>Cadangan & Pemulihan</span>
-        </button>
+        </Button>
       </div>
 
       {message && (
@@ -116,7 +118,7 @@ export function Settings({ refresh }: { refresh: () => Promise<void> }) {
               {COLOR_STYLES.map((c) => {
                 const isSelected = colorStyle === c.id;
                 return (
-                  <button
+                  <Button
                     key={c.id}
                     type="button"
                     className={`color-swatch-item ${isSelected ? 'is-selected' : ''}`}
@@ -150,7 +152,7 @@ export function Settings({ refresh }: { refresh: () => Promise<void> }) {
                       />
                     </div>
                     <small className="swatch-desc-text">{c.desc}</small>
-                  </button>
+                  </Button>
                 );
               })}
             </div>
@@ -165,14 +167,14 @@ export function Settings({ refresh }: { refresh: () => Promise<void> }) {
             <div className="theme-preview-stage" style={{ background: 'var(--canvas)', borderColor: 'var(--line)' }}>
               {/* Preview Button & Chip */}
               <div className="preview-row">
-                <button
+                <Button
                   type="button"
                   className="preview-primary-btn"
                   style={{ background: 'var(--brand)', color: 'var(--brand-text)' }}
                 >
                   <Sparkles size={14} />
                   <span>+ Aksi Cepat</span>
-                </button>
+                </Button>
                 <span
                   className="preview-companion-chip"
                   style={{ background: 'var(--brand-soft)', borderColor: 'var(--brand-soft-border)', color: 'var(--ink-heading)' }}
@@ -264,7 +266,7 @@ export function Settings({ refresh }: { refresh: () => Promise<void> }) {
             </div>
 
             <div className="settings-reset-row">
-              <button
+              <Button
                 type="button"
                 className="btn-reset-appearance"
                 onClick={() => {
@@ -278,7 +280,7 @@ export function Settings({ refresh }: { refresh: () => Promise<void> }) {
               >
                 <RotateCcw size={15} />
                 <span>Kembalikan Tampilan Awal</span>
-              </button>
+              </Button>
             </div>
           </section>
         </div>
@@ -344,7 +346,7 @@ export function Settings({ refresh }: { refresh: () => Promise<void> }) {
             >
               <label className="field-group">
                 <span className="field-caption">PIN Saat Ini</span>
-                <input
+                <Input
                   name="pin"
                   type="password"
                   inputMode="numeric"
@@ -358,7 +360,7 @@ export function Settings({ refresh }: { refresh: () => Promise<void> }) {
 
               <label className="field-group">
                 <span className="field-caption">PIN Baru</span>
-                <input
+                <Input
                   name="newPin"
                   type="password"
                   inputMode="numeric"
@@ -371,9 +373,9 @@ export function Settings({ refresh }: { refresh: () => Promise<void> }) {
               </label>
 
               <div className="form-actions">
-                <button disabled={busy} type="submit" className="primary">
+                <Button disabled={busy} type="submit" className="primary">
                   {busy ? 'Menyimpan PIN…' : 'Simpan PIN Baru'}
-                </button>
+                </Button>
               </div>
             </form>
           </section>
@@ -410,7 +412,7 @@ export function Settings({ refresh }: { refresh: () => Promise<void> }) {
                 <p>Memulihkan seluruh catatan dari berkas JSON hasil unduhan sebelumnya.</p>
                 <label className="button restore-upload-label">
                   Pilih Berkas Cadangan JSON
-                  <input
+                  <Input
                     type="file"
                     accept=".json,application/json"
                     disabled={busy}

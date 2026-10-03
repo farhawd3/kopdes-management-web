@@ -1,4 +1,6 @@
 'use client';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
@@ -76,14 +78,14 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
       {selected ? (
         <>
           <div className="project-detail-header-nav">
-            <button
+            <Button
               type="button"
               className="btn-back-project"
               onClick={() => router.push('/proyek')}
             >
               <ArrowLeft size={15} />
               <span>Semua proyek</span>
-            </button>
+            </Button>
             <span className="project-breadcrumb-sep">/</span>
             <span className="project-breadcrumb-title">{String(selected.data.title)}</span>
           </div>
@@ -113,14 +115,14 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
                   <h1 className="project-hero-title">{String(selected.data.title)}</h1>
                 </div>
               </div>
-              <button
+              <Button
                 type="button"
                 className="btn-edit-project"
                 onClick={() => setEdit(selected)}
               >
                 <Edit2 size={15} />
                 <span>Ubah proyek</span>
-              </button>
+              </Button>
             </div>
 
             <p className={`project-hero-desc ${!selected.data.description ? 'is-empty' : ''}`}>
@@ -419,9 +421,9 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
               <h2>Proyek Anda</h2>
               <p>Tugas, milestone, dan catatan untuk setiap proyek.</p>
             </div>
-            <button className="primary" onClick={() => setEdit(null)}>
+            <Button className="primary" onClick={() => setEdit(null)}>
               <Plus size={18} /> Proyek baru
-            </button>
+            </Button>
           </section>
 
           {/* Project Summary KPI Bar */}
@@ -472,7 +474,7 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
           <div className="projects-toolbar-row">
             <div className="project-search-box">
               <Search size={16} className="search-icon" />
-              <input
+              <Input
                 type="search"
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
@@ -480,14 +482,14 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
                 aria-label="Cari proyek"
               />
               {Boolean(search) && (
-                <button
+                <Button
                   type="button"
                   className="btn-clear-search"
                   title="Hapus pencarian"
                   onClick={() => setSearch('')}
                 >
                   <X size={14} />
-                </button>
+                </Button>
               )}
             </div>
 
@@ -500,7 +502,7 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
                 ['selesai', 'Selesai'],
                 ['diarsipkan', 'Arsip'],
               ].map(([value, label]) => (
-                <button
+                <Button
                   key={value}
                   type="button"
                   aria-pressed={status === value}
@@ -513,7 +515,7 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
                         .length
                     }
                   </small>
-                </button>
+                </Button>
               ))}
             </div>
           </div>

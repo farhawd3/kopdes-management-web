@@ -1,4 +1,5 @@
 'use client';
+import { Button } from '@/components/ui/Button';
 import { Calendar, Edit2, Trash2 } from 'lucide-react';
 import { schemas, type Item } from '../schemas';
 import { planProgress } from '@/lib/progress';
@@ -60,7 +61,7 @@ export function SprintCard({
           <span className={`sprint-status-tag status-${data.status || 'aktif'}`}>
             {String(data.status || 'aktif')}
           </span>
-          <button
+          <Button
             type="button"
             className="sprint-action-btn"
             title="Ubah Target Periode"
@@ -70,15 +71,15 @@ export function SprintCard({
             }}
           >
             <Edit2 size={14} />
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             className="sprint-action-btn delete-btn"
             title="Hapus"
             onClick={handleDelete}
           >
             <Trash2 size={14} />
-          </button>
+          </Button>
         </div>
       </header>
 

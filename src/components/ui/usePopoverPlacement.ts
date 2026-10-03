@@ -11,7 +11,8 @@ export function usePopoverPlacement(open: boolean, calendar = false) {
       const menu = node?.querySelector<HTMLElement>('[data-popover]');
       if (!node || !menu) return;
       const rect = node.getBoundingClientRect();
-      let bounds = { top: 0, bottom: window.innerHeight, left: 0, right: window.innerWidth };
+      const viewportWidth = document.documentElement.clientWidth || window.innerWidth;
+      let bounds = { top: 0, bottom: window.innerHeight, left: 0, right: viewportWidth };
       // Panel bergulir dapat lebih sempit dari dialog; menu harus tetap di area yang terlihat.
       for (let parent = node.parentElement; parent; parent = parent.parentElement) {
         const style = window.getComputedStyle(parent);
@@ -26,7 +27,7 @@ export function usePopoverPlacement(open: boolean, calendar = false) {
         };
       }
       if (calendar) {
-        const width = Math.min(344, window.innerWidth - 16, bounds.right - bounds.left - 16);
+        const width = Math.max(0, Math.min(344, viewportWidth - 16, bounds.right - bounds.left - 16));
         menu.style.setProperty('--popover-width', `${width}px`);
         const left = bounds.left + 8;
         const right = bounds.right - 8;

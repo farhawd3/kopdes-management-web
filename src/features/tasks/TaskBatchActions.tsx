@@ -1,4 +1,6 @@
 'use client';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 import { DateInput } from '@/components/ui/DateField';
 import { useState } from 'react';
 import type { Item } from '../schemas';
@@ -22,16 +24,16 @@ export function TaskBatchActions({
   const rows = items.filter((item) => selected.includes(item.id));
   return (
     <section className="task-batch">
-      <button aria-expanded={open} onClick={() => setOpen(!open)}>
+      <Button aria-expanded={open} onClick={() => setOpen(!open)}>
         Ubah beberapa tugas
-      </button>
+      </Button>
       {open && (
         <div className="batch-panel">
           <p>Pilih tugas, lalu ubah status atau tenggatnya.</p>
           <div className="batch-list">
             {items.map((item) => (
               <label key={item.id}>
-                <input
+                <Input
                   type="checkbox"
                   disabled={busy}
                   checked={selected.includes(item.id)}
@@ -69,7 +71,7 @@ export function TaskBatchActions({
               <DateInput value={date} disabled={busy} onValueChange={(value) => setDate(value)} />
             </label>
           </div>
-          <button
+          <Button
             disabled={busy || !rows.length || (!status && !date)}
             onClick={async () => {
               setBusy(true);
@@ -100,7 +102,7 @@ export function TaskBatchActions({
             }}
           >
             {busy ? 'Menyimpan…' : `Terapkan ke ${rows.length} tugas`}
-          </button>
+          </Button>
           {message && <p role="status">{message}</p>}
         </div>
       )}

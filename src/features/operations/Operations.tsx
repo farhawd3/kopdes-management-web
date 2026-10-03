@@ -1,4 +1,6 @@
 'use client';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -264,7 +266,7 @@ export function Operations({
         ? data['inventory-items']?.find((i) => i.id === row.data.item_id)
         : null;
       return (
-        <button
+        <Button
           type="button"
           className="table-title"
           onClick={() => setEdit(row)}
@@ -288,7 +290,7 @@ export function Operations({
               )}
             </span>
           )}
-        </button>
+        </Button>
       );
     }
     if (field === 'status' && entity === 'members') {
@@ -514,7 +516,7 @@ export function Operations({
             </div>
             <label className="notebook-search">
               <Search size={16} />
-              <input
+              <Input
                 aria-label="Cari catatan terakhir"
                 type="search"
                 value={search}
@@ -543,7 +545,7 @@ export function Operations({
                   </Link>
 
                   <div className="notebook-actions">
-                    <button
+                    <Button
                       className="notebook-add-btn"
                       disabled={
                         !ready || (entity === 'stock-counts' && !data['inventory-items']?.length)
@@ -561,7 +563,7 @@ export function Operations({
                     >
                       <Plus size={15} />
                       <span>Tambah</span>
-                    </button>
+                    </Button>
                     <Link
                       className="notebook-open-btn"
                       href={'/' + path}
@@ -587,7 +589,7 @@ export function Operations({
               </div>
               {recent.length ? (
                 recent.map(({ row, entry }) => (
-                  <button
+                  <Button
                     className="recent-note"
                     key={row.id}
                     onClick={() => {
@@ -606,7 +608,7 @@ export function Operations({
                       </small>
                     </span>
                     <ArrowUpRight size={14} className="recent-arrow" />
-                  </button>
+                  </Button>
                 ))
               ) : (
                 <div className="recent-empty">
@@ -631,11 +633,11 @@ export function Operations({
               <p>{catalog[entity!].description}</p>
             </div>
             <div className="actions">
-              <button disabled={!ready || !rows.length} onClick={exportCsv}>
+              <Button disabled={!ready || !rows.length} onClick={exportCsv}>
                 <Download size={16} />
                 CSV
-              </button>
-              <button
+              </Button>
+              <Button
                 className="primary"
                 disabled={!ready || (entity === 'stock-counts' && !data['inventory-items']?.length)}
                 onClick={() => setEdit(null)}
@@ -647,7 +649,7 @@ export function Operations({
                   : entity === 'stock-counts'
                     ? 'opname'
                     : book.title.toLowerCase()}
-              </button>
+              </Button>
             </div>
           </div>
           {entity === 'stock-counts' && ready && !data['inventory-items']?.length && (
@@ -731,7 +733,7 @@ export function Operations({
                 <Search size={14} />
                 Cari catatan
               </span>
-              <input
+              <Input
                 type="search"
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
@@ -787,7 +789,7 @@ export function Operations({
                 />
               </label>
             )}
-            <button
+            <Button
               type="button"
               className="btn-clear-filters"
               onClick={() => {
@@ -798,7 +800,7 @@ export function Operations({
               }}
             >
               Hapus filter
-            </button>
+            </Button>
           </div>
           {ready && (
             <>
@@ -830,16 +832,16 @@ export function Operations({
                         ))}
                         <td className="col-action">
                           <div className="table-actions">
-                            <button
+                            <Button
                               type="button"
                               className="table-btn-edit"
                               onClick={() => setEdit(row)}
                               title="Ubah data"
                             >
                               Ubah
-                            </button>
+                            </Button>
                             {entity === 'members' && (
-                              <button
+                              <Button
                                 type="button"
                                 className="table-btn-action table-btn-cash"
                                 title="Catat kas untuk anggota ini"
@@ -865,11 +867,11 @@ export function Operations({
                               >
                                 <Wallet size={12} />
                                 <span>+ Kas</span>
-                              </button>
+                              </Button>
                             )}
                             {entity === 'inventory-items' && (
                               <>
-                                <button
+                                <Button
                                   type="button"
                                   className="table-btn-action table-btn-buy"
                                   title="Catat pengeluaran kas pembelian barang ini"
@@ -895,7 +897,7 @@ export function Operations({
                                 >
                                   <Wallet size={12} />
                                   <span>+ Beli</span>
-                                </button>
+                                </Button>
                                 <Link
                                   className="table-btn-action"
                                   href={`/stok-opname?barang=${row.id}`}
@@ -927,7 +929,7 @@ export function Operations({
                         : `Gunakan tombol Tambah di atas untuk mengisi catatan ${book.title.toLowerCase()} pertama.`}
                     </p>
                     {all.length ? (
-                      <button
+                      <Button
                         type="button"
                         className="btn-clear-filters"
                         onClick={() => {
@@ -938,7 +940,7 @@ export function Operations({
                         }}
                       >
                         Hapus filter
-                      </button>
+                      </Button>
                     ) : null}
                   </div>
                 )}

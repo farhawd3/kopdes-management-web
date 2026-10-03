@@ -1,4 +1,6 @@
 'use client';
+import { DialogSurface } from '@/components/ui/Modal';
+import { Button } from '@/components/ui/Button';
 import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import {
@@ -163,7 +165,7 @@ export function ManagerActionModal({ open, onClose }: { open: boolean; onClose: 
   };
 
   return (
-    <dialog
+    <DialogSurface
       ref={dialogRef}
       className="manager-action-dialog"
       aria-labelledby="action-modal-title"
@@ -181,7 +183,7 @@ export function ManagerActionModal({ open, onClose }: { open: boolean; onClose: 
               Pilih tindakan cepat. Tekan angka <kbd>1</kbd> s.d. <kbd>9</kbd> untuk membuka formulir langsung.
             </p>
           </div>
-          <button
+          <Button
             type="button"
             className="action-modal-close"
             onClick={onClose}
@@ -189,7 +191,7 @@ export function ManagerActionModal({ open, onClose }: { open: boolean; onClose: 
             title="Tutup (Esc)"
           >
             <X size={20} strokeWidth={2.25} />
-          </button>
+          </Button>
         </header>
 
         <div className="action-modal-sections">
@@ -199,7 +201,7 @@ export function ManagerActionModal({ open, onClose }: { open: boolean; onClose: 
               {actions.slice(0, 5).map((item) => {
                 const { id, title, desc, href, Icon, keyShortcut } = item;
                 return (
-                  <button
+                  <Button
                     key={id}
                     type="button"
                     className="action-card-btn"
@@ -213,7 +215,7 @@ export function ManagerActionModal({ open, onClose }: { open: boolean; onClose: 
                       <small>{desc}</small>
                     </div>
                     <kbd className="action-key">{keyShortcut}</kbd>
-                  </button>
+                  </Button>
                 );
               })}
             </div>
@@ -225,7 +227,7 @@ export function ManagerActionModal({ open, onClose }: { open: boolean; onClose: 
               {actions.slice(5).map((item) => {
                 const { id, title, desc, href, Icon, keyShortcut } = item;
                 return (
-                  <button
+                  <Button
                     key={id}
                     type="button"
                     className="action-card-btn"
@@ -239,13 +241,14 @@ export function ManagerActionModal({ open, onClose }: { open: boolean; onClose: 
                       <small>{desc}</small>
                     </div>
                     <kbd className="action-key">{keyShortcut}</kbd>
-                  </button>
+                  </Button>
                 );
               })}
             </div>
           </div>
         </div>
       </div>
-    </dialog>
+    </DialogSurface>
   );
 }
+

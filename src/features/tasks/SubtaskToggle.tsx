@@ -1,4 +1,5 @@
 'use client';
+import { Button } from '@/components/ui/Button';
 import { Check } from 'lucide-react';
 import type { MouseEventHandler } from 'react';
 
@@ -16,7 +17,7 @@ export function SubtaskToggle({
   onClick: MouseEventHandler<HTMLButtonElement>;
 }) {
   return (
-    <button
+    <Button
       type="button"
       className="subtask-toggle"
       onClick={onClick}
@@ -36,6 +37,6 @@ export function SubtaskToggle({
           <Check size={14} strokeWidth={2.5} />
         ) : null}
       </span>
-    </button>
+    </Button>
   );
 }

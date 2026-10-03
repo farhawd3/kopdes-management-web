@@ -1,4 +1,6 @@
 'use client';
+import { Button } from '@/components/ui/Button';
+import { Textarea } from '@/components/ui/Input';
 import { useRef, useState } from 'react';
 import { FileText, Heading2, List, ListChecks, Quote, Pencil, Save, CheckSquare, Square } from 'lucide-react';
 import type { Item } from '../schemas';
@@ -65,7 +67,7 @@ export function ProjectNotes({
           Catatan proyek
         </h3>
         {!editing && (
-          <button
+          <Button
             onClick={() => {
               setText(String(project.data.notes || ''));
               setEditing(true);
@@ -73,32 +75,32 @@ export function ProjectNotes({
           >
             <Pencil size={15} />
             Tulis
-          </button>
+          </Button>
         )}
       </div>
       {editing ? (
         <>
           <div className="note-toolbar" aria-label="Format catatan">
-            <button title="Judul" onClick={() => insert('## Judul\n')}>
+            <Button title="Judul" onClick={() => insert('## Judul\n')}>
               <Heading2 size={17} />
               <span>Judul</span>
-            </button>
-            <button onClick={() => insert('- Butir catatan\n')}>
+            </Button>
+            <Button onClick={() => insert('- Butir catatan\n')}>
               <List size={17} />
               <span>Daftar</span>
-            </button>
-            <button onClick={() => insert('- [ ] Butir pemeriksaan\n')}>
+            </Button>
+            <Button onClick={() => insert('- [ ] Butir pemeriksaan\n')}>
               <ListChecks size={17} />
               <span>Checklist</span>
-            </button>
-            <button onClick={() => insert('> Catatan penting\n')}>
+            </Button>
+            <Button onClick={() => insert('> Catatan penting\n')}>
               <Quote size={17} />
               <span>Kutipan</span>
-            </button>
+            </Button>
           </div>
           <label>
             <span className="sr-only">Isi catatan proyek</span>
-            <textarea
+            <Textarea
               ref={input}
               rows={12}
               maxLength={5000}
@@ -113,7 +115,7 @@ export function ProjectNotes({
             <NoteContent text={text} />
           </details>
           <div className="form-actions">
-            <button
+            <Button
               disabled={busy}
               onClick={() => {
                 setEditing(false);
@@ -121,8 +123,8 @@ export function ProjectNotes({
               }}
             >
               Batal
-            </button>
-            <button
+            </Button>
+            <Button
               disabled={busy}
               className="primary"
               onClick={async () => {
@@ -144,7 +146,7 @@ export function ProjectNotes({
             >
               <Save size={16} />
               {busy ? 'Menyimpan…' : 'Simpan catatan'}
-            </button>
+            </Button>
           </div>
         </>
       ) : project.data.notes ? (

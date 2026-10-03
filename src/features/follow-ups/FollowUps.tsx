@@ -1,4 +1,5 @@
 'use client';
+import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import { WeeklyReview } from './WeeklyReview';
 import { PinnedRecords } from './PinnedRecords';
@@ -65,7 +66,7 @@ export function FollowUps({ data, compact = false }: { data: Workspace; compact?
             </div>
           </div>
           <div className="compact-bar-actions">
-            <button
+            <Button
               type="button"
               className="btn-toggle-compact-followup"
               onClick={() => setIsExpanded(!isExpanded)}
@@ -80,7 +81,7 @@ export function FollowUps({ data, compact = false }: { data: Workspace; compact?
                   <span>Rincian ({items.length})</span> <ChevronDown size={14} />
                 </>
               )}
-            </button>
+            </Button>
             <Link
               href="/tindak-lanjut"
               className="compact-bar-link"

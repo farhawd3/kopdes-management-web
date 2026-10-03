@@ -1,4 +1,6 @@
 'use client';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 import { useState } from 'react';
 import { z } from 'zod';
 import { usePreference } from '@/lib/usePreference';
@@ -36,15 +38,15 @@ export function SavedTaskViews({
       <div className="saved-view-list">
         {views.map((item) => (
           <span key={item.name}>
-            <button onClick={() => onApply(item)}>{item.name}</button>
-            <button
+            <Button onClick={() => onApply(item)}>{item.name}</Button>
+            <Button
               aria-label={`Hapus tampilan ${item.name}`}
               onClick={() =>
                 setStored(JSON.stringify(views.filter((view) => view.name !== item.name)))
               }
             >
               ×
-            </button>
+            </Button>
           </span>
         ))}
       </div>
@@ -64,14 +66,14 @@ export function SavedTaskViews({
           setMessage('Tampilan disimpan di browser ini.');
         }}
       >
-        <input
+        <Input
           aria-label="Nama tampilan"
           placeholder="Nama filter, misalnya Gerai minggu ini"
           maxLength={40}
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-        <button disabled={!name.trim()}>Simpan tampilan</button>
+        <Button disabled={!name.trim()}>Simpan tampilan</Button>
       </form>
       {message && <small role="status">{message}</small>}
     </details>

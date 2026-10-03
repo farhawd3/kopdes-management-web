@@ -1,4 +1,5 @@
 'use client';
+import { Button } from '@/components/ui/Button';
 import { useState } from 'react';
 import {
   Check,
@@ -177,7 +178,7 @@ export function DailyTasksView({
             }
           }}
         >
-          <button
+          <Button
             type="button"
             className={`task-round-check ${isDone ? 'checked' : ''}`}
             onClick={(e) => toggleComplete(task, e)}
@@ -185,7 +186,7 @@ export function DailyTasksView({
             aria-label={isDone ? 'Tandai belum selesai' : 'Tandai selesai'}
           >
             {isDone && <Check size={13} strokeWidth={2.8} />}
-          </button>
+          </Button>
 
           <span className="task-code-tag">
             {formatDisplayCode(String(task.data.code), 'work-items', task.id)}
@@ -218,7 +219,7 @@ export function DailyTasksView({
 
           {/* Quick Hover Actions */}
           <div className="task-row-actions">
-            <button
+            <Button
               type="button"
               className="action-icon-btn"
               title="Ubah / Buka detail"
@@ -229,8 +230,8 @@ export function DailyTasksView({
               }}
             >
               <Edit2 size={15} />
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               className="action-icon-btn delete-btn"
               title="Hapus Tugas"
@@ -238,7 +239,7 @@ export function DailyTasksView({
               onClick={(e) => deleteTask(task, e)}
             >
               <Trash2 size={15} />
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -285,7 +286,7 @@ export function DailyTasksView({
         <div className="daily-nav-left">
           {/* Day Jump Arrows */}
           <div className="daily-nav-arrows">
-            <button
+            <Button
               type="button"
               className="daily-nav-arrow-btn"
               onClick={() => setSelectedDate(addDays(selectedDate, -1))}
@@ -293,16 +294,16 @@ export function DailyTasksView({
               aria-label="Hari sebelumnya"
             >
               <ChevronLeft size={18} />
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               className={`daily-btn-today ${isToday ? 'is-active-today' : ''}`}
               onClick={() => setSelectedDate(currentDate)}
               title="Kembali ke Hari Ini"
             >
               Hari Ini
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               className="daily-nav-arrow-btn"
               onClick={() => setSelectedDate(addDays(selectedDate, 1))}
@@ -310,7 +311,7 @@ export function DailyTasksView({
               aria-label="Hari berikutnya"
             >
               <ChevronRight size={18} />
-            </button>
+            </Button>
           </div>
 
           {/* 7-Day Week Strip */}
@@ -321,7 +322,7 @@ export function DailyTasksView({
                 (t) => t.data.status !== 'selesai' && t.data.status !== 'dibatalkan',
               );
               return (
-                <button
+                <Button
                   key={date}
                   type="button"
                   role="tab"
@@ -343,7 +344,7 @@ export function DailyTasksView({
                       <span className="strip-empty-dot" />
                     )}
                   </span>
-                </button>
+                </Button>
               );
             })}
           </div>
@@ -352,25 +353,25 @@ export function DailyTasksView({
         {/* View Switcher & Quick Add Button */}
         <div className="daily-nav-right">
           <div className="daily-view-mode-tabs" role="group" aria-label="Mode tampilan harian">
-            <button
+            <Button
               type="button"
               className={`btn-mode-tab ${viewMode === 'focused' ? 'is-active' : ''}`}
               onClick={() => setViewMode('focused')}
               title="Tampilkan tugas satu hari secara terfokus"
             >
               Fokus Hari
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               className={`btn-mode-tab ${viewMode === 'all-week' ? 'is-active' : ''}`}
               onClick={() => setViewMode('all-week')}
               title="Tampilkan seluruh hari dalam pekan secara terbuka"
             >
               Semua Pekan
-            </button>
+            </Button>
           </div>
 
-          <button
+          <Button
             type="button"
             className="btn-add-task-day-primary"
             onClick={() => onCreateTask(selectedDate)}
@@ -378,7 +379,7 @@ export function DailyTasksView({
           >
             <Plus size={16} />
             <span>Tambah Tugas</span>
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -429,14 +430,14 @@ export function DailyTasksView({
                   <h4>Tidak Ada Tugas</h4>
                   <p>Tidak ada jadwal pekerjaan untuk hari {formatFullDayDate(selectedDate)}.</p>
                 </div>
-                <button
+                <Button
                   type="button"
                   className="btn-create-task-empty"
                   onClick={() => onCreateTask(selectedDate)}
                 >
                   <Plus size={16} />
                   <span>Buat Tugas Hari Ini</span>
-                </button>
+                </Button>
               </div>
             ) : (
               <div className="daily-task-items-list">
@@ -462,14 +463,14 @@ export function DailyTasksView({
                 <div className="day-count-badge">
                   <span>{items.length.toString().padStart(2, '0')}</span>
                 </div>
-                <button
+                <Button
                   type="button"
                   className="btn-quick-add-day"
                   title={`Tambah tugas untuk ${dayName}`}
                   onClick={() => onCreateTask(date)}
                 >
                   <Plus size={16} />
-                </button>
+                </Button>
               </header>
 
               <div className="daily-task-items-list">

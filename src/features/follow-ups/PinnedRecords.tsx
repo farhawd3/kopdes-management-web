@@ -1,4 +1,5 @@
 'use client';
+import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import { useState } from 'react';
 import { Pin, X } from 'lucide-react';
@@ -68,9 +69,9 @@ export function PinnedRecords({ data }: { data: Workspace }) {
             })),
           ]}
         />
-        <button onClick={addPin} disabled={!selection || pins.length >= 50}>
+        <Button onClick={addPin} disabled={!selection || pins.length >= 50}>
           <Pin size={16} /> Sematkan
-        </button>
+        </Button>
       </div>
       <div className="pinned-list">
         {pins.map((pin) => {
@@ -87,7 +88,7 @@ export function PinnedRecords({ data }: { data: Workspace }) {
                   <small>{catalog[pin.entity].title}</small>Catatan belum dimuat atau sudah dihapus.
                 </span>
               )}
-              <button
+              <Button
                 aria-label={`Hapus sematan ${record ? record.row.data.title : catalog[pin.entity].title}`}
                 onClick={() =>
                   setPreference(
@@ -98,7 +99,7 @@ export function PinnedRecords({ data }: { data: Workspace }) {
                 }
               >
                 <X size={16} />
-              </button>
+              </Button>
             </div>
           );
         })}

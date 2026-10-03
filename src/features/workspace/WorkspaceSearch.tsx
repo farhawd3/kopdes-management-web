@@ -1,4 +1,6 @@
 'use client';
+import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
 
 import Link from 'next/link';
 import { useState } from 'react';
@@ -37,7 +39,7 @@ export function WorkspaceSearch({
     <div className="workspace-search">
       <label className="workspace-search-field">
         <Search size={20} aria-hidden="true" />
-        <input
+        <Input
           autoFocus
           aria-label="Cari halaman atau isi catatan"
           type="search"
@@ -48,14 +50,14 @@ export function WorkspaceSearch({
       </label>
       <div className="workspace-search-scopes" role="group" aria-label="Jenis hasil pencarian">
         {scopes.map(([value, label]) => (
-          <button
+          <Button
             key={value}
             type="button"
             aria-pressed={scope === value}
             onClick={() => setScope(value)}
           >
             {label}
-          </button>
+          </Button>
         ))}
       </div>
       <p className="workspace-search-hint">

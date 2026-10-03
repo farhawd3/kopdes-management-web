@@ -8,15 +8,15 @@
 body {
   background: var(--canvas);
 }
-button,
+button:not(.ui-btn),
 .button,
 .primary,
-input,
+input:not(.ui-input),
 select,
-textarea {
+textarea:not(.ui-input) {
   border-radius: 10px;
 }
-button,
+button:not(.ui-btn),
 .button,
 .primary {
   transition:
@@ -51,7 +51,7 @@ button,
   background: color-mix(in srgb, var(--surface) 85%, transparent);
   height: 68px;
 }
-.topbar button,
+.topbar button:not(.ui-btn),
 .topbar select {
   border-color: transparent;
   background: transparent;
@@ -352,7 +352,7 @@ button,
 .database-views {
   gap: 10px;
 }
-.database-views button[aria-pressed='true'] {
+.database-views button:not(.ui-btn)[aria-pressed='true'] {
   background: var(--brand-soft);
   border-radius: 8px 8px 0 0;
 }
@@ -364,7 +364,7 @@ button,
 .filters label {
   font-size: 11px;
 }
-.filters input,
+.filters input:not(.ui-input),
 .filters select {
   font-size: var(--control-text-size);
 }
@@ -392,7 +392,7 @@ button,
 .record .section-head h3 {
   font-size: var(--card-title-size);
 }
-.record .actions button {
+.record .actions button:not(.ui-btn) {
   font-size: 12px;
 }
 .record .record-text {
@@ -446,7 +446,7 @@ button,
   width: fit-content;
   max-width: 100%;
 }
-.tabs button {
+.tabs button:not(.ui-btn) {
   border: 0;
   background: transparent;
   white-space: nowrap;
@@ -485,11 +485,11 @@ button,
   flex-wrap: wrap;
   margin-bottom: 14px;
 }
-.note-toolbar button {
+.note-toolbar button:not(.ui-btn) {
   font-size: 11px;
   padding: 8px 10px;
 }
-.note-page textarea {
+.note-page textarea:not(.ui-input) {
   border: 1px dashed var(--line);
   background: var(--canvas);
   line-height: 1.9;
@@ -561,16 +561,16 @@ button,
   min-width: 110px;
   flex: 1;
 }
-.timeline-toolbar input,
+.timeline-toolbar input:not(.ui-input),
 .timeline-toolbar select,
-.timeline-toolbar button {
+.timeline-toolbar button:not(.ui-btn) {
   font-size: var(--control-text-size);
 }
 .timeline-toolbar .actions {
   flex-wrap: nowrap;
   gap: 3px;
 }
-.timeline-toolbar .actions button {
+.timeline-toolbar .actions button:not(.ui-btn) {
   padding: 10px;
 }
 .timeline-legend {
@@ -837,7 +837,7 @@ button,
     gap: 0;
     overflow-x: auto;
   }
-  .database-views button {
+  .database-views button:not(.ui-btn) {
     gap: 5px;
     white-space: nowrap;
     font-size: 11px;
@@ -872,14 +872,14 @@ button,
     gap: 8px;
     margin-top: 18px;
   }
-  .timeline-mobile-list button {
+  .timeline-mobile-list button:not(.ui-btn) {
     justify-content: flex-start;
     text-align: left;
     font-weight: 500;
     gap: 10px;
     padding: 14px;
   }
-  .timeline-mobile-list button > span:nth-child(2) {
+  .timeline-mobile-list button:not(.ui-btn) > span:nth-child(2) {
     flex: 1;
     min-width: 0;
   }
@@ -924,12 +924,9 @@ button,
   .note-toolbar span {
     display: none;
   }
-  .bottom-nav {
-    box-shadow: 0 -4px 20px #211b3310;
-  }
 }
 @media (prefers-reduced-motion: reduce) {
-  button,
+  button:not(.ui-btn),
   .button,
   .primary {
     transition: none;
@@ -952,12 +949,12 @@ button,
   flex-wrap: wrap;
   margin: 0 0 24px;
 }
-.project-status-tabs button {
+.project-status-tabs button:not(.ui-btn) {
   border-color: transparent;
   background: transparent;
   font-size: 12px;
 }
-.project-status-tabs button[aria-pressed='true'] {
+.project-status-tabs button:not(.ui-btn)[aria-pressed='true'] {
   background: var(--surface);
   border-color: var(--line);
   box-shadow: var(--shadow);
@@ -971,9 +968,9 @@ button,
 }
 /* Form choices retain browser keyboard and touch behavior. */
 select:not([multiple]),
-input[type='date'],
-input[type='month'],
-input[type='time'] {
+input:not(.ui-input)[type='date'],
+input:not(.ui-input)[type='month'],
+input:not(.ui-input)[type='time'] {
   min-height: 44px;
   border: 1px solid color-mix(in srgb, var(--violet) 24%, var(--line));
   background-color: var(--surface);
@@ -1075,7 +1072,7 @@ select:not([multiple]):hover {
   display: flex;
   gap: 6px;
 }
-.calendar-controls button {
+.calendar-controls button:not(.ui-btn) {
   min-width: 44px;
   min-height: 44px;
   display: inline-flex;
@@ -1179,7 +1176,7 @@ select:not([multiple]):hover {
     max-width: none;
     min-width: 0;
   }
-  .calendar-toolbar .calendar-month input {
+  .calendar-toolbar .calendar-month input:not(.ui-input) {
     width: 100%;
     min-width: 0;
   }
@@ -1329,7 +1326,7 @@ select:not([multiple]):hover {
 .studio-shell .topbar .actions {
   gap: 6px;
 }
-.studio-shell .topbar button {
+.studio-shell .topbar button:not(.ui-btn) {
   min-width: 44px;
   color: var(--ink-muted);
 }
@@ -1441,11 +1438,11 @@ select:not([multiple]):hover {
   gap: 6px;
   padding-bottom: 12px;
 }
-.project-status-tabs button {
+.project-status-tabs button:not(.ui-btn) {
   border: 0;
   background: transparent;
 }
-.project-status-tabs button[aria-pressed='true'] {
+.project-status-tabs button:not(.ui-btn)[aria-pressed='true'] {
   color: var(--brand);
   background: var(--brand-soft);
   box-shadow: none;
@@ -1466,7 +1463,7 @@ select:not([multiple]):hover {
   padding: 0 0 12px;
   border-radius: 0;
 }
-.database-views button[aria-pressed='true'] {
+.database-views button:not(.ui-btn)[aria-pressed='true'] {
   background: var(--brand-soft);
   color: var(--brand);
   box-shadow: none;
@@ -1714,27 +1711,6 @@ select:not([multiple]):hover {
   background: var(--brand-soft);
   color: var(--brand);
 }
-.date-field {
-  min-width: 0;
-}
-.date-field > label {
-  margin-bottom: 6px;
-}
-.date-input {
-  display: flex;
-  gap: 6px;
-}
-.date-input input {
-  min-width: 0;
-  flex: 1;
-}
-.date-input > button {
-  width: 44px;
-  flex-shrink: 0;
-  padding: 8px;
-  color: var(--brand);
-  background: var(--brand-soft);
-}
 .date-picker-head {
   display: flex;
   align-items: center;
@@ -1744,7 +1720,7 @@ select:not([multiple]):hover {
 .date-picker-head strong {
   font-size: 13px;
 }
-.date-picker-head button {
+.date-picker-head button:not(.ui-btn) {
   min-width: 44px;
   padding: 8px;
   border: 0;
@@ -1761,7 +1737,7 @@ select:not([multiple]):hover {
   font-size: 11px;
   margin: 8px 0;
 }
-.date-picker-days button {
+.date-picker-days button:not(.ui-btn) {
   padding: 4px;
   min-height: 44px;
   border: 0;
@@ -1769,14 +1745,14 @@ select:not([multiple]):hover {
   border-radius: 9px;
   min-width: 0;
 }
-.date-picker-days button[data-outside='true'] {
+.date-picker-days button:not(.ui-btn)[data-outside='true'] {
   color: var(--ink-muted);
   background: var(--canvas);
 }
-.date-picker-days button[aria-current='date'] {
+.date-picker-days button:not(.ui-btn)[aria-current='date'] {
   box-shadow: inset 0 0 0 1px var(--brand);
 }
-.date-picker-days button[aria-pressed='true'] {
+.date-picker-days button:not(.ui-btn)[aria-pressed='true'] {
   background: var(--brand);
   color: var(--brand-contrast);
 }
@@ -1787,7 +1763,7 @@ select:not([multiple]):hover {
   border-top: 1px solid var(--line);
   padding-top: 8px;
 }
-.date-picker-footer button {
+.date-picker-footer button:not(.ui-btn) {
   padding: 6px;
   border: 0;
   font-size: 12px;
@@ -1799,9 +1775,6 @@ select:not([multiple]):hover {
   }
   .studio-shell .sidebar nav a span {
     display: inline;
-  }
-  .studio-shell .bottom-nav {
-    display: none;
   }
 }
 @media (max-width: 1200px) {
@@ -1836,9 +1809,6 @@ select:not([multiple]):hover {
   }
   .studio-shell .mobile-menu {
     display: inline-flex;
-  }
-  .studio-shell .bottom-nav {
-    display: flex;
   }
   .studio-shell .menu-shade {
     z-index: 79;
@@ -1932,7 +1902,7 @@ select:not([multiple]):hover {
 .subtask-list .check {
   min-height: 44px;
 }
-.subtask-list input:checked + span {
+.subtask-list input:not(.ui-input):checked + span {
   text-decoration: line-through;
   color: var(--ink-muted);
 }
@@ -2005,18 +1975,12 @@ select:not([multiple]):hover {
 .form-grid {
   align-items: start;
 }
-.date-field {
-  position: relative;
-}
 @media (max-width: 600px) {
-  .date-picker-days button {
+  .date-picker-days button:not(.ui-btn) {
     min-width: 44px;
   }
 }
 @media (min-width: 640px) and (max-width: 1023px) {
-  .studio-shell .bottom-nav {
-    display: none;
-  }
 }
 /* Notebook presentation: document rows, restrained surfaces, direct actions. */
 :root {
@@ -2203,7 +2167,7 @@ select:not([multiple]):hover {
   border-bottom: 1px solid var(--line);
   max-width: 280px;
 }
-.notebook-search input {
+.notebook-search input:not(.ui-input) {
   border: 0;
   background: transparent;
   padding: 8px 0;
@@ -2287,14 +2251,14 @@ select:not([multiple]):hover {
   color: var(--ink-muted);
   font-variant-numeric: tabular-nums;
 }
-.notebook-row > button {
+.notebook-row > button:not(.ui-btn) {
   padding: 8px;
   width: 44px;
   background: transparent;
   border: 0;
   color: var(--ink-muted);
 }
-.notebook-row > button:hover {
+.notebook-row > button:not(.ui-btn):hover {
   background: var(--brand-soft);
   color: var(--brand);
 }
@@ -2361,7 +2325,7 @@ select:not([multiple]):hover {
   color: var(--brand);
   flex-shrink: 0;
 }
-.inline-task input {
+.inline-task input:not(.ui-input) {
   flex: 1;
   min-width: 0;
   border: 0;
@@ -2372,7 +2336,7 @@ select:not([multiple]):hover {
   white-space: nowrap;
   font-size: 11px;
 }
-.inline-task button {
+.inline-task button:not(.ui-btn) {
   border: 0;
   background: var(--brand-soft);
   color: var(--brand);
@@ -2935,7 +2899,7 @@ body {
 }
 .database-views::-webkit-scrollbar { display: none; }
 
-.database-views button {
+.database-views button:not(.ui-btn) {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -2953,11 +2917,11 @@ body {
   transition: background 0.12s ease, color 0.12s ease;
   box-shadow: none;
 }
-.database-views button:hover {
+.database-views button:not(.ui-btn):hover {
   background: var(--surface);
   color: var(--ink);
 }
-.database-views button[aria-pressed='true'] {
+.database-views button:not(.ui-btn)[aria-pressed='true'] {
   background: var(--surface);
   color: var(--ink-heading);
   font-weight: 650;
@@ -3010,7 +2974,7 @@ body {
   transform: translateY(-1px);
 }
 
-button.button,
+button:not(.ui-btn).button,
 .button {
   border-radius: 10px;
   background: var(--pill-bg);
@@ -3018,7 +2982,7 @@ button.button,
   color: var(--ink);
 }
 
-button.button:hover,
+button:not(.ui-btn).button:hover,
 .button:hover {
   background: var(--pill-hover);
 }
@@ -4195,7 +4159,7 @@ tr:last-child td {
   min-width: 260px;
 }
 
-.notebook-search input {
+.notebook-search input:not(.ui-input) {
   border: 0;
   background: transparent;
   font-size: var(--control-text-size);
@@ -4346,7 +4310,7 @@ tr:last-child td {
   overflow-x: auto;
 }
 
-.project-status-tabs button {
+.project-status-tabs button:not(.ui-btn) {
   padding: 7px 18px;
   border-radius: var(--radius-pill);
   border: 0;
@@ -4361,7 +4325,7 @@ tr:last-child td {
   transition: all 0.15s ease;
 }
 
-.project-status-tabs button[aria-pressed='true'] {
+.project-status-tabs button:not(.ui-btn)[aria-pressed='true'] {
   background: var(--brand);
   color: var(--brand-contrast);
   box-shadow: 0 2px 8px rgba(213, 249, 53, 0.3);
@@ -4994,7 +4958,7 @@ dialog.editor .form-grid {
   margin-left: auto !important;
 }
 /* All icon buttons: rounded square, consistent */
-.manager-actions button:not(.quick-action-hub-btn),
+.manager-actions button:not(.ui-btn):not(.quick-action-hub-btn),
 .manager-actions a:not(.quick-action-hub-btn) {
   display: grid;
   place-items: center;
@@ -5008,7 +4972,7 @@ dialog.editor .form-grid {
   cursor: pointer;
   transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
 }
-.manager-actions button:not(.quick-action-hub-btn):hover,
+.manager-actions button:not(.ui-btn):not(.quick-action-hub-btn):hover,
 .manager-actions a:not(.quick-action-hub-btn):hover {
   background: var(--canvas);
   border-color: var(--line-strong);
@@ -5343,22 +5307,6 @@ dialog.editor .form-grid {
 }
 
 /* Date Field Clean & No Double Calendar Icon */
-.date-input {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-.date-input input[type='date'] {
-  cursor: pointer;
-}
-.date-input input[type='date']::-webkit-calendar-picker-indicator {
-  display: none !important;
-  -webkit-appearance: none !important;
-  opacity: 0 !important;
-  width: 0 !important;
-  height: 0 !important;
-  pointer-events: none !important;
-}
 
 /* Task Calendar Day Cell & Symmetrical Header */
 .calendar-days > section.calendar-day-cell {
@@ -5756,7 +5704,6 @@ dialog.editor .form-grid {
   box-sizing: border-box;
   min-width: 0;
 }
-.manager-dock,
 .close-navigation,
 .manager-shade {
   display: none;
@@ -5941,7 +5888,7 @@ dialog.editor .form-grid {
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.03) !important;
 }
 
-.focus-filters button {
+.focus-filters button:not(.ui-btn) {
   flex: 1 !important;
   height: 38px !important;
   min-height: 38px !important;
@@ -5961,12 +5908,12 @@ dialog.editor .form-grid {
   transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
-.focus-filters button:hover:not([aria-pressed='true']) {
+.focus-filters button:not(.ui-btn):hover:not([aria-pressed='true']) {
   background: color-mix(in srgb, var(--surface) 80%, transparent) !important;
   color: var(--ink-heading) !important;
 }
 
-.focus-filters button[aria-pressed='true'] {
+.focus-filters button:not(.ui-btn)[aria-pressed='true'] {
   background: var(--surface) !important;
   color: var(--ink-heading) !important;
   font-weight: 800 !important;
@@ -5989,11 +5936,11 @@ dialog.editor .form-grid {
   transition: all 0.18s ease !important;
 }
 
-.focus-filters button[aria-pressed='true'] .focus-filter-count {
+.focus-filters button:not(.ui-btn)[aria-pressed='true'] .focus-filter-count {
   background: var(--brand-soft) !important;
   color: var(--brand-contrast, #065f46) !important;
 }
-.focus-filters button[aria-pressed='true'] span {
+.focus-filters button:not(.ui-btn)[aria-pressed='true'] span {
   background: var(--brand);
   color: var(--brand-contrast);
 }
@@ -6323,9 +6270,9 @@ dialog.editor .form-grid {
 }
 .primary,
 .button,
-button,
+button:not(.ui-btn),
 select,
-input {
+input:not(.ui-input) {
   border-radius: 12px;
 }
 select {
@@ -6390,9 +6337,9 @@ select option {
   overflow: auto;
   scrollbar-width: none;
 }
-.tabs button,
-.database-views button,
-.project-status-tabs button,
+.tabs button:not(.ui-btn),
+.database-views button:not(.ui-btn),
+.project-status-tabs button:not(.ui-btn),
 .recording-tabs a {
   border-radius: 9px;
   min-height: 32px;
@@ -6407,16 +6354,16 @@ select option {
   cursor: pointer;
   transition: background 0.12s ease, color 0.12s ease;
 }
-.tabs button:hover,
-.database-views button:hover,
-.project-status-tabs button:hover,
+.tabs button:not(.ui-btn):hover,
+.database-views button:not(.ui-btn):hover,
+.project-status-tabs button:not(.ui-btn):hover,
 .recording-tabs a:hover {
   background: var(--surface);
   color: var(--ink);
 }
-.tabs button[aria-selected='true'],
-.database-views button[aria-pressed='true'],
-.project-status-tabs button[aria-pressed='true'],
+.tabs button:not(.ui-btn)[aria-selected='true'],
+.database-views button:not(.ui-btn)[aria-pressed='true'],
+.project-status-tabs button:not(.ui-btn)[aria-pressed='true'],
 .recording-tabs a[aria-current='page'] {
   background: var(--surface);
   color: var(--ink-heading);
@@ -6446,7 +6393,7 @@ select option {
   border-radius: 12px;
   color: var(--ink);
 }
-.calendar-modes button[aria-pressed='true'] {
+.calendar-modes button:not(.ui-btn)[aria-pressed='true'] {
   background: var(--brand);
   color: var(--brand-contrast);
 }
@@ -6486,7 +6433,7 @@ select option {
     margin-left: auto;
     gap: 6px;
   }
-  .manager-actions button:not(.quick-action-hub-btn),
+  .manager-actions button:not(.ui-btn):not(.quick-action-hub-btn),
   .manager-actions a:not(.quick-action-hub-btn) {
     width: 34px !important;
     height: 34px !important;
@@ -6527,56 +6474,6 @@ select option {
     margin: 0;
     padding: 22px 16px calc(135px + env(safe-area-inset-bottom, 0px));
     width: 100%;
-  }
-  .manager-dock {
-    display: flex;
-    position: fixed;
-    bottom: max(10px, env(safe-area-inset-bottom));
-    left: 50%;
-    transform: translateX(-50%);
-    width: min(440px, calc(100vw - 16px));
-    max-width: calc(100vw - 16px);
-    padding: 4px 10px calc(4px + env(safe-area-inset-bottom, 0px));
-    border-radius: 28px;
-    background: color-mix(in srgb, var(--surface) 92%, var(--canvas));
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid color-mix(in srgb, var(--border) 75%, transparent);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
-    z-index: 999;
-    align-items: center;
-    justify-content: space-around;
-    box-sizing: border-box;
-  }
-  .manager-dock a,
-  .manager-dock button:not(.dock-center-action) {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 3px;
-    min-width: 48px;
-    height: 48px;
-    padding: 0 4px;
-    border: 0;
-    border-radius: 12px;
-    background: transparent;
-    color: var(--muted);
-    font-size: 10.5px;
-    font-weight: 600;
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.15s ease;
-  }
-  .manager-dock a:hover,
-  .manager-dock button:not(.dock-center-action):hover {
-    color: var(--ink);
-    background: color-mix(in srgb, var(--brand-soft) 25%, transparent);
-  }
-  .manager-dock [aria-current='page'] {
-    background: color-mix(in srgb, var(--brand-soft) 60%, transparent);
-    color: var(--brand-strong, var(--ink));
-    font-weight: 700;
   }
   .home-grid {
     display: flex;
@@ -6770,7 +6667,7 @@ select option {
   .calendar-modes {
     flex: 1;
   }
-  .calendar-modes button {
+  .calendar-modes button:not(.ui-btn) {
     padding: 8px 12px;
   }
   .calendar-month {
@@ -6886,7 +6783,7 @@ select option {
   scrollbar-width: thin;
   scrollbar-color: var(--line) transparent;
 }
-.manager-main :is(input, select, textarea, button, a):focus-visible {
+.manager-main :is(input:not(.ui-input), select, textarea:not(.ui-input), button:not(.ui-btn), a):focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 3px;
 }
@@ -6980,7 +6877,7 @@ select option {
   gap: 4px;
   z-index: 60;
 }
-.view-extra-actions .view-extra-menu button {
+.view-extra-actions .view-extra-menu button:not(.ui-btn) {
   width: 100%;
   display: flex;
   align-items: center;
@@ -6997,7 +6894,7 @@ select option {
   white-space: nowrap;
   transition: background 0.12s ease;
 }
-.view-extra-actions .view-extra-menu button:hover {
+.view-extra-actions .view-extra-menu button:not(.ui-btn):hover {
   background: var(--canvas);
   color: var(--ink-heading);
 }
@@ -7048,7 +6945,7 @@ select option {
   .task-database .database-views {
     margin: 0 -4px 10px;
   }
-  .task-database .database-views button {
+  .task-database .database-views button:not(.ui-btn) {
     padding: 9px 12px;
     font-size: 12px;
   }
@@ -7086,13 +6983,13 @@ select option {
   .calendar-controls {
     gap: 3px;
   }
-  .calendar-controls button {
+  .calendar-controls button:not(.ui-btn) {
     padding: 8px;
   }
   .calendar-modes {
     justify-content: flex-end;
   }
-  .calendar-modes button {
+  .calendar-modes button:not(.ui-btn) {
     padding: 8px;
     font-size: 12px;
   }
@@ -7174,13 +7071,13 @@ dialog.task-detail-drawer::backdrop {
     flex: 1 1 100%;
     justify-content: center;
   }
-  .manager-main .calendar-modes button {
+  .manager-main .calendar-modes button:not(.ui-btn) {
     flex: 1;
     border: 0;
     border-radius: 28px;
     background: var(--canvas);
   }
-  .manager-main .calendar-modes button[aria-pressed='true'] {
+  .manager-main .calendar-modes button:not(.ui-btn)[aria-pressed='true'] {
     background: var(--brand);
   }
   .manager-main .calendar-controls {
@@ -7191,7 +7088,7 @@ dialog.task-detail-drawer::backdrop {
     gap: 4px;
     overflow: visible;
   }
-  .manager-main .database-views > button {
+  .manager-main .database-views > button:not(.ui-btn) {
     flex: 1 1 0;
     min-width: 44px;
     flex-direction: column;
@@ -8244,9 +8141,9 @@ dialog.task-detail-drawer::backdrop {
 .textarea-input,
 .select-input,
 .field-input,
-.sprint-form input[type="text"],
-.sprint-form input[type="date"],
-.sprint-form input[type="time"] {
+.sprint-form input:not(.ui-input)[type="text"],
+.sprint-form input:not(.ui-input)[type="date"],
+.sprint-form input:not(.ui-input)[type="time"] {
   width: 100%;
   height: var(--control-height-md);
   padding: var(--control-padding-md);
@@ -8261,7 +8158,7 @@ dialog.task-detail-drawer::backdrop {
 }
 
 .textarea-input,
-textarea.text-input {
+textarea:not(.ui-input).text-input {
   height: auto;
   min-height: 80px;
   padding: 10px 14px;
@@ -8274,9 +8171,9 @@ textarea.text-input {
 .text-input:focus,
 .textarea-input:focus,
 .select-input:focus,
-.sprint-form input[type="text"]:focus,
-.sprint-form input[type="date"]:focus,
-.sprint-form input[type="time"]:focus {
+.sprint-form input:not(.ui-input)[type="text"]:focus,
+.sprint-form input:not(.ui-input)[type="date"]:focus,
+.sprint-form input:not(.ui-input)[type="time"]:focus {
   outline: none;
   background: var(--control-bg);
   border-color: var(--brand);
@@ -8507,7 +8404,7 @@ textarea.text-input {
   font-size: 14px;
 }
 
-.year-stepper button {
+.year-stepper button:not(.ui-btn) {
   width: 30px;
   height: 30px;
   border-radius: 50%;
@@ -8536,7 +8433,7 @@ textarea.text-input {
 }
 
 .month-tab,
-.month-list button {
+.month-list button:not(.ui-btn) {
   width: 100%;
   display: flex;
   align-items: center;
@@ -8554,13 +8451,13 @@ textarea.text-input {
 }
 
 .month-tab:hover,
-.month-list button:hover {
+.month-list button:not(.ui-btn):hover {
   background: var(--canvas);
   color: var(--ink-heading);
 }
 
 .month-tab.active,
-.month-list button.active {
+.month-list button:not(.ui-btn).active {
   background: var(--brand-soft);
   color: var(--ink-heading);
   font-weight: 750;
@@ -8633,7 +8530,7 @@ textarea.text-input {
   gap: 6px;
 }
 
-.month-nav-btns button {
+.month-nav-btns button:not(.ui-btn) {
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -8815,7 +8712,7 @@ textarea.text-input {
   color: var(--ink-heading);
 }
 
-.date-picker-head button {
+.date-picker-head button:not(.ui-btn) {
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -8829,7 +8726,7 @@ textarea.text-input {
   transition: all 0.15s ease;
 }
 
-.date-picker-head button:hover {
+.date-picker-head button:not(.ui-btn):hover {
   background: var(--surface-subtle);
   border-color: var(--line-strong);
 }
@@ -8841,7 +8738,7 @@ textarea.text-input {
   margin: 8px 0;
 }
 
-.date-picker-days button {
+.date-picker-days button:not(.ui-btn) {
   font-size: 12.5px;
   font-weight: 600;
   border-radius: 8px;
@@ -8855,24 +8752,24 @@ textarea.text-input {
   justify-content: center;
 }
 
-.date-picker-days button:hover {
+.date-picker-days button:not(.ui-btn):hover {
   background: var(--canvas);
   border-color: var(--line);
 }
 
-.date-picker-days button[data-outside='true'] {
+.date-picker-days button:not(.ui-btn)[data-outside='true'] {
   color: var(--ink-subtle);
   opacity: 0.35;
 }
 
-.date-picker-days button[aria-current='date'] {
+.date-picker-days button:not(.ui-btn)[aria-current='date'] {
   background: var(--brand-soft);
   color: var(--ink-heading);
   border-color: var(--brand);
   font-weight: 800;
 }
 
-.date-picker-days button[aria-pressed='true'] {
+.date-picker-days button:not(.ui-btn)[aria-pressed='true'] {
   background: var(--brand);
   color: var(--brand-contrast);
   font-weight: 800;
@@ -8889,7 +8786,7 @@ textarea.text-input {
   gap: 8px;
 }
 
-.date-picker-footer button {
+.date-picker-footer button:not(.ui-btn) {
   padding: 6px 12px;
   border-radius: var(--radius-pill);
   background: var(--canvas);
@@ -8901,7 +8798,7 @@ textarea.text-input {
   transition: all 0.15s ease;
 }
 
-.date-picker-footer button:hover {
+.date-picker-footer button:not(.ui-btn):hover {
   background: var(--surface-subtle);
   color: var(--ink-heading);
   border-color: var(--line-strong);
@@ -10402,7 +10299,7 @@ textarea.text-input {
   cursor: pointer;
 }
 
-button.task-round-check,
+button:not(.ui-btn).task-round-check,
 .task-round-check {
   width: 22px !important;
   height: 22px !important;
@@ -10428,7 +10325,7 @@ button.task-round-check,
   transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
-button.task-round-check:hover,
+button:not(.ui-btn).task-round-check:hover,
 .task-round-check:hover {
   border-color: var(--brand) !important;
   background: color-mix(in srgb, var(--brand) 14%, var(--surface)) !important;
@@ -10436,7 +10333,7 @@ button.task-round-check:hover,
   transform: scale(1.08) !important;
 }
 
-button.task-round-check.checked,
+button:not(.ui-btn).task-round-check.checked,
 .task-round-check.checked {
   background: var(--brand) !important;
   border-color: var(--brand) !important;
@@ -10445,7 +10342,7 @@ button.task-round-check.checked,
   animation: checkPop 0.24s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
-button.task-round-check::after,
+button:not(.ui-btn).task-round-check::after,
 .task-round-check::after {
   display: none !important;
   content: none !important;
@@ -10735,7 +10632,7 @@ button.task-round-check::after,
   flex-shrink: 0;
 }
 
-.quick-add-input-wrap input {
+.quick-add-input-wrap input:not(.ui-input) {
   width: 100%;
   border: none;
   background: transparent;
@@ -10746,7 +10643,7 @@ button.task-round-check::after,
   padding: 6px 0;
 }
 
-.quick-add-input-wrap input::placeholder {
+.quick-add-input-wrap input:not(.ui-input)::placeholder {
   color: var(--ink-subtle);
 }
 
@@ -12431,7 +12328,7 @@ button.task-round-check::after,
   gap: 5px;
 }
 
-.filters input,
+.filters input:not(.ui-input),
 .filters select {
   min-height: 42px;
   height: 42px;
@@ -12448,7 +12345,7 @@ button.task-round-check::after,
   box-sizing: border-box;
 }
 
-.filters input {
+.filters input:not(.ui-input) {
   padding: 9px 14px;
 }
 
@@ -12470,7 +12367,7 @@ button.task-round-check::after,
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
 }
 
-.filters input:focus,
+.filters input:not(.ui-input):focus,
 .filters select:focus {
   border-color: var(--brand);
   box-shadow: 0 0 0 3px var(--brand-soft);
@@ -12792,7 +12689,7 @@ button.task-round-check::after,
   flex-shrink: 0;
 }
 
-.manager-actions button:not(.quick-action-hub-btn),
+.manager-actions button:not(.ui-btn):not(.quick-action-hub-btn),
 .manager-actions a:not(.quick-action-hub-btn) {
   aspect-ratio: 1 / 1;
 }
@@ -13165,7 +13062,7 @@ button.task-round-check::after,
     transition: none !important;
   }
 }
-.today-task-card button.task-title-text { padding:0; border:0; background:transparent; text-align:left; min-height:44px; font-weight:600; }
+.today-task-card button:not(.ui-btn).task-title-text { padding:0; border:0; background:transparent; text-align:left; min-height:44px; font-weight:600; }
 /* Shared card rhythm and linked dashboard charts. */
 :is(.home-panel, .project-card, .record.card, .metric-card, .dash-stat-card, .book-card) {
   min-width: 0;
@@ -13188,9 +13085,9 @@ button.task-round-check::after,
 .dashboard-controls .custom-select-wrap { min-height:38px; min-width:200px; max-width:100%; }
 .dashboard-controls p { flex:1; min-width:180px; margin:0; font-size:12px; color:var(--ink-muted); line-height:1.4; }
 .dashboard-selection { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-block:12px; padding:8px 12px; border-radius:14px; background:var(--brand-soft); font-size:12px; }
-.dashboard-selection button { min-height:44px; }
-button.dash-bar-col { padding:4px 0; border:0; border-radius:12px; background:transparent; color:var(--ink); cursor:pointer; }
-button.dash-bar-col:hover, button.dash-bar-col[aria-pressed=true] { background:var(--brand-soft); }
+.dashboard-selection button:not(.ui-btn) { min-height:44px; }
+button:not(.ui-btn).dash-bar-col { padding:4px 0; border:0; border-radius:12px; background:transparent; color:var(--ink); cursor:pointer; }
+button:not(.ui-btn).dash-bar-col:hover, button:not(.ui-btn).dash-bar-col[aria-pressed=true] { background:var(--brand-soft); }
 /* ── Clean-Look Modern Dashboard Charts & Analytics ───────────────────────── */
 .dash-analytics-row {
   display: grid;
@@ -13332,7 +13229,7 @@ button.dash-bar-col:hover, button.dash-bar-col[aria-pressed=true] { background:v
   overflow-x: auto;
 }
 
-button.dash-bar-col {
+button:not(.ui-btn).dash-bar-col {
   flex: 1 0 42px;
   display: flex;
   flex-direction: column;
@@ -13347,13 +13244,13 @@ button.dash-bar-col {
   transition: all 0.15s ease;
 }
 
-button.dash-bar-col:hover {
+button:not(.ui-btn).dash-bar-col:hover {
   background: var(--surface-subtle);
   border-color: var(--line);
 }
 
-button.dash-bar-col[aria-pressed='true'],
-button.dash-bar-col.is-selected-bar {
+button:not(.ui-btn).dash-bar-col[aria-pressed='true'],
+button:not(.ui-btn).dash-bar-col.is-selected-bar {
   background: color-mix(in srgb, var(--brand) 16%, var(--surface));
   border-color: var(--brand);
 }
@@ -13503,7 +13400,7 @@ button.dash-bar-col.is-selected-bar {
   flex: 1 1 150px;
 }
 
-button.donut-legend-row {
+button:not(.ui-btn).donut-legend-row {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -13518,13 +13415,13 @@ button.donut-legend-row {
   transition: all 0.15s ease;
 }
 
-button.donut-legend-row:hover {
+button:not(.ui-btn).donut-legend-row:hover {
   background: var(--canvas);
   border-color: var(--line-strong);
   transform: translateX(2px);
 }
 
-button.donut-legend-row[aria-pressed='true'] {
+button:not(.ui-btn).donut-legend-row[aria-pressed='true'] {
   background: color-mix(in srgb, var(--brand) 16%, var(--surface));
   border-color: var(--brand);
 }
@@ -14332,36 +14229,6 @@ button.donut-legend-row[aria-pressed='true'] {
 }
 
 /* Mobile Center Action Dock Button */
-.dock-center-action {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  border: 0;
-  cursor: pointer;
-  color: var(--ink-muted);
-  font-size: 10.5px;
-  padding: 0;
-  position: relative;
-  top: -12px;
-}
-.dock-center-circle {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: var(--brand);
-  color: var(--brand-contrast);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-  margin-bottom: 2px;
-}
-.dock-center-action:active .dock-center-circle {
-  transform: scale(0.92);
-}
 
 /* Manager Action Modal Dialog */
 .manager-action-dialog {
@@ -15174,8 +15041,7 @@ button.donut-legend-row[aria-pressed='true'] {
   .no-print,
   nav,
   aside,
-  header.app-header,
-  .bottom-nav {
+  header.app-header {
     display: none !important;
   }
   .official-report-sheet {
@@ -15227,8 +15093,8 @@ button.donut-legend-row[aria-pressed='true'] {
 .sidebar-favorites a { display:flex; align-items:center; gap:10px; min-height:44px; border-radius:10px; padding:6px 10px; font-size:13px; color:var(--ink); }
 .sidebar-favorites a[aria-current=page] { background:var(--brand-soft); }
 .sidebar-favorites .sidebar-section-head-row { padding-left:10px; }
-.sidebar-favorites button { min-height:44px; min-width:44px; padding:8px; border:0; background:transparent; }
-.sidebar-favorites button[aria-pressed=true] svg { fill:var(--brand); }
+.sidebar-favorites button:not(.ui-btn) { min-height:44px; min-width:44px; padding:8px; border:0; background:transparent; }
+.sidebar-favorites button:not(.ui-btn)[aria-pressed=true] svg { fill:var(--brand); }
 .sidebar-favorites small { display:block; padding:8px; }
 .search-group-label { display:block; padding:14px 10px 6px; color:var(--ink-muted); font-size:11px; text-transform:uppercase; }
 .command-results a > span { display:grid; gap:4px; min-width:0; }
@@ -15253,19 +15119,19 @@ button.donut-legend-row[aria-pressed='true'] {
 .follow-up-filter { display:flex; align-items:center; flex-wrap:wrap; gap:12px; margin:20px 0; }
 .saved-views { margin:12px 0; border-top:1px solid var(--line); padding:12px 0; }
 .saved-views form { display:flex; flex-wrap:wrap; gap:8px; }
-.saved-views input { flex:1 1 200px; min-width:0; max-width:400px; }
+.saved-views input:not(.ui-input) { flex:1 1 200px; min-width:0; max-width:400px; }
 .saved-view-list { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px; }
 .saved-view-list > span { display:flex; border:1px solid var(--line); border-radius:12px; overflow:hidden; }
-.saved-view-list button { border:0; background:var(--brand-soft); min-height:44px; border-radius:0; }
+.saved-view-list button:not(.ui-btn) { border:0; background:var(--brand-soft); min-height:44px; border-radius:0; }
 .task-batch { margin:12px 0 20px; }
 .batch-panel { border:1px solid var(--line); padding:20px; border-radius:18px; background:var(--surface); margin-top:12px; }
 .batch-list { max-height:240px; overflow:auto; }
 .batch-list label { display:flex; align-items:center; gap:10px; padding:10px; min-height:44px; border-bottom:1px solid var(--line); }
-.batch-list input { width:18px; height:18px; flex-shrink:0; }
+.batch-list input:not(.ui-input) { width:18px; height:18px; flex-shrink:0; }
 .batch-fields { display:flex; gap:16px; flex-wrap:wrap; margin:18px 0; }
 .batch-fields label { display:grid; gap:8px; flex:1; min-width:160px; }
 .draft-notice { padding:14px; margin:12px 20px; background:var(--brand-soft); border:1px solid var(--line); border-radius:14px; }
-.draft-notice button { margin:4px; min-height:44px; }
+.draft-notice button:not(.ui-btn) { margin:4px; min-height:44px; }
 .draft-status { padding:8px 24px; margin:0; font-size:12px; color:var(--ink-muted); }
 .appearance-settings { display:grid; gap:16px; align-content:start; }
 .appearance-settings h2,.appearance-settings p { margin:0; }
@@ -15306,11 +15172,11 @@ button.donut-legend-row[aria-pressed='true'] {
   .follow-up-panel .section-head { flex-wrap:wrap; }
   .follow-up-panel .section-head h2 { font-size:var(--section-title-size); }
   .saved-views form { display:grid; grid-template-columns:1fr; }
-  .saved-views input { width:100%; }
+  .saved-views input:not(.ui-input) { width:100%; }
   .editor { width:100%; max-width:100%; max-height:100dvh; height:100dvh; margin:0; border-radius:0; }
   .editor-form-actions { position:sticky; bottom:0; background:var(--surface); padding-bottom:max(16px,env(safe-area-inset-bottom)); z-index:3; }
 }
-:root[data-motion=minimal] :is(.manager-shell,.editor) *, :root[data-motion=minimal] :is(.manager-shell,.editor) *::before { animation:none!important; transition:none!important; scroll-behavior:auto!important; }
+:root[data-motion=minimal] :is(.manager-shell,.editor) *,:root[data-motion=minimal] :is(.manager-shell,.editor) *::before { animation:none!important; transition:none!important; scroll-behavior:auto!important; }
 @media (prefers-reduced-motion:reduce) { .manager-shell *, .editor * { animation:none!important; transition:none!important; scroll-behavior:auto!important; } }
 .manager-actions .quick-action-hub-btn { width:36px; min-width:36px; height:36px; display:grid; place-items:center; padding:0; background:var(--brand); color:var(--brand-text,#1a1a1a); border:0; border-radius:10px; box-shadow:none; }
 .manager-actions .quick-action-hub-btn:hover { filter:brightness(0.92); box-shadow:none; }
@@ -15850,9 +15716,9 @@ dialog::backdrop {
 }
 
 /* Modal Form Inputs: Consistent, Clear 1.5px Border & Focus State */
-dialog.editor input:not([type="checkbox"]):not([type="radio"]),
+dialog.editor input:not(.ui-input):not([type="checkbox"]):not([type="radio"]),
 dialog.editor select,
-dialog.editor textarea,
+dialog.editor textarea:not(.ui-input),
 .field-input,
 .field-select,
 .field-textarea {
@@ -15864,18 +15730,18 @@ dialog.editor textarea,
   transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease !important;
 }
 
-dialog.editor input:not([type="checkbox"]):not([type="radio"]):hover,
+dialog.editor input:not(.ui-input):not([type="checkbox"]):not([type="radio"]):hover,
 dialog.editor select:hover,
-dialog.editor textarea:hover,
+dialog.editor textarea:not(.ui-input):hover,
 .field-input:hover,
 .field-select:hover,
 .field-textarea:hover {
   border-color: var(--ink-muted) !important;
 }
 
-dialog.editor input:not([type="checkbox"]):not([type="radio"]):focus,
+dialog.editor input:not(.ui-input):not([type="checkbox"]):not([type="radio"]):focus,
 dialog.editor select:focus,
-dialog.editor textarea:focus,
+dialog.editor textarea:not(.ui-input):focus,
 .field-input:focus,
 .field-select:focus,
 .field-textarea:focus {
@@ -15884,9 +15750,9 @@ dialog.editor textarea:focus,
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 40%, transparent) !important;
 }
 
-.dark dialog.editor input:not([type="checkbox"]):not([type="radio"]):focus,
+.dark dialog.editor input:not(.ui-input):not([type="checkbox"]):not([type="radio"]):focus,
 .dark dialog.editor select:focus,
-.dark dialog.editor textarea:focus,
+.dark dialog.editor textarea:not(.ui-input):focus,
 .dark .field-input:focus,
 .dark .field-select:focus,
 .dark .field-textarea:focus {
@@ -17449,7 +17315,7 @@ dialog.editor textarea:focus,
   pointer-events: none;
 }
 
-.project-search-box input {
+.project-search-box input:not(.ui-input) {
   width: 100%;
   height: 38px;
   padding: 0 34px 0 36px;
@@ -17461,7 +17327,7 @@ dialog.editor textarea:focus,
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.project-search-box input:focus {
+.project-search-box input:not(.ui-input):focus {
   outline: none;
   border-color: var(--brand);
   box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.12);
@@ -18628,7 +18494,7 @@ dialog.editor textarea:focus,
   background: var(--canvas);
   transform: translateY(-2px);
 }
-button.dash-bar-col.is-selected-bar {
+button:not(.ui-btn).dash-bar-col.is-selected-bar {
   background: var(--brand-soft);
   box-shadow: 0 0 0 1.5px var(--brand);
 }
@@ -19065,7 +18931,7 @@ button.dash-bar-col.is-selected-bar {
   font-weight: 600;
   color: var(--ink-muted);
 }
-.inline-creator-field input,
+.inline-creator-field input:not(.ui-input),
 .inline-creator-field select {
   height: 38px;
   border-radius: 8px;
@@ -19104,7 +18970,7 @@ button.dash-bar-col.is-selected-bar {
   gap: 8px;
   margin-top: 4px;
 }
-.inline-creator-actions button {
+.inline-creator-actions button:not(.ui-btn) {
   min-height: 36px;
   padding: 6px 14px;
   font-size: 12.5px;
@@ -19440,8 +19306,6 @@ button.dash-bar-col.is-selected-bar {
   /* Native Mobile Touch Feedback */
   .mobile-nav-card:active,
   .mobile-sheet-footer-btn:active,
-  .manager-dock a:active,
-  .manager-dock button:active,
   .card-quick-move-btn:active,
   .clean-empty-btn-primary:active,
   .clean-empty-btn-secondary:active,
@@ -19616,10 +19480,6 @@ button.dash-bar-col.is-selected-bar {
   .manager-main {
     margin-left: 76px;
     width: calc(100% - 76px);
-  }
-
-  .manager-dock {
-    display: none;
   }
 
   .manager-sidebar {
@@ -20359,7 +20219,7 @@ button.dash-bar-col.is-selected-bar {
   gap: 2px;
 }
 
-.cal-more-menu button {
+.cal-more-menu button:not(.ui-btn) {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -20376,15 +20236,15 @@ button.dash-bar-col.is-selected-bar {
   transition: background 0.12s ease;
 }
 
-.cal-more-menu button:hover {
+.cal-more-menu button:not(.ui-btn):hover {
   background: var(--surface-subtle);
 }
 
-.cal-more-menu button.danger {
+.cal-more-menu button:not(.ui-btn).danger {
   color: #dc2626;
 }
 
-.cal-more-menu button.danger:hover {
+.cal-more-menu button:not(.ui-btn).danger:hover {
   background: color-mix(in srgb, #ef4444 12%, var(--surface));
 }
 
@@ -20511,11 +20371,11 @@ button.dash-bar-col.is-selected-bar {
 }
 .manager-main
   :is(
-    .tabs button,
-    .database-views button,
-    .project-status-tabs button,
+    .tabs button:not(.ui-btn),
+    .database-views button:not(.ui-btn),
+    .project-status-tabs button:not(.ui-btn),
     .recording-tabs a,
-    .settings-tabs-row button
+    .settings-tabs-row button:not(.ui-btn)
   ) {
   display: inline-flex;
   align-items: center;
@@ -20537,7 +20397,7 @@ button.dash-bar-col.is-selected-bar {
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--line-strong);
 }
-.manager-main :is(.primary, .button, .section-head button, .workspace-load-more) {
+.manager-main :is(.primary, .button, .section-head button:not(.ui-btn), .workspace-load-more) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -20546,9 +20406,7 @@ button.dash-bar-col.is-selected-bar {
   border-radius: 12px;
   font-weight: 650;
 }
-.manager-main :is(button, a) svg,
-.manager-topbar :is(button, a) svg,
-.manager-sidebar :is(button, a) svg {
+.manager-main :is(button:not(.ui-btn), a) svg, .manager-topbar :is(button:not(.ui-btn), a) svg, .manager-sidebar :is(button:not(.ui-btn), a) svg {
   flex: 0 0 auto;
   stroke: currentColor;
   opacity: 1;
@@ -20570,7 +20428,7 @@ button.dash-bar-col.is-selected-bar {
   border-radius: 15px;
   margin-bottom: 18px;
 }
-.workspace-scope-control button {
+.workspace-scope-control button:not(.ui-btn) {
   min-height: 40px;
   padding: 7px 14px;
   border: 0;
@@ -20579,7 +20437,7 @@ button.dash-bar-col.is-selected-bar {
   color: var(--ink-muted);
   cursor: pointer;
 }
-.workspace-scope-control button[aria-pressed='true'] {
+.workspace-scope-control button:not(.ui-btn)[aria-pressed='true'] {
   background: var(--surface);
   color: var(--ink-heading);
   box-shadow: 0 2px 9px color-mix(in srgb, var(--ink) 8%, transparent);
@@ -20616,7 +20474,7 @@ button.dash-bar-col.is-selected-bar {
   background: color-mix(in srgb, var(--canvas) 76%, var(--surface));
   overflow-x: auto;
 }
-.manager-main :is(.history-filter-tabs button, .focus-filters button) {
+.manager-main :is(.history-filter-tabs button:not(.ui-btn), .focus-filters button:not(.ui-btn)) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -20627,8 +20485,8 @@ button.dash-bar-col.is-selected-bar {
 }
 .manager-main
   :is(
-    .history-filter-tabs button[aria-pressed='true'],
-    .focus-filters button[aria-pressed='true']
+    .history-filter-tabs button:not(.ui-btn)[aria-pressed='true'],
+    .focus-filters button:not(.ui-btn)[aria-pressed='true']
   ) {
   background: var(--surface);
   color: var(--ink-heading);
@@ -20713,7 +20571,7 @@ button.dash-bar-col.is-selected-bar {
   .workspace-scope-control {
     width: 100%;
   }
-  .workspace-scope-control button {
+  .workspace-scope-control button:not(.ui-btn) {
     flex: 1;
   }
 }
@@ -20784,8 +20642,7 @@ button.dash-bar-col.is-selected-bar {
 .sprint-form .field-label svg {
   flex: none;
 }
-.sprint-form :is(.text-input, .field-input):disabled,
-.editor :is(.field-input, .date-input input, .date-input button):disabled {
+.sprint-form :is(.text-input, .field-input):disabled {
   opacity: 0.52;
   cursor: not-allowed;
   background: var(--canvas);
@@ -20830,7 +20687,7 @@ button.dash-bar-col.is-selected-bar {
   line-height: 1.4;
   flex: 1 1 0;
 }
-.task-form-intro button,
+.task-form-intro button:not(.ui-btn),
 .task-form-intro .btn-toggle-task-details {
   min-height: 34px;
   padding: 5px 12px;
@@ -20847,7 +20704,7 @@ button.dash-bar-col.is-selected-bar {
   transition: all 0.15s ease;
   flex-shrink: 0;
 }
-.task-form-intro button:hover,
+.task-form-intro button:not(.ui-btn):hover,
 .task-form-intro .btn-toggle-task-details:hover {
   background: color-mix(in srgb, var(--brand-soft) 50%, var(--surface));
   border-color: var(--brand);
@@ -20859,98 +20716,6 @@ button.dash-bar-col.is-selected-bar {
 @media (max-width: 767px) {
   .manager-main {
     padding-bottom: calc(92px + env(safe-area-inset-bottom)) !important;
-  }
-  .manager-dock {
-    display: flex !important;
-    position: fixed !important;
-    bottom: max(10px, env(safe-area-inset-bottom)) !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    width: min(440px, calc(100vw - 16px)) !important;
-    max-width: calc(100vw - 16px) !important;
-    min-height: 58px !important;
-    padding: 4px 10px calc(4px + env(safe-area-inset-bottom, 0px)) !important;
-    border-radius: 28px !important;
-    background: color-mix(in srgb, var(--surface) 92%, var(--canvas)) !important;
-    backdrop-filter: blur(20px) !important;
-    -webkit-backdrop-filter: blur(20px) !important;
-    border: 1px solid color-mix(in srgb, var(--border) 75%, transparent) !important;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18) !important;
-    z-index: 999 !important;
-    align-items: center !important;
-    justify-content: space-around !important;
-    box-sizing: border-box !important;
-  }
-  .manager-dock a,
-  .manager-dock button:not(.dock-center-action) {
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
-    align-items: center !important;
-    gap: 3px !important;
-    min-width: 48px !important;
-    height: 48px !important;
-    padding: 0 4px !important;
-    border: 0 !important;
-    border-radius: 12px !important;
-    background: transparent !important;
-    color: var(--muted) !important;
-    font-size: 10.5px;
-    font-weight: 600;
-    text-decoration: none !important;
-    cursor: pointer !important;
-    transition: all 0.15s ease !important;
-  }
-  .manager-dock a:hover,
-  .manager-dock button:not(.dock-center-action):hover {
-    color: var(--ink) !important;
-    background: color-mix(in srgb, var(--brand-soft) 25%, transparent) !important;
-  }
-  .manager-dock [aria-current='page'] {
-    background: color-mix(in srgb, var(--brand-soft) 60%, transparent) !important;
-    color: var(--brand-strong, var(--ink)) !important;
-    font-weight: 700;
-  }
-  .dock-center-action {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 3px !important;
-    min-width: 48px !important;
-    height: 48px !important;
-    padding: 0 6px !important;
-    border: 0 !important;
-    border-radius: 12px !important;
-    background: color-mix(in srgb, var(--brand-soft) 55%, transparent) !important;
-    color: var(--brand-strong, var(--ink)) !important;
-    font-size: 10.5px;
-    font-weight: 700;
-    cursor: pointer !important;
-    position: static !important;
-    top: 0 !important;
-    margin: 0 !important;
-    transition: all 0.15s ease !important;
-  }
-  .dock-center-action:hover {
-    background: color-mix(in srgb, var(--brand-soft) 80%, transparent) !important;
-    color: var(--ink) !important;
-  }
-  .dock-center-action:active {
-    transform: scale(0.94) !important;
-  }
-  .dock-center-circle {
-    width: auto !important;
-    height: auto !important;
-    border-radius: 0 !important;
-    background: transparent !important;
-    color: inherit !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    box-shadow: none !important;
-    margin-bottom: 0 !important;
-    transition: none !important;
   }
   .manager-main .task-calendar {
     min-width: 0;
@@ -21141,7 +20906,7 @@ button.dash-bar-col.is-selected-bar {
   .timeline-panel.mobile-chart-open .timeline-mobile-list {
     display: none;
   }
-  .timeline-mobile-list button {
+  .timeline-mobile-list button:not(.ui-btn) {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -21154,7 +20919,7 @@ button.dash-bar-col.is-selected-bar {
     color: var(--ink);
     text-align: left;
   }
-  .timeline-mobile-list button > span:nth-child(2) {
+  .timeline-mobile-list button:not(.ui-btn) > span:nth-child(2) {
     flex: 1;
     min-width: 0;
   }
@@ -21556,7 +21321,7 @@ button.dash-bar-col.is-selected-bar {
   opacity: 0.65;
   background: var(--surface-subtle);
 }
-.routine-item input[type="checkbox"] {
+.routine-item input:not(.ui-input)[type="checkbox"] {
   width: 16px;
   height: 16px;
   accent-color: var(--brand);
@@ -21816,14 +21581,12 @@ button.dash-bar-col.is-selected-bar {
 /* ── Empty-state helper text trimmed for compact mobile ───────────── */
 
 /* ── Bottom mobile nav: safe-area padding so labels never clip ────── */
-.manager-dock,
-.mobile-nav-bar,
-.bottom-nav {
+.mobile-nav-bar {
   padding-bottom: env(safe-area-inset-bottom, 0px) !important;
 }
 
 /* ── Focus ring: clear and consistent (a11y, no removal of function) ─ */
-.manager-main :is(button, a, input, select):focus-visible {
+.manager-main :is(button:not(.ui-btn), a, input:not(.ui-input), select):focus-visible {
   outline: 2px solid var(--brand);
   outline-offset: 2px;
 }
@@ -21844,7 +21607,7 @@ button.dash-bar-col.is-selected-bar {
   outline: 2px solid var(--brand);
   outline-offset: 2px;
 }
-.workspace-search-field input {
+.workspace-search-field input:not(.ui-input) {
   flex: 1;
   min-width: 0;
   width: 100%;
@@ -21853,7 +21616,7 @@ button.dash-bar-col.is-selected-bar {
   background: transparent;
   padding: 10px 0;
 }
-.workspace-search-field input:focus {
+.workspace-search-field input:not(.ui-input):focus {
   outline: none;
   box-shadow: none;
 }
@@ -21870,7 +21633,7 @@ button.dash-bar-col.is-selected-bar {
   background: var(--surface);
   scrollbar-width: thin;
 }
-.workspace-search-scopes button,
+.workspace-search-scopes button:not(.ui-btn),
 .project-section-nav a {
   flex-shrink: 0;
   display: inline-flex;
@@ -21886,13 +21649,13 @@ button.dash-bar-col.is-selected-bar {
   font-size: 13px;
   font-weight: 600;
 }
-.workspace-search-scopes button[aria-pressed='true'],
+.workspace-search-scopes button:not(.ui-btn)[aria-pressed='true'],
 .project-section-nav a:hover {
   background: var(--brand-soft);
   color: var(--ink-heading);
 }
 .project-section-nav a:focus-visible,
-.workspace-search :is(a, button):focus-visible {
+.workspace-search :is(a, button:not(.ui-btn)):focus-visible {
   outline: 2px solid var(--brand);
   outline-offset: -2px;
 }
@@ -21984,8 +21747,8 @@ button.dash-bar-col.is-selected-bar {
     min-width: 0;
   }
 
-  .task-database .quick-add-input-wrap input,
-  .today-view-wrapper .quick-add-input-wrap input {
+  .task-database .quick-add-input-wrap input:not(.ui-input),
+  .today-view-wrapper .quick-add-input-wrap input:not(.ui-input) {
     min-width: 0;
     font-size: var(--control-text-size);
   }
@@ -21996,8 +21759,8 @@ button.dash-bar-col.is-selected-bar {
     justify-content: flex-end;
   }
 
-  .task-database .quick-add-actions button,
-  .today-view-wrapper .quick-add-actions button {
+  .task-database .quick-add-actions button:not(.ui-btn),
+  .today-view-wrapper .quick-add-actions button:not(.ui-btn) {
     min-height: 44px;
   }
 }
@@ -22030,7 +21793,7 @@ button.dash-bar-col.is-selected-bar {
 .pinned-row { display: flex; gap: 8px; align-items: center; padding: 12px; border: 1px solid var(--line); border-radius: 12px; }
 .pinned-row a, .pinned-row > span { flex: 1; min-width: 0; overflow-wrap: anywhere; }
 .pinned-row small { display: block; color: var(--ink-muted); }
-.pinned-row button { min-width: 44px; min-height: 44px; flex-shrink: 0; }
+.pinned-row button:not(.ui-btn) { min-width: 44px; min-height: 44px; flex-shrink: 0; }
 @media (max-width: 767px) {
   .pinned-list { grid-template-columns: 1fr; }
   .pinned-toolbar { flex-wrap: wrap; }
@@ -22047,7 +21810,7 @@ button.dash-bar-col.is-selected-bar {
 }
 
 /* Kontrol bersama: edit token di globals.css, bukan font per halaman. */
-input, select, textarea, .custom-select-trigger, .custom-select-option {
+input:not(.ui-input), select, textarea:not(.ui-input), .custom-select-trigger, .custom-select-option {
   font-family: var(--font-sans);
   font-size: var(--control-text-size);
   line-height: 1.5;
@@ -22130,8 +21893,8 @@ select:not(.custom-select-native):focus {
 }
 
 /* Universal reset for custom select options: NEVER inherit button borders or isolated card appearance */
-button.custom-select-option,
-.custom-select-menu button,
+button:not(.ui-btn).custom-select-option,
+.custom-select-menu button:not(.ui-btn),
 .custom-select-menu [role='option'],
 .custom-select-option {
   all: unset !important;
@@ -22167,15 +21930,15 @@ button.custom-select-option,
   flex: 1 !important;
 }
 .custom-select-option-text { white-space: normal; overflow-wrap: anywhere; }
-button.custom-select-option:hover,
-button.custom-select-option.is-highlighted,
-.custom-select-menu button:hover,
-.custom-select-menu button.is-highlighted {
+button:not(.ui-btn).custom-select-option:hover,
+button:not(.ui-btn).custom-select-option.is-highlighted,
+.custom-select-menu button:not(.ui-btn):hover,
+.custom-select-menu button:not(.ui-btn).is-highlighted {
   background: var(--brand-soft, #f0fdf4) !important;
   color: var(--ink) !important;
 }
-button.custom-select-option.is-selected,
-.custom-select-menu button.is-selected {
+button:not(.ui-btn).custom-select-option.is-selected,
+.custom-select-menu button:not(.ui-btn).is-selected {
   background: var(--pastel-emerald-bg, #ecfdf5) !important;
   color: var(--pastel-emerald-text, #065f46) !important;
   font-weight: 650 !important;
@@ -22550,7 +22313,7 @@ button.custom-select-option.is-selected,
 }
 
 /* Subtask round check in calendar / task cards: clean 18px circle, never deformed into a button card */
-button.subtask-round-check,
+button:not(.ui-btn).subtask-round-check,
 .subtask-round-check {
   all: unset !important;
   box-sizing: border-box !important;
@@ -22576,12 +22339,12 @@ button.subtask-round-check,
   transition: all 0.15s ease !important;
   -webkit-appearance: none !important;
 }
-button.subtask-round-check:hover,
+button:not(.ui-btn).subtask-round-check:hover,
 .subtask-round-check:hover {
   border-color: var(--brand, #10b981) !important;
   background: var(--brand-soft, #f0fdf4) !important;
 }
-button.subtask-round-check.checked,
+button:not(.ui-btn).subtask-round-check.checked,
 .subtask-round-check.checked {
   background: var(--brand, #10b981) !important;
   border-color: var(--brand, #10b981) !important;
@@ -22589,7 +22352,7 @@ button.subtask-round-check.checked,
 }
 
 /* Subtask toggle in TaskDetailDrawer */
-button.subtask-toggle,
+button:not(.ui-btn).subtask-toggle,
 .subtask-toggle {
   all: unset !important;
   box-sizing: border-box !important;
@@ -22631,19 +22394,19 @@ button.subtask-toggle,
 }
 
 /* Square icon buttons & close buttons: never distorted into ovals or circles */
-button.btn-icon,
+button:not(.ui-btn).btn-icon,
 .btn-icon,
-button.close-drawer-btn,
+button:not(.ui-btn).close-drawer-btn,
 .close-drawer-btn,
-button.editor-close-btn,
+button:not(.ui-btn).editor-close-btn,
 .editor-close-btn,
-button.close-btn,
+button:not(.ui-btn).close-btn,
 .close-btn,
-button.action-modal-close,
+button:not(.ui-btn).action-modal-close,
 .action-modal-close,
-button.close-picker-btn,
+button:not(.ui-btn).close-picker-btn,
 .close-picker-btn,
-button.sprint-action-btn,
+button:not(.ui-btn).sprint-action-btn,
 .sprint-action-btn {
   width: 36px !important;
   height: 36px !important;
@@ -22668,19 +22431,19 @@ button.sprint-action-btn,
   transition: all 0.15s ease !important;
   box-sizing: border-box !important;
 }
-button.btn-icon:hover,
+button:not(.ui-btn).btn-icon:hover,
 .btn-icon:hover,
-button.close-drawer-btn:hover,
+button:not(.ui-btn).close-drawer-btn:hover,
 .close-drawer-btn:hover,
-button.editor-close-btn:hover,
+button:not(.ui-btn).editor-close-btn:hover,
 .editor-close-btn:hover,
-button.close-btn:hover,
+button:not(.ui-btn).close-btn:hover,
 .close-btn:hover,
-button.action-modal-close:hover,
+button:not(.ui-btn).action-modal-close:hover,
 .action-modal-close:hover,
-button.close-picker-btn:hover,
+button:not(.ui-btn).close-picker-btn:hover,
 .close-picker-btn:hover,
-button.sprint-action-btn:hover,
+button:not(.ui-btn).sprint-action-btn:hover,
 .sprint-action-btn:hover {
   background: var(--canvas) !important;
   border-color: var(--line-strong) !important;
@@ -22698,15 +22461,13 @@ button.sprint-action-btn:hover,
   margin-bottom: 26px !important;
 }
 .inline-actions > * { margin: 0 !important; }
-.inline-actions > :is(input, textarea, .custom-select-wrap) { flex: 1 1 160px; min-width: 0; }
-
-.date-field { position: relative; min-width: 0; }
+.inline-actions > :is(input:not(.ui-input), textarea:not(.ui-input), .custom-select-wrap) { flex: 1 1 160px; min-width: 0; }
 .date-picker { position: absolute; inset: calc(100% + 8px) auto auto var(--popover-offset, 0px); width: var(--popover-width, 344px); max-width: calc(100vw - 16px); max-height: min(420px, var(--popover-available-height, 420px)); overflow: auto; overscroll-behavior: contain; padding: 8px; z-index: 600; background: var(--surface); color: var(--ink); border: 1px solid var(--line-strong); border-radius: 14px; box-shadow: var(--shadow-float); }
 [data-popover-side='above'] > .custom-select-menu { inset-block: auto calc(100% + 6px); }
 [data-popover-side='below'] > .date-picker { inset-block: calc(100% + 8px) auto; }
-.date-picker-head button, .date-picker-footer button { color: var(--ink); }
-.date-picker-days button { padding: 0; min-width: 0; width: 100%; aspect-ratio: 1; color: var(--ink); }
-.date-picker-days button[aria-pressed='true'] { color: var(--brand-contrast); background: var(--brand); }
+.date-picker-head button:not(.ui-btn), .date-picker-footer button:not(.ui-btn) { color: var(--ink); }
+.date-picker-days button:not(.ui-btn) { padding: 0; min-width: 0; width: 100%; aspect-ratio: 1; color: var(--ink); }
+.date-picker-days button:not(.ui-btn)[aria-pressed='true'] { color: var(--brand-contrast); background: var(--brand); }
 
 /* Focus task tones: subtle, rich depth without being flat */
 .focus-task.tone-0 { border-left: 4px solid var(--pastel-emerald-accent, #10b981); }
@@ -22977,9 +22738,9 @@ button.sprint-action-btn:hover,
 @media (max-width: 767px) {
   /* Selective touch targets: protect cards from oversized buttons while keeping touch accessibility */
   .manager-main :is(
-    input:not([type='checkbox']):not([type='radio']):not(.date-picker *):not(.inline-subtask-input),
+    input:not(.ui-input):not([type='checkbox']):not([type='radio']):not(.date-picker *):not(.inline-subtask-input),
     select:not(.custom-select-native),
-    textarea,
+    textarea:not(.ui-input),
     .primary,
     .home-action-btn,
     .btn-primary-finish,
@@ -23072,7 +22833,7 @@ button.sprint-action-btn:hover,
     flex-shrink: 0 !important;
     margin-left: auto !important;
   }
-  .manager-actions button:not(.quick-action-hub-btn),
+  .manager-actions button:not(.ui-btn):not(.quick-action-hub-btn),
   .manager-actions a:not(.quick-action-hub-btn) {
     width: 36px !important;
     height: 36px !important;
@@ -23377,7 +23138,7 @@ button.sprint-action-btn:hover,
     border: 1px solid var(--line) !important;
     margin-bottom: 14px !important;
   }
-  .focus-filters button {
+  .focus-filters button:not(.ui-btn) {
     flex: 1 !important;
     height: 36px !important;
     min-height: 36px !important;
@@ -23394,7 +23155,7 @@ button.sprint-action-btn:hover,
     justify-content: center !important;
     gap: 6px !important;
   }
-  .focus-filters button[aria-pressed='true'] {
+  .focus-filters button:not(.ui-btn)[aria-pressed='true'] {
     background: var(--surface) !important;
     color: var(--ink-heading) !important;
     font-weight: 800 !important;
@@ -23505,7 +23266,7 @@ button.sprint-action-btn:hover,
     margin-bottom: 26px !important;
     width: 100% !important;
   }
-  .inline-actions > button {
+  .inline-actions > button:not(.ui-btn) {
     flex: 1 1 0 !important;
     min-width: 0 !important;
   }
@@ -24352,21 +24113,21 @@ details[open] .next-chevron {
    ========================================================================== */
 
 /* 1. Universal Close Buttons & Icon Buttons: Strict Square with 10px Rounded Corners */
-button.editor-close-btn,
+button:not(.ui-btn).editor-close-btn,
 .editor-close-btn,
-button.close-btn,
+button:not(.ui-btn).close-btn,
 .close-btn,
-button.close-drawer-btn,
+button:not(.ui-btn).close-drawer-btn,
 .close-drawer-btn,
-button.action-modal-close,
+button:not(.ui-btn).action-modal-close,
 .action-modal-close,
-button.btn-modal-close,
+button:not(.ui-btn).btn-modal-close,
 .btn-modal-close,
-button.close-picker-btn,
+button:not(.ui-btn).close-picker-btn,
 .close-picker-btn,
-button.sprint-action-btn,
+button:not(.ui-btn).sprint-action-btn,
 .sprint-action-btn,
-button.btn-icon,
+button:not(.ui-btn).btn-icon,
 .btn-icon {
   width: 36px !important;
   height: 36px !important;
@@ -24392,21 +24153,21 @@ button.btn-icon,
   transition: all 0.15s ease !important;
 }
 
-button.editor-close-btn:hover,
+button:not(.ui-btn).editor-close-btn:hover,
 .editor-close-btn:hover,
-button.close-btn:hover,
+button:not(.ui-btn).close-btn:hover,
 .close-btn:hover,
-button.close-drawer-btn:hover,
+button:not(.ui-btn).close-drawer-btn:hover,
 .close-drawer-btn:hover,
-button.action-modal-close:hover,
+button:not(.ui-btn).action-modal-close:hover,
 .action-modal-close:hover,
-button.btn-modal-close:hover,
+button:not(.ui-btn).btn-modal-close:hover,
 .btn-modal-close:hover,
-button.close-picker-btn:hover,
+button:not(.ui-btn).close-picker-btn:hover,
 .close-picker-btn:hover,
-button.sprint-action-btn:hover,
+button:not(.ui-btn).sprint-action-btn:hover,
 .sprint-action-btn:hover,
-button.btn-icon:hover,
+button:not(.ui-btn).btn-icon:hover,
 .btn-icon:hover {
   background: var(--canvas) !important;
   border-color: var(--line-strong) !important;
@@ -24428,9 +24189,9 @@ select:not(.custom-select-native) {
 
 /* 3. Standard Buttons: "Kotak dengan sedikit rounded" (10px standard, 8px compact) */
 .primary,
-button.primary,
+button:not(.ui-btn).primary,
 .button,
-button.button,
+button:not(.ui-btn).button,
 .btn-mark-complete,
 .btn-drawer-action,
 .btn-editor-cancel,
@@ -24477,7 +24238,7 @@ button.button,
 .dropzone-success,
 .dropzone-error,
 .calendar-agenda-task-count,
-.project-status-tabs button {
+.project-status-tabs button:not(.ui-btn) {
   border-radius: 8px !important;
 }
 
