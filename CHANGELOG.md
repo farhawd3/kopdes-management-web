@@ -1,5 +1,17 @@
 # Changelog
 
+## Overhaul estetika kartu dashboard (Stat Cards, Agenda Rapat, dan Filter Pills) — 4 Oktober 2026
+
+- Transformasi 4 kartu ringkasan dashboard (`.dash-stat-card`): ganti tampilan putih polos dan flat membosankan dengan sistem tema 4 pilar pastel yang kaya dan hidup:
+  - **Progres tugas (`variant="emerald"`)**: gradien hijau sage/emerald lembut, ring progres melingkar SVG terintegrasi, dan aksen batas hijau halus.
+  - **Tugas aktif (`variant="blue"`)**: gradien biru pastel elegan (`#f0f9ff` ke `#e0f2fe`), ikon checklist berwadah rounded-square bercahaya, dan tipografi angka tebal.
+  - **Tugas terlambat (`variant="rose"`)**: gradien merah muda/rose pastel yang hangat dan tegas (`#fff1f2` ke `#ffe4e6`), ikon peringatan rose, dan teks penjelas kontras tinggi.
+  - **Rapat hari ini (`variant="purple"`)**: gradien lavender/ungu pastel anggun (`#faf5ff` ke `#f3e8ff`), ikon kalender berwadah ungu, dan status netral.
+- Sentuhan visual modern premium: border melengkung halus 20 px (`border-radius: 20px`), highlight kaca atas (`box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7)`), micro-animation hover melayang (`transform: translateY(-3px)`), dan adaptasi penuh dark mode.
+- Rombak total kartu Agenda Rapat (`.next-meeting`): ganti kartu putih polos yang kosong dengan executive agenda card berikon kalender 46 px frosted (`.meeting-icon-box`), badge pill status pertemuan, format jam berlatar pill, dan tombol navigasi panah interaktif dengan efek hover meluncur.
+- Desain ulang bilah filter fokus tugas (`.focus-filters`): terapkan gaya segmented pill bar modern ala iOS/Linear dengan tab aktif berlatar putih melayang (`box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08)`), badge penghitung pill (`.focus-filter-count`), dan transisi mulus.
+- Verifikasi lengkap: 171 tes dalam 23 berkas lulus (`npm test`), 0 kesalahan TypeScript (`npm run typecheck`), dan Next.js production build berhasil (`npm run build`).
+
 ## Koreksi jarak atas mobile, overlap tombol, dan penataan dock navigasi — 4 Oktober 2026
 
 - Perbaiki jarak mepet bagian atas ponsel: perbesar padding atas `.manager-main` dari 8 px menjadi 22 px pada viewport mobile (`@media (max-width: 767px)`), dan normalkan margin tajuk halaman (`.page-heading`) agar tidak menempel rapat pada garis batas header sticky.

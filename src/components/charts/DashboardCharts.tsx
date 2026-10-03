@@ -352,6 +352,7 @@ export function StatCard({
   value,
   sub,
   accent = false,
+  variant,
   percentage,
   icon,
   sparkData,
@@ -361,6 +362,7 @@ export function StatCard({
   value: number | string;
   sub?: string;
   accent?: boolean;
+  variant?: 'emerald' | 'blue' | 'rose' | 'purple';
   percentage?: number;
   icon?: React.ReactNode;
   sparkData?: number[];
@@ -370,14 +372,30 @@ export function StatCard({
   const pctVal =
     percentage ?? (typeof value === 'string' && value.endsWith('%') ? parseInt(value, 10) || 0 : 0);
 
+  const variantClass = variant
+    ? `stat-variant-${variant}`
+    : accent
+    ? 'dash-stat-accent stat-variant-emerald'
+    : '';
+
   const Inner = (
-    <div className={`dash-stat-card${accent ? ' dash-stat-accent' : ''}`}>
+    <div className={`dash-stat-card ${variantClass}`}>
       <div className="dash-stat-top">
         <span className="dash-stat-label">{label}</span>
         {isPercent ? (
           <RadialProgressRing
             percentage={pctVal}
-            color={accent ? 'var(--brand-text)' : 'var(--brand)'}
+            color={
+              variant === 'emerald' || accent
+                ? '#059669'
+                : variant === 'blue'
+                ? '#2563eb'
+                : variant === 'rose'
+                ? '#e11d48'
+                : variant === 'purple'
+                ? '#7c3aed'
+                : 'var(--brand)'
+            }
           />
         ) : icon ? (
           <div className="dash-stat-icon-wrap">{icon}</div>

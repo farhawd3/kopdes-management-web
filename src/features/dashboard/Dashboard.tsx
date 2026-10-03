@@ -252,6 +252,7 @@ export function Dashboard({ data }: { data: Workspace }) {
           value={`${completion}%`}
           percentage={completion}
           sub={`${completedCount} dari ${totalTasks} selesai · aktif/terbaru`}
+          variant="emerald"
           accent
           href="/tugas?status=selesai"
         />
@@ -260,6 +261,7 @@ export function Dashboard({ data }: { data: Workspace }) {
           value={open.length}
           sub="dari catatan yang dimuat"
           icon={<ListTodo size={18} />}
+          variant="blue"
           href="/tugas"
         />
         <StatCard
@@ -267,6 +269,7 @@ export function Dashboard({ data }: { data: Workspace }) {
           value={overdueCount}
           sub={overdueCount > 0 ? 'perlu diperhatikan' : 'tidak ada pada catatan yang dimuat'}
           icon={<AlertTriangle size={18} />}
+          variant="rose"
           href="/tugas?status=terlambat"
         />
         <StatCard
@@ -274,6 +277,7 @@ export function Dashboard({ data }: { data: Workspace }) {
           value={todayMeetingCount}
           sub={meeting ? String(meeting.data.title) : 'tidak ada pada catatan yang dimuat'}
           icon={<Calendar size={18} />}
+          variant="purple"
           href="/rapat"
         />
       </div>
@@ -282,16 +286,24 @@ export function Dashboard({ data }: { data: Workspace }) {
         {/* ── Left Column: Task Focus & Daily Routine ───────── */}
         <section className="home-work" aria-label="Tugas pilihan">
           <Link href="/rapat" className="next-meeting">
-            <CalendarDays size={28} />
-            <div>
-              <small>{meeting ? 'Rapat berikutnya' : 'Agenda rapat'}</small>
+            <span className="meeting-icon-box">
+              <CalendarDays size={22} />
+            </span>
+            <div className="meeting-info-content">
+              <div className="meeting-eyebrow-row">
+                <small>{meeting ? 'Rapat berikutnya' : 'Agenda rapat'}</small>
+                {meeting && (
+                  <span className="meeting-mode-pill">{String(meeting.data.mode || 'tatap muka')}</span>
+                )}
+              </div>
               <strong>{meeting ? String(meeting.data.title) : 'Belum ada jadwal rapat'}</strong>
-              {meeting && (
-                <span>
+              {meeting ? (
+                <span className="meeting-meta-time">
                   {formatDate(String(meeting.data.date))} ·{' '}
-                  {String(meeting.data.time || 'Waktu belum diisi')} ·{' '}
-                  {String(meeting.data.mode || 'tatap muka')}
+                  {String(meeting.data.time || 'Waktu belum diisi')}
                 </span>
+              ) : (
+                <span className="meeting-meta-empty">Klik untuk menjadwalkan rapat koordinasi</span>
               )}
             </div>
             {meetingOnlineUrl ? (
@@ -307,8 +319,8 @@ export function Dashboard({ data }: { data: Workspace }) {
                 <span>Gabung ↗</span>
               </a>
             ) : (
-              <span className="round-arrow">
-                <ArrowRight size={22} />
+              <span className="round-arrow" aria-hidden="true">
+                <ArrowRight size={18} />
               </span>
             )}
           </Link>
@@ -327,8 +339,8 @@ export function Dashboard({ data }: { data: Workspace }) {
                   setSelectedDate('');
                 }}
               >
-                {label}
-                <span>{count}</span>
+                <span>{label}</span>
+                <span className="focus-filter-count">{count}</span>
               </button>
             ))}
           </div>
