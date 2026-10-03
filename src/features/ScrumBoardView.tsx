@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
-import { Plus, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Plus, AlertCircle, CheckCircle2, Calendar, Flame, CheckSquare } from 'lucide-react';
 import { taskProgress } from '@/lib/progress';
 import { type Item } from './schemas';
 import { type Workspace } from './useWorkspace';
@@ -245,27 +245,19 @@ export function ScrumBoardView({
                       ? `${formatDate(String(data.start_date))} – ${formatDate(dueDate)}`
                       : formatDate(dueDate);
 
-                    // Calculate time / deadline text
                     const isLate = dueDate < today() && isActiveTask(data.status);
-                    const deadlineText =
-                      data.status === 'selesai'
-                        ? 'Selesai'
-                        : isLate
-                          ? 'Terlambat'
-                          : subtasks.length > 0
-                            ? `${doneSubtasks}/${subtasks.length} selesai`
-                            : 'Tenggat terdekat';
 
                     const managerName = String(
                       workspace.organization?.[0]?.data?.manager || 'Manajer',
                     );
                     const assignee = String(data.assignee || managerName);
-                    const initials = assignee
-                      .split(' ')
-                      .map((n) => n[0])
-                      .slice(0, 2)
-                      .join('')
-                      .toUpperCase();
+                    const initials =
+                      assignee
+                        .split(' ')
+                        .map((n) => n[0])
+                        .slice(0, 2)
+                        .join('')
+                        .toUpperCase() || 'M';
 
                     const project = (workspace.workstreams || []).find(
                       (w) => w.id === data.workstream_id,
@@ -287,72 +279,81 @@ export function ScrumBoardView({
                           }
                         }}
                       >
-                        {/* Top Date Badge Pill & Meta */}
+                        {/* Top Meta Strip: Task Code + Project on left, Priority + Due Date on right */}
                         <div className="card-top-row">
-                          <span className={`card-date-pill ${isLate ? 'is-late' : ''}`}>
-                            {isLate && <AlertCircle size={11} className="inline-icon" />}
-                            {datePill}
-                          </span>
-                          {project && (
-                            <span className="card-project-pill" title={String(project.data.title)}>
-                              <span
-                                className="project-dot"
-                                style={{
-                                  backgroundColor: String(project.data.color || 'var(--brand)'),
-                                }}
-                              />
-                              {String(project.data.title)}
+                          <div className="card-top-left">
+                            <span className="card-task-code">
+                              {formatDisplayCode(String(data.code), 'work-items', task.id)}
                             </span>
-                          )}
-                          {Boolean(data.priority) && data.priority !== 'normal' && (
-                            <span className={`card-priority-pill priority-${data.priority}`}>
-                              {String(data.priority)}
-                            </span>
-                          )}
-                        </div>
-
-                        {/* Card Title & Code */}
-                        <div className="card-title-wrap">
-                          <span className="card-task-code">
-                            {formatDisplayCode(String(data.code), 'work-items', task.id)}
-                          </span>
-                          <h4 className="card-task-title">{String(data.title)}</h4>
-                        </div>
-
-                        {/* Snippet Description */}
-                        {Boolean(data.description) && (
-                          <p className="card-description-snippet">
-                            {String(data.description).slice(0, 85)}
-                            {String(data.description).length > 85 ? '…' : ''}
-                          </p>
-                        )}
-
-                        {/* Card Bottom Row: Assignee & Progress Bar */}
-                        <div className="card-bottom-section">
-                          <div className="card-bottom-meta-row">
-                            <div className="card-assignee-row">
-                              <span className="scrum-assignee-pill" title={`Penanggung jawab: ${assignee}`}>
-                                {assignee}
-                              </span>
-                            </div>
-
-                            <div className="card-progress-section">
-                              <div className="progress-labels-row">
-                                <span className="progress-percent-text">{progressPct}%</span>
-                                <span className={`progress-time-text ${isLate ? 'late-text' : ''}`}>
-                                  {deadlineText}
-                                </span>
-                              </div>
-                              <div className="scrum-progress-bar-track">
-                                <div
-                                  className="scrum-progress-bar-fill"
-                                  style={{ width: `${progressPct}%` }}
+                            {project && (
+                              <span className="card-project-pill" title={String(project.data.title)}>
+                                <span
+                                  className="project-dot"
+                                  style={{
+                                    backgroundColor: String(project.data.color || 'var(--brand)'),
+                                  }}
                                 />
-                              </div>
-                            </div>
+                                <span className="card-project-name">{String(project.data.title)}</span>
+                              </span>
+                            )}
                           </div>
 
-                          {/* Quick Status Shift Row (Mobile & Touch Friendly) */}
+                          <div className="card-top-right">
+                            {Boolean(data.priority) && data.priority !== 'normal' && (
+                              <span className={`card-priority-pill priority-${data.priority}`}>
+                                {data.priority === 'tinggi' && <Flame size={10} className="inline-icon" />}
+                                {data.priority === 'mendesak' && <AlertCircle size={10} className="inline-icon" />}
+                                <span>{String(data.priority)}</span>
+                              </span>
+                            )}
+                            <span className={`card-date-pill ${isLate ? 'is-late' : ''}`} title={`Tenggat: ${datePill}`}>
+                              {isLate ? (
+                                <AlertCircle size={11} className="inline-icon" />
+                              ) : (
+                                <Calendar size={11} className="inline-icon" />
+                              )}
+                              <span>{datePill}</span>
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Card Title & Snippet */}
+                        <div className="card-title-wrap">
+                          <h4 className="card-task-title">{String(data.title)}</h4>
+                          {Boolean(data.description) && (
+                            <p className="card-description-snippet">
+                              {String(data.description).slice(0, 80)}
+                              {String(data.description).length > 80 ? '…' : ''}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Card Bottom Row: Assignee, Subtasks & Quick Move */}
+                        <div className="card-bottom-section">
+                          <div className="card-footer-left">
+                            <span className="scrum-assignee-pill" title={`Penanggung jawab: ${assignee}`}>
+                              <span className="assignee-mini-avatar">{initials}</span>
+                              <span className="assignee-name">{assignee}</span>
+                            </span>
+
+                            {subtasks.length > 0 && (
+                              <div
+                                className="card-subtasks-chip"
+                                title={`${doneSubtasks} dari ${subtasks.length} subtugas selesai (${progressPct}%)`}
+                              >
+                                <CheckSquare size={11} className="subtask-chip-icon" />
+                                <span className="subtask-chip-text">{doneSubtasks}/{subtasks.length}</span>
+                                <div className="subtask-mini-track">
+                                  <div
+                                    className="subtask-mini-fill"
+                                    style={{ width: `${progressPct}%` }}
+                                  />
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Quick Status Shift Row */}
                           <div
                             className="card-quick-move-row"
                             onClick={(e) => e.stopPropagation()}

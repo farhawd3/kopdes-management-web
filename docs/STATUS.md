@@ -1,5 +1,20 @@
 # Status proyek — 3 Oktober 2026
 
+## Penataan Ulang Kartu Tugas Papan (Scrum/Kanban) Lebih Efisien, Rapi & Elegan (3 Oktober 2026)
+
+- **Restrukturisasi Layout Kartu 3 Bagian Terpadu (`ScrumBoardView.tsx` & `personal.css`)**:
+  - Mengeliminasi penumpukan baris ganda yang memboroskan ruang vertikal (~50% pemangkasan tinggi kartu yang berlebihan, dari ~190px–210px menjadi ~95px–105px).
+  - **Bilah Header Metadata Terpadu**: Menggabungkan kode tugas (`TGS-F2A4` dalam monospace badge ringkas) dan lencana proyek di sebelah kiri, berdampingan dengan pill tingkat prioritas berikon (`Tinggi` / `Mendesak`) serta tenggat tanggal berikon kalender di sebelah kanan.
+  - **Badan Kartu Fokus**: Judul tugas tampil menonjol, tegas, dan mudah dibaca tanpa garis pemisah (*divider*) yang kaku, disertai cuplikan deskripsi jika tersedia.
+  - **Bilah Footer Tunggal & Seimbang**: Menggabungkan avatar inisial manajer (`M`) dan nama penanggung jawab, indikator progres subtugas ringkas (`☑ 0/1` dengan mini progress bar 28px), serta tombol aksi cepat status (`Mulai Kerja →` / `← Rencana` & `✓ Selesai` / `↺ Buka Lagi`) dalam satu baris horizontal tanpa kekosongan ruang.
+- **Penyelarasan Desain & Konsistensi Multiplatform (`personal.css` & `polish.css`)**:
+  - Standarisasi lencana kode `.card-task-code` berdimensi `padding: 1.5px 6px` dan radius `5px`.
+  - Tombol aksi cepat `.card-quick-move-btn` berdimensi kompak `height: 25px` dengan aksen warna tema emerald/biru yang halus.
+  - Penyesuaian responsif `flex-wrap: wrap` sehingga kartu tetap rapi pada layar ponsel maupun tablet/desktop.
+- **Verifikasi Kualitas**:
+  - Menambahkan pengujian `ScrumBoardView menampilkan kartu tugas dengan indikator subtugas dan tombol status yang tepat` di `tests/redesign.test.tsx`.
+  - Seluruh 144 unit tes lulus 100% (19 berkas), 0 kesalahan TypeScript, dan kompilasi Next.js sukses.
+
 ## Penyempurnaan Detail Tugas: Dropdown Prioritas Rapi, Kartu Bukti Pengumpulan Bersih & Konsistensi Kotak Centang (3 Oktober 2026)
 
 - **Perapihan Dropdown Prioritas & Status (`TaskDetailDrawer.tsx` & `personal.css`)**:

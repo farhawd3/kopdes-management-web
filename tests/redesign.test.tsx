@@ -249,7 +249,44 @@ describe('Fitur Redesain Behance', () => {
     expect(screen.getByText('Selesai')).toBeTruthy();
     expect(screen.getByText('KD-44010')).toBeTruthy();
     expect(screen.getByText('Penataan Rak Etalase Gerai')).toBeTruthy();
+    expect(screen.getByText('Mulai Kerja →')).toBeTruthy();
+    expect(screen.getByText('Manajer')).toBeTruthy();
     expect(screen.getAllByText('Tambah tugas').length).toBeGreaterThan(0);
+  });
+
+  it('ScrumBoardView menampilkan kartu tugas dengan indikator subtugas dan tombol status yang tepat', () => {
+    const taskWithSubtasks: Item = {
+      id: 'task-scrum-2',
+      created_at: '',
+      updated_at: '',
+      data: {
+        title: 'Mengerjakan tugas di Lark',
+        status: 'proses',
+        code: 'TGS-F2A4',
+        due_date: '2026-10-03',
+        priority: 'tinggi',
+        subtasks: [
+          { title: 'Subtugas 1', done: false },
+        ],
+      },
+    };
+
+    render(
+      <ScrumBoardView
+        tasks={[taskWithSubtasks]}
+        workspace={{}}
+        onOpenTask={vi.fn()}
+        onCreateTask={vi.fn()}
+        onRefresh={vi.fn().mockResolvedValue(undefined)}
+      />,
+    );
+
+    expect(screen.getByText('TGS-F2A4')).toBeTruthy();
+    expect(screen.getByText('Mengerjakan tugas di Lark')).toBeTruthy();
+    expect(screen.getByText('tinggi')).toBeTruthy();
+    expect(screen.getByText('0/1')).toBeTruthy();
+    expect(screen.getByText('✓ Selesai')).toBeTruthy();
+    expect(screen.getByText('← Rencana')).toBeTruthy();
   });
 
   it('TodayView menampilkan tugas hari ini, tugas terlambat, dan agenda rapat', () => {
