@@ -1,5 +1,15 @@
 # Changelog
 
+## Koreksi jarak atas mobile, overlap tombol, dan penataan dock navigasi — 4 Oktober 2026
+
+- Perbaiki jarak mepet bagian atas ponsel: perbesar padding atas `.manager-main` dari 8 px menjadi 22 px pada viewport mobile (`@media (max-width: 767px)`), dan normalkan margin tajuk halaman (`.page-heading`) agar tidak menempel rapat pada garis batas header sticky.
+- Cegah overlap dock navigasi melayang terhadap kartu bawah: perbesar padding bawah `.manager-main` menjadi `calc(135px + env(safe-area-inset-bottom, 0px))` sehingga kartu statistik, ringkasan, dan konten bagian bawah dapat digulir bebas tanpa terpotong atau tertutup di balik `.manager-dock`.
+- Tata ulang header Beranda (`.home-heading`): pindahkan chip tanggal (`.home-date-chip`) dari kontainer grid tombol aksi (`.home-heading-actions`) ke baris judul (`.home-eyebrow-row`). Tombol `+ Buat tugas` dan `Catat kegiatan` kini menjadi grid 2-kolom seimbang (`1fr 1fr`) 44 px tanpa elemen tanggal yang anjlok atau tampak seperti tombol pecah di bawahnya.
+- Rombak tata letak kartu peringatan `.follow-up-compact-bar` pada layar ponsel: gunakan layout 2-baris yang rapi (baris atas: ikon peringatan dan lencana jumlah; baris bawah: tombol pill `Rincian (X)` di kiri dan tautan `Semua ↗` di kanan dengan pemisah garis halus), menghilangkan tabrakan teks dan pembungkusan canggung.
+- Bersihkan bilah navigasi atas ponsel (`.manager-topbar`): sembunyikan label teks redundant "Menu" pada tombol burger agar menjadi tombol ikon 36 px bersih, sembunyikan garis miring pemisah yatim (`.topbar-crumb-sep`), hapus kapsul kosong tanpa teks, dan tampilkan nama halaman aktif (`.manager-location`) secara proporsional.
+- Nonaktifkan indikator dev floating Next.js (`devIndicators: false` pada `next.config.ts`) agar lencana lingkaran hitam 'N' tidak menimpa tombol dock navigasi Beranda di pojok kiri bawah layar ponsel.
+- Verifikasi lengkap: 171 tes dalam 23 berkas lulus (`npm test`), 0 kesalahan TypeScript (`npm run typecheck`), dan Next.js production build berhasil (`npm run build`).
+
 ## Overhaul tampilan detail proyek (Hero, Properties Grid, Tab Bar, Next Actions) — 4 Oktober 2026
 
 - Rombak total header detail proyek (`.project-cover`): ganti kartu putih polos yang kosong dengan hero card bernuansa gradien lembut, aksen border brand atas 4 px, bayangan melayang elegan, dan tata letak berdampingan untuk simbol proyek, kode tag (`OPS`), status pill semantik, judul h1, serta tombol `Ubah proyek` berikon `<Edit2 />`.

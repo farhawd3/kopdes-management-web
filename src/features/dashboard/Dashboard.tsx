@@ -200,8 +200,14 @@ export function Dashboard({ data }: { data: Workspace }) {
   return (
     <div className="manager-home">
       <header className="home-heading">
-        <div>
-          <span className="home-eyebrow">Ruang kerja</span>
+        <div className="home-heading-text">
+          <div className="home-eyebrow-row">
+            <span className="home-eyebrow">Ruang kerja</span>
+            <span className="home-date-chip">
+              <CalendarDays size={13} />
+              <span>{formatDate(now)}</span>
+            </span>
+          </div>
           <h1>Ringkasan pekerjaan</h1>
         </div>
         <div className="home-heading-actions">
@@ -211,10 +217,6 @@ export function Dashboard({ data }: { data: Workspace }) {
           <Link href="/jurnal?baru=1" className="home-action-btn home-action-btn-soft">
             Catat kegiatan
           </Link>
-          <span className="home-date-chip">
-            <CalendarDays size={14} />
-            <span>{formatDate(now)}</span>
-          </span>
         </div>
       </header>
 
