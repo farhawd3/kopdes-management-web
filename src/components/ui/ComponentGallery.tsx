@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Plus } from 'lucide-react';
 import { Button, IconButton } from './Button';
 import { Input, Textarea } from './Input';
@@ -13,6 +13,9 @@ import { BottomNav } from './BottomNav';
 import { useDragSort } from './useDragSort';
 import { DragOverlay } from './DragOverlay';
 import { GripVertical } from 'lucide-react';
+import { SegmentedControl } from './SegmentedControl';
+import { Legend } from './Legend';
+import { Progress } from './Progress';
 
 function DragExample() {
   const [column, setColumn] = useState('rencana');
@@ -52,12 +55,21 @@ export function ComponentGallery() {
   const [theme, setTheme] = useState('sage');
   const [value, setValue] = useState('2026-10-04');
   const [notice, setNotice] = useState('');
+  useEffect(() => {
+    const root = document.documentElement;
+    const previous = { dark: root.classList.contains('dark'), theme: root.getAttribute('data-theme'), color: root.getAttribute('data-theme-color') };
+    root.classList.toggle('dark', dark);
+    root.setAttribute('data-theme', dark ? 'dark' : 'light');
+    root.setAttribute('data-theme-color', theme);
+    return () => {
+      root.classList.toggle('dark', previous.dark);
+      for (const [attribute, value] of [['data-theme', previous.theme], ['data-theme-color', previous.color]] as const) {
+        if (value === null) root.removeAttribute(attribute); else root.setAttribute(attribute, value);
+      }
+    };
+  }, [dark, theme]);
   return (
-    <main
-      className={`ui-gallery ${dark ? 'dark' : ''}`}
-      data-theme={dark ? 'dark' : 'light'}
-      data-theme-color={theme}
-    >
+    <main className="ui-gallery">
       <h1>Komponen antarmuka</h1>
       <p>
         Pratinjau lokal tanpa koneksi data. Gunakan Tab, hover dan tekan untuk memeriksa fokus serta
@@ -132,6 +144,12 @@ export function ComponentGallery() {
         />
       </Card>
       <p role="status">{notice}</p>
+      <Card>
+        <CardHeader><h2>Pilihan dan grafik</h2></CardHeader>
+        <SegmentedControl label="Contoh tampilan" value={notice} onChange={setNotice} options={[{ value: 'daftar', label: 'Daftar' }, { value: 'papan', label: 'Papan' }, { value: 'nonaktif', label: 'Nonaktif', disabled: true }]} />
+        <Legend label="Legenda contoh" items={[{key: 'contoh', label: 'Contoh visual, bukan data koperasi', value: '50%', color: 'var(--brand)'}]} />
+        <Progress label="Progres contoh visual" value={50} />
+      </Card>
       <Card>
         <CardHeader>
           <h2>Drag tanpa data</h2>

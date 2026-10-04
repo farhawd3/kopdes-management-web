@@ -2,6 +2,7 @@
 import { Button } from '@/components/ui/Button';
 import { useMotionEntry } from '@/components/ui/useMotionEntry';
 import { useEffect, useState } from 'react';
+import { Legend } from '@/components/ui/Legend';
 import Link from 'next/link';
 
 /* ─── WeekBarChart ─────────────────────────────────────────── */
@@ -185,39 +186,10 @@ export function TaskDonutChart({
           <span>tugas</span>
         </div>
       </div>
-      <div className="dash-donut-legend">
-        {slices.map((s) => (
-          <Button
-            type="button"
-            key={s.label}
-            className="donut-legend-row"
-            aria-pressed={
-              selected ===
-              {
-                Selesai: 'selesai',
-                Dikerjakan: 'proses',
-                Rencana: 'rencana',
-                Dibatalkan: 'dibatalkan',
-              }[s.label]
-            }
-            onClick={() =>
-              onSelect?.(
-                {
-                  Selesai: 'selesai',
-                  Dikerjakan: 'proses',
-                  Rencana: 'rencana',
-                  Dibatalkan: 'dibatalkan',
-                }[s.label] || 'aktif',
-              )
-            }
-          >
-            <span className="donut-dot" style={{ background: s.color }} />
-            <span className="donut-legend-label">{s.label}</span>
-            <strong className="donut-legend-val">{s.value}</strong>
-          </Button>
-        ))}
-      </div>
-    </div>
+      <Legend label="Status tugas" selected={selected} onSelect={onSelect} items={slices.map((slice) => ({
+        key: ({ Selesai: 'selesai', Dikerjakan: 'proses', Rencana: 'rencana', Dibatalkan: 'dibatalkan' }[slice.label] || 'aktif'),
+        label: slice.label, value: slice.value, color: slice.color,
+      }))} /> </div>
   );
 }
 

@@ -1,5 +1,7 @@
 # Checklist produk aktif
 
+- [x] SegmentedControl, Legend dan Progress digunakan pada tugas/kegiatan serta grafik; kontras primer lima tema terang/gelap diperiksa.
+
 - [x] Font/radius legacy memakai token; filter rentang dan tanggal Gantt terbaca pada 320/768 px.
 
 - [x] Pembersihan awal deklarasi CSS identik dan statistik legacy; ukuran total sudah turun dibanding audit awal.

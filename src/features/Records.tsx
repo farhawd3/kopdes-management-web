@@ -6,6 +6,7 @@ import { GripVertical } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import React from 'react';
+import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -1785,11 +1786,12 @@ export function Records({
       )}
       {(entity === 'work-items' || entity === 'journal') && !isCompletedArchive && (
         <div className="database-views-bar">
-          <div
+          <SegmentedControl
             className="database-views"
-            aria-label={`Tampilan ${entity === 'work-items' ? 'tugas' : 'kegiatan'}`}
-          >
-            {(entity === 'work-items'
+            label={`Tampilan ${entity === 'work-items' ? 'tugas' : 'kegiatan'}`}
+            value={view}
+            onChange={handleViewChange}
+            options={(entity === 'work-items'
               ? [
                   ['harian', 'Harian', CalendarClock],
                   ['papan', 'Papan', Columns3],
@@ -1805,21 +1807,11 @@ export function Records({
                 ]
             ).map(([value, label, Icon]) => {
               const ViewIcon = Icon as typeof ListTodo;
-              return (
-                <Button
-                  key={String(value)}
-                  aria-pressed={view === value}
-                  onClick={() => handleViewChange(String(value))}
-                >
-                  <ViewIcon size={17} />
-                  {String(label)}
-                </Button>
-              );
+              return { value: String(value), label: <><ViewIcon size={20} />{String(label)}</> };
             })}
-            <span>
-              {rows.length} {entity === 'work-items' ? 'tugas' : 'kegiatan'}
-            </span>
-          </div>
+          >
+            <span>{rows.length} {entity === 'work-items' ? 'tugas' : 'kegiatan'}</span>
+          </SegmentedControl>
 
           {entity === 'work-items' && (
             <details className="view-extra-actions">

@@ -1,5 +1,7 @@
 # Status produk — 4 Oktober 2026
 
+Pilihan tampilan tugas/kegiatan memakai SegmentedControl; donut/radar memakai Legend; Meter memakai Progress yang mempertahankan status belum dinilai. Galeri mengikuti tema root sementara dan memulihkan tema saat keluar. 190 tes/30 berkas serta build/statik lulus; kontras teks primer lima tema terang 4,69–12,36 dan gelap 7,45–13,20.
+
 Tipografi/radius legacy kini memakai token bersama: 852 deklarasi font dan 796 radius dinormalisasi. Ragam font deklarasi turun 60 → 6; radius 59 → 11 termasuk variasi sudut. Filter/Gantt diperbaiki pada 320 px dan tablet 768, tanpa luapan halaman.
 
 Pembersihan CSS tahap awal menghapus 671 deklarasi identik yang ditimpa selector sama dan gaya statistik lama tanpa pemanggil. CSS kini sekitar 576 KB (awal 604 KB), important 2.058 (awal 2.353), duplikat 457 (awal 522). Target akhir penghapusan personal.css dan important <20 belum tercapai.

@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { type ReactNode } from 'react';
 import { Inbox } from 'lucide-react';
+import { Button } from './Button';
 
 export function EmptyState({
   icon,
@@ -53,14 +54,14 @@ export function EmptyState({
                 <span>{action.label}</span>
               </Link>
             ) : (
-              <button
+              <Button variant="primary"
                 type="button"
                 className="clean-empty-btn-primary"
                 onClick={action.onClick}
               >
                 {action.icon}
                 <span>{action.label}</span>
-              </button>
+              </Button>
             ))}
           {secondaryAction &&
             (secondaryAction.href ? (
@@ -68,13 +69,13 @@ export function EmptyState({
                 {secondaryAction.label}
               </Link>
             ) : (
-              <button
+              <Button variant="ghost"
                 type="button"
                 className="clean-empty-btn-secondary"
                 onClick={secondaryAction.onClick}
               >
                 {secondaryAction.label}
-              </button>
+              </Button>
             ))}
         </div>
       )}

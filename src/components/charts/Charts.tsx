@@ -1,12 +1,11 @@
 import { AlertTriangle, ShieldAlert, ShieldCheck } from 'lucide-react';
 import type { Item } from '@/features/schemas';
+import { Progress } from '@/components/ui/Progress';
 
 export function Meter({ value }: { value: number | null }) {
   return (
     <div className="meter-row">
-      <div className="meter">
-        <span style={{ width: `${value || 0}%` }} />
-      </div>
+      <Progress value={value} label="Kesiapan" />
       <strong>{value === null ? 'Belum dinilai' : `${value}%`}</strong>
     </div>
   );

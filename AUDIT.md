@@ -6,7 +6,7 @@ Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at
 
 | Metrik | Jumlah |
 |---|---:|
-| button | 11 |
+| button | 9 |
 | input | 3 |
 | select | 1 |
 | textarea | 1 |
@@ -15,12 +15,12 @@ Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at
 | hexTsx | 24 |
 | hexCss | 858 |
 | important | 2058 |
-| bytes | 589385 |
+| bytes | 590633 |
 | Elemen mentah di luar components/ui | 0 |
 | Selector berulang | 457 |
 | Nilai border-radius unik | 11 |
 | Nilai font-size unik | 6 |
-| Nilai height unik | 61 |
+| Nilai height unik | 62 |
 
 ## CSS
 
@@ -29,7 +29,7 @@ Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at
 | src/app/globals.css | 27982 | 2 |
 | src/app/personal.css | 544384 | 2053 |
 | src/app/tokens.css | 3056 | 3 |
-| src/app/ui.css | 13963 | 0 |
+| src/app/ui.css | 15211 | 0 |
 
 ## Inventaris halaman dan overlay
 
@@ -59,8 +59,6 @@ Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at
 | button | src/components/ui/DateField.tsx:172 | HTML button | Primitive internal | Button / IconButton | Pustaka UI |
 | button | src/components/ui/DateField.tsx:180 | HTML button | Primitive internal | Button / IconButton | Pustaka UI |
 | button | src/components/ui/DateField.tsx:184 | HTML button | Primitive internal | Button / IconButton | Pustaka UI |
-| button | src/components/ui/EmptyState.tsx:56 | HTML button | Primitive internal | Button / IconButton | Pustaka UI |
-| button | src/components/ui/EmptyState.tsx:71 | HTML button | Primitive internal | Button / IconButton | Pustaka UI |
 | input | src/components/ui/Input.tsx:6 | HTML input | Primitive internal | Input / DateInput | Pustaka UI |
 | textarea | src/components/ui/Input.tsx:11 | HTML textarea | Primitive internal | Textarea | Pustaka UI |
 | select | src/components/ui/Select.tsx:175 | HTML select | Primitive internal | Select | Pustaka UI |
@@ -614,5 +612,6 @@ Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at
 - `var(--control-height-md)`
 - `var(--h-md)`
 - `var(--icon-md)`
+- `var(--space-2)`
 - `var(--space-8)`
 - `var(--table-th-height)`

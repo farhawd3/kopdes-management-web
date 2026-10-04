@@ -1,5 +1,6 @@
 import type { Checklist } from '@/features/schemas';
 import { readiness } from '@/lib/progress';
+import { Legend } from '@/components/ui/Legend';
 const dimensions = ['legalitas', 'fisik', 'sdm', 'sop', 'sistem'] as const;
 export function ReadinessRadar({ items }: { items: Checklist[] }) {
   const values = dimensions.map((dimension) =>
@@ -38,14 +39,12 @@ export function ReadinessRadar({ items }: { items: Checklist[] }) {
           strokeWidth="2"
         />
       </svg>
-      <ul>
-        {dimensions.map((dimension, index) => (
-          <li key={dimension}>
-            {dimension.toUpperCase()}:{' '}
-            {values[index] === null ? 'Belum dinilai' : `${values[index]}%`}
-          </li>
-        ))}
-      </ul>
+      <Legend label="Nilai kesiapan per dimensi" items={dimensions.map((dimension, index) => ({
+        key: dimension,
+        label: dimension === 'sdm' ? 'SDM' : dimension === 'sop' ? 'SOP' : dimension[0].toUpperCase() + dimension.slice(1),
+        value: values[index] === null ? 'Belum dinilai' : `${values[index]}%`,
+        color: 'var(--brand)',
+      }))} />
     </details>
   );
 }

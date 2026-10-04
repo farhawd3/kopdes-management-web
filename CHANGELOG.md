@@ -1,5 +1,10 @@
 # Changelog
 
+## PLAN-ASTRA — kontrol tampilan dan legenda — 4 Oktober 2026
+
+- Satukan pilihan tampilan, legenda donut/radar dan indikator kesiapan. Tombol EmptyState memakai Button. Galeri memeriksa warna aktif tanpa menyimpan preferensi.
+- 190 tes, typecheck, lint, penjaga UI, audit sumber 91/91 dan build lulus. Kontras primer lima tema melampaui 4,5 pada terang/gelap.
+
 ## PLAN-ASTRA — geometri legacy dan Gantt sempit — 4 Oktober 2026
 
 - Normalisasi font/radius numerik dan alias ke token bersama. Perbaiki filter rentang tugas, status aktif, dan susunan tanggal Gantt pada layar sempit.

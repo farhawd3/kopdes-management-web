@@ -90,3 +90,12 @@ Migrasi visual penuh, interaktivitas, animasi dan QA menyeluruh masih berjalan. 
 - Verifikasi: 187 tes/29 berkas, typecheck, lint, lint:ui dan build lulus. CSS tetap lebih kecil dibanding awal; important dan duplikat belum mencapai target.
 - [x] Normalisasi font/radius dan perbaikan Gantt sempit.
 - [ ] Seluruh state/tema/halaman dan penghapusan personal.css.
+
+## Paket lanjutan fase 3/4 — pilihan dan grafik
+
+- SegmentedControl mengganti pilihan tampilan tugas/kegiatan; Legend mengganti legenda donut/radar. Progress dipakai Meter dengan transform scaleX; null tetap tanpa aria-valuenow dan teks Belum dinilai. EmptyState memakai Button.
+- Galeri mengubah tema root sementara untuk menguji CSS yang benar dan memulihkan atribut saat keluar; tidak mengubah preferensi tersimpan. Galeri 320 tidak meluap.
+- Kontras teks primer (terang/gelap): peach 5,75/8,44; lavender 5,05/8,25; sage 4,88/8,38; sky 4,69/7,45; lime 12,36/13,20. Ini hanya tombol primer, bukan bukti semua teks sudah memenuhi kontras.
+- Verifikasi: 190 tes/30 berkas, typecheck, lint, lint:ui, check:ui, build dan audit sumber 91/91 lulus.
+- [x] Pilihan tampilan, legenda donut/radar dan progres bersama.
+- [ ] Seluruh label form/tooltip/card, seluruh tema/state dan kontras teks selain primer.
