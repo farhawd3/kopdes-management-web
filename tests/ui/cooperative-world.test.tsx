@@ -37,6 +37,7 @@ it('preferensi korup tidak mencegah halaman tampil', () => {
 });
 it('kontrol waktu dan cuaca langsung terlihat serta mengubah suasana', () => {
   render(<CooperativeWorld data={{}} />);
+  fireEvent.click(screen.getByRole('button', { name: 'Suasana' }));
   const malamBtn = screen.getByRole('button', { name: 'Waktu malam' });
   expect(malamBtn).toBeTruthy();
   fireEvent.click(malamBtn);

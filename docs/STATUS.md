@@ -40,17 +40,21 @@ Versi sekarang belum diterima: kawasan kecil/sepi, mobil belum ada, tampilan aga
   - Pakaian karakter dinamis: Manajer KDMP Puntukrejo mengenakan jas resmi navy (`palette.navy`), kerah kemeja putih, dan dasi merah; staf mengenakan seragam kerja dan lanyard ID badge. Animasi procedural mendukung pose lambaian tangan (`greet`) dan anggukan berbicara (`talk`).
   - Balon percakapan komik mengambang (`.cw-dialogue-bubble`): diproyeksikan dari koordinat 3D kepala karakter ke koordinat 2D layar dengan teks dinamis sesuai keadaan data nyata (misal menanyakan tugas terbuka, cuaca, atau sapaan waktu WIB).
   - Integrasi data Manajer & Tim: chip kiri-bawah diperbarui menjadi "Manajer · {aktivitas}" yang membuka kartu profil Manajer lengkap dengan statistik tugas, rapat, dan gerai; tab Karakter di dock membuka daftar tim staf serta form `+ Tambah Anggota Tim` yang langsung tersinkronisasi ke API staf tanpa tabel tambahan.
+- **Paket 5 Selesai:**
+  - Modul pencahayaan dinamis murni `world-lighting.ts`: kurva kontinu siklus 24 jam (matahari/bulan), elevasi terkunci >= 30 derajat untuk mencegah shadow acne, interpolasi smoothstep intensitas dan warna langit/ambient, serta penyesuaian cuaca (berawan/hujan).
+  - Mode malam atmosferik: lampu jalan menyala kuning hangat (`#fef08a`), pendar tanah (*ground glow*) lembut di bawah tiang lampu, jendela kantor dan gudang bercahaya hangat, serta lampu plafon gantung dan layar monitor di interior memancarkan pendar terang yang nyaman.
+  - Pusat kendali Popover Suasana terpadu: menghapus bilah horizontal cepat atas yang menabrak kartu KPI/rapat, menyatukan 3 titik masuk (pil jam header, kartu cuaca kiri-bawah, dan tab Suasana di dock bawah) ke satu Popover Suasana kaca elegan (slider jam, tombol preset Pagi/Siang/Senja/Malam, kontrol cuaca, putar otomatis waktu, dan sakelar jeda animasi).
+  - Indikator status simulasi waktu di header: pil jam menampilkan titik oranye berkedip dan label `Simulasi {jam}` saat mode simulasi aktif, dan kembali ke waktu asli saat mode Live WIB.
 - Exterior luas (58 × 38 unit): kantor koperasi, jalan dua arah, plaza air mancur dan 4 bangku taman ber-anchor, area parkir mobil manajer, gudang logistik, dan tujuh lahan gerai yang terhubung catatan `units`.
-- Default waktu adalah Siang terang; kontrol cepat **Waktu** dan **Cuaca** aktif.
 - Style dunia terisolasi di `world.css` dan palet Three.js di `world-objects.ts`.
 
 ## Pemeriksaan paket terbaru
 
-- `npm test -- --maxWorkers=2`: **274 tes / 44 berkas lulus 100%**.
+- `npm test -- --maxWorkers=2`: **275 tes / 44 berkas lulus 100%**.
 - `npm run typecheck`: **lulus** (0 error TypeScript).
 - `npm run lint`: **lulus** (0 error, 0 warning ESLint).
-- `npm run build`: **lulus** (Turbopack production build sukses dalam 8.4 detik).
-- QA browser Paket 4: verifikasi visual browser membuktikan kartu profil Manajer terbuka dengan data lengkap KDMP Puntukrejo, panel Karakter menampilkan tim dan form tambah anggota, balon dialog komik mengambang di atas karakter dengan ucapan akurat sesuai data tugas ("Ada tugas yang perlu ditinjau hari ini? (1 tugas)"), serta tata letak mobile 360px berfungsi mulus sebagai bottom sheet. Bukti screenshot: `manager_detail_panel_1791148328482.png`, `karakter_panel_1791148359274.png`, `speech_bubble_interaction_1791148395196.png`, `mobile_view_360px_1791148417630.png`.
+- `npm run build`: **lulus** (Turbopack production build sukses).
+- QA browser Paket 5: verifikasi visual browser membuktikan hilangnya bilah atas pengganggu, berfungsinya Popover Suasana terpadu dari 3 titik pemicu, visual malam yang memukau (lampu jalan menyala hangat, pendar tanah, jendela gedung bercahaya, interior malam terang nyaman), indikator jam simulasi oranye di header, dan adaptasi layout responsif mobile 375x812px. Bukti screenshot: `suasana_popover_open_1791149718956.png`, `night_exterior_1440x900_1791149941673.png`, `night_interior_1440x900_1791149993531.png`, `night_mobile_375x812_1791150060286.png`.
 
 ## Halaman operasional yang tersedia
 

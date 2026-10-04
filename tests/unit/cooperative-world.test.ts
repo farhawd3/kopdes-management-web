@@ -180,4 +180,40 @@ describe('pemetaan dunia koperasi', () => {
     const pairStillCooldown = mgr.triggerDialogue('p1', 'p2', 'Budi', 'manager', [0, 0, 0], ctxWithTasks, 25.0);
     expect(pairStillCooldown).toBe(false);
   });
+  it('pencahayaan dinamis: kurva kontinu, elevasi aman anti-acne, lampu malam dan cuaca', async () => {
+    const { getLightingForMinute, getMinuteFromPreset } = await import(
+      '@/features/cooperative-world/world-lighting'
+    );
+
+    // Preset konversi
+    expect(getMinuteFromPreset('pagi')).toBe(420);
+    expect(getMinuteFromPreset('siang')).toBe(720);
+    expect(getMinuteFromPreset('senja')).toBe(1065);
+    expect(getMinuteFromPreset('malam')).toBe(1230);
+
+    // Siang hari (12:00 / 720m)
+    const noon = getLightingForMinute(720, 'cerah');
+    expect(noon.isNight).toBe(false);
+    expect(noon.lampIntensity).toBe(0);
+    expect(noon.sunIntensity).toBeGreaterThan(1.0);
+    expect(noon.sunPosition[1]).toBeGreaterThanOrEqual(20); // Elevasi Y aman >= 30 derajat
+
+    // Malam hari (20:30 / 1230m)
+    const night = getLightingForMinute(1230, 'cerah');
+    expect(night.isNight).toBe(true);
+    expect(night.lampIntensity).toBe(1.0);
+    expect(night.streetLightEmissive).toBe('#fde047');
+    expect(night.sunPosition[1]).toBeGreaterThanOrEqual(20);
+
+    // Kontinuitas 00:00 = 24:00 (wrap-around kontinu)
+    const midnight0 = getLightingForMinute(0, 'cerah');
+    const midnight24 = getLightingForMinute(1440, 'cerah');
+    expect(midnight0.sunIntensity).toBeCloseTo(midnight24.sunIntensity, 3);
+    expect(midnight0.lampIntensity).toBeCloseTo(midnight24.lampIntensity, 3);
+
+    // Adaptasi Cuaca (hujan mereduksi intensitas cahaya matahari)
+    const noonRain = getLightingForMinute(720, 'hujan');
+    expect(noonRain.sunIntensity).toBeLessThan(noon.sunIntensity);
+    expect(noonRain.ambientIntensity).toBeLessThan(noon.ambientIntensity);
+  });
 });

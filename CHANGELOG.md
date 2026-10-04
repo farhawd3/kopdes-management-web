@@ -1,5 +1,13 @@
 # Changelog
 
+## Paket 5 Dunia Koperasi: Cahaya Dinamis Kontinu, Lampu Malam & Pusat Kontrol Suasana — 5 Oktober 2026
+
+- Kembangkan modul pencahayaan dinamis murni `world-lighting.ts`: implementasi kurva kontinu matahari/bulan 24 jam dengan interpolasi smoothstep, batas elevasi directional light >= 30 derajat anti shadow acne, modulasi ambient & directional light, adaptasi cuaca cerah/berawan/hujan, serta kontinuitas 00:00 = 24:00.
+- Terapkan sistem pencahayaan malam atmosferik: lampu jalan menyala emisi kuning hangat (`#fef08a`), pendar tanah (*ground glow*) melingkar di bawah tiang lampu, jendela kantor dan gudang bercahaya hangat, serta interior kantor dilengkapi lampu plafon gantung dan layar monitor pendar sejuk yang terang dan nyaman.
+- Bangun Popover Suasana terpadu: menghapus bilah horizontal cepat atas yang menutupi kartu KPI/rapat, menyatukan 3 titik akses (pil jam header, kartu cuaca kiri-bawah, dan tab Suasana di dock bawah) ke dalam satu dialog popover kaca modern dengan kontrol mode Live WIB vs Simulasi slider jam 00–24, tombol pintas waktu (Pagi/Siang/Senja/Malam), pemilihan cuaca, putar otomatis waktu (kecepatan 1x/3x), serta sakelar jeda animasi.
+- Integrasikan indikator status simulasi waktu di header: pil jam menampilkan titik oranye berdenyut dan label `Simulasi {jam}` saat mode simulasi aktif, dan kembali ke jam WIB asli saat beralih ke Live.
+- 275 tes unit lulus 100%, typecheck 0 error, lint 0 error, build produksi Next.js sukses; audit browser membuktikan hilangnya bilah atas, berfungsinya popover suasana, pemandangan malam yang indah, dan layout mobile 375x812px responsif.
+
 ## Paket 4 Dunia Koperasi: Karakter Manajer, Tim Staf & Dialog Kontekstual — 5 Oktober 2026
 
 - Bangun modul dialog murni `world-dialogue.ts`: sistem percakapan kontekstual bersyarat data nyata (`getTimeGreeting`, `getContextualDialogue`, `DialogueManager`), cooldown per pasangan 45 dtk, cooldown global 8 dtk, kapasitas maks 2 balon ucapan.

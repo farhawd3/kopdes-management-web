@@ -29,12 +29,15 @@ import {
   type DialogueBubble,
   type DialogueContext,
 } from './world-dialogue';
+import { getLightingForMinute } from './world-lighting';
 
 type Props = {
   model: WorldModel;
   location: WorldLocation;
   weather: WorldPreferences['weather'];
   hour: number;
+  minuteOfDay?: number;
+  isPaused?: boolean;
   outfit: WorldPreferences['outfit'];
   activity: CharacterActivity;
   zoom: number;
@@ -48,6 +51,8 @@ export function WorldScene({
   location,
   weather,
   hour,
+  minuteOfDay,
+  isPaused = false,
   outfit,
   activity,
   zoom,
@@ -61,13 +66,13 @@ export function WorldScene({
   const runtime = useRef<{ camera: THREE.OrthographicCamera; controls: OrbitControls } | null>(
     null,
   );
-  const motion = useRef({ activity, weather, hour });
+  const motion = useRef({ activity, weather, hour, minuteOfDay, isPaused });
   const selectAction = useRef(onSelect);
   const [failed, setFailed] = useState(false);
   const [screenBubbles, setScreenBubbles] = useState<({ x: number; y: number } & DialogueBubble)[]>([]);
   useEffect(() => {
-    motion.current = { activity, weather, hour };
-  }, [activity, weather, hour]);
+    motion.current = { activity, weather, hour, minuteOfDay, isPaused };
+  }, [activity, weather, hour, minuteOfDay, isPaused]);
   useEffect(() => {
     selectAction.current = onSelect;
   }, [onSelect]);
@@ -140,6 +145,14 @@ export function WorldScene({
     sun.shadow.bias = -0.0003;
     sun.shadow.normalBias = 0.025;
     scene.add(sun);
+
+    const nightPointLight = new THREE.PointLight('#fef08a', 0, 36, 1.8);
+    nightPointLight.position.set(2, 6, 8);
+    scene.add(nightPointLight);
+
+    const interiorPointLight = new THREE.PointLight('#fff1dc', 0, 26, 1.6);
+    interiorPointLight.position.set(0, 5.5, -1.0);
+    scene.add(interiorPointLight);
     const floor = new THREE.Mesh(
       new THREE.PlaneGeometry(500, 500),
       new THREE.MeshStandardMaterial({ color: '#e5ebf8', roughness: 1 }),
@@ -339,25 +352,52 @@ export function WorldScene({
       frame = requestAnimationFrame(draw);
       if (document.hidden || stamp - previous < 32) return;
       const dt = Math.min((stamp - previous) / 1000, 0.06);
-      elapsed += dt;
+      const state = motion.current;
+      if (!state.isPaused) {
+        elapsed += dt;
+      }
       previous = stamp;
       controls.update();
 
-      const state = motion.current,
-        night = state.hour < 6 || state.hour >= 19,
-        dusk = state.hour >= 16 && state.hour < 19;
-      const sky = night
-        ? '#1e293b'
-        : dusk
-          ? '#f3e8f4'
-          : state.weather === 'cerah'
-            ? '#e7edf9'
-            : '#cbd7e9';
-      scene.background = new THREE.Color(sky);
-      (floor.material as THREE.MeshStandardMaterial).color.set(sky);
-      ambient.intensity = night ? 1.5 : dusk ? 2.2 : 2.8;
-      sun.intensity = night ? 0.9 : state.weather === 'cerah' ? 3.8 : 1.8;
-      sun.color.set(dusk ? '#ffd4b2' : night ? '#a3bffa' : '#fff8ec');
+      const currentMinute =
+        state.minuteOfDay !== undefined
+          ? state.minuteOfDay
+          : state.hour * 60;
+      const lighting = getLightingForMinute(currentMinute, state.weather);
+
+      scene.background = new THREE.Color(lighting.skyBackground);
+      (floor.material as THREE.MeshStandardMaterial).color.set(lighting.skyBackground);
+
+      ambient.color.set(lighting.ambientColor);
+      ambient.intensity = lighting.ambientIntensity * 2.6;
+
+      sun.color.set(lighting.sunColor);
+      sun.intensity = lighting.sunIntensity * 3.4;
+      sun.position.set(lighting.sunPosition[0], lighting.sunPosition[1], lighting.sunPosition[2]);
+
+      // Point lights untuk malam dan interior
+      if (location === 'luar') {
+        nightPointLight.intensity = lighting.lampIntensity * 2.2;
+        interiorPointLight.intensity = 0;
+      } else {
+        nightPointLight.intensity = 0;
+        interiorPointLight.intensity = lighting.lampIntensity * 2.4 + 1.2;
+      }
+
+      // Update tiang lampu jalan & pendar tanah
+      if (exteriorResult?.streetLamps) {
+        for (const bulb of exteriorResult.streetLamps) {
+          const mat = bulb.material as THREE.MeshStandardMaterial;
+          mat.emissive.set(lighting.streetLightEmissive);
+          mat.emissiveIntensity = lighting.lampIntensity * 1.5;
+        }
+      }
+      if (exteriorResult?.groundGlows) {
+        for (const glow of exteriorResult.groundGlows) {
+          const mat = glow.material as THREE.MeshStandardMaterial;
+          mat.opacity = lighting.lampIntensity * 0.45;
+        }
+      }
 
       // Animate 2-phase Traffic Light
       let isMainGreen = true;

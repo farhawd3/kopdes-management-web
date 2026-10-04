@@ -30,7 +30,10 @@ import {
   Users,
   X,
   BookOpen,
+  Play,
+  Pause,
 } from 'lucide-react';
+import { getMinuteFromPreset } from './world-lighting';
 import { Button } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
 import { Input } from '@/components/ui/Input';
@@ -131,6 +134,33 @@ export function CooperativeWorld({
   const model = useMemo(() => getWorldModel(data, now), [data, now]);
   // Geometry is independent of the clock: minute ticks must not reset the camera.
   const sceneModel = useMemo(() => getWorldModel(data, new Date()), [data]);
+  const [suasanaOpen, setSuasanaOpen] = useState(false);
+  const [simulationMinute, setSimulationMinute] = useState<number>(() => {
+    const d = new Date();
+    return getMinuteFromPreset(preferences.time, d.getHours(), d.getMinutes());
+  });
+  const [isPlayingTime, setIsPlayingTime] = useState(false);
+  const [playSpeed, setPlaySpeed] = useState<'slow' | 'fast'>('slow');
+  const [isPausedAnimation, setIsPausedAnimation] = useState(false);
+
+  useEffect(() => {
+    if (!isPlayingTime) return;
+    const interval = playSpeed === 'fast' ? 66 : 200; // Fast: 1 jam ~ 4s, Slow: 1 jam ~ 12s
+    const timer = window.setInterval(() => {
+      setSimulationMinute((prev) => (prev + 1) % 1440);
+    }, interval);
+    return () => clearInterval(timer);
+  }, [isPlayingTime, playSpeed]);
+
+  const liveMinute = now.getHours() * 60 + now.getMinutes();
+  const effectiveMinute =
+    preferences.time === 'otomatis'
+      ? liveMinute
+      : simulationMinute;
+  const simHour = Math.floor(effectiveMinute / 60);
+  const simMin = effectiveMinute % 60;
+  const simulationClock = `${String(simHour).padStart(2, '0')}.${String(simMin).padStart(2, '0')}`;
+
   const hour = getWorldHour(preferences.time, now);
   const activity = rehearsal === 'otomatis' ? model.activity : rehearsal;
   const plot = model.plots.find((item) => item.id === selected);
@@ -240,14 +270,19 @@ export function CooperativeWorld({
             </small>
           </span>
         </div>
-        <span className="cw-live" suppressHydrationWarning>
+        <Button
+          className={`cw-live ${preferences.time !== 'otomatis' ? 'is-simulation' : ''}`}
+          onClick={() => setSuasanaOpen(true)}
+          aria-label="Buka pengaturan suasana dan waktu"
+          suppressHydrationWarning
+        >
           <i />
-          {clock} WIB
-        </span>
+          {preferences.time === 'otomatis' ? `${clock} WIB` : `Simulasi ${simulationClock}`}
+        </Button>
         <Button
           className="cw-icon-button"
           aria-label="Pengaturan suasana"
-          onClick={() => select('lingkungan')}
+          onClick={() => setSuasanaOpen(true)}
         >
           <Settings2 size={18} />
         </Button>
@@ -266,6 +301,8 @@ export function CooperativeWorld({
           location={location}
           weather={preferences.weather}
           hour={hour}
+          minuteOfDay={effectiveMinute}
+          isPaused={isPausedAnimation}
           outfit={preferences.outfit}
           activity={activity}
           zoom={zoom}
@@ -274,38 +311,193 @@ export function CooperativeWorld({
           bubble={bubble}
           onSelect={select}
         />
-        <div className="cw-quick-controls cw-glass" aria-label="Kontrol Waktu dan Cuaca">
-          <div className="cw-quick-group">
-            <span className="cw-quick-label">WAKTU</span>
-            {(['siang', 'pagi', 'senja', 'malam', 'otomatis'] as const).map((t) => (
+
+        {suasanaOpen && (
+          <div
+            className="cw-suasana-popover cw-glass"
+            role="dialog"
+            aria-label="Pengaturan Suasana dan Waktu"
+          >
+            <div className="cw-suasana-header">
+              <div className="cw-suasana-title">
+                <Sun size={18} className="cw-accent-icon" />
+                <strong>Pengaturan Suasana</strong>
+              </div>
               <Button
-                key={t}
-                className={`cw-quick-btn ${preferences.time === t ? 'is-active' : ''}`}
-                onClick={() => preference('time', t)}
-                aria-pressed={preferences.time === t}
-                aria-label={`Waktu ${t === 'otomatis' ? 'WIB Otomatis' : t}`}
+                className="cw-icon-button cw-close-btn"
+                aria-label="Tutup pengaturan suasana"
+                onClick={() => setSuasanaOpen(false)}
               >
-                {t === 'otomatis' ? 'WIB' : t.charAt(0).toUpperCase() + t.slice(1)}
+                <X size={16} />
               </Button>
-            ))}
+            </div>
+
+            <div className="cw-suasana-body">
+              {/* Mode Waktu */}
+              <div className="cw-suasana-section">
+                <span className="cw-suasana-section-label">MODE WAKTU</span>
+                <div className="cw-suasana-segmented">
+                  <Button
+                    className={`cw-seg-btn ${preferences.time === 'otomatis' ? 'is-active' : ''}`}
+                    onClick={() => preference('time', 'otomatis')}
+                  >
+                    Live WIB
+                  </Button>
+                  <Button
+                    className={`cw-seg-btn ${preferences.time !== 'otomatis' ? 'is-active' : ''}`}
+                    onClick={() => {
+                      if (preferences.time === 'otomatis') {
+                        preference('time', 'siang');
+                      }
+                    }}
+                  >
+                    Simulasi
+                  </Button>
+                </div>
+              </div>
+
+              {/* Slider & Pintasan jika Simulasi */}
+              {preferences.time !== 'otomatis' && (
+                <div className="cw-suasana-section cw-simulation-box">
+                  <div className="cw-suasana-row-between">
+                    <span className="cw-suasana-sublabel">Waktu Simulasi</span>
+                    <strong className="cw-time-display">{simulationClock} WIB</strong>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1439"
+                    step="15"
+                    value={simulationMinute}
+                    onChange={(e) => {
+                      const m = parseInt(e.target.value, 10);
+                      setSimulationMinute(m);
+                      if (m < 360 || m >= 1140) preference('time', 'malam');
+                      else if (m < 600) preference('time', 'pagi');
+                      else if (m < 1020) preference('time', 'siang');
+                      else preference('time', 'senja');
+                    }}
+                    className="cw-time-slider"
+                    aria-label="Slider waktu simulasi"
+                  />
+                  <div className="cw-quick-chips">
+                    <Button
+                      className={`cw-chip-btn ${preferences.time === 'pagi' ? 'is-active' : ''}`}
+                      aria-label="Waktu pagi"
+                      aria-pressed={preferences.time === 'pagi'}
+                      onClick={() => {
+                        preference('time', 'pagi');
+                        setSimulationMinute(420);
+                      }}
+                    >
+                      Pagi 07:00
+                    </Button>
+                    <Button
+                      className={`cw-chip-btn ${preferences.time === 'siang' ? 'is-active' : ''}`}
+                      aria-label="Waktu siang"
+                      aria-pressed={preferences.time === 'siang'}
+                      onClick={() => {
+                        preference('time', 'siang');
+                        setSimulationMinute(720);
+                      }}
+                    >
+                      Siang 12:00
+                    </Button>
+                    <Button
+                      className={`cw-chip-btn ${preferences.time === 'senja' ? 'is-active' : ''}`}
+                      aria-label="Waktu senja"
+                      aria-pressed={preferences.time === 'senja'}
+                      onClick={() => {
+                        preference('time', 'senja');
+                        setSimulationMinute(1065);
+                      }}
+                    >
+                      Senja 17:45
+                    </Button>
+                    <Button
+                      className={`cw-chip-btn ${preferences.time === 'malam' ? 'is-active' : ''}`}
+                      aria-label="Waktu malam"
+                      aria-pressed={preferences.time === 'malam'}
+                      onClick={() => {
+                        preference('time', 'malam');
+                        setSimulationMinute(1230);
+                      }}
+                    >
+                      Malam 20:30
+                    </Button>
+                  </div>
+
+                  {/* Putar Otomatis */}
+                  <div className="cw-suasana-row-between cw-autopilot-row">
+                    <span className="cw-suasana-sublabel">Putar Waktu</span>
+                    <div className="cw-autopilot-controls">
+                      <Button
+                        className={`cw-chip-btn ${isPlayingTime ? 'is-active' : ''}`}
+                        onClick={() => setIsPlayingTime(!isPlayingTime)}
+                      >
+                        {isPlayingTime ? <Pause size={13} /> : <Play size={13} />}
+                        <span>{isPlayingTime ? 'Jeda' : 'Putar'}</span>
+                      </Button>
+                      <Button
+                        className={`cw-chip-btn ${playSpeed === 'fast' ? 'is-active' : ''}`}
+                        onClick={() => setPlaySpeed(playSpeed === 'slow' ? 'fast' : 'slow')}
+                      >
+                        {playSpeed === 'slow' ? '1x (Pelan)' : '3x (Cepat)'}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Pilihan Cuaca */}
+              <div className="cw-suasana-section">
+                <span className="cw-suasana-section-label">KONDISI CUACA</span>
+                <div className="cw-suasana-weather-chips">
+                  {(['cerah', 'berawan', 'hujan'] as const).map((w) => (
+                    <Button
+                      key={w}
+                      className={`cw-weather-chip ${preferences.weather === w ? 'is-active' : ''}`}
+                      aria-label={`Cuaca ${w}`}
+                      aria-pressed={preferences.weather === w}
+                      onClick={() => preference('weather', w)}
+                    >
+                      {w === 'cerah' ? <Sun size={15} /> : w === 'berawan' ? <Cloud size={15} /> : <CloudRain size={15} />}
+                      <span>{w.charAt(0).toUpperCase() + w.slice(1)}</span>
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Aksesibilitas */}
+              <div className="cw-suasana-section">
+                <span className="cw-suasana-section-label">AKSESIBILITAS</span>
+                <label className="cw-toggle-label">
+                  <input
+                    type="checkbox"
+                    checked={isPausedAnimation}
+                    onChange={(e) => setIsPausedAnimation(e.target.checked)}
+                    aria-label="Jeda animasi dunia"
+                  />
+                  <span>Jeda semua animasi</span>
+                </label>
+              </div>
+
+              {/* Reset to live */}
+              {preferences.time !== 'otomatis' && (
+                <Button
+                  className="cw-reset-live-btn"
+                  onClick={() => {
+                    preference('time', 'otomatis');
+                    setIsPlayingTime(false);
+                  }}
+                >
+                  <RotateCcw size={14} />
+                  <span>Kembali ke Waktu Live WIB</span>
+                </Button>
+              )}
+            </div>
           </div>
-          <i className="cw-quick-sep" />
-          <div className="cw-quick-group">
-            <span className="cw-quick-label">CUACA</span>
-            {(['cerah', 'berawan', 'hujan'] as const).map((w) => (
-              <Button
-                key={w}
-                className={`cw-quick-btn ${preferences.weather === w ? 'is-active' : ''}`}
-                onClick={() => preference('weather', w)}
-                aria-pressed={preferences.weather === w}
-                aria-label={`Cuaca ${w}`}
-              >
-                {w === 'cerah' ? <Sun size={13} /> : w === 'berawan' ? <Cloud size={13} /> : <CloudRain size={13} />}
-                <span>{w.charAt(0).toUpperCase() + w.slice(1)}</span>
-              </Button>
-            ))}
-          </div>
-        </div>
+        )}
         <div className="cw-stat-row">
           <Link href="/gerai" className="cw-glass cw-stat">
             <span className="cw-stat-icon">
@@ -890,7 +1082,7 @@ export function CooperativeWorld({
                 Cuaca simulasi · {preferences.time === 'otomatis' ? 'waktu WIB' : preferences.time}
               </small>
             </div>
-            <Button aria-label="Atur cuaca dan waktu" onClick={() => select('lingkungan')}>
+            <Button aria-label="Atur cuaca dan waktu" onClick={() => setSuasanaOpen(true)}>
               <Settings2 size={15} />
             </Button>
           </div>
@@ -964,7 +1156,13 @@ export function CooperativeWorld({
           <MessageCircle size={19} />
           <span>Karakter</span>
         </Button>
-        <Button aria-pressed={selected === 'lingkungan'} onClick={() => select('lingkungan')}>
+        <Button
+          aria-pressed={suasanaOpen}
+          onClick={() => {
+            select('lingkungan');
+            setSuasanaOpen((prev) => !prev);
+          }}
+        >
           <Sun size={19} />
           <span>Suasana</span>
         </Button>

@@ -548,7 +548,16 @@ function streetLamp(parent: THREE.Object3D, x: number, z: number) {
   parent.add(g);
   cylinder(g, 0.07, 3.4, [0, 1.7, 0], palette.metal);
   box(g, [0.75, 0.07, 0.15], [0.3, 3.38, 0], '#334155');
-  box(g, [0.35, 0.18, 0.28], [0.55, 3.28, 0], palette.nightLamp, 0.04);
+  const bulb = box(g, [0.35, 0.18, 0.28], [0.55, 3.28, 0], palette.nightLamp, 0.04);
+  bulb.material = (bulb.material as THREE.MeshStandardMaterial).clone();
+
+  // Pendar cahaya lembut di tanah (disk datar layer 3)
+  const glow = cylinder(g, 1.3, 0.005, [0.55, 0.042, 0], '#fef08a');
+  glow.material = (glow.material as THREE.MeshStandardMaterial).clone();
+  glow.material.transparent = true;
+  glow.material.opacity = 0;
+
+  return { bulb, glow };
 }
 
 export function createExterior(parent: THREE.Group, model: WorldModel) {
@@ -687,12 +696,19 @@ export function createExterior(parent: THREE.Group, model: WorldModel) {
   }
 
   // Tiang Lampu Jalan (Streetlamps)
+  const streetLamps: THREE.Mesh[] = [];
+  const groundGlows: THREE.Mesh[] = [];
+
   for (const lx of [-24, -12, 0, 12, 24]) {
-    streetLamp(parent, lx, 8.4);
-    streetLamp(parent, lx, 15.6);
+    const lamp1 = streetLamp(parent, lx, 8.4);
+    const lamp2 = streetLamp(parent, lx, 15.6);
+    streetLamps.push(lamp1.bulb, lamp2.bulb);
+    groundGlows.push(lamp1.glow, lamp2.glow);
   }
-  streetLamp(parent, -1, 3.2);
-  streetLamp(parent, 9, 3.2);
+  const lampNorth1 = streetLamp(parent, -1, 3.2);
+  const lampNorth2 = streetLamp(parent, 9, 3.2);
+  streetLamps.push(lampNorth1.bulb, lampNorth2.bulb);
+  groundGlows.push(lampNorth1.glow, lampNorth2.glow);
 
   // Pepohonan Hijau Kawasan
   for (const tx of [-26, -21, -15, -9, 0, 9, 15, 21, 26]) {
@@ -707,7 +723,7 @@ export function createExterior(parent: THREE.Group, model: WorldModel) {
   tree(parent, -0.8, 2.6, 0.85);
   tree(parent, 8.8, 2.6, 0.85);
 
-  return { movingTruck, trafficPool, mitraTruck, trafficLights, seatAnchors };
+  return { movingTruck, trafficPool, mitraTruck, trafficLights, seatAnchors, streetLamps, groundGlows };
 }
 
 function chair(parent: THREE.Object3D, x: number, z: number, rotation = 0) {
@@ -744,6 +760,13 @@ export function createInterior(parent: THREE.Group) {
     box(parent, [2.4, 2.0, 0.08], [x, 2.3, -7.48], '#b8d4ec', 0.04);
     box(parent, [0.08, 2.1, 0.12], [x, 2.3, -7.42], '#839bb9', 0);
     box(parent, [2.6, 0.18, 0.2], [x, 3.32, -7.38], '#fafcff', 0.02);
+  }
+
+  // Lampu plafon modern minimalis di atas zona kerja & rapat
+  for (const lx of [-7.5, 0, 7.8]) {
+    cylinder(parent, 0.02, 0.8, [lx, 3.6, -4.5], '#475569');
+    box(parent, [2.2, 0.08, 0.28], [lx, 3.2, -4.5], '#f8fafc', 0.04);
+    box(parent, [2.0, 0.03, 0.22], [lx, 3.16, -4.5], '#fffbeb', 0.02);
   }
 
   // Modern glass partition dividing West Meeting Zone from Central Workstation
