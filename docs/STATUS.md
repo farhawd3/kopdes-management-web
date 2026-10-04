@@ -1,6 +1,9 @@
 # Status produk — 4 Oktober 2026
 
 Penyempurnaan visual, konsistensi tipografi, perbaikan tampilan kegiatan, dan tampilan pencatatan modern:
+- **Penyederhanaan Breadcrumb Topbar (`.manager-location-wrap`, `AppShell`)**:
+  - **Meredakan Penonjolan Breadcrumb Lokasi**: Menghilangkan kapsul tebal berwarna latar hijau dan garis tepi (`border: 1px solid var(--line)`) pada breadcrumb topbar desktop. Menghilangkan titik hijau mencolok (`.manager-location-dot`) sehingga judul halaman (seperti "Daftar Tugas") hadir sebagai teks breadcrumb yang tenang, elegan, dan proporsional sesuai kaidah hierarki antarmuka modern.
+  - **Minimalis Ghost Button Favorit (`.topbar-fav-btn`)**: Mengganti tombol favoriting berbahan `.ui-btn` menjadi ghost icon button ramping 22×22 px tanpa latar belakang/bingkai tebal, dengan bintang amber lembut saat aktif dan outline subtle saat idle.
 - **Penanda Menu & Tampilan Aktif (`SegmentedControl`, `.database-views`, `.project-status-tabs`)**:
   - **Penanda Visual Tegas (Active Indicator)**: Menambahkan kapsul aktif terangkat (`background: var(--surface)`, `border: 1px solid var(--line)`, `box-shadow: 0 1px 3px rgba(0,0,0,0.08)`), warna teks tegas (`var(--ink-heading)` bobot 700), dan ikon berwarna brand.
   - **Indikator Titik Aksen Menyala (`.ui-segmented-active-dot`)**: Menyematkan titik aksen hijau/brand (`•`) di samping label teks menu yang sedang aktif untuk memberikan konfirmasi visual instan kepada manajer tanpa keraguan.

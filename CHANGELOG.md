@@ -1,5 +1,15 @@
 # Changelog
 
+## Penyederhanaan Breadcrumb Topbar & Reduksi Penonjolan Judul Lokasi — 4 Oktober 2026
+
+- **Eliminasi Kapsul & Border Hijau Tebal (`.manager-location-wrap`)**:
+  - Menghilangkan kontainer kapsul pil berwarna latar hijau dan garis tepi (`border: 1px solid var(--line)`) pada breadcrumb topbar desktop.
+  - Menghapus titik aksen hijau (`.manager-location-dot`) yang sebelumnya menonjol di samping judul halaman.
+  - Memposisikan judul halaman ("Daftar Tugas") sebagai teks breadcrumb alami yang tenang, bersih, dan berbobot seimbang (`font-size: 13.5px`, `font-weight: 600`, `color: var(--ink)`).
+- **Perapian Tombol Bintang Favorit (`.topbar-fav-btn`)**:
+  - Mengganti elemen dari `.ui-btn` (yang membawa border dan background tebal) menjadi elemen native button minimalis (22×22 px) tanpa border/background.
+  - Bintang favorit menggunakan warna amber lembut (`#f59e0b`) saat aktif dan outline subtle saat idle, dengan micro-animation hover yang halus (`scale: 1.15`, `opacity: 1`).
+
 ## Penyempurnaan Visual & Fungsional Halaman Kegiatan (Kegiatan Lapangan & Koordinasi) — 4 Oktober 2026
 
 - **Penanda Menu & Tampilan Aktif (`SegmentedControl`, `.database-views`, `.project-status-tabs`)**:

@@ -256,9 +256,8 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
             /
           </span>
           <div className="manager-location-wrap">
-            <span className="manager-location-dot" aria-hidden="true" />
             <span className="manager-location">{current}</span>
-            <Button
+            <button
               type="button"
               className="topbar-fav-btn"
               aria-label={
@@ -277,11 +276,11 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
               }
             >
               <Star
-                size={14}
-                fill={favorites.includes(path) ? 'var(--tone-warn-text)' : 'none'}
-                color={favorites.includes(path) ? 'var(--tone-warn-text)' : 'var(--ink-muted)'}
+                size={13}
+                fill={favorites.includes(path) ? '#f59e0b' : 'none'}
+                color={favorites.includes(path) ? '#f59e0b' : 'currentColor'}
               />
-            </Button>
+            </button>
           </div>
         </div>
         <div className="manager-actions">
