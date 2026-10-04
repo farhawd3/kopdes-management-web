@@ -2,11 +2,13 @@
 
 ## Tujuan
 
+Prioritas visual terbaru (5 Oktober 2026): Dunia Koperasi, halaman 3D isometrik dengan kartu UI mengikuti video pengguna. Kawasan menyediakan tujuh lahan yang terisi dari data Gerai; klik kantor membuka interior dengan area rapat/tugas/kegiatan/arsip. Maskot animatif/bubble dan cuaca/waktu melengkapi lingkungan. Spesifikasi dan batas aktual: [DUNIA-KOPERASI](DUNIA-KOPERASI.md). Suplier/ekspedisi dan editor lingkungan masih rencana.
+
 Aplikasi pribadi manajer koperasi untuk mengelola banyak proyek, tugas, catatan, jadwal, dan koordinasi. Proyek memiliki durasi sendiri. Tidak ada program wajib 90 hari atau data capaian tiruan. Pengalaman terinspirasi workspace Notion, dengan fungsi yang langsung berguna bagi manajer.
 
 ## Ruang proyek
 
-- Galeri proyek dengan pencarian dan filter rencana/aktif/ditunda/selesai/arsip.
+- Galeri proyek berjalan dengan pencarian/filter rencana/aktif/ditunda; tab Riwayat Proyek untuk selesai/arsip. Detail mempertahankan tugas seluruh status; penutupan proyek tidak menyelesaikan tugas otomatis.
 - Properti: nama, kode, tujuan, PIC, prioritas, tanggal mulai/target, warna, dan catatan.
 - Tugas, milestone, dan progres terhubung melalui ID proyek (`workstream_id`).
 - Catatan mendukung judul, paragraf, daftar, checklist, kutipan, dan pratinjau. Penyimpanan eksplisit; HTML tidak dieksekusi.
@@ -35,8 +37,8 @@ Beranda dan Hari Ini merangkum pekerjaan aktual. Kesiapan/gerai, pemangku/intera
 
 ## Desain dan akses
 
-- Sidebar berkelompok, rel tablet, navigasi bawah ponsel. Area sentuh minimal 44 px.
-- Latar lembut, teks arang dan aksen hijau lembut/lavender, kartu berlapis dan bayangan ringan, teks utama jelas, status berlabel.
+- Halaman operasional memakai sidebar berkelompok, rel tablet dan navigasi bawah ponsel. Dunia Koperasi memakai layar penuh/dock sendiri dengan panel detail kanan atau bawah. Area sentuh minimal 44 px.
+- Halaman operasional: latar lembut, teks arang, aksen hijau lembut/lavender dan kartu berlapis. Style dunia hanya mengikuti DUNIA-KOPERASI; jangan menerapkan palet operasional ke scene.
 - Tema terang/gelap dan kepadatan. Tabel/Gantt menggulir dalam kontainer.
 - Dialog fokus, label input, error yang jelas, reduced-motion, data kosong tanpa angka buatan.
 
@@ -52,4 +54,4 @@ Belum ada editor blok drag-and-drop, multiuser/kolaborasi real-time, PWA/offline
 
 Arahan 1 Oktober menambahkan area Pencatatan terpisah: anggota, buku kas, barang dan stok opname. Tambah/ubah catatan, pencarian, filter, ringkasan, serta ekspor CSV tersedia. Stok opname memotret stok pembanding, tidak mengubah stok buku otomatis. Buku kas bukan akuntansi lengkap. Aktivasi cloud memerlukan migrasi kedua dan persetujuan pemilik; lihat [PENCATATAN](PENCATATAN.md) dan bukti cloud di [STATUS](STATUS.md).
 
-Desain studio menggantikan tema rose/lavender sebagai tampilan aktif: sidebar arang, permukaan netral, aksen hijau. Pencarian halaman Ctrl/⌘ K, navigasi kelompok, akses Catat di ponsel, pemilih tanggal, serta checklist subtugas mempercepat penggunaan. Rapat mendukung jenis online/hybrid, tautan bergabung, durasi, lokasi dan ekspor ICS.
+Pada halaman operasional, desain studio menjadi tampilan aktif: sidebar arang, permukaan netral, aksen hijau. Pencarian halaman Ctrl/⌘ K, navigasi kelompok, akses Catat di ponsel, pemilih tanggal, serta checklist subtugas mempercepat penggunaan. Rapat mendukung jenis online/hybrid, tautan bergabung, durasi, lokasi dan ekspor ICS.

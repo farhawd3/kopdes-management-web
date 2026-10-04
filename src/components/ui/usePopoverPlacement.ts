@@ -26,8 +26,9 @@ export function usePopoverPlacement(open: boolean, calendar = false) {
           right: Math.min(bounds.right, area.left + parent.clientLeft + parent.clientWidth),
         };
       }
-      if (calendar) {
-        const width = Math.max(0, Math.min(344, viewportWidth - 16, bounds.right - bounds.left - 16));
+      {
+        const preferredWidth = calendar ? 344 : Math.max(220, rect.width);
+        const width = Math.max(0, Math.min(preferredWidth, viewportWidth - 16, bounds.right - bounds.left - 16));
         menu.style.setProperty('--popover-width', `${width}px`);
         const left = bounds.left + 8;
         const right = bounds.right - 8;

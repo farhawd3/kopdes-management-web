@@ -1,4 +1,5 @@
 'use client';
+import { AppIcon } from '@/components/ui/AppIcon';
 import { Button } from '@/components/ui/Button';
 import { useMotionEntry } from '@/components/ui/useMotionEntry';
 import { useEffect, useState } from 'react';
@@ -61,7 +62,7 @@ export function WeekBarChart({
             title="Klik untuk tampilkan semua tugas"
           >
             <span>{activeDay?.dateLabel || selectedDate}</span>
-            <span className="reset-x">✕</span>
+            <AppIcon name="close" size={16} />
           </Button>
         )}
       </div>

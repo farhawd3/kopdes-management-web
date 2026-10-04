@@ -2,6 +2,7 @@
 import { useDragSort } from '@/components/ui/useDragSort';
 import { DragOverlay } from '@/components/ui/DragOverlay';
 import { IconButton } from '@/components/ui/Button';
+import { AppIcon } from '@/components/ui/AppIcon';
 import { GripVertical } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -70,12 +71,14 @@ import {
   Flame,
   MoreHorizontal,
   Trash2,
+  ArrowUpRight,
 } from 'lucide-react';
 import { TaskTimeline } from './tasks/TaskTimeline';
 import { downloadMeeting, meetingJoinUrl } from './meetings/meeting';
 import { DailyTasksView } from './tasks/DailyTasksView';
 import { TaskDetailDrawer } from './tasks/TaskDetailDrawer';
 import { SprintModal } from './projects/SprintModal';
+import { Modal } from '@/components/ui/Modal';
 import { SprintCard } from './projects/SprintCard';
 import { CsvDropzone } from '@/components/ui/CsvDropzone';
 import { ScrumBoardView } from './tasks/ScrumBoardView';
@@ -475,19 +478,24 @@ function JournalBoardView({
                           </p>
                         )}
                         <div className="card-bottom-section">
-                          <div className="card-assignee-row">
+                          <div className="card-assignee-row journal-board-chips">
                             {unit && (
-                              <span className="scrum-assignee-pill">
-                                Gerai: {String(unit.data.title)}
+                              <span className="relation-chip chip-unit" title={`Gerai: ${String(unit.data.title)}`}>
+                                <Building2 size={11} />
+                                <span>{String(unit.data.title)}</span>
                               </span>
                             )}
                             {stakeholder && (
-                              <span className="scrum-assignee-pill">
-                                Mitra: {String(stakeholder.data.title)}
+                              <span className="relation-chip chip-stakeholder" title={`Mitra: ${String(stakeholder.data.title)}`}>
+                                <Handshake size={11} />
+                                <span>{String(stakeholder.data.title)}</span>
                               </span>
                             )}
                             {linkedMeeting && (
-                              <span className="scrum-assignee-pill">Rapat Terkait</span>
+                              <span className="relation-chip chip-meeting-join">
+                                <Video size={11} />
+                                <span>Rapat</span>
+                              </span>
                             )}
                           </div>
                         </div>
@@ -557,14 +565,14 @@ function JournalTimelineView({
                         item.id,
                       )}
                     </span>
-                    <Button
+                    <button
                       type="button"
                       className="timeline-task-title-btn"
                       onClick={() => onOpenItem(item)}
                       title="Lihat / ubah rincian kegiatan"
                     >
                       {String(item.data.title)}
-                    </Button>
+                    </button>
                     {unit && (
                       <span className="task-project-name has-project">
                         {String(unit.data.title)}
@@ -617,14 +625,31 @@ function JournalTableView({
   workspace: Workspace;
   onOpenItem: (item: Item) => void;
 }) {
+  const todayStr = today();
+
   return (
     <div className="task-table-wrap journal-table-wrap">
       <table className="task-table journal-table">
         <thead>
           <tr>
-            <th className="col-journal-date">Tanggal</th>
-            <th className="col-journal-main">Kegiatan Lapangan & Uraian</th>
-            <th className="col-journal-relation">Terkait</th>
+            <th className="col-journal-date">
+              <span className="journal-th-content">
+                <Calendar size={13} aria-hidden="true" />
+                <span>Tanggal</span>
+              </span>
+            </th>
+            <th className="col-journal-main">
+              <span className="journal-th-content">
+                <FileText size={13} aria-hidden="true" />
+                <span>Kegiatan Lapangan & Uraian</span>
+              </span>
+            </th>
+            <th className="col-journal-relation">
+              <span className="journal-th-content">
+                <Building2 size={13} aria-hidden="true" />
+                <span>Terkait & Koordinasi</span>
+              </span>
+            </th>
             <th className="col-journal-action">
               <span className="sr-only">Aksi</span>
             </th>
@@ -632,6 +657,8 @@ function JournalTableView({
         </thead>
         <tbody>
           {activities.map((row) => {
+            const rowDate = String(row.data.date || '');
+            const isToday = rowDate === todayStr;
             const unit = workspace.units?.find((u) => u.id === row.data.unit_id);
             const task = workspace['work-items']?.find((t) => t.id === row.data.work_item_id);
             const stakeholder = workspace.stakeholders?.find(
@@ -643,20 +670,21 @@ function JournalTableView({
             return (
               <tr key={row.id} className="journal-table-row">
                 <td className="col-journal-date">
-                  <span className="journal-date-badge">
-                    <Calendar size={12} />
-                    <span>{formatDate(String(row.data.date))}</span>
+                  <span className={`journal-date-badge ${isToday ? 'is-today' : ''}`}>
+                    <Calendar size={12} aria-hidden="true" />
+                    <span>{formatDate(rowDate)}</span>
+                    {isToday && <span className="journal-today-indicator">Hari ini</span>}
                   </span>
                 </td>
                 <td className="col-journal-main">
                   <div className="journal-main-cell">
                     <Button
                       type="button"
-                      className="journal-title-btn"
+                      className="journal-title-interactive"
                       onClick={() => onOpenItem(row)}
                       title="Lihat atau ubah rincian kegiatan"
                     >
-                      <span className="task-code-tag">
+                      <span className="journal-code-tag">
                         {formatDisplayCode(
                           row.data.code ? String(row.data.code) : undefined,
                           'journal',
@@ -674,20 +702,20 @@ function JournalTableView({
                   <div className="journal-relation-chips">
                     {unit && (
                       <span
-                        className="relation-pill pill-unit"
+                        className="relation-chip chip-unit"
                         title={`Gerai: ${String(unit.data.title)}`}
                       >
-                        <Building2 size={11} />
+                        <Building2 size={12} />
                         <span>{String(unit.data.title)}</span>
                       </span>
                     )}
                     {task ? (
                       <Link
                         href={`/tugas?task=${encodeURIComponent(task.id)}`}
-                        className="relation-pill pill-task has-link"
+                        className="relation-chip chip-task has-link"
                         title={`Buka tugas: ${String(task.data.title)}`}
                       >
-                        <CheckSquare size={11} />
+                        <CheckSquare size={12} />
                         <span>{String(task.data.title)}</span>
                         <span
                           className={`task-status-mini status-${String(task.data.status || 'rencana')}`}
@@ -696,9 +724,9 @@ function JournalTableView({
                         </span>
                       </Link>
                     ) : (
-                      <Button
+                      <button
                         type="button"
-                        className="relation-pill-btn-add"
+                        className="relation-chip chip-add-task"
                         title="Buat tugas tindak lanjut langsung dari kegiatan ini"
                         onClick={() => {
                           window.dispatchEvent(
@@ -712,16 +740,16 @@ function JournalTableView({
                           );
                         }}
                       >
-                        <Plus size={11} />
-                        <span>+ Tindak Lanjut</span>
-                      </Button>
+                        <Plus size={12} />
+                        <span>Tindak Lanjut</span>
+                      </button>
                     )}
                     {stakeholder && (
                       <span
-                        className="relation-pill pill-stakeholder"
+                        className="relation-chip chip-stakeholder"
                         title={`Mitra: ${String(stakeholder.data.title)}`}
                       >
-                        <Handshake size={11} />
+                        <Handshake size={12} />
                         <span>{String(stakeholder.data.title)}</span>
                       </span>
                     )}
@@ -730,23 +758,25 @@ function JournalTableView({
                         href={joinUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="journal-join-chip"
+                        className="relation-chip chip-meeting-join"
                         title="Masuk ruang rapat daring (Google Meet / Zoom)"
                       >
-                        <Video size={11} />
+                        <Video size={12} />
                         <span>Gabung rapat ↗</span>
                       </a>
                     )}
                   </div>
                 </td>
                 <td className="col-journal-action">
-                  <Button
+                  <button
                     type="button"
-                    className="table-btn-done btn-journal-open"
+                    className="journal-action-open"
                     onClick={() => onOpenItem(row)}
+                    title="Buka rincian kegiatan"
                   >
-                    Buka
-                  </Button>
+                    <span>Buka</span>
+                    <ArrowUpRight size={13} aria-hidden="true" />
+                  </button>
                 </td>
               </tr>
             );
@@ -762,13 +792,17 @@ export function Records({
   workspace,
   refresh,
   initialFilter = '',
+  initialView,
   scopeId,
+  draftScope,
 }: {
   entity: Entity;
   workspace: Workspace;
   refresh: () => Promise<void>;
   initialFilter?: string;
+  initialView?: string;
   scopeId?: string;
+  draftScope?: string;
 }) {
   const query = useSearchParams(),
     router = useRouter();
@@ -794,13 +828,14 @@ export function Records({
     [priority, setPriority] = useState(''),
     [sort, setSort] = useState('due'),
     [view, setView] = useState<string>(() => {
+      if (initialView) return initialView;
       const paramView = query.get('view');
       if (paramView && ['daftar', 'papan', 'kalender', 'gantt', 'harian'].includes(paramView)) {
         return paramView;
       }
       if (typeof window !== 'undefined') {
         try {
-          const savedView = localStorage.getItem(`preferred_view_${entity}`);
+          const savedView = localStorage.getItem(`${draftScope ? draftScope + ':' : ''}preferred_view_${entity}`);
           if (savedView && ['daftar', 'papan', 'kalender', 'gantt', 'harian'].includes(savedView)) {
             return savedView;
           }
@@ -814,11 +849,13 @@ export function Records({
     setView(newView);
     if (typeof window !== 'undefined') {
       try {
-        localStorage.setItem(`preferred_view_${entity}`, newView);
+        localStorage.setItem(`${draftScope ? draftScope + ':' : ''}preferred_view_${entity}`, newView);
       } catch {}
     }
   };
+  const closedProject = Boolean(scopeId && workspace.workstreams?.some((project) => project.id === scopeId && ['selesai', 'diarsipkan'].includes(String(project.data.status))));
   function createTask(date = today(), status = 'rencana') {
+    if (closedProject) { setError('Buka kembali proyek sebelum menambah tugas baru. Tugas yang sudah ada tetap dapat diperiksa.'); return; }
     setEdit({
       id: '',
       created_at: '',
@@ -884,6 +921,8 @@ export function Records({
               ? row.data.status === 'selesai'
               : effectiveFilter === 'terlambat'
                 ? String(row.data.due_date) < today() && isActiveTask(row.data.status)
+                : effectiveFilter === 'all'
+                  ? true
                 : effectiveFilter
                   ? row.data.status === effectiveFilter
                   : isActiveTask(row.data.status)) &&
@@ -1158,15 +1197,16 @@ export function Records({
       return renderCalendarTaskCard(row);
     }
     return (
-      <article className="record card" key={row.id}>
+      <article className={`record card ${entity === 'units' ? 'unit-record' : ''} ${entity === 'meetings' ? 'meeting-record' : ''}`} key={row.id}>
         <div className="section-head">
           <h3>
+            {(entity === 'units' || entity === 'meetings') && <span className="record-domain-icon"><AppIcon name={entity === 'units' ? 'store' : 'meeting'} size={20} /></span>}
             {['work-items', 'journal'].includes(entity) && (
               <span className="task-code-tag mr-2">
                 {formatDisplayCode(String(row.data.code), entity, row.id)}
               </span>
             )}
-            {String(row.data.title)}
+            <span className="record-title-text">{String(row.data.title)}</span>
           </h3>
           {Boolean(row.data.status) && (
             <span className={'badge ' + (row.data.status === 'selesai' ? 'ok' : '')}>
@@ -1245,7 +1285,7 @@ export function Records({
               })()}
             </>
           )}
-          {Boolean(row.data.assignee) && <span>{String(row.data.assignee)}</span>}
+          {Boolean(row.data.assignee) && <span>{entity === 'units' ? 'Penanggung jawab: ' : ''}{String(row.data.assignee)}</span>}
           {Boolean(row.data.priority) && <span>Prioritas {String(row.data.priority)}</span>}
           {Boolean(row.data.due_date || row.data.date) && (
             <span
@@ -1443,7 +1483,7 @@ export function Records({
             );
           })()}
         {['description', 'notes', 'minutes', 'reason', 'follow_up']
-          .filter((key) => entity !== 'stakeholders' || key !== 'follow_up')
+          .filter((key) => (entity !== 'stakeholders' || key !== 'follow_up') && (entity !== 'meetings' || key !== 'minutes'))
           .map((key) =>
             row.data[key] ? (
               <p className="record-text" key={key}>
@@ -1626,7 +1666,7 @@ export function Records({
             </Button>
           )}
           <details className="record-options">
-            <summary>Opsi lainnya</summary>
+            <summary><AppIcon name="more" size={16} /><span>Opsi lainnya</span><ChevronDown size={14} aria-hidden="true" /></summary>
             <div className="actions">
               {entity === 'work-items' && (
                 <>
@@ -1667,21 +1707,16 @@ export function Records({
                   </div>
                 </>
               )}
-              {(entity === 'meetings' || entity === 'issues') && (
+              {entity === 'issues' && (
                 <Button
                   onClick={() => {
                     window.dispatchEvent(
                       new CustomEvent('hub-task', {
                         detail: {
                           title: `Tindak lanjut: ${row.data.title}`,
-                          description:
-                            entity === 'meetings'
-                              ? String(row.data.minutes || row.data.agenda || '')
-                              : String(row.data.description || ''),
+                          description: String(row.data.description || ''),
                           notes: `Sumber ${entity}: ${row.id}`,
-                          ...(entity === 'meetings'
-                            ? { meeting_id: row.id }
-                            : { issue_id: row.id }),
+                          issue_id: row.id,
                         },
                       }),
                     );
@@ -1743,9 +1778,7 @@ export function Records({
               <span className="stat-label">Total Selesai</span>
               <strong>{rows.length} tugas</strong>
             </div>
-            <Link href={scopeId ? `/proyek` : `/tugas`} className="btn-back-to-active-tasks">
-              ← Kembali ke Tugas Aktif
-            </Link>
+            {scopeId ? <Button className="btn-back-to-active-tasks" onClick={() => setFilter('all')}>Semua tugas proyek</Button> : <Link href="/tugas" className="btn-back-to-active-tasks">← Kembali ke Tugas Aktif</Link>}
           </div>
         </div>
       ) : (
@@ -1756,6 +1789,7 @@ export function Records({
           </div>
           <Button
             className="primary"
+            disabled={entity === 'work-items' && closedProject}
             onClick={() =>
               setEdit(
                 entity === 'organization' && all[0]
@@ -1782,6 +1816,59 @@ export function Records({
                 ? 'Tugas baru'
                 : 'Tambah'}
           </Button>
+        </div>
+      )}
+      {entity === 'work-items' && closedProject && <p className="notice">Proyek sudah selesai atau diarsipkan. Seluruh tugas tetap tersimpan. Ubah status proyek ke aktif sebelum menambah tugas baru.</p>}
+      {entity === 'journal' && !isCompletedArchive && (
+        <div className="recording-metrics journal-metrics">
+          <div className="metric-card metric-total">
+            <div className="metric-header">
+              <small className="metric-label">Total Kegiatan</small>
+              <div className="metric-icon-wrap icon-total" aria-hidden="true">
+                <BookOpen size={16} />
+              </div>
+            </div>
+            <strong className="metric-value">{all.length}</strong>
+            <span className="metric-sub">{all.length} catatan lapangan</span>
+          </div>
+          <div className="metric-card metric-active">
+            <div className="metric-header">
+              <small className="metric-label">Bulan Ini</small>
+              <div className="metric-icon-wrap icon-active" aria-hidden="true">
+                <Calendar size={16} />
+              </div>
+            </div>
+            <strong className="metric-value">
+              {all.filter((a) => String(a.data.date || '').startsWith(today().slice(0, 7))).length}
+            </strong>
+            <span className="metric-sub">
+              {new Intl.DateTimeFormat('id-ID', { month: 'long', year: 'numeric' }).format(new Date())}
+            </span>
+          </div>
+          <div className="metric-card metric-income">
+            <div className="metric-header">
+              <small className="metric-label">Tindak Lanjut Tugas</small>
+              <div className="metric-icon-wrap icon-income" aria-hidden="true">
+                <CheckSquare size={16} />
+              </div>
+            </div>
+            <strong className="metric-value">
+              {all.filter((a) => Boolean(a.data.work_item_id)).length}
+            </strong>
+            <span className="metric-sub">Menghasilkan tugas kerja</span>
+          </div>
+          <div className="metric-card metric-net">
+            <div className="metric-header">
+              <small className="metric-label">Koordinasi Rapat</small>
+              <div className="metric-icon-wrap icon-net" aria-hidden="true">
+                <Video size={16} />
+              </div>
+            </div>
+            <strong className="metric-value">
+              {all.filter((a) => Boolean(a.data.meeting_id)).length}
+            </strong>
+            <span className="metric-sub">Terhubung agenda rapat</span>
+          </div>
         </div>
       )}
       {(entity === 'work-items' || entity === 'journal') && !isCompletedArchive && (
@@ -1824,6 +1911,7 @@ export function Records({
                   type="button"
                   className="btn-sprint-trigger"
                   title="Kelola Target Periode (Sprint)"
+                  aria-label="Kelola periode kerja"
                   onClick={(e) => {
                     e.currentTarget.closest('details')?.removeAttribute('open');
                     setShowSprintModal(true);
@@ -1836,6 +1924,7 @@ export function Records({
                   type="button"
                   className="btn-csv-trigger"
                   title="Tarik & Lepas File CSV"
+                  aria-label="Impor CSV"
                   onClick={(e) => {
                     e.currentTarget.closest('details')?.removeAttribute('open');
                     setShowCsvModal(true);
@@ -1868,7 +1957,7 @@ export function Records({
               ))}
           </div>
         )}
-      {entity === 'work-items' && !isCompletedArchive && view === 'daftar' && (
+      {entity === 'work-items' && !isCompletedArchive && !closedProject && view === 'daftar' && (
         <form
           className="today-quick-add-card"
           onSubmit={async (event) => {
@@ -1918,14 +2007,14 @@ export function Records({
       )}
       {view !== 'harian' && (
         <>
-          <Button
+          <button
             type="button"
             className="mobile-filter-toggle"
             aria-expanded={filtersOpen}
             onClick={() => setFiltersOpen(!filtersOpen)}
           >
-            Cari & filter{search || effectiveFilter || workstream || priority ? ' · aktif' : ''}
-          </Button>
+            Cari & filter{search || effectiveFilter || workstream || priority || journalUnit || journalStakeholder || journalMeeting ? ' · aktif' : ''}
+          </button>
           <div className={`filters ${filtersOpen ? 'filters-expanded' : ''}`}>
             <label>
               <span className="field-caption">
@@ -1954,7 +2043,8 @@ export function Records({
                     }
                   }}
                   options={[
-                    { value: '', label: 'Semua Status' },
+                    { value: '', label: entity === 'work-items' ? 'Tugas aktif' : 'Semua Status' },
+                    ...(scopeId && entity === 'work-items' ? [{ value: 'all', label: 'Semua status (termasuk selesai)' }] : []),
                     ...(entity === 'work-items'
                       ? [{ value: 'terlambat', label: 'Terlambat' }]
                       : []),
@@ -2014,6 +2104,24 @@ export function Records({
                     ariaLabel="Rapat Terkait"
                   />
                 </label>
+                {Boolean(search || journalUnit || journalStakeholder || journalMeeting) && (
+                  <div className="filter-actions-col">
+                    <button
+                      type="button"
+                      className="btn-filter-reset"
+                      onClick={() => {
+                        setSearch('');
+                        setJournalUnit('');
+                        setJournalStakeholder('');
+                        setJournalMeeting('');
+                      }}
+                      title="Hapus semua filter kegiatan"
+                    >
+                      <X size={13} />
+                      <span>Hapus filter</span>
+                    </button>
+                  </div>
+                )}
               </>
             )}
             {!scopeId && ['work-items', 'checklist'].includes(entity) && (
@@ -2121,7 +2229,7 @@ export function Records({
           title={`Belum ada ${catalog[entity].title.toLowerCase()}`}
           description={`Mulai dengan menambah ${catalog[entity].title.toLowerCase()} baru atau sesuaikan filter pencarian.`}
           tone="emerald"
-          action={{
+          action={closedProject ? undefined : {
             label: `Tambah ${catalog[entity].title}`,
             onClick: () => setEdit(null),
           }}
@@ -2417,6 +2525,7 @@ export function Records({
           entity={entity}
           item={edit || undefined}
           quick={quickAdd && entity === 'work-items'}
+          draftScope={draftScope}
           workspace={workspace}
           onClose={() => {
             setEdit(undefined);
@@ -2468,13 +2577,10 @@ export function Records({
         />
       )}
       {showCsvModal && (
-        <div
-          className="sprint-modal-backdrop"
-          role="dialog"
+        <Modal
+          className="sprint-modal-dialog"
           aria-labelledby="csv-modal-title"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setShowCsvModal(false);
-          }}
+          onDismiss={() => setShowCsvModal(false)}
         >
           <div className="sprint-modal-card">
             <header className="sprint-modal-head">
@@ -2486,6 +2592,7 @@ export function Records({
               </div>
               <Button
                 type="button"
+                variant="ghost"
                 className="close-btn"
                 onClick={() => setShowCsvModal(false)}
                 aria-label="Tutup modal"
@@ -2524,7 +2631,7 @@ export function Records({
             />
             {error && <p className="notice error">{error}</p>}
           </div>
-        </div>
+        </Modal>
       )}
     </section>
   );

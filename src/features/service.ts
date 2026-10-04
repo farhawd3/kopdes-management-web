@@ -54,6 +54,7 @@ export async function list(entity: Entity): Promise<Item[]> {
 }
 export async function save(entity: Entity, input: unknown, id?: string) {
   let data = schemas[entity].parse(input);
+  let projectClosed = false;
   if (entity === 'workstreams') {
     const project = schemas.workstreams.parse(data);
     if (project.start_date && project.target_date && project.start_date > project.target_date)
@@ -64,12 +65,17 @@ export async function save(entity: Entity, input: unknown, id?: string) {
     if (value) {
       const { data: found, error } = await db()
         .from('hub_records')
-        .select('id')
+        .select('id, data')
         .eq('entity', target)
         .eq('id', value)
         .maybeSingle();
       if (error || !found)
         throw new Error('Catatan terkait tidak ditemukan. Muat ulang sebelum menyimpan.');
+      if (entity === 'work-items' && field === 'workstream_id') {
+        projectClosed = ['selesai', 'diarsipkan'].includes(String(found.data?.status));
+        if (!id && projectClosed)
+          throw new Error('Proyek sudah masuk riwayat. Buka kembali proyek sebelum menambah tugas baru.');
+      }
     }
   }
   if (entity === 'work-items') {
@@ -110,6 +116,7 @@ export async function save(entity: Entity, input: unknown, id?: string) {
       task.recurrence !== 'tidak' ? nextOccurrence(task.due_date, task.recurrence) : '';
     const next =
       task.status === 'selesai' &&
+      !projectClosed &&
       task.recurrence !== 'tidak' &&
       (!task.recurrence_end_date || nextDueDate <= task.recurrence_end_date)
         ? {

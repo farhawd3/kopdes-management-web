@@ -13,23 +13,21 @@ import {
   Database,
   Building,
   RotateCcw,
-  Sparkles,
   Download,
   Upload,
   KeyRound,
 } from 'lucide-react';
 import { Select } from '@/components/ui/Select';
+import type { Item } from '@/features/schemas';
 
-export function Settings({ refresh }: { refresh: () => Promise<void> }) {
+export function Settings({ refresh, preferenceScope = '', organization }: { refresh: () => Promise<void>; preferenceScope?: string; organization?: Item }) {
   const { colorStyle, setColorStyle, preference, setTheme } = useTheme();
   const [activeTab, setActiveTab] = useState<'tampilan' | 'profil' | 'keamanan' | 'cadangan'>('tampilan');
-  const [density, setDensity] = usePreference('hub-density', 'comfortable');
-  const [motion, setMotion] = usePreference('hub-motion', 'system');
-  const [navStyle, setNavStyle] = usePreference('hub-nav-style', 'soft');
+  const [density, setDensity] = usePreference(preferenceScope + 'hub-density', 'comfortable');
+  const [motion, setMotion] = usePreference(preferenceScope + 'hub-motion', 'system');
+  const [navStyle, setNavStyle] = usePreference(preferenceScope + 'hub-nav-style', 'soft');
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
-
-  const selectedPalette = COLOR_STYLES.find((c) => c.id === colorStyle) || COLOR_STYLES[0];
 
   const run = async (action: () => Promise<unknown>, success: string) => {
     setBusy(true);
@@ -110,9 +108,8 @@ export function Settings({ refresh }: { refresh: () => Promise<void> }) {
         <div className="settings-content-grid">
           {/* Color Palettes Selection */}
           <section className="card color-style-card">
-            <span className="eyebrow">PALET RUANG KERJA</span>
-            <h2>Pilihan Tema Warna</h2>
-            <p>Pilih nuansa warna kerja yang nyaman dan sesuai pencahayaan ruangan Anda.</p>
+            <span className="eyebrow">TEMA WARNA</span>
+            <h2>Palet Warna</h2>
 
             <div className="color-swatches-grid">
               {COLOR_STYLES.map((c) => {
@@ -120,24 +117,16 @@ export function Settings({ refresh }: { refresh: () => Promise<void> }) {
                 return (
                   <Button
                     key={c.id}
+                    data-palette={c.id}
                     type="button"
                     className={`color-swatch-item ${isSelected ? 'is-selected' : ''}`}
                     onClick={() => setColorStyle(c.id)}
                     aria-pressed={isSelected}
                   >
-                    <div className="swatch-header-row">
-                      <strong>{c.name}</strong>
-                      {isSelected ? (
-                        <span className="swatch-active-badge">
-                          <Check size={12} strokeWidth={3} />
-                          <span>Aktif</span>
-                        </span>
-                      ) : null}
-                    </div>
                     <div className="swatch-palette-strip">
                       <span
                         className="swatch-color-pill swatch-primary-pill"
-                        style={{ backgroundColor: c.primary }}
+                        style={{ backgroundColor: 'var(--palette-accent)' }}
                         title="Warna Utama"
                       />
                       <span
@@ -151,57 +140,18 @@ export function Settings({ refresh }: { refresh: () => Promise<void> }) {
                         title="Latar Lembut"
                       />
                     </div>
-                    <small className="swatch-desc-text">{c.desc}</small>
+                    <div className="swatch-header-row">
+                      <strong>{c.name}</strong>
+                      {isSelected ? (
+                        <span className="swatch-active-badge">
+                          <Check size={11} strokeWidth={3} />
+                          <span>Aktif</span>
+                        </span>
+                      ) : null}
+                    </div>
                   </Button>
                 );
               })}
-            </div>
-          </section>
-
-          {/* Live Component Preview Card */}
-          <section className="card theme-live-preview-card">
-            <span className="eyebrow">PRATINJAU LANGSUNG</span>
-            <h2>Pratinjau Komponen Tema</h2>
-            <p>Berikut tampilan tombol, kartu tugas, dan indikator dengan tema <strong>{selectedPalette.name}</strong>:</p>
-
-            <div className="theme-preview-stage" style={{ background: 'var(--canvas)', borderColor: 'var(--line)' }}>
-              {/* Preview Button & Chip */}
-              <div className="preview-row">
-                <Button
-                  type="button"
-                  className="preview-primary-btn"
-                  style={{ background: 'var(--brand)', color: 'var(--brand-text)' }}
-                >
-                  <Sparkles size={14} />
-                  <span>+ Aksi Cepat</span>
-                </Button>
-                <span
-                  className="preview-companion-chip"
-                  style={{ background: 'var(--brand-soft)', borderColor: 'var(--brand-soft-border)', color: 'var(--ink-heading)' }}
-                >
-                  3 Tugas Hari Ini
-                </span>
-                <span className="preview-status-pill">
-                  Selesai Tepat Waktu
-                </span>
-              </div>
-
-              {/* Preview Task Card */}
-              <div className="preview-task-card" style={{ background: 'var(--surface)', borderColor: 'var(--line)' }}>
-                <div className="preview-task-header">
-                  <div className="preview-checkbox" style={{ borderColor: 'var(--brand)', background: 'var(--brand)' }}>
-                    <Check size={12} color="var(--brand-text)" />
-                  </div>
-                  <div className="preview-task-text">
-                    <strong>Pemeriksaan Kesiapan Gerai Toko KDMP</strong>
-                    <small>Tenggat: Hari ini · Proyek: Persiapan Gerai</small>
-                  </div>
-                  <span className="preview-tag-high">Prioritas Tinggi</span>
-                </div>
-                <div className="preview-progress-track">
-                  <div className="preview-progress-fill" style={{ width: '75%', background: 'var(--brand)' }} />
-                </div>
-              </div>
             </div>
           </section>
 
@@ -288,7 +238,7 @@ export function Settings({ refresh }: { refresh: () => Promise<void> }) {
 
       {/* ── TAB 2: PROFIL KOPERASI ──────────────────────────────── */}
       {activeTab === 'profil' && (
-        <div className="settings-content-grid">
+        <div className="settings-content-grid settings-panel-single">
           <section className="card">
             <span className="eyebrow">IDENTITAS OPERASIONAL</span>
             <h2>Profil Manajer & Koperasi</h2>
@@ -299,9 +249,9 @@ export function Settings({ refresh }: { refresh: () => Promise<void> }) {
                 <span>KD</span>
               </div>
               <div className="profile-details">
-                <h3>Koperasi Desa Merdeka Puntukrejo (KDMP)</h3>
-                <p>Badan Hukum Koperasi Konsumen Desa Puntukrejo</p>
-                <small>Kecamatan Ngargoyoso, Kabupaten Karanganyar, Jawa Tengah</small>
+                <h3>{String(organization?.data.title || 'Profil koperasi belum diisi')}</h3>
+                <p>{organization?.data.manager ? `Manajer: ${String(organization.data.manager)}` : 'Lengkapi identitas melalui formulir profil koperasi.'}</p>
+                <small>{['village', 'district', 'regency', 'province'].map((field) => organization?.data[field]).filter(Boolean).join(', ')}</small>
               </div>
             </div>
 
@@ -319,7 +269,7 @@ export function Settings({ refresh }: { refresh: () => Promise<void> }) {
 
       {/* ── TAB 3: KEAMANAN PIN ─────────────────────────────────── */}
       {activeTab === 'keamanan' && (
-        <div className="settings-content-grid">
+        <div className="settings-content-grid settings-panel-single">
           <section className="card security-settings-card">
             <div className="section-head-with-icon">
               <KeyRound size={20} className="text-brand" />
@@ -384,7 +334,7 @@ export function Settings({ refresh }: { refresh: () => Promise<void> }) {
 
       {/* ── TAB 4: CADANGAN & PEMULIHAN ─────────────────────────── */}
       {activeTab === 'cadangan' && (
-        <div className="settings-content-grid">
+        <div className="settings-content-grid settings-panel-single">
           <section className="card backup-settings-card">
             <h2>Cadangan Data Mandiri</h2>
             <p>

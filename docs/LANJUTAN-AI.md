@@ -1,34 +1,44 @@
-# Serah terima AI
+# Serah terima AI — 5 Oktober 2026
 
-## Lanjutan PLAN-ASTRA — 4 Oktober 2026
+## Arahan aktif
 
-- Pencatatan kini memakai EmptyState; Opname tanpa barang mengarahkan ke /barang. Tes terbaru 196/31 berkas. QA ukuran enam halaman pencatatan/gerai 360 dan Opname 768/1024/1440 tanpa luapan setelah isi muncul; tidak ada mutasi data nyata.
+Prioritaskan **Dunia Koperasi** sesuai video pengguna: lingkungan 3D isometrik biru-putih, kartu mengambang, interior kantor ketika gedung diklik, maskot animatif dengan bubble chat, cuaca/waktu, dan tujuh lahan gerai. Halaman operasional tetap menjadi sumber data dan tempat mengisi catatan.
 
-- Paket terbaru: EmptyState Beranda/Hari Ini, daftar proyek seluruhnya diarsipkan, kartu tugas mobile dan guard keyboard aksi anak. 195 tes/31 berkas serta typecheck/lint/lint:ui/build dan audit sumber 91/91 lulus.
-- Sesi browser aktif kembali; catatan kedaluwarsa di bawah adalah riwayat. Hari Ini 320/360/768/1024/1440 diukur tanpa luapan; screenshot 360 di artifacts/astra/hari-ini-kartu-360.jpg. Tidak menyimpan perubahan data nyata selama QA.
-- Kalender tetap ke bawah dan di dalam panel, namun sel pada form sempit kurang dari 44 px. Perbaikan berikutnya harus mempertahankan batas panel dan validasi tanggal, bukan membiarkan kalender meluap.
+Arahan 3 Oktober untuk mempertahankan dashboard berlaku pada halaman operasional; jangan memakainya sebagai larangan membangun dunia. Pemilik meminta panduan disesuaikan, bagian rancu dihapus, dan gaya disimpan untuk AI berikutnya.
 
-- Rujuk docs/LAPORAN-ASTRA.md dan AUDIT.md untuk paket serta kriteria terbuka. Pemeriksaan terakhir 191 tes/30 berkas, typecheck/lint/build, check:ui dan audit sumber 91/91 lulus.
-- Branch codex/workspace-redesign telah di-push per paket. Periksa ulang Git. Perubahan pemilik pada personal.css, Settings.tsx, ThemeContext.tsx serta PLAN-ASTRA yang belum dilacak tetap dipertahankan terpisah.
-- Sesi QA browser kedaluwarsa; masuk kembali diperlukan untuk QA halaman berdata. Galeri /dev/komponen hanya development, tanpa database.
-- Stylesheet sekarang globals.css, personal.css, tokens.css dan ui.css. Jangan menandai rencana selesai: CSS legacy/important/duplikat dan QA lengkap masih terbuka.
-- Skrip sekali pakai/snapshot berada di artifacts/astra (diabaikan Git); jangan rerun skrip migrasi lama. Skrip audit dan pembersihan berulang berada di scripts; tinjau kandidat sebelum menerapkan ke kode yang berubah.
+## Urutan melanjutkan
 
-Baca [AGENTS](../AGENTS.md), [STATUS](STATUS.md), [KEPUTUSAN](KEPUTUSAN.md), [PRD](PRD.md) dan [CHECKLIST](CHECKLIST.md). Untuk UI baca [DESAIN-ANTARMUKA](DESAIN-ANTARMUKA.md); kegiatan/SQL memakai [KEGIATAN-DAN-TUGAS](KEGIATAN-DAN-TUGAS.md) dan [MIGRASI-SQL](MIGRASI-SQL.md).
+1. Periksa Git; saat penulisan cabang `codex/dunia-koperasi`.
+2. Baca AGENTS, STATUS, DESAIN-ANTARMUKA dan [DUNIA-KOPERASI](DUNIA-KOPERASI.md).
+3. Baca `src/features/cooperative-world/` dan periksa render sebelum mengubah desain.
+4. Jalankan pemeriksaan lalu catat bukti baru. Angka tes lama bukan bukti paket ini.
 
-## Acuan kerja
+## Arahan pemilik terbaru dan langkah berikutnya
 
-- Periksa Git, cabang dan diff; pertahankan perubahan yang sudah ada. Paket terakhir memakai codex/workspace-redesign, tetapi checkout dapat berubah.
-- Pemilik memilih dashboard aplikasi saat ini. Pertahankan acuan e8fc8b4 dan tweak berikutnya, tanpa redesain total atau pratinjau baru.
-- Stylesheet aktif: src/app/globals.css dan src/app/personal.css. Fitur di src/features/<domain>/, kontrak/form bersama di akar features; lihat [ARSITEKTUR](ARSITEKTUR.md).
-- Font/ukuran kontrol memakai token global; style kontrol aktif di akhir personal.css. Gunakan DateInput/DateField, Select dan SubtaskToggle bersama. Posisi menu memakai usePopoverPlacement yang memperhitungkan batas panel bergulir. Panduan onboarding berada di ManagerGuide.
-- Koreksi terbaru pemilik: kalender ke bawah, input/dropdown mobile 14 px; skala mobile dimiliki token globals.css. Basis flex 200 px intro tugas dibuang karena berubah menjadi tinggi pada layout kolom. Dashboard/Hari Ini memakai ringkasan dua kolom dan label proyek panjang membungkus. Hindari menambah aturan tipografi !important atau mengembalikan bleed kalender di ponsel.
-- Status tugas sudah memiliki utilitas src/lib/task-status.ts; progres di src/lib/progress.ts. Periksa pemanggil sebelum membuat logika baru.
-- Harian memakai tampilan hari/minggu. Instruksi lama tentang accordion Selasa sudah usang. Kalender telah mengutamakan judul dan menjadikan kode metadata.
-- Bukti tes, viewport dan cloud ada di STATUS. Tes lokal tidak membuktikan UAT atau penerapan SQL cloud.
+Pemilik menilai map kecil/sepi, kendaraan belum ada, tampilan gelap, kontrol waktu sulit ditemukan, dan karakter belum tampak berpindah. Jangan menganggap animasi dasar/treadmill saat ini sudah memenuhi permintaan. Rencana konkret disimpan hanya pada bagian **Rencana revisi setelah penilaian pemilik** di [DUNIA-KOPERASI](DUNIA-KOPERASI.md): terang/map lebih luas → kendaraan/interaksi → patroli manajer jarang dengan bubble → gym aktif. Ini rencana, belum perubahan runtime. Jangan membuat MD gaya tandingan.
 
-## Pekerjaan lanjutan
+## Keadaan kode
 
-Paket mobile memeriksa 22 halaman dan 21 form pada 360 px dalam dua tema, serta Proyek/Panduan/Risiko/Tugas pada empat lebar. Kalender detail, skeleton, matriks risiko, tabel tugas dan aksi buku diperbaiki dari temuan fixture. Reproduksi masalah memakai data yang sama sebelum memperbaiki: filter Beranda–Hari Ini–Tugas–Riwayat, fokus kembali, Escape/reduced-motion dan Gantt. Audit seluruh keadaan/interaksi dan perangkat fisik tetap terbuka. Fixture/tes DOM tidak menggantikan UAT.
+- `/dunia-koperasi`: navigasi aplikasi, sesi yang sudah ada, data workspace; AppShell menyerahkan layar penuh.
+- `/dev/dunia-koperasi`: hanya development, workspace kosong tanpa database.
+- Three.js: kamera ortografis, OrbitControls, cahaya/bayangan, zoom/putar/reset, raycast gedung/karakter/lahan, penanda HTML aksesibel.
+- Exterior: kantor biru, tujuh lahan, jalan, pohon, bangku dan area rencana logistik. Unit tersimpan muncul sebagai bangunan.
+- Interior: meja rapat, meja tugas/komputer, arsip/buku, treadmill kegiatan. Pintasan membuka modul asli.
+- Maskot: rapat aktif → duduk; jurnal hari ini → olahraga; tugas proses → bekerja; lainnya → idle. Pratinjau gerakan tidak menyimpan catatan.
+- Cuaca simulasi dan waktu otomatis WIB/manual; preferensi Zod lokal memakai `usePreference`.
+- Style: `world.css`, dibatasi `.cooperative-world` dan kelas `cw-*`. Backdrop blur dihapus karena mengganggu ketajaman render.
 
-Tidak melakukan deployment produksi atau SQL cloud otomatis. Jelaskan berkas SQL, dampak dan proyek tujuan lalu minta persetujuan untuk eksekusi cloud. Jalankan pemeriksaan sesuai AGENTS, catat hasil nyata dan commit/push paket ke cabang kerja tanpa menyertakan perubahan orang lain.
+## Batas yang harus diteruskan
+
+- Implementasi perlu penilaian pemilik; jangan klaim identik piksel dengan video atau sudah disetujui.
+- Tujuh slot mengikuti created_at lalu ID; penghapusan gerai bisa menggeser slot berikutnya. Belum ada layout permanen/edit posisi.
+- Ringkasan mengikuti catatan yang dimuat, bukan total global bila berpaginasi; belum real-time.
+- Suplier, ekspedisi, pengiriman, karakter pegawai nyata, editor lingkungan, layout cloud dan AI chat masih rencana. Tidak ada SQL baru pada paket ini.
+- Screenshot awal desktop dengan blur sudah usang. Bukti terbaru ada di STATUS. Tes UI scene tiruan tidak membuktikan WebGL/animasi.
+- Percobaan tes tanpa batas worker membebani mesin dan dihentikan. Jalankan `npm test -- --maxWorkers=2`; catat hanya hasil yang selesai.
+
+## Perubahan pemilik
+
+Pertahankan perubahan awal pada DateField.tsx, Select.tsx, Dashboard.tsx, SprintModal.tsx, RecursiveScheduleModal.tsx, TaskDetailDrawer.tsx, ThemeContext.tsx dan docs/PLAN-ASTRA-Kopdes.md yang belum terlacak. Jangan sertakan semuanya dalam commit dunia atau mengembalikannya tanpa memeriksa diff.
+
+next-env.d.ts berubah saat Next.js dijalankan; periksa keluaran generator sebelum memulihkannya. Tidak ada deploy atau SQL cloud pada sesi ini. Ikuti [MIGRASI-SQL](MIGRASI-SQL.md) untuk perubahan cloud.

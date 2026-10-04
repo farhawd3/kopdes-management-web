@@ -65,6 +65,8 @@ it('form tugas menawarkan mitra tanpa mewajibkan kode tugas', () => {
       onSaved={vi.fn()}
     />,
   );
+  expect(screen.queryByLabelText('Mitra atau kontak')).toBeNull();
+  fireEvent.click(screen.getByRole('button', { name: 'Detail lainnya' }));
   const contact = screen.getByLabelText('Mitra atau kontak') as HTMLSelectElement;
   expect(contact.querySelector(`option[value="${contactId}"]`)?.textContent).toBe('Agrinas');
   expect(
@@ -89,7 +91,6 @@ it('form tugas menawarkan mitra tanpa mewajibkan kode tugas', () => {
   fireEvent.change(screen.getByRole('textbox', { name: 'Nama / judul' }), {
     target: { value: 'Hubungi Agrinas' },
   });
-  fireEvent.click(screen.getByRole('button', { name: /Detail lainnya/ }));
   expect((screen.getByRole('textbox', { name: 'Nama / judul' }) as HTMLInputElement).value).toBe(
     'Hubungi Agrinas',
   );

@@ -16,5 +16,5 @@ export function Modal({ onDismiss, children, ...props }: DialogHTMLAttributes<HT
     node?.showModal();
     return () => { node?.close(); if (previous instanceof HTMLElement && previous.isConnected) previous.focus(); };
   }, []);
-  return <DialogSurface {...props} ref={ref} onCancel={(event) => { event.preventDefault(); onDismiss(); }} onClick={(event) => { if (event.target === event.currentTarget) onDismiss(); }}>{children}</DialogSurface>;
+  return <DialogSurface {...props} ref={ref} onCancel={(event) => { event.preventDefault(); event.stopPropagation(); onDismiss(); }} onClick={(event) => { if (event.target === event.currentTarget) { event.stopPropagation(); onDismiss(); } }}>{children}</DialogSurface>;
 }

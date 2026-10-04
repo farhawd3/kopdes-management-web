@@ -9,8 +9,10 @@ export function ReadinessRadar({ items }: { items: Checklist[] }) {
   const point = (index: number, radius: number) =>
     `${100 + Math.sin((index * Math.PI * 2) / 5) * radius},${90 - Math.cos((index * Math.PI * 2) / 5) * radius}`;
   return (
-    <details>
+    <details className="readiness-details">
       <summary>Kesiapan lima dimensi</summary>
+      <div className="readiness-breakdown">
+      {values.some(value => value !== null) && (
       <svg
         className="radar"
         viewBox="0 0 200 180"
@@ -39,12 +41,14 @@ export function ReadinessRadar({ items }: { items: Checklist[] }) {
           strokeWidth="2"
         />
       </svg>
+      )}
       <Legend label="Nilai kesiapan per dimensi" items={dimensions.map((dimension, index) => ({
         key: dimension,
         label: dimension === 'sdm' ? 'SDM' : dimension === 'sop' ? 'SOP' : dimension[0].toUpperCase() + dimension.slice(1),
         value: values[index] === null ? 'Belum dinilai' : `${values[index]}%`,
         color: 'var(--brand)',
       }))} />
+      </div>
     </details>
   );
 }

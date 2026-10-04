@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 import { ThemeProvider, useTheme } from '@/lib/ThemeContext';
 import { api, resetAuthNavigation } from '@/lib/client';
 import { navigation } from '@/features/catalog';
+import { isProjectHistory } from '@/features/projects/project-lifecycle';
 import type { Workspace } from '@/features/workspace/useWorkspace';
 import {
   House,
@@ -48,6 +49,7 @@ import { Modal } from '@/components/ui/Modal';
 
 const navIcons: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
   '/beranda': House,
+  '/dunia-koperasi': Landmark,
   '/hari-ini': SunMedium,
   '/tugas': CheckCheck,
   '/tindak-lanjut': AlertCircle,
@@ -74,7 +76,7 @@ const navIcons: Record<string, React.ComponentType<{ size?: number; className?: 
 const sections = [
   [
     'Pekerjaan & Proyek',
-    ['/beranda', '/hari-ini', '/tugas', '/proyek', '/roadmap', '/tindak-lanjut'],
+    ['/beranda', '/dunia-koperasi', '/hari-ini', '/tugas', '/proyek', '/roadmap', '/tindak-lanjut'],
     'blue',
   ],
   ['Kegiatan Lapangan', ['/jurnal'], 'amber'],
@@ -151,6 +153,31 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
     [error, setError] = useState(''),
     [actionModalOpen, setActionModalOpen] = useState(false);
   const dialog = useRef<HTMLDialogElement>(null);
+  const mobileSheet = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (!menu) return;
+    const sheet = mobileSheet.current;
+    if (!sheet) return;
+    const previous = document.activeElement;
+    const controls = () => [...sheet.querySelectorAll<HTMLElement>('button:not([disabled]), a[href], input:not([disabled]), [tabindex="0"]')]
+      .filter(node => node.getClientRects().length > 0);
+    controls()[0]?.focus();
+    const containFocus = (event: KeyboardEvent) => {
+      if (event.key !== 'Tab') return;
+      const nodes = controls(), first = nodes[0], last = nodes.at(-1);
+      if (!first || !last) return;
+      const outside = !sheet.contains(document.activeElement);
+      if (outside || (event.shiftKey ? document.activeElement === first : document.activeElement === last)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first).focus();
+      }
+    };
+    document.addEventListener('keydown', containFocus);
+    return () => {
+      document.removeEventListener('keydown', containFocus);
+      if (previous instanceof HTMLElement && previous.isConnected) previous.focus();
+    };
+  }, [menu]);
 
   useEffect(() => {
     const receive = (event: Event) => setWorkspace((event as CustomEvent<Workspace | null>).detail);
@@ -196,6 +223,7 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
   }, [setDesktopSidebarHidden, router]);
   const name = String(workspace?.organization?.[0]?.data.manager || 'Manajer');
   const current = navigation.find(([href]) => href === path)?.[1] || 'Beranda';
+  if (path === '/dunia-koperasi') return <>{children}</>;
   return (
     <div className={`manager-shell ${desktopSidebarHidden === 'true' ? 'sidebar-collapsed' : ''}`}>
       <a className="skip" href="#main">
@@ -231,9 +259,8 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
             /
           </span>
           <div className="manager-location-wrap">
-            <span className="manager-location-dot" aria-hidden="true" />
             <span className="manager-location">{current}</span>
-            <Button
+            <button
               type="button"
               className="topbar-fav-btn"
               aria-label={
@@ -252,11 +279,11 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
               }
             >
               <Star
-                size={14}
-                fill={favorites.includes(path) ? 'var(--tone-warn-text)' : 'none'}
-                color={favorites.includes(path) ? 'var(--tone-warn-text)' : 'var(--ink-muted)'}
+                size={13}
+                fill={favorites.includes(path) ? '#f59e0b' : 'none'}
+                color={favorites.includes(path) ? '#f59e0b' : 'currentColor'}
               />
-            </Button>
+            </button>
           </div>
         </div>
         <div className="manager-actions">
@@ -496,7 +523,7 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
             {workspace ? (
               <div className="sidebar-projects-list">
                 {(workspace.workstreams || [])
-                  .filter((p) => p.data.status !== 'diarsipkan')
+                  .filter((p) => !isProjectHistory(p))
                   .map((p) => (
                     <Link
                       className="manager-project-link"
@@ -515,8 +542,8 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
             ) : (
               <small className="sidebar-empty-note">Proyek belum dimuat.</small>
             )}
-            {workspace && !workspace.workstreams?.length && (
-              <small className="sidebar-empty-note">Belum ada proyek.</small>
+            {workspace && !workspace.workstreams?.some((p) => !isProjectHistory(p)) && (
+              <small className="sidebar-empty-note">Tidak ada proyek berjalan.</small>
             )}
           </section>
         </div>
@@ -542,7 +569,7 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
         )}
         {children}
       </main>
-      {shortcutHelp && <Modal onDismiss={() => setShortcutHelp(false)} aria-labelledby="shortcut-title">
+      {shortcutHelp && <Modal className="shortcut-help-dialog" onDismiss={() => setShortcutHelp(false)} aria-labelledby="shortcut-title">
         <h2 id="shortcut-title">Pintasan keyboard</h2>
         <p><kbd>N</kbd> Buat tugas · <kbd>T</kbd> Hari Ini · <kbd>?</kbd> Bantuan</p>
         <p><kbd>Ctrl/⌘ K</kbd> Cari · <kbd>Ctrl/⌘ B</kbd> Menu samping · <kbd>Esc</kbd> Tutup</p>
@@ -557,6 +584,7 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
         aria-hidden={!menu}
       />
       <aside
+        ref={mobileSheet}
         className={`mobile-app-sheet ${menu ? 'is-open' : ''}`}
         inert={!menu}
         aria-hidden={!menu}

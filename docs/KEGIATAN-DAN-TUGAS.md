@@ -1,5 +1,7 @@
 # Kegiatan, tugas, dan Beranda manajer
 
+Alur pengisian terbaru: [ALUR-PENGISIAN](ALUR-PENGISIAN.md). Form tugas mendahulukan proyek; tugas mandiri tetap tersedia dengan pilihan eksplisit. Progres tugas 100% tidak menutup proyek otomatis. Proyek selesai/arsip tersedia di Riwayat Proyek, termasuk tugas selesai lama.
+
 **Tugas** (`/tugas`, entitas `work-items`) adalah pekerjaan yang harus ditindaklanjuti: ada penanggung jawab, tenggat, prioritas, status `rencana`/`proses`/`selesai`/`dibatalkan`, dan bisa terkait proyek, milestone, rapat, dokumen, serta mitra. Tugas muncul di daftar, papan, kalender, Gantt, Hari Ini, dan Perlu Perhatian. Perubahan status harus memakai satu aturan di seluruh tampilan.
 
 **Kegiatan** (`/jurnal`, entitas `journal`) adalah catatan apa yang terjadi: kunjungan, koordinasi, pembahasan, hasil lapangan. Isinya tanggal, uraian, unit, serta tautan opsional ke tugas/mitra. Kegiatan tidak perlu status tugas atau tenggat. Jangan menampilkan jurnal sebagai tugas yang belum selesai. Bila dari kegiatan timbul pekerjaan, buat tugas terkait; bila tugas dikerjakan, catat hasil sebagai kegiatan yang menunjuk tugas itu. Rapat (`/rapat`) tetap catatan jadwal/acara tersendiri dengan tautan online bila diisi pengguna.

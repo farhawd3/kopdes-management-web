@@ -188,7 +188,7 @@ it('menghapus filter URL tetap menampilkan seluruh tugas dan mempertahankan mode
     />,
   );
   fireEvent.click(screen.getByRole('button', { name: /^Status:/ }));
-  fireEvent.click(screen.getByRole('option', { name: /semua status/i }));
+  fireEvent.click(screen.getByRole('option', { name: /tugas aktif/i }));
   expect(screen.getByText('Masih bekerja')).toBeTruthy();
   expect(mocks.replace).toHaveBeenCalledWith('/tugas?view=daftar');
 });

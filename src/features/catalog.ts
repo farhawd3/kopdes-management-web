@@ -411,6 +411,7 @@ export function formatChoiceLabel(value: string): string {
 
 export const navigation = [
   ['/beranda', 'Beranda', ''],
+  ['/dunia-koperasi', 'Dunia Koperasi', ''],
   ['/hari-ini', 'Hari Ini', ''],
   ['/tugas', 'Daftar Tugas', ''],
   ['/tindak-lanjut', 'Perlu Perhatian', ''],

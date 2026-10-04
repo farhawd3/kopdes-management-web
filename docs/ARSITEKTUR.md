@@ -39,6 +39,7 @@ Kontrak API dan skema memisahkan kebutuhan UI dari penyimpanan. Bila skala membu
 | Folder | Tanggung jawab |
 |---|---|
 | `src/features/dashboard/` | Beranda dan Hari Ini |
+| `src/features/cooperative-world/` | Scene 3D, mesh/karakter, adapter data, preferensi dan UI dunia; lihat DUNIA-KOPERASI.md |
 | `src/features/tasks/` | Daftar, papan, kalender, detail, jadwal berulang dan kode tugas |
 | `src/features/projects/` | Proyek, catatan, milestone dan target periode |
 | `src/features/follow-ups/` | Pengingat, sematan dan tinjauan mingguan |

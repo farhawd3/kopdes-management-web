@@ -1,71 +1,53 @@
-# Checklist produk aktif
+# Checklist produk aktif — 5 Oktober 2026
 
-- [x] Keadaan kosong buku pencatatan memakai EmptyState; Opname tanpa barang mengarahkan pendaftaran barang, dengan regresi.
-- [x] Enam halaman pencatatan/gerai pada 360 px setelah isi tampil tidak meluap; Opname juga 768/1024/1440. Data terisi/tema lain tetap terbuka.
+Implementasi, bukti pemeriksaan dan penerimaan dibedakan. STATUS adalah keadaan terbaru; CHANGELOG dan laporan QA menyimpan sejarah. Daftar lama yang mengulang angka tes dan instruksi layout usang telah diringkas.
 
-- [x] EmptyState bersama pada Beranda/Hari Ini; proyek seluruhnya diarsipkan menampilkan keadaan kosong, dengan tes regresi.
-- [x] Judul tugas Hari Ini membungkus pada ponsel; Enter pada aksi anak tidak membuka detail kartu; lima lebar diukur tanpa overflow.
-- [ ] Sel tanggal kalender panel sempit mencapai target sentuh 44 px.
+## Dunia Koperasi
 
-- [x] CSS tanpa pemanggil statis dipangkas dengan pengecualian kelas dinamis/selector kompleks; Field umum Editor terhubung dengan id.
-- [x] Galeri komponen tanpa overflow pada 320/360/390/768/1024/1280/1440/1920; bukan bukti seluruh halaman/perangkat.
+- [x] Analisis empat frame video dan referensi interior; simpan referensi/gaya untuk AI berikutnya.
+- [x] Halaman dunia pada navigasi aplikasi, layar penuh/dock, sesi dan data workspace.
+- [x] Exterior/interior Three.js, kamera ortografis, zoom/putar/reset dan penanda HTML.
+- [x] Kantor membuka interior; tujuh lahan terisi otomatis dari unit yang dimuat.
+- [x] Meja rapat, workstation tugas, arsip/buku dan treadmill kegiatan dengan tautan modul.
+- [x] Maskot modular, bubble, animasi berbasis data dan pratinjau gerakan.
+- [x] Cuaca simulasi/waktu WIB/pakaian; preferensi lokal tervalidasi.
+- [x] Tes adapter/UI, typecheck, lint dan production build. Cakupan aktual di STATUS.
+- [x] QA lokal kosong exterior/interior 360/768/1024/1440, tanpa luapan; penanda masuk kantor/bubble/pratinjau rapat-gym.
+- [ ] Map lebih luas dengan jalur, parkir, plaza dan ruang interaksi; detail rencana di DUNIA-KOPERASI.
+- [ ] Default siang terang dan kontrol waktu/cuaca terlihat serta berfungsi setelah reload.
+- [ ] Mobil manajer/van/truk boks, jalur gerak dan interaksi dengan label simulasi.
+- [ ] Manajer berpindah saat patroli jarang; bubble pertanyaan sesekali mengikuti kepala.
+- [ ] Zona gym jelas dan karakter beraksi di sana sesuai kegiatan, rapat duduk di kursi.
+- [ ] Penerimaan pemilik atas kualitas dan kemiripan final dengan video.
+- [ ] Semua interaksi/state, raycast objek langsung, semua cuaca/waktu, keyboard/reduced-motion dan fallback WebGL.
+- [ ] Semua target sentuh/kontras, perangkat fisik, WebGL perangkat rendah dan benchmark performa.
+- [ ] UAT pemetaan/sinkronisasi dengan data nyata dan paginasi.
+- [ ] Slot lahan permanen/editor lingkungan dan preferensi/layout lintas perangkat.
+- [ ] Suplier, jadwal pengiriman dan kendaraan ekspedisi; masih rencana.
+- [ ] Karakter pegawai nyata atau AI chat; belum tersedia.
 
-- [x] SegmentedControl, Legend dan Progress digunakan pada tugas/kegiatan serta grafik; kontras primer lima tema terang/gelap diperiksa.
+## Fitur operasional tersedia
 
-- [x] Font/radius legacy memakai token; filter rentang dan tanggal Gantt terbaca pada 320/768 px.
+- [x] Proyek fleksibel, properti, catatan, tugas/milestone dan progres bersama.
+- [x] Tugas daftar/papan/harian/kalender/Gantt, filter, subtugas, dependensi dan pengulangan.
+- [x] Riwayat berupa tab horizontal Proyek; alias lama redirect, tugas historis tetap tersedia.
+- [x] Beranda/Hari Ini dari data asli, kegiatan terpisah dari tugas.
+- [x] Rapat/ICS, koordinasi, dokumen, risiko, jurnal dan laporan snapshot.
+- [x] Anggota, kas, barang dan opname dengan gerbang kemampuan database.
+- [x] PIN/sesi/RLS/Origin, profil dan cadangan JSON.
+- [x] Paket perbaikan anotasi sebelumnya; bukti/batas di QA-ANOTASI.md, QA-TATA-LETAK.md dan QA-POPUP.md.
 
-- [x] Pembersihan awal deklarasi CSS identik dan statistik legacy; ukuran total sudah turun dibanding audit awal.
+## Penerimaan operasional dan cloud terbuka
 
-- [x] PLAN-ASTRA 6: observer grafik, count-up, animasi kartu/tombol dan reduced-motion terpusat; pemeriksaan perangkat/performa lengkap masih terbuka.
+- [ ] Konfirmasi PIN/simpan setelah reset serta keadaan migrasi cloud 6/7.
+- [ ] UAT data nyata dan konsistensi lintas tampilan, cadangan/pemulihan di lingkungan uji.
+- [ ] Audit UI legacy: lint:ui/check:ui belum diulang; laporan sebelumnya 111 temuan CSS dan enam kontrol mentah.
+- [ ] Sel kalender panel sempit, semua modul/tema/state/akses dan perangkat fisik.
+- [ ] Lighthouse/performa data besar dan smoke test produksi setelah deployment yang diizinkan.
 
-- [x] PLAN-ASTRA 5B: pintasan N/T/?, panel tersimpan, swipe Hari Ini dan undo status/tanggal; tes regresi otomatis tersedia.
+## Pengembangan di luar paket ini
 
-Implementasi dan penerimaan dipisahkan. Bukti terakhir ada di [STATUS](STATUS.md), riwayat paket di [CHANGELOG](../CHANGELOG.md).
+- [ ] Editor blok bebas, kolaborasi real-time, PWA/offline dan unggah berkas.
+- [ ] Baseline/jalur kritis, penjadwalan otomatis dependensi dan impor CSV buku.
 
-## Implementasi tersedia
-
-- [x] PLAN-ASTRA fase 1: audit AST seluruh kontrol HTML, inventaris rute/overlay, CSS dan selector berulang yang dapat dibuat ulang.
-- [x] Fondasi token semantik dan stylelint CSS baru tanpa hex/important; migrasi legacy belum selesai.
-- [x] Primitive tombol/input, nol kontrol mentah luar UI; tanggal tunggal, DateNav, BottomNav, dialog bersama dan galeri development. Batas QA tercatat di LAPORAN-ASTRA.
-- [x] Kartu statistik dashboard netral, baris terlambat dan tata letak adaptif; pemeriksaan Beranda empat lebar terang dan gelap 1440.
-- [x] Drag Pointer Events pada handle papan tugas/kegiatan dan alternatif dropdown; 181 tes lulus serta drag mouse fixture browser berhasil.
-
-- [x] Contoh konfigurasi/panduan lokal memakai host yang sama dengan server; penolakan origin lokal diperbaiki dan diprobe tanpa mutasi database.
-
-- [x] Proyek fleksibel, properti, catatan terformat, milestone dan tugas terhubung.
-- [x] Daftar/papan/harian/kalender/Gantt, filter, subtugas, prasyarat, pengulangan dan riwayat tugas.
-- [x] Gantt dengan rentang/skala, geser/resize, tinjau/simpan dan alternatif keyboard/form.
-- [x] Beranda/Hari Ini berdasarkan catatan aktual; rincian tambahan opsional dan banner perhatian ringkas.
-- [x] Koordinasi, rapat/ICS, dokumen, risiko, kegiatan, laporan snapshot, profil dan cadangan JSON.
-- [x] Anggota, kas, barang dan opname dengan gerbang aktivasi, filter dan ekspor CSV.
-- [x] Impor CSV terbatas pada daftar Records, validasi per baris; bukan impor buku atau transaksi atomik seluruh berkas.
-- [x] PIN/sesi, RLS, pemeriksaan asal mutasi dan validasi server.
-- [x] Pencarian berkonteks proyek dan isolasi relasi melalui tugas.
-- [x] Pagination/cache, pemuatan modul terpisah, progres bersama dan pembersihan sumber mati.
-- [x] Struktur modul/tes; 167 tes, typecheck, lint, build dan audit sumber lulus pada paket struktur.
-- [x] Fixture banner terang 360/768/1024/1440 px, rincian/keadaan kosong 360 px.
-- [x] Panduan Markdown diindeks; duplikasi digabung dan rujukan usang diperbaiki.
-- [x] Font/token kontrol bersama, dropdown lebih tenang, kalender adaptif, aksi/subtugas dan panduan onboarding dirapikan.
-- [x] Sweep fixture 22 halaman/21 form mobile dalam dua tema; Proyek/Panduan/Risiko/Tugas pada empat lebar. Bukti dan batas pemeriksaan ada di STATUS.
-- [x] Koreksi ukuran font mobile, intro tugas berlebihan, toolbar/tanggal linimasa, kepadatan dashboard/Hari Ini, kalender ke bawah dan warna pending subtugas; bukti render ada di STATUS.
-
-## Cloud dan penerimaan
-
-- [x] Migrasi pencatatan kedua dikonfirmasi pemilik; kemampuan pernah diperiksa lewat aplikasi lokal.
-- [x] Reset kosong pernah dikonfirmasi berhasil oleh pemilik.
-- [ ] Konfirmasi PIN dan uji simpan setelah reset cloud.
-- [ ] Verifikasi keadaan migrasi cloud, khususnya indeks paginasi 6 dan relasi dokumen 7.
-- [ ] UAT data nyata beberapa hari, termasuk konsistensi lintas tampilan.
-- [ ] Audit semua modul/tema pada 360/768/1024/1440 px, fokus, Escape, modal dan reduced-motion.
-- [ ] Perangkat fisik Android/iOS/Safari dan audit aksesibilitas/Lighthouse.
-- [ ] Cadangan/pemulihan nyata di lingkungan uji.
-- [ ] Benchmark performa/bundle dan data besar.
-- [ ] Smoke test login/simpan produksi setelah deployment yang diizinkan pemilik.
-
-## Pengembangan terpisah
-
-- [ ] Baseline/jalur kritis dan penjadwalan otomatis dependensi.
-- [ ] Editor blok drag-and-drop dan kolaborasi real-time.
-- [ ] PWA/offline, impor CSV buku pencatatan, unggah berkas dan tautan laporan publik.
-
-Rencana program lama bukan instruksi aktif. Riwayatnya tersedia melalui Git; fixture kompatibilitas SQL tetap di tests/fixtures/.
+SQL cloud tetap memerlukan penjelasan berkas, dampak, proyek tujuan dan persetujuan pemilik. Tidak ada migrasi baru atau reset pada paket dunia. Program 90 hari bukan instruksi aktif.

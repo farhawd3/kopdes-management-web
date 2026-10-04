@@ -208,3 +208,16 @@ it('tambah cepat dari ringkasan membuka buku yang dipilih', () => {
   expect(screen.getByRole('dialog')).toBeTruthy();
   expect(screen.getByLabelText('Nama anggota')).toBeTruthy();
 });
+
+it('aksi + Kas anggota membuka transaksi kas dengan anggota terhubung, lalu kembali ke formulir anggota', () => {
+  const member = { id: 'member-cash-test', created_at: '', updated_at: '', data: { title: 'Anggota uji', member_number: 'UJI-01', status: 'aktif', join_date: '2026-10-04' } };
+  render(<Operations slug="anggota" data={{ members: [member] }} ready refresh={vi.fn()} draftScope="qa-cash-regression" />);
+  fireEvent.click(screen.getByRole('button', { name: '+ Kas' }));
+  expect(screen.getByRole('heading', { name: 'Tambah Buku kas' })).toBeTruthy();
+  expect((screen.getByLabelText('Nama / judul') as HTMLInputElement).value).toContain('Anggota uji');
+  expect(screen.getByRole('button', { name: /Anggota terkait.*Anggota uji/ }).textContent).toContain('Anggota uji');
+  fireEvent.click(screen.getByRole('button', { name: 'Batal' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Tambah anggota' }));
+  expect(screen.getByLabelText('Nama anggota')).toBeTruthy();
+  expect(screen.queryByLabelText('Nominal (Rp)')).toBeNull();
+});

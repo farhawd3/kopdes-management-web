@@ -1,9 +1,9 @@
 'use client';
+import { AppIcon } from '@/components/ui/AppIcon';
 import { useDragSort } from '@/components/ui/useDragSort';
 import { DragOverlay } from '@/components/ui/DragOverlay';
 import { IconButton } from '@/components/ui/Button';
 import { GripVertical } from 'lucide-react';
-import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { useState } from 'react';
 import Link from 'next/link';
@@ -303,20 +303,6 @@ export function ScrumBoardView({
                           >
                             <GripVertical />
                           </IconButton>
-                          <Select
-                            ariaLabel={'Pindahkan ' + String(data.title) + ' ke'}
-                            value={String(data.status)}
-                            disabled={Boolean(busyId)}
-                            onChange={(target) => {
-                              void handleQuickMove(task, target);
-                            }}
-                            options={[
-                              { value: 'rencana', label: 'Rencana' },
-                              { value: 'proses', label: 'Dikerjakan' },
-                              { value: 'selesai', label: 'Selesai' },
-                              { value: 'dibatalkan', label: 'Dibatalkan' },
-                            ]}
-                          />
                         </div>
                         <div className="card-top-row">
                           <div className="card-top-left">
@@ -442,7 +428,7 @@ export function ScrumBoardView({
                                   title="Tandai tugas selesai"
                                   aria-label="Tandai tugas selesai"
                                 >
-                                  <span>✓ Selesai</span>
+                                  <span><AppIcon name="complete" size={16} /> Selesai</span>
                                 </Button>
                               </div>
                             )}

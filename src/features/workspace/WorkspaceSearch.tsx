@@ -41,6 +41,7 @@ export function WorkspaceSearch({
         <Search size={20} aria-hidden="true" />
         <Input
           autoFocus
+          className="ui-search-input"
           aria-label="Cari halaman atau isi catatan"
           type="search"
           placeholder="Judul, isi catatan, atau nama proyek…"

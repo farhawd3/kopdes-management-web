@@ -1,3 +1,4 @@
-# Aturan workspace
+# Titik masuk aturan AI
 
-Sumber aturan tunggal: baca AGENTS.md di akar proyek, lalu docs/STATUS.md dan docs/KEPUTUSAN.md. Aturan produk lama telah digantikan oleh PRD terbaru untuk Kopdes Management Web.
+Baca [AGENTS](../../AGENTS.md). Berkas ini tidak menambah aturan.
+Fokus aktif: Dunia Koperasi dan koneksi data web. Kontrak gaya/rencana hanya pada [DUNIA-KOPERASI](../../docs/DUNIA-KOPERASI.md); keadaan nyata pada [STATUS](../../docs/STATUS.md).

@@ -26,6 +26,7 @@ import { api } from '@/lib/client';
 import { ZodError } from 'zod';
 import { DateField } from '@/components/ui/DateField';
 import { Select } from '@/components/ui/Select';
+import { EntryGuide } from './workspace/EntryGuide';
 
 const STAKEHOLDER_PRESETS = [
   {
@@ -62,17 +63,13 @@ const STAKEHOLDER_PRESETS = [
   },
 ] as const;
 const BASIC_TASK_FIELDS = [
+  'workstream_id',
   'title',
   'due_date',
   'status',
   'priority',
   'assignee',
-  'link',
   'description',
-  'workstream_id',
-  'milestone_id',
-  'stakeholder_id',
-  'document_id',
 ];
 
 export function Editor({
@@ -82,6 +79,7 @@ export function Editor({
   onClose,
   onSaved,
   quick = false,
+  draftScope,
 }: {
   entity: Entity;
   item?: Item;
@@ -89,6 +87,7 @@ export function Editor({
   onClose: () => void;
   onSaved: () => Promise<void>;
   quick?: boolean;
+  draftScope?: string;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
@@ -97,7 +96,7 @@ export function Editor({
   const [restoredDraft, setRestoredDraft] = useState<Record<string, unknown> | null>(null);
   const [formVersion, setFormVersion] = useState(0);
   const [draftNotice, setDraftNotice] = useState('');
-  const draftKey = 'hub-draft:' + entity + ':' + (item?.id || 'new');
+  const draftKey = 'hub-draft:' + (draftScope ? draftScope + ':' : '') + entity + ':' + (item?.id || 'new');
   useEffect(() => {
     try {
       const raw = sessionStorage.getItem(draftKey);
@@ -191,7 +190,7 @@ export function Editor({
     };
   }, []);
   const fields = quick
-    ? ['title', 'due_date', 'workstream_id']
+    ? ['workstream_id', 'title', 'due_date']
     : entity === 'work-items' && !showTaskDetails
       ? BASIC_TASK_FIELDS
       : catalog[entity].fields;
@@ -202,205 +201,9 @@ export function Editor({
       start_date: today(),
       title: '',
     };
-  return (
-    <dialog
-      ref={dialog}
-      className="editor"
-      onCancel={(event) => {
-        event.preventDefault();
-        requestClose();
-      }}
-      aria-labelledby={headingId}
-      onClick={(e) => {
-        if (e.target === dialog.current) requestClose();
-      }}
-    >
-      <form
-        key={formVersion}
-        ref={formRef}
-        onChange={() => {
-          setDirty(true);
-          saveLocalDraft();
-        }}
-        onBlur={() => {
-          if (dirty) saveLocalDraft();
-        }}
-        onSubmit={async (event) => {
-          event.preventDefault();
-          setBusy(true);
-          setError('');
-          try {
-            const form = new FormData(event.currentTarget),
-              values: Record<string, unknown> = { ...item?.data };
-            for (const field of fields) {
-              if (field === 'required') values[field] = form.get(field) === 'on';
-              else if (field === 'subtasks')
-                values[field] = String(form.get(field) || '')
-                  .split('\n')
-                  .filter(Boolean)
-                  .map((line) => ({
-                    title: line.replace(/^\[x\]\s*/i, ''),
-                    done: /^\[x\]/i.test(line),
-                  }));
-              else if (field === 'dependencies') values[field] = form.getAll(field);
-              else values[field] = form.get(field) ?? '';
-            }
-            if (entity === 'work-items')
-              values.completed_at =
-                values.status === 'selesai' ? item?.data.completed_at || today() : '';
-            if (entity === 'work-items' && values.recurrence === 'tidak') {
-              values.recurrence_time = '09:00';
-              values.recurrence_end_date = '';
-            }
-            if (entity === 'meetings') {
-              if (meetingMode === 'tatap muka') {
-                values.meeting_url = '';
-              } else if (meetingMode === 'online') {
-                values.location = '';
-              }
-            }
-            const parsed = schemas[entity].parse(values);
-            await api(entity, { id: item?.id || undefined, data: parsed });
-            try {
-              sessionStorage.removeItem(draftKey);
-            } catch {
-              /* Optional browser storage. */
-            }
-            setDirty(false);
-            await onSaved();
-            onClose();
-          } catch (e) {
-            setError(
-              e instanceof ZodError
-                ? e.issues
-                    .map((issue) => `${labels[String(issue.path[0])] || 'Isian'}: ${issue.message}`)
-                    .join(' · ')
-                : (e as Error).message,
-            );
-          } finally {
-            setBusy(false);
-          }
-        }}
-      >
-        <div className="section-head editor-modal-head">
-          <div className="editor-title-wrap">
-            <span className="eyebrow editor-badge-eyebrow">
-              {entity === 'work-items' ? (
-                <CheckCircle2 size={13} />
-              ) : entity === 'workstreams' ? (
-                <FolderKanban size={13} />
-              ) : entity === 'journal' ? (
-                <BookOpen size={13} />
-              ) : entity === 'meetings' ? (
-                <Calendar size={13} />
-              ) : entity === 'stakeholders' ? (
-                <Users size={13} />
-              ) : (
-                <FileText size={13} />
-              )}
-              {catalog[entity].title}
-            </span>
-            <h2 id={headingId}>
-              {item?.id
-                ? String(item.data.title)
-                : entity === 'work-items'
-                  ? 'Tambah Tugas Baru'
-                  : entity === 'workstreams'
-                    ? 'Tambah Proyek Baru'
-                    : entity === 'stakeholders'
-                      ? 'Tambah Mitra atau Kontak'
-                      : entity === 'meetings'
-                        ? 'Jadwalkan Rapat Baru'
-                        : `Tambah ${catalog[entity].title}`}
-            </h2>
-          </div>
-          <Button
-            type="button"
-            className="editor-close-btn"
-            aria-label="Tutup formulir"
-            title="Tutup formulir (Esc)"
-            onClick={requestClose}
-          >
-            <X size={20} strokeWidth={2.25} />
-          </Button>
-        </div>
-        <div className="editor-form-scroll">
-          {savedDraft && (
-          <div className="draft-notice">
-            <p>Draf belum disimpan ditemukan di tab ini.</p>
-            <Button
-              type="button"
-              onClick={() => {
-                setRestoredDraft(savedDraft);
-                setMeetingMode(String(savedDraft.mode || 'tatap muka'));
-                setStockItem(String(savedDraft.item_id || ''));
-                setRecurrence(String(savedDraft.recurrence || 'tidak'));
-                setProjectId(String(savedDraft.workstream_id || ''));
-                setShowTaskDetails(true);
-                setFormVersion((value) => value + 1);
-                setSavedDraft(null);
-                setDirty(true);
-                setDraftNotice('Draf dibuka. Periksa isian sebelum menyimpan.');
-              }}
-            >
-              Lanjutkan draf
-            </Button>
-            <Button
-              type="button"
-              onClick={() => {
-                try {
-                  sessionStorage.removeItem(draftKey);
-                } catch {}
-                setSavedDraft(null);
-              }}
-            >
-              Abaikan draf
-            </Button>
-          </div>
-        )}
-        {draftNotice && (
-          <p className="draft-status" role="status">
-            {draftNotice}
-          </p>
-        )}
-        {entity === 'stakeholders' && !item?.id && (
-          <div className="stakeholder-preset-banner">
-            <div className="preset-label">
-              <Sparkles size={14} />
-              <strong>Jenis kontak</strong>
-            </div>
-            <div className="preset-buttons">
-              {STAKEHOLDER_PRESETS.map((p) => (
-                <Button
-                  key={p.label}
-                  type="button"
-                  className={`preset-chip ${stakeholderPreset?.label === p.label ? 'active' : ''}`}
-                  onClick={() => setStakeholderPreset(p)}
-                >
-                  {p.label}
-                </Button>
-              ))}
-            </div>
-            <small className="preset-hint">
-              Pilih jenis, lalu isi nama orang atau lembaga sesuai data Anda.
-            </small>
-          </div>
-        )}
-          {entity === 'work-items' && !quick && !showTaskDetails && (
-            <div className="task-form-intro">
-              <p>Isi judul dan tenggat. Hubungkan proyek atau mitra jika ada.</p>
-              <Button
-                type="button"
-                className="btn-toggle-task-details"
-                title="Opsi lanjutan, kendala dan subtugas"
-                onClick={() => setShowTaskDetails(true)}
-              >
-                Detail lainnya
-              </Button>
-            </div>
-          )}
-        <div className="form-grid">
-          {fields.map((field) => {
+  const optionalFields = fields.filter((field) => ['members', 'cash-entries', 'inventory-items'].includes(entity) && ['member_id','item_id','unit_id','reference_number','link','notes','contact','address','price'].includes(field));
+  const primaryFields = fields.filter((field) => !optionalFields.includes(field));
+  const renderField = (field: string) => {
             if (entity === 'meetings' && field === 'meeting_url' && meetingMode === 'tatap muka') {
               return null;
             }
@@ -686,15 +489,18 @@ export function Editor({
                     onChange={(next) => {
                       setSelectedRefs((prev) => ({ ...prev, [field]: next }));
                       if (field === 'item_id') setStockItem(next);
-                      else if (entity === 'work-items' && field === 'workstream_id') setProjectId(next);
+                      else if (entity === 'work-items' && field === 'workstream_id') {
+                        setProjectId(next);
+                        setSelectedRefs((previous) => ({ ...previous, milestone_id: '' }));
+                      }
                       else if (entity === 'work-items' && field === 'recurrence') setRecurrence(next);
                     }}
                     options={[
-                      ...(reference ? [{ value: '', label: 'Belum Ditentukan' }] : []),
+                      ...(reference ? [{ value: '', label: entity === 'stock-counts' && field === 'item_id' ? 'Pilih barang (wajib)' : entity === 'work-items' && field === 'workstream_id' ? 'Tugas mandiri (tanpa proyek)' : 'Tidak terkait (opsional)' }] : []),
                       ...(reference && selectedValue && !refItems.some((row) => row.id === selectedValue)
                         ? [{ value: String(selectedValue), label: 'Catatan terkait yang belum dimuat (' + String(selectedValue).slice(0, 8) + ')' }] : []),
                       ...(allChoices ? allChoices.map((choice) => ({ value: choice, label: formatChoiceLabel(choice) }))
-                        : refItems.filter((row) => entity !== 'work-items' || field !== 'milestone_id' || row.data.workstream_id === projectId)
+                        : refItems.filter((row) => (entity !== 'work-items' || field !== 'milestone_id' || row.data.workstream_id === projectId) && (entity !== 'work-items' || field !== 'workstream_id' || !['selesai', 'diarsipkan'].includes(String(row.data.status)) || row.id === selectedValue))
                           .map((row) => ({ value: row.id, label: String(row.data.title) + (
                             reference === 'workstreams'
                               ? (['selesai', 'diarsipkan'].includes(String(row.data.status)) ? ' (Riwayat/Selesai)' : row.data.code ? ' [' + String(row.data.code) + ']' : '')
@@ -710,7 +516,7 @@ export function Editor({
                     <div className="inline-quick-creator-card">
                       <div className="inline-creator-head">
                         <Video size={16} />
-                        <strong>Buat & Tautkan Rapat Online / Pertemuan</strong>
+                        <strong>Tambah dan tautkan rapat</strong>
                       </div>
                       <div className="inline-creator-grid">
                         <label className="inline-creator-field">
@@ -733,9 +539,9 @@ export function Editor({
                                   setInlineMode(val);
                               }}
                               options={[
-                                { value: 'online', label: 'Online Penuh (Google Meet / Zoom)' },
-                                { value: 'tatap muka', label: 'Tatap Muka Langsung' },
-                                { value: 'hybrid', label: 'Hybrid (Tatap Muka + Daring)' },
+                                { value: 'online', label: 'Online' },
+                                { value: 'tatap muka', label: 'Tatap muka' },
+                                { value: 'hybrid', label: 'Hybrid' },
                               ]}
                               ariaLabel="Mode Rapat"
                             />
@@ -754,6 +560,7 @@ export function Editor({
                           <label className="inline-creator-field">
                             <span>Tanggal</span>
                             <DateInput
+                              aria-label="Tanggal rapat baru"
                               value={inlineDate}
                               onValueChange={(value) => setInlineDate(value)}
                             />
@@ -1467,7 +1274,210 @@ export function Editor({
                 )}
               </Field>
             );
-          })}
+
+  };
+
+  return (
+    <dialog
+      ref={dialog}
+      className="editor"
+      onCancel={(event) => {
+        event.preventDefault();
+        requestClose();
+      }}
+      aria-labelledby={headingId}
+      onClick={(e) => {
+        if (e.target === dialog.current) requestClose();
+      }}
+    >
+      <form
+        key={formVersion}
+        ref={formRef}
+        onChange={() => {
+          setDirty(true);
+          saveLocalDraft();
+        }}
+        onBlur={() => {
+          if (dirty) saveLocalDraft();
+        }}
+        onSubmit={async (event) => {
+          event.preventDefault();
+          setBusy(true);
+          setError('');
+          try {
+            const form = new FormData(event.currentTarget),
+              values: Record<string, unknown> = { ...item?.data };
+            for (const field of fields) {
+              if (field === 'required') values[field] = form.get(field) === 'on';
+              else if (field === 'subtasks')
+                values[field] = String(form.get(field) || '')
+                  .split('\n')
+                  .filter(Boolean)
+                  .map((line) => ({
+                    title: line.replace(/^\[x\]\s*/i, ''),
+                    done: /^\[x\]/i.test(line),
+                  }));
+              else if (field === 'dependencies') values[field] = form.getAll(field);
+              else values[field] = form.get(field) ?? '';
+            }
+            if (entity === 'work-items')
+              values.completed_at =
+                values.status === 'selesai' ? item?.data.completed_at || today() : '';
+            if (entity === 'work-items' && values.recurrence === 'tidak') {
+              values.recurrence_time = '09:00';
+              values.recurrence_end_date = '';
+            }
+            if (entity === 'meetings') {
+              if (meetingMode === 'tatap muka') {
+                values.meeting_url = '';
+              } else if (meetingMode === 'online') {
+                values.location = '';
+              }
+            }
+            const parsed = schemas[entity].parse(values);
+            await api(entity, { id: item?.id || undefined, data: parsed });
+            try {
+              sessionStorage.removeItem(draftKey);
+            } catch {
+              /* Optional browser storage. */
+            }
+            setDirty(false);
+            await onSaved();
+            onClose();
+          } catch (e) {
+            setError(
+              e instanceof ZodError
+                ? e.issues
+                    .map((issue) => `${labels[String(issue.path[0])] || 'Isian'}: ${issue.message}`)
+                    .join(' · ')
+                : (e as Error).message,
+            );
+          } finally {
+            setBusy(false);
+          }
+        }}
+      >
+        <div className="section-head editor-modal-head">
+          <div className="editor-title-wrap">
+            <span className="eyebrow editor-badge-eyebrow">
+              {entity === 'work-items' ? (
+                <CheckCircle2 size={13} />
+              ) : entity === 'workstreams' ? (
+                <FolderKanban size={13} />
+              ) : entity === 'journal' ? (
+                <BookOpen size={13} />
+              ) : entity === 'meetings' ? (
+                <Calendar size={13} />
+              ) : entity === 'stakeholders' ? (
+                <Users size={13} />
+              ) : (
+                <FileText size={13} />
+              )}
+              {catalog[entity].title}
+            </span>
+            <h2 id={headingId}>
+              {item?.id
+                ? String(item.data.title)
+                : entity === 'work-items'
+                  ? 'Tambah Tugas Baru'
+                  : entity === 'workstreams'
+                    ? 'Tambah Proyek Baru'
+                    : entity === 'stakeholders'
+                      ? 'Tambah Mitra atau Kontak'
+                      : entity === 'meetings'
+                        ? 'Jadwalkan Rapat Baru'
+                        : `Tambah ${catalog[entity].title}`}
+            </h2>
+          </div>
+          <Button
+            type="button"
+            className="editor-close-btn"
+            aria-label="Tutup formulir"
+            title="Tutup formulir (Esc)"
+            onClick={requestClose}
+          >
+            <X size={20} strokeWidth={2.25} />
+          </Button>
+        </div>
+        <div className="editor-form-scroll">
+          {savedDraft && (
+          <div className="draft-notice">
+            <p>Draf belum disimpan ditemukan di tab ini.</p>
+            <Button
+              type="button"
+              onClick={() => {
+                setRestoredDraft(savedDraft);
+                setMeetingMode(String(savedDraft.mode || 'tatap muka'));
+                setStockItem(String(savedDraft.item_id || ''));
+                setRecurrence(String(savedDraft.recurrence || 'tidak'));
+                setProjectId(String(savedDraft.workstream_id || ''));
+                setShowTaskDetails(true);
+                setFormVersion((value) => value + 1);
+                setSavedDraft(null);
+                setDirty(true);
+                setDraftNotice('Draf dibuka. Periksa isian sebelum menyimpan.');
+              }}
+            >
+              Lanjutkan draf
+            </Button>
+            <Button
+              type="button"
+              onClick={() => {
+                try {
+                  sessionStorage.removeItem(draftKey);
+                } catch {}
+                setSavedDraft(null);
+              }}
+            >
+              Abaikan draf
+            </Button>
+          </div>
+        )}
+        {draftNotice && (
+          <p className="draft-status" role="status">
+            {draftNotice}
+          </p>
+        )}
+        {entity === 'stakeholders' && !item?.id && (
+          <div className="stakeholder-preset-banner">
+            <div className="preset-label">
+              <Sparkles size={14} />
+              <strong>Jenis kontak</strong>
+            </div>
+            <div className="preset-buttons">
+              {STAKEHOLDER_PRESETS.map((p) => (
+                <Button
+                  key={p.label}
+                  type="button"
+                  className={`preset-chip ${stakeholderPreset?.label === p.label ? 'active' : ''}`}
+                  onClick={() => setStakeholderPreset(p)}
+                >
+                  {p.label}
+                </Button>
+              ))}
+            </div>
+            <small className="preset-hint">
+              Pilih jenis, lalu isi nama orang atau lembaga sesuai data Anda.
+            </small>
+          </div>
+        )}
+          {entity === 'work-items' && !quick && !showTaskDetails && (
+            <div className="task-form-intro">
+              <p>Isian utama terlebih dahulu. Tambahkan milestone, mitra, dokumen atau pengulangan bila diperlukan.</p>
+              <Button
+                type="button"
+                className="btn-toggle-task-details"
+                title="Opsi lanjutan, kendala dan subtugas"
+                onClick={() => setShowTaskDetails(true)}
+              >
+                Detail lainnya
+              </Button>
+            </div>
+          )}
+        <EntryGuide entity={entity} />
+        <div className="form-grid">
+{primaryFields.map(renderField)}
+          {optionalFields.length > 0 && <details className="entry-related-fields field-wide" open={optionalFields.some((field) => Boolean(defaults[field as keyof typeof defaults]))}><summary>Hubungan dan rincian opsional</summary><p className="field-helper">Isi hanya bila terkait. Tidak perlu membuat anggota, barang atau gerai untuk setiap transaksi.</p><div className="form-grid">{optionalFields.map(renderField)}</div></details>}
           </div>
         </div>
         {error && (

@@ -275,7 +275,7 @@ describe('Fitur Redesain Behance', () => {
     expect(screen.getByText('Mengerjakan tugas di Lark')).toBeTruthy();
     expect(screen.getByText('tinggi')).toBeTruthy();
     expect(screen.getByText('0/1')).toBeTruthy();
-    expect(screen.getByText('✓ Selesai')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Tandai tugas selesai' })).toBeTruthy();
     expect(screen.getByText('← Rencana')).toBeTruthy();
   });
 

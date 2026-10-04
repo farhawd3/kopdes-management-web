@@ -818,6 +818,7 @@ export function TaskDetailDrawer({
             <Input
               type="text"
               value={newSubtaskTitle}
+              aria-label="Judul subtugas baru"
               onChange={(e) => setNewSubtaskTitle(e.target.value)}
               placeholder="Tambah subtugas baru, lalu tekan Enter…"
               className="inline-subtask-input"
