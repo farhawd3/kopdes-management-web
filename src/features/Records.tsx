@@ -678,7 +678,7 @@ function JournalTableView({
                 </td>
                 <td className="col-journal-main">
                   <div className="journal-main-cell">
-                    <button
+                    <Button
                       type="button"
                       className="journal-title-interactive"
                       onClick={() => onOpenItem(row)}
@@ -692,7 +692,7 @@ function JournalTableView({
                         )}
                       </span>
                       <strong className="journal-title-text">{String(row.data.title)}</strong>
-                    </button>
+                    </Button>
                     {Boolean(row.data.notes) && (
                       <p className="journal-notes-preview">{String(row.data.notes)}</p>
                     )}

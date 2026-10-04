@@ -1,5 +1,7 @@
 # Checklist produk aktif
 
+- [x] Empat anotasi lanjutan: footer opsi simetris, kartu Jurnal mobile, metadata kegiatan Beranda dan grafik status responsif. QA terang lima lebar; batas di QA-ANOTASI.md.
+
 - [x] Tindak lanjuti 15 anotasi: + Kas, bantuan ringkas, catatan, kartu/tabel/aksi, tema dan profil. Cakupan/batas di QA-ANOTASI.md.
 
 - [x] Riwayat proyek berupa tab horizontal, bukan menu sidebar; tanggal drawer, warna kartu, dropdown kartu papan dan padding catatan dirapikan sesuai koreksi pemilik.
@@ -12,7 +14,7 @@
 
 - [x] Koreksi lima screenshot: satu bingkai fokus pencarian, menu dropdown terpisah dari lebar pemicu, ukuran teks aksi berdasarkan konteks, form satu kolom/tab dua kolom mobile, kartu Gerai tanpa radar kosong, Hari ini sesuai tanggal Jakarta.
 - [x] Konten contoh 21 domain pada 360 terang/gelap; lima jenis kartu dan empat form relasi di empat lebar diperiksa ulang. Rincian/batasan di QA-POPUP.md.
-- [ ] lint:ui legacy (111 temuan) dan tujuh kontrol mentah pada checkout terbaru belum memenuhi audit UI.
+- [ ] lint:ui legacy (111 temuan) dan enam kontrol mentah pada checkout terbaru belum memenuhi audit UI.
 
 - [x] Inventaris popup dan fixture 21 domain; panggilan API diblokir, draft/preferensi QA terpisah.
 - [x] Form panjang, input rutinitas, label tanggal, target tombol dialog dan Escape popup bertingkat diperbaiki.

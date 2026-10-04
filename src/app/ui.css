@@ -80,9 +80,9 @@
 .record-title-text { min-width: 0; }
 .unit-record .record-domain-icon, .meeting-record .record-domain-icon { flex-shrink: 0; margin-right: 0; }
 .unit-record .record-meta, .meeting-record .record-meta { padding-block: var(--space-2); border-bottom: 1px solid var(--line); }
-.record.card > .actions > .record-options { width: auto; flex: 0 1 auto; margin-left: auto; }
+.record.card > .actions > .record-options { width: 100%; min-width: 0; margin: 0; }
 .record.card > .actions > .record-options > summary { justify-content: center; gap: var(--space-2); padding: var(--space-2) var(--space-3); border: 1px solid var(--line); border-radius: var(--r-md); color: var(--ink); }
-.record.card > .actions > .record-options[open] { flex-basis: 100%; margin-left: 0; }
+
 .record-options[open] > .actions { background: var(--canvas); border: 1px solid var(--line); border-radius: var(--r-md); padding: var(--space-3); display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .record-options[open] > summary svg:last-child { transform: rotate(180deg); }
 .meeting-action-row { display: flex; flex-wrap: wrap; align-items: stretch; gap: var(--space-2); }
@@ -171,8 +171,8 @@ dialog[open] .ui-btn.ui-btn.ui-btn, .date-picker.date-picker.date-picker button 
 .record.card > .section-head .badge { flex-shrink: 0; }
 .record.card .record-text { overflow-wrap: anywhere; }
 .record.card > .actions { flex-wrap: wrap; gap: var(--space-2); margin-top: auto; }
-.record.card > .actions > .record-options { flex: 0 1 auto; border-top: 0; padding-top: 0; margin-top: 0; }
-.record.card > .actions > .record-options[open] { flex-basis: 100%; }
+.record.card > .actions > .record-options { border-top: 0; padding-top: 0; }
+
 .record.card > .actions > .record-options > summary { min-height: var(--touch-target); display: flex; align-items: center; justify-content: flex-end; }
 .record.card > .record-text { margin-block: 0; }
 .risk-matrix-scroll.risk-matrix-scroll { min-width: 0; max-width: 100%; overflow-x: auto; overscroll-behavior-inline: contain; }
@@ -402,8 +402,11 @@ textarea.ui-input.ui-input { height: auto; min-height: 104px; padding: 14px 16px
 .journal-table td > .actions { gap: 10px; flex-wrap: wrap; }
 .unit-record.unit-record, .meeting-record.meeting-record { box-shadow: var(--shadow-sm); padding: 20px; gap: 16px; }
 .unit-record > .section-head, .meeting-record > .section-head { padding: 12px; border-radius: var(--r-md); background: var(--brand-soft); }
-.record.card > .actions { padding-top: 16px; border-top: 1px solid var(--line); }
-.record.card > .actions > .record-options > summary { justify-content: center; background: var(--canvas); }
+.record.card > .actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; padding-top: var(--space-4); border-top: var(--border-width) solid var(--line); }
+.record.card > .actions > .ui-btn, .record.card > .actions > .record-options > summary { width: 100%; min-height: var(--touch-target); margin: 0; }
+.record.card > .actions > .record-options > summary { justify-content: center; background: var(--canvas); gap: var(--space-1); padding: var(--space-2); }
+.record-options > summary > svg { width: var(--space-3); height: var(--space-3); flex-shrink: 0; }
+.record-options > summary > span { white-space: nowrap; }
 .record-options[open] > .actions { margin-top: 8px; }
 .meeting-action-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); padding-top: 12px; }
 .meeting-action-row > :is(a, .ui-btn) { width: 100%; margin: 0; }
@@ -426,3 +429,36 @@ textarea.ui-input.ui-input { height: auto; min-height: 104px; padding: 14px 16px
 .journal-table .journal-relation-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .journal-table .journal-title-interactive { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; min-height: 44px; text-align: left; }
 .journal-table .journal-notes-preview { margin: 10px 0 0; line-height: 1.6; }
+
+/* Compact reading order on phones, without scrolling past the date to find the title. */
+.journal-recent-top { flex-wrap: wrap; align-items: start; }
+.journal-recent-top > div { flex-wrap: wrap; min-width: 0; }
+.journal-recent-top time { white-space: nowrap; }
+.journal-recent-top .journal-join-chip { min-height: var(--touch-target); white-space: nowrap; }
+.dash-donut-wrap { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-5); align-items: center; }
+.dash-donut-wrap .ui-legend { width: 100%; gap: var(--space-2); }
+.dash-donut-wrap .ui-legend .ui-btn { min-height: var(--touch-target); padding: var(--space-2); border: var(--border-width) solid var(--line); border-radius: var(--r-md); background: var(--canvas); }
+@media (max-width: 767px) {
+  .journal-table-wrap.journal-table-wrap { border: 0; background: transparent; box-shadow: none; overflow: visible; }
+  .journal-table.journal-table { display: block; min-width: 0; width: 100%; }
+  .journal-table > thead { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); }
+  .journal-table > tbody { display: grid; gap: var(--space-3); }
+  .journal-table .journal-table-row { display: grid; grid-template-columns: minmax(0, 1fr); padding: var(--space-4); gap: var(--space-3); border: var(--border-width) solid var(--line); border-radius: var(--r-lg); background: var(--surface); box-shadow: var(--shadow-sm); }
+  .journal-table.journal-table .journal-table-row > td { display: block; position: static; width: auto; min-width: 0; max-width: 100%; padding: 0; border: 0; white-space: normal; background: transparent; }
+  .journal-table .col-journal-main { order: 1; }
+  .journal-table .col-journal-date { order: 2; }
+  .journal-table .col-journal-relation { order: 3; }
+  .journal-table .col-journal-action { order: 4; }
+  .journal-table .journal-title-interactive.ui-btn { width: 100%; display: flex; flex-direction: column; align-items: start; justify-content: start; white-space: normal; padding: var(--space-3); }
+  .journal-table .journal-title-text { white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; }
+  .journal-table .journal-code-tag { flex-shrink: 0; }
+  .journal-table .journal-date-badge { flex-wrap: wrap; }
+  .journal-table .journal-relation-chips > * { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+  .journal-recent-top { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); }
+  .journal-recent-top > div { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .journal-recent-top .journal-join-chip { justify-self: start; }
+  .dash-donut-wrap { grid-template-columns: minmax(0, 1fr); justify-items: center; gap: var(--space-4); }
+  .dash-donut-wrap .ui-legend { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.journal-table .journal-title-interactive:hover .journal-title-text { color: var(--ink-heading); }

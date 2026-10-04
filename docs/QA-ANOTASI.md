@@ -1,5 +1,18 @@
 # Pemeriksaan 15 anotasi — 4 Oktober 2026
 
+## Empat anotasi lanjutan
+
+| No. | Perbaikan |
+| --- | --- |
+| 1 | Footer Buka catatan/Opsi lainnya memakai dua kolom sama lebar. Pemicu opsi diringkas agar tinggi 44 px pada layar sempit, panel terbuka tetap di kolomnya. |
+| 2 | Jurnal mobile menjadi kartu satu kolom: judul/kode, tanggal, hubungan, aksi. Judul panjang membungkus; tidak perlu menggulir melewati kolom tanggal. Tombol judul memakai Button bersama. |
+| 3 | Metadata kode/tanggal kegiatan terbaru membungkus; Gabung rapat berada pada baris terpisah di ponsel. |
+| 4 | Donut terpusat dengan legenda dua kolom di ponsel; setiap status memakai bidang berjeda dan target 44 px. |
+
+Pemeriksaan terang dilakukan pada 360/383/768/1024/1440 px untuk Gerai, Jurnal dan Beranda. Footer opsi terbuka terukur 44 px pada kelima lebar, kedua tombol sama lebar (selisih pembulatan kurang dari 0,02 px). Jurnal mobile tidak membutuhkan gulir horizontal; tabel desktop tetap bergulir di kontainer. Metadata kegiatan tidak bertumpuk dengan tombol rapat. Bukti lokal: artifacts/astra/annotations-journal-mobile.png dan annotations-donut-mobile.png.
+
+256 tes/42 berkas, TypeScript, ESLint dan build lulus. check:ui kini enam kontrol mentah, turun dari tujuh; lint:ui tetap 111 temuan legacy. Pemeriksaan tambahan fixture gelap dimulai tetapi belum lengkap setelah sambungan browser terputus; tidak dianggap lulus. Tidak ada mutasi data operasional. Pemeriksaan sebelumnya di bawah tetap merupakan catatan paket sebelumnya.
+
 | No. | Perbaikan |
 | --- | --- |
 | 1 | Bantuan proyek/form menjadi Cara mengisi yang tertutup bawaan, tinggi 45 px. Tidak fixed/menutupi input. |

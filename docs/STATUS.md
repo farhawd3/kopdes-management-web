@@ -1,5 +1,7 @@
 # Status produk — 4 Oktober 2026
 
+Empat anotasi lanjutan selesai: footer Gerai simetris, Jurnal menjadi kartu pada ponsel, metadata kegiatan Beranda tidak bertumpuk dengan tombol rapat, dan grafik status memakai legenda dua kolom pada ponsel. 256 tes/42 berkas, TypeScript, ESLint dan build lulus. QA terang pada 360/383/768/1024/1440 px; pemeriksaan gelap tambahan belum lengkap karena sesi browser terputus. Rincian di bagian lanjutan QA-ANOTASI.md. Audit UI tetap terbuka: 111 temuan CSS legacy dan enam kontrol mentah.
+
 Perbaikan 15 anotasi browser: bantuan form dilipat, banner buku dihapus, padding textarea global, kartu/tabel/aksi ditata, + Kas membuka domain kas dengan relasi anggota, tema pastel dan profil berbasis data. 256 tes/42 berkas, tipe, ESLint dan build lulus. QA 10 halaman pada 360/768/1024/1440 px serta form proyek empat lebar dua tema. Batas dan pemetaan: docs/QA-ANOTASI.md.
 
 Koreksi penempatan riwayat: kini tab horizontal Proyek berjalan/Riwayat selesai & arsip pada /proyek?tab=riwayat, bukan menu sidebar. URL riwayat lama mengalihkan ke tab tersebut. Warna kartu memakai satu aksen status tanpa gradien pelangi/border berlapis; tanggal drawer satu kontrol, dropdown pindah status kartu papan dihapus, editor catatan diberi padding. 253 tes/41 berkas, tipe/ESLint/build lulus. QA kartu/tab empat lebar dua tema, tanggal drawer empat lebar, papan tanpa dropdown kartu dan padding catatan 16 px diverifikasi. Tidak ada mutasi DB.

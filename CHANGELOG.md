@@ -1,5 +1,12 @@
 # Changelog
 
+## Empat anotasi lanjutan — 4 Oktober 2026
+
+- Seimbangkan Buka catatan/Opsi lainnya pada footer kartu, termasuk keadaan opsi terbuka.
+- Susun Jurnal menjadi kartu pada ponsel: judul/kode, tanggal, hubungan, lalu aksi; desktop tetap tabel.
+- Pisahkan metadata kegiatan terbaru dari Gabung rapat pada ponsel; pusatkan donut dengan legenda dua kolom.
+- 256 tes/42 berkas, TypeScript, ESLint dan build lulus. QA terang lima lebar; pemeriksaan gelap tambahan belum lengkap. Audit UI legacy masih terbuka.
+
 Perbaikan 15 anotasi: bantuan form dilipat, banner buku dihapus, padding catatan global, kartu/tabel/aksi ditata, + Kas membuka kas dengan relasi anggota, tema pastel dan profil berbasis data. 256 tes/42 berkas, tipe/ESLint/build lulus. Cakupan/batas: docs/QA-ANOTASI.md.
 
 ## Koreksi tab proyek dan detail visual — 4 Oktober 2026

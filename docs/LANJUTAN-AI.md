@@ -1,5 +1,7 @@
 # Serah terima AI
 
+Empat anotasi terbaru ditangani pada ui.css dan Records.tsx: footer aksi dua kolom seimbang (44 px), judul Jurnal memakai Button bersama dan kartu mobile, metadata kegiatan membungkus, donut mobile dengan legenda dua kolom. QA terang lima lebar termasuk 383 px; screenshot lokal annotations-journal-mobile.png dan annotations-donut-mobile.png di artifacts/astra. Tema gelap tambahan belum selesai setelah browser terputus. 256 tes/42 berkas, typecheck/lint/build lulus. check:ui tersisa enam kontrol mentah; lint:ui tetap 111 legacy. Pertahankan perubahan pengguna di tujuh berkas yang disebut QA-ANOTASI.md serta PLAN-ASTRA-Kopdes.md yang belum terlacak.
+
 Perbaikan 15 anotasi: bantuan form dilipat, banner buku dihapus, padding catatan global, kartu/tabel/aksi ditata, + Kas membuka kas dengan relasi anggota, tema pastel dan profil berbasis data. 256 tes/42 berkas, tipe/ESLint/build lulus. Cakupan/batas: docs/QA-ANOTASI.md.
 
 Arahan terbaru: riwayat proyek adalah tab horizontal pada /proyek?tab=riwayat; tidak ada menu Riwayat Proyek di sidebar. Alias URL lama redirect dengan id dipertahankan. Tab mengganti key Projects untuk mencegah filter status sebelumnya mengosongkan tab berikutnya. Dropdown kartu papan dihapus, aksi footer/drag tetap ada; tes board memakai aksi tersebut. CSS tanggal drawer yang saling menimpa dihapus pada sumber, wrapper tidak punya border sendiri. Kartu tanpa gradien pelangi/border sisi ganda; catatan padding 16 px. 253 tes dan statik/build lulus; utang audit UI sebelumnya tetap terbuka.
