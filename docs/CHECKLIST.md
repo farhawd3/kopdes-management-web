@@ -1,5 +1,8 @@
 # Checklist produk aktif
 
+- [x] Keadaan kosong buku pencatatan memakai EmptyState; Opname tanpa barang mengarahkan pendaftaran barang, dengan regresi.
+- [x] Enam halaman pencatatan/gerai pada 360 px setelah isi tampil tidak meluap; Opname juga 768/1024/1440. Data terisi/tema lain tetap terbuka.
+
 - [x] EmptyState bersama pada Beranda/Hari Ini; proyek seluruhnya diarsipkan menampilkan keadaan kosong, dengan tes regresi.
 - [x] Judul tugas Hari Ini membungkus pada ponsel; Enter pada aksi anak tidak membuka detail kartu; lima lebar diukur tanpa overflow.
 - [ ] Sel tanggal kalender panel sempit mencapai target sentuh 44 px.

@@ -22,6 +22,12 @@ vi.mock('next/navigation', () => ({
   useSearchParams: () => new URLSearchParams(),
 }));
 afterEach(cleanup);
+it('opname tanpa barang mengarahkan pendaftaran barang sebelum mencatat', () => {
+  render(<Operations slug="stok-opname" data={{}} ready refresh={vi.fn()} />);
+  expect((screen.getByRole('button', { name: 'Tambah opname' }) as HTMLButtonElement).disabled).toBe(true);
+  expect(screen.getByRole('link', { name: 'Daftarkan barang' }).getAttribute('href')).toBe('/barang');
+  expect(screen.queryByText(/Gunakan tombol Tambah di atas/)).toBeNull();
+});
 const item = (data: Record<string, unknown>): Item => ({
   id: 'test',
   created_at: '',

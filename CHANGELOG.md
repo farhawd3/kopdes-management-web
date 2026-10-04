@@ -1,5 +1,11 @@
 # Changelog
 
+## PLAN-ASTRA — keadaan kosong pencatatan — 4 Oktober 2026
+
+- Satukan keadaan kosong empat buku dengan EmptyState. Opname tanpa barang menyediakan tautan Daftarkan barang sesuai prasyarat tombol Tambah.
+- Tambahkan regresi petunjuk Opname. Enam halaman pencatatan/gerai tanpa luapan pada 360 px setelah isi tampil; Opname juga 768/1024/1440.
+- 196 tes, typecheck, lint/lint:ui, build, check:ui dan audit sumber 91/91 lulus.
+
 ## PLAN-ASTRA — keadaan kosong dan kartu Hari Ini — 4 Oktober 2026
 
 - EmptyState netral menyatukan Beranda/Hari Ini; daftar proyek seluruhnya diarsipkan tidak lagi kosong tanpa penjelasan.

@@ -2,6 +2,8 @@
 
 ## Lanjutan PLAN-ASTRA — 4 Oktober 2026
 
+- Pencatatan kini memakai EmptyState; Opname tanpa barang mengarahkan ke /barang. Tes terbaru 196/31 berkas. QA ukuran enam halaman pencatatan/gerai 360 dan Opname 768/1024/1440 tanpa luapan setelah isi muncul; tidak ada mutasi data nyata.
+
 - Paket terbaru: EmptyState Beranda/Hari Ini, daftar proyek seluruhnya diarsipkan, kartu tugas mobile dan guard keyboard aksi anak. 195 tes/31 berkas serta typecheck/lint/lint:ui/build dan audit sumber 91/91 lulus.
 - Sesi browser aktif kembali; catatan kedaluwarsa di bawah adalah riwayat. Hari Ini 320/360/768/1024/1440 diukur tanpa luapan; screenshot 360 di artifacts/astra/hari-ini-kartu-360.jpg. Tidak menyimpan perubahan data nyata selama QA.
 - Kalender tetap ke bawah dan di dalam panel, namun sel pada form sempit kurang dari 44 px. Perbaikan berikutnya harus mempertahankan batas panel dan validasi tanggal, bukan membiarkan kalender meluap.

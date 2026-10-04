@@ -128,6 +128,16 @@ Migrasi visual penuh, interaktivitas, animasi dan QA menyeluruh masih berjalan. 
 
 ### Urutan lanjutan
 
+### Paket keadaan kosong pencatatan
+
+- Empat buku memakai EmptyState. QA menemukan Opname meminta tombol Tambah yang nonaktif saat belum ada barang; petunjuk kini menjelaskan prasyarat dengan tautan Daftarkan barang. Filter kosong tetap dapat dibersihkan. Tidak mengubah kontrak, API atau database.
+- Operations.tsx +15/−21 baris dan regresi Opname +6/−0 diubah; metrik kontrol/CSS tetap karena primitive yang sama. 196 tes/31 berkas, typecheck, lint/lint:ui, build, check:ui dan audit sumber 91/91 lulus.
+- 196 tes/31 berkas lulus. Ringkasan, Anggota, Kas, Barang, Opname dan Gerai pada 360 px diukur setelah judul/isi muncul, bukan saat skeleton. Semua scrollWidth = clientWidth. Opname 768/1024/1440 juga tanpa luapan; screenshot desktop dilihat, bukti ponsel di artifacts/astra/opname-empty-360.jpg.
+- [x] EmptyState pencatatan dan regresi petunjuk Opname tanpa barang.
+- [ ] Data terisi, seluruh tema/state, perangkat fisik dan performa.
+
+### Antrean yang masih terbuka
+
 1. Setelah pengguna masuk kembali, periksa rute/data aktif pada 320/360/768/1024/1440, terutama Editor, tugas/papan dan semua domain pencatatan.
 2. Lanjutkan migrasi Card/Badge/Field khusus, Tooltip, empty state dan semua legenda; jangan menghitung tes lama sebagai penerimaan fitur baru.
 3. Pecah aturan yang masih aktif menjadi base/components/fitur dan turunkan important melalui perbaikan cascade disertai QA; jangan menghapus/merename personal.css untuk sekadar memenuhi nama target.

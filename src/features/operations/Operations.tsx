@@ -1,6 +1,7 @@
 'use client';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { EmptyState } from '@/components/ui/EmptyState';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -914,35 +915,28 @@ export function Operations({
                   </tbody>
                 </table>
                 {!rows.length && (
-                  <div className="table-empty-state">
-                    <div className="empty-icon-wrap">
-                      <book.Icon size={30} />
-                    </div>
-                    <h3>
-                      {all.length
+                  <EmptyState
+                    icon={<book.Icon size={30} />}
+                    title={all.length
                         ? 'Tidak ada data yang cocok'
                         : `Belum ada catatan ${book.title.toLowerCase()}`}
-                    </h3>
-                    <p>
-                      {all.length
+                    description={all.length
                         ? 'Coba kata pencarian atau bersihkan filter di atas.'
+                        : entity === 'stock-counts' && !data['inventory-items']?.length
+                          ? 'Daftarkan barang sebelum mencatat hasil hitung fisik.'
                         : `Gunakan tombol Tambah di atas untuk mengisi catatan ${book.title.toLowerCase()} pertama.`}
-                    </p>
-                    {all.length ? (
-                      <Button
-                        type="button"
-                        className="btn-clear-filters"
-                        onClick={() => {
+                    action={all.length ? {
+                        label: 'Hapus filter',
+                        onClick: () => {
                           setSearch('');
                           setMonth('');
                           setFilter('');
                           setUnit('');
-                        }}
-                      >
-                        Hapus filter
-                      </Button>
-                    ) : null}
-                  </div>
+                        },
+                      } : entity === 'stock-counts' && !data['inventory-items']?.length
+                        ? { label: 'Daftarkan barang', href: '/barang' }
+                        : undefined}
+                  />
                 )}
               </div>
             </>

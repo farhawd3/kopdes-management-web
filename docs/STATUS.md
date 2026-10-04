@@ -1,5 +1,7 @@
 # Status produk — 4 Oktober 2026
 
+Pencatatan memakai EmptyState bersama. Stok Opname tanpa barang mengarahkan ke pendaftaran barang, bukan meminta tombol Tambah yang masih nonaktif. Tes regresi baru lulus; 196 tes/31 berkas. Ringkasan, Anggota, Buku Kas, Barang, Stok Opname dan Gerai diukur setelah data tampil pada 360 px tanpa luapan; Opname juga 768/1024/1440. Ini belum mencakup data terisi atau semua tema.
+
 Keadaan kosong Beranda/Hari Ini memakai EmptyState netral dan aksi yang jelas. Daftar proyek seluruhnya diarsipkan kini menampilkan keadaan kosong. Kartu Hari Ini membungkus judul panjang pada ponsel, kontrol centang mengikuti ukuran primitive dan Enter pada aksi anak tidak membuka detail kartu. 195 tes/31 berkas, typecheck, lint/lint:ui, build dan audit sumber 91/91 lulus. CSS terakhir 514.373 byte, important 1.970, duplikat 384; kontrol mentah luar UI tetap nol.
 
 Sesi browser aktif kembali. Beranda gelap 360 dan Hari Ini berdata diperiksa; pengukuran Hari Ini 320/360/768/1024/1440 tidak menemukan luapan halaman. Form tanggal menampilkan satu pemicu dan kalender ke bawah, tetapi sel kalender dalam panel sempit belum mencapai target sentuh 44 px. Perangkat fisik, seluruh tema/state dan Lighthouse belum diperiksa.
