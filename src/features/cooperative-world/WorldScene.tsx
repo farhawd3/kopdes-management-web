@@ -146,14 +146,14 @@ export function WorldScene({
     }
     const color = { biru: palette.blue, lavender: '#a18ae0', hijau: '#51aa8a' }[outfit];
     const characters = [
-      createCharacter(world, location === 'luar' ? [-5, 0.1, 3.5] : [-4, 0.42, -1.2], color),
+      createCharacter(world, location === 'luar' ? [-5, 0.1, 3.5] : [-7.5, 0.42, -3.0], color),
       createCharacter(
         world,
-        location === 'luar' ? [4, 0.42, 2.6] : [4.6, 0.42, -1.5],
+        location === 'luar' ? [4, 0.42, 2.6] : [1.8, 0.42, -2.0],
         '#a18ae0',
         1,
       ),
-      createCharacter(world, location === 'luar' ? [-2.2, 0.1, 1.2] : [2.4, 0.35, 3.5], '#50ab90', 2),
+      createCharacter(world, location === 'luar' ? [-2.2, 0.1, 1.2] : [9.2, 0.35, 4.8], '#50ab90', 2),
     ];
     characters.forEach((character) => {
       character.group.userData.selection = 'karakter';
@@ -163,7 +163,7 @@ export function WorldScene({
       characters[1].group.rotation.y = Math.PI;
     } else {
       characters[0].group.rotation.y = Math.PI;
-      characters[1].group.rotation.y = 0;
+      characters[1].group.rotation.y = Math.PI;
       characters[2].group.rotation.y = 0;
     }
     const raycaster = new THREE.Raycaster();
@@ -218,7 +218,7 @@ export function WorldScene({
       if (!width || !height) return;
       renderer.setSize(width, height);
       const aspect = width / height;
-      const span = location === 'luar' ? (aspect < 1 ? 26 : 18.5) : aspect < 1 ? 12 : 9;
+      const span = location === 'luar' ? (aspect < 1 ? 26 : 18.5) : aspect < 1 ? 16 : 11.5;
       camera.left = -span * aspect;
       camera.right = span * aspect;
       camera.top = span;
@@ -239,9 +239,11 @@ export function WorldScene({
         ),
       );
     } else {
-      worldStations.forEach((station) =>
-        positions.set(station.id, new THREE.Vector3(station.position[0], 2.2, station.position[2])),
-      );
+      worldStations
+        .filter((station) => station.scope === 'kantor')
+        .forEach((station) =>
+          positions.set(station.id, new THREE.Vector3(station.position[0], 2.2, station.position[2])),
+        );
     }
 
     // Waypoints for manager exterior patrol
@@ -354,18 +356,18 @@ export function WorldScene({
           characters[0].base.copy(pOffice);
         }
       } else {
-        // Interior Placement for Manager
+        // Interior Placement for Manager in 22x15 office
         if (state.activity === 'meeting') {
-          characters[0].base.set(-4, 0.42, -1.2);
+          characters[0].base.set(-7.5, 0.42, -3.0);
           characters[0].group.rotation.y = Math.PI;
         } else if (state.activity === 'gym') {
-          characters[0].base.set(2.4, 0.35, 3.5);
+          characters[0].base.set(6.4, 0.35, 4.8);
           characters[0].group.rotation.y = 0;
         } else if (state.activity === 'work') {
-          characters[0].base.set(2.2, 0.42, -1.5);
-          characters[0].group.rotation.y = 0;
+          characters[0].base.set(-1.8, 0.42, -2.0);
+          characters[0].group.rotation.y = Math.PI;
         } else {
-          characters[0].base.set(-1.0, 0.1, 1.5);
+          characters[0].base.set(0, 0.1, 3.2);
           characters[0].group.rotation.y = 0;
         }
       }

@@ -571,12 +571,14 @@ export function CooperativeWorld({
                   <span className="cw-status">Ruang kerja</span>
                   <p className="cw-panel-note">{station.description}</p>
                   <div className="cw-room-links">
-                    {worldStations.map((item) => (
-                      <Button
-                        key={item.id}
-                        aria-pressed={selected === item.id}
-                        onClick={() => select(item.id)}
-                      >
+                    {worldStations
+                      .filter((item) => item.scope === 'kantor')
+                      .map((item) => (
+                        <Button
+                          key={item.id}
+                          aria-pressed={selected === item.id}
+                          onClick={() => select(item.id)}
+                        >
                         {item.id === 'rapat' ? (
                           <Users size={17} />
                         ) : item.id === 'tugas' ? (

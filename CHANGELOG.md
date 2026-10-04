@@ -1,5 +1,13 @@
 # Changelog
 
+## Paket 2 Dunia Koperasi: Interior 22×15 Lapang 6 Zona dan Bentuk Berbobot — 5 Oktober 2026
+
+- Perlebar denah interior kantor dari 15×12 menjadi 22×15 unit dengan 6 zona lapang: Zona A (Rapat 6×6 dengan meja kayu madu 5.2×2.2, 6 kursi eksekutif berjarak lega, laptop, cangkir kopi, dan partisi kaca tempered berbingkai), Zona B (Workstation 5×6 dengan 4 meja komputer PC All-in-One berlayar pendar), Zona C (Arsip & Buku 6×6 dengan 3 lemari bertingkat, buku pastel, tanaman keramik), Zona D (Gym 6×6 dengan matras slate gelap 5.6×4.8, dual treadmill LED hijau dengan animasi latihan berolahraga, dumbbell rack, dispenser air), Zona E (Pojok Santai 6×6 dengan sofa empuk, meja kopi, dan tanaman sudut), Zona F (Lobi & Pintu Masuk, bangku tunggu, tanaman penyambut).
+- Sediakan koridor sirkulasi utama selebar 2.5–3.0 unit dengan rasio jejak perabot <= 30% luas lantai, melenyapkan kesan sempit, sesak, dan perabot menempel dinding/partisi.
+- Perluas span kamera ortografis interior (11.5–16 unit) agar seluruh ruangan 22×15 terbingkai utuh, proporsional, dan estetik.
+- Tetapkan pembedaan lingkup stasiun (`scope: 'kantor' | 'luar'`) pada model dunia dan kartu detail UI sehingga navigasi interior bersih dan landmark luar (gudang) terorganisir rapi.
+- 270 tes lulus 100%, typecheck 0 error, lint 0 error, build Next.js Turbopack sukses; QA screenshot browser membuktikan kelegaan tata letak 6 zona interior di viewport 1440, 1024, 768, dan 360 px.
+
 ## Paket 1 Dunia Koperasi: Geometri Shading Anti-Acne, Simpang Lampu Merah, Gudang Logistik, dan Seat Anchor — 5 Oktober 2026
 
 - Perbaiki tekstur jalan dengan tabel layer permukaan atas (top) presisi dan konfigurasi Three.js `sun.shadow.bias = -0.0003`, `sun.shadow.normalBias = 0.025`, serta penonaktifan `castShadow` pada objek datar: garis hitam shadow acne di jalan raya berhasil dihilangkan total pada mode siang maupun malam.

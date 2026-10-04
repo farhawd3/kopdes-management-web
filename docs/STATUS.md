@@ -23,19 +23,23 @@ Versi sekarang belum diterima: kawasan kecil/sepi, mobil belum ada, tampilan aga
   - Simpang lampu merah 3D modular dengan tiang baja dan siklus otomatis lampu merah, kuning, dan hijau di persimpangan jalan utama dan akses kantor.
   - Gedung Gudang Logistik solid 3 dermaga rolling door, kanopi pelindung, apron bertanda marka kuning, forklift, dan palet kayu di sisi timur kawasan.
   - Sistem `SeatAnchor` pada bangku taman plaza: karakter wanita kini duduk santai di bangku taman plaza menghadap utara dengan pose duduk wajar, menuntaskan masalah karakter berdiri/menginjak bangku.
+- **Paket 2 Selesai:**
+  - Interior kantor diperlebar dari 15×12 menjadi 22×15 unit dengan 6 zona lapang: Zona A (Rapat 6×6, meja kayu madu 5.2×2.2, 6 kursi eksekutif berjarak lega, partisi kaca tempered berbingkai), Zona B (Workstation 5×6, 4 meja PC All-in-One), Zona C (Arsip & Buku 6×6, 3 lemari bertingkat, buku pastel, tanaman hias), Zona D (Gym 6×6, matras slate gelap 5.6×4.8, dual treadmill LED hijau dengan animasi latihan, dumbbell rack, dispenser air), Zona E (Pojok Santai 6×6, sofa empuk, meja kopi, tanaman sudut), Zona F (Lobi & Pintu Masuk, bangku tunggu, tanaman penyambut).
+  - Koridor sirkulasi utama dan persimpangan selebar 2.5–3.0 unit dengan rasio jejak perabot ≤ 30% luas lantai, melenyapkan kesan sesak dan perabot menempel dinding/partisi.
+  - Kamera interior ortografis diperluas (span 11.5–16 unit) membingkai ruang 22×15 secara utuh dan proporsional.
+  - Pembedaan lingkup stasiun (`scope: 'kantor' | 'luar'`) sehingga stasiun interior dan landmark luar terpisah rapi.
 - Exterior luas (58 × 38 unit): kantor koperasi, jalan dua arah, plaza air mancur dan 4 bangku taman ber-anchor, area parkir mobil manajer, gudang logistik, dan tujuh lahan gerai yang terhubung catatan `units`.
 - Default waktu adalah Siang terang; kontrol cepat **Waktu** dan **Cuaca** aktif.
 - Kendaraan suasana: Mobil Manajer di parkir, Van Distribusi di dermaga gudang, dan Truk Muatan Logistik bergerak di jalan raya.
-- Interior kantor dengan zona Gym modern: dual treadmill LED, bangku latihan, dumbbell rack, dispenser, meja rapat, dan meja tugas.
 - Style dunia terisolasi di `world.css` dan palet Three.js di `world-objects.ts`.
 
 ## Pemeriksaan paket terbaru
 
-- `npm test -- --maxWorkers=2`: **269 tes / 44 berkas lulus 100%**.
+- `npm test -- --maxWorkers=2`: **270 tes / 44 berkas lulus 100%**.
 - `npm run typecheck`: **lulus** (0 error TypeScript).
 - `npm run lint`: **lulus** (0 error ESLint).
 - `npm run build`: **lulus** (Turbopack production build sukses).
-- QA browser Paket 1: terbukti bebas shadow acne pada mode siang dan malam (`kawasan_malam_1791145827983.png`), karakter duduk rapi di bangku (`fountain_plaza_closeup_1791145906859.png`), simpang lampu merah dan gudang logistik ter-render solid.
+- QA browser Paket 2: verifikasi 4 viewport (1440, 1024, 768, 360 px) membuktikan 6 zona interior ter-render lapang, sirkulasi koridor 2.5–3.0 unit terjaga, perabot solid dan berjarak lega, animasi latihan gym aktif. Bukti screenshot: `kantor_interior_1440px_1791146612300.png`, `kantor_interior_1024px_1791146625534.png`, `kantor_interior_768px_1791146643220.png`, `kantor_interior_360px_1791146664641.png`.
 
 ## Halaman operasional yang tersedia
 

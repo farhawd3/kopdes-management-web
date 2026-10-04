@@ -70,4 +70,11 @@ describe('pemetaan dunia koperasi', () => {
     // Verifikasi koordinat map luas mencakup area di luar pusat
     expect(landPositions.some(([x]) => Math.abs(x) >= 18)).toBe(true);
   });
+  it('membedakan stasiun interior kantor dan landmark exterior luar', async () => {
+    const { worldStations } = await import('@/features/cooperative-world/world-model');
+    const kantorStations = worldStations.filter((s) => s.scope === 'kantor');
+    const luarStations = worldStations.filter((s) => s.scope === 'luar');
+    expect(kantorStations.map((s) => s.id)).toEqual(['rapat', 'tugas', 'kegiatan', 'dokumen']);
+    expect(luarStations.map((s) => s.id)).toEqual(['gudang']);
+  });
 });

@@ -626,100 +626,154 @@ function chair(parent: THREE.Object3D, x: number, z: number, rotation = 0) {
 }
 
 export function createInterior(parent: THREE.Group) {
-  box(parent, [16, 0.3, 13], [0, -0.2, 0], '#d8e0eb', 0.1);
-  box(parent, [15.6, 0.05, 12.6], [0, -0.02, 0], '#f4f3ef');
-  for (let x = -7; x <= 7; x++) box(parent, [0.012, 0.01, 12.5], [x, 0.015, 0], '#e4e5e7', 0);
-  for (let z = -6; z <= 6; z++) box(parent, [15.5, 0.01, 0.012], [0, 0.015, z], '#e4e5e7', 0);
-  // Cutaway back and side walls
-  box(parent, [16, 3.8, 0.2], [0, 1.7, -6.4], '#f8fbff');
-  box(parent, [0.2, 3.8, 13], [-7.9, 1.7, 0], '#e9eff8');
-  for (let x = -6; x <= 6; x += 2) {
-    box(parent, [1.65, 1.55, 0.06], [x, 2.15, -6.26], '#b8d4ec');
-    box(parent, [0.05, 1.65, 0.1], [x, 2.15, -6.2], '#839bb9');
-    box(parent, [1.85, 0.15, 0.16], [x, 2.95, -6.15], '#f9fcff');
+  // Base platform: 23 x 0.35 x 16 (Top = -0.05)
+  box(parent, [23, 0.35, 16], [0, -0.22, 0], '#d8e0eb', 0.12, false);
+  // Floor (Top = 0.000): light warm parquet / modern birch wood floor
+  box(parent, [22.4, 0.06, 15.4], [0, -0.02, 0], '#f6f5f1', 0.035, false);
+  // Parquet plank line grooves
+  for (let x = -10.5; x <= 10.5; x += 1.5) {
+    box(parent, [0.015, 0.01, 15.2], [x, 0.012, 0], '#e3e4e8', 0, false);
   }
-  // Glass partition divider
-  box(parent, [0.08, 2.4, 4.4], [-0.5, 1.2, -3.8], '#c9e0ec');
-  for (const z of [-6.0, -1.6]) box(parent, [0.1, 2.5, 0.1], [-0.5, 1.25, z], '#f9fcff');
-
-  // Area 1: Meja Rapat (Meeting Zone) at [-4, 0, -2.6]
-  box(parent, [4.4, 0.18, 1.8], [-4, 1.0, -2.6], palette.wood, 0.15);
-  for (const x of [-5.6, -2.4])
-    for (const z of [-3.2, -2.0]) box(parent, [0.1, 0.9, 0.1], [x, 0.45, z], '#edf2f9');
-  for (const x of [-5.2, -4.0, -2.8]) {
-    chair(parent, x, -4.1);
-    chair(parent, x, -1.1, Math.PI);
+  for (let z = -7; z <= 7; z += 1.5) {
+    box(parent, [22.2, 0.01, 0.015], [0, 0.012, z], '#e3e4e8', 0, false);
   }
-  box(parent, [0.65, 0.03, 0.45], [-4.3, 1.11, -2.5], '#f9fcff');
-  cylinder(parent, 0.14, 0.18, [-3, 1.18, -2.5], palette.blue);
 
-  // Area 2: Meja Tugas (Workstation Zone) at [3.4, 0, -2.5]
-  for (const z of [-3.8, -1.2]) {
-    box(parent, [4.8, 0.13, 1.2], [3.4, 1.0, z], '#ffffff');
-    for (const x of [1.2, 5.6]) box(parent, [0.12, 1.0, 0.9], [x, 0.5, z], '#d1dbe9');
-    for (const x of [2.2, 4.6]) {
-      box(parent, [0.85, 0.55, 0.08], [x, 1.52, z - 0.18], '#344761');
-      box(parent, [0.76, 0.44, 0.02], [x, 1.53, z - 0.12], '#8ebcfa');
-      box(parent, [0.08, 0.28, 0.09], [x, 1.15, z - 0.18], '#6f8198');
-      box(parent, [0.55, 0.04, 0.22], [x, 1.085, z + 0.22], '#bdc9d9');
-      chair(parent, x, z + 1.1, Math.PI);
+  // Cutaway walls (North wall at z = -7.6, West wall at x = -11.1)
+  box(parent, [22.4, 4.0, 0.25], [0, 1.9, -7.6], '#f8fbff', 0.05);
+  box(parent, [0.25, 4.0, 15.4], [-11.1, 1.9, 0], '#e9eff8', 0.05);
+
+  // Large office windows on North wall with sky tint
+  for (let x = -9; x <= 9; x += 3.6) {
+    box(parent, [2.4, 2.0, 0.08], [x, 2.3, -7.48], '#b8d4ec', 0.04);
+    box(parent, [0.08, 2.1, 0.12], [x, 2.3, -7.42], '#839bb9', 0);
+    box(parent, [2.6, 0.18, 0.2], [x, 3.32, -7.38], '#fafcff', 0.02);
+  }
+
+  // Modern glass partition dividing West Meeting Zone from Central Workstation
+  box(parent, [0.08, 2.6, 5.8], [-4.2, 1.3, -4.5], '#c9e0ec', 0.02);
+  for (const z of [-7.2, -1.8]) {
+    box(parent, [0.12, 2.7, 0.12], [-4.2, 1.35, z], '#fafcff', 0.02);
+  }
+
+  // ==========================================
+  // ZONA A: MEJA RAPAT EKSEKUTIF (Barat-Utara: x: -10...-5, z: -7...-2)
+  // ==========================================
+  // Meja rapat kayu madu solid luas (5.2 x 2.2)
+  box(parent, [5.2, 0.18, 2.2], [-7.5, 1.0, -4.5], palette.wood, 0.15);
+  for (const x of [-9.5, -5.5]) {
+    for (const z of [-5.2, -3.8]) {
+      box(parent, [0.14, 0.9, 0.14], [x, 0.45, z], '#edf2f9', 0.02);
+    }
+  }
+  // 6 Kursi rapat eksekutif dengan ruang gerak lega
+  for (const x of [-9.0, -7.5, -6.0]) {
+    chair(parent, x, -6.0, 0); // Kursi sisi utara (hadap selatan)
+    chair(parent, x, -3.0, Math.PI); // Kursi sisi selatan (hadap utara)
+  }
+  // Laptop eksekutif & proyektor mini di meja
+  box(parent, [0.8, 0.03, 0.55], [-7.8, 1.11, -4.5], '#fafcff', 0.02);
+  cylinder(parent, 0.16, 0.22, [-6.2, 1.2, -4.5], palette.blue);
+  // Layar presentasi dinding putih
+  box(parent, [3.8, 1.8, 0.06], [-7.5, 2.6, -7.45], '#ffffff', 0.03);
+  box(parent, [3.6, 1.6, 0.02], [-7.5, 2.6, -7.4], '#dbeafe', 0);
+
+  // ==========================================
+  // ZONA B: WORKSTATION OPERASIONAL & TUGAS (Tengah-Utara: x: -3.5...3.5, z: -7...-2)
+  // ==========================================
+  // 2 Baris Meja Kerja (2x2) dengan partisi kaca tempered
+  for (const z of [-5.6, -3.2]) {
+    box(parent, [6.2, 0.14, 1.3], [0, 1.0, z], '#ffffff', 0.05);
+    for (const x of [-2.8, 2.8]) {
+      box(parent, [0.14, 1.0, 1.1], [x, 0.5, z], '#d1dbe9', 0.02);
+    }
+    // Komputer PC All-in-One dan kursi di tiap meja
+    for (const x of [-1.8, 1.8]) {
+      box(parent, [0.95, 0.6, 0.08], [x, 1.55, z - 0.2], '#344761', 0.03); // Monitor frame
+      box(parent, [0.86, 0.5, 0.02], [x, 1.56, z - 0.14], '#8ebcfa', 0.01); // Glowing screen
+      box(parent, [0.08, 0.3, 0.1], [x, 1.15, z - 0.2], '#6f8198', 0.02); // Stand
+      box(parent, [0.65, 0.04, 0.24], [x, 1.085, z + 0.25], '#cbd5e1', 0.02); // Keyboard
+      chair(parent, x, z + 1.25, Math.PI); // Kursi kerja
     }
   }
 
-  // Area 3: Arsip & Dokumen (Library & Filing) at [-4.5, 0, 4.4]
-  for (const x of [-6.0, -4.5, -3.0]) {
-    box(parent, [1.35, 1.65, 0.75], [x, 0.82, 4.6], palette.wood);
-    box(parent, [1.38, 0.12, 0.8], [x, 1.68, 4.6], '#ffffff');
-    for (let i = 0; i < 5; i++)
+  // ==========================================
+  // ZONA C: ARSIP & LEGALITAS KOPERASI (Barat-Selatan: x: -10...-5, z: 2...7)
+  // ==========================================
+  for (const x of [-9.6, -7.6, -5.6]) {
+    box(parent, [1.5, 2.0, 0.85], [x, 1.0, 5.6], palette.wood, 0.06);
+    box(parent, [1.54, 0.14, 0.9], [x, 2.06, 5.6], '#ffffff', 0.03);
+    for (let i = 0; i < 6; i++) {
       box(
         parent,
-        [0.14, 0.45, 0.32],
-        [x - 0.42 + i * 0.21, 1.95, 4.6],
-        ['#6d91dd', '#b7b6e0', '#88b9a4'][i % 3],
+        [0.15, 0.5, 0.35],
+        [x - 0.5 + i * 0.2, 2.38, 5.6],
+        ['#6d91dd', '#b7b6e0', '#88b9a4', '#f59e0b'][i % 4],
+        0.02,
       );
+    }
   }
+  // Tanaman pot keramik di sudut arsip
+  tree(parent, -10.0, 3.0, 0.9);
 
-  // Area 4: Dedicated GYM ZONE (Area Kegiatan & Olahraga) at [3.8, 0, 3.5]
-  // Textured dark rubber workout mat with slate edge
-  box(parent, [5.8, 0.04, 4.2], [3.8, 0.02, 3.5], '#334155', 0.1);
-  box(parent, [5.5, 0.02, 3.9], [3.8, 0.04, 3.5], '#475569');
+  // ==========================================
+  // ZONA D: GYM & KEGIATAN MODERN (Timur-Selatan: x: 5...10.5, z: 2...7)
+  // ==========================================
+  // Matras slate gelap (5.6 x 4.8)
+  box(parent, [5.6, 0.04, 4.8], [7.8, 0.02, 4.6], '#334155', 0.1, false);
+  box(parent, [5.3, 0.02, 4.5], [7.8, 0.04, 4.6], '#475569', 0, false);
 
   // Dual modern treadmills
-  for (const tx of [2.4, 5.0]) {
-    // Treadmill frame base
-    box(parent, [1.1, 0.24, 2.1], [tx, 0.16, 3.5], '#1e293b', 0.06);
-    // Rubber running deck/belt
-    box(parent, [0.8, 0.04, 1.8], [tx, 0.29, 3.5], '#0f172a');
-    // Side support posts
+  for (const tx of [6.4, 9.2]) {
+    box(parent, [1.15, 0.24, 2.2], [tx, 0.16, 4.8], '#1e293b', 0.06);
+    box(parent, [0.85, 0.04, 1.9], [tx, 0.29, 4.8], '#0f172a', 0);
     for (const side of [-1, 1]) {
-      box(parent, [0.08, 1.25, 0.08], [tx + side * 0.48, 0.85, 2.65], '#94a3b8');
-      box(parent, [0.06, 0.08, 0.75], [tx + side * 0.48, 1.45, 3.0], '#475569');
+      box(parent, [0.08, 1.3, 0.08], [tx + side * 0.5, 0.88, 3.85], '#94a3b8');
+      box(parent, [0.06, 0.08, 0.8], [tx + side * 0.5, 1.5, 4.2], '#475569');
     }
-    // Dashboard console
-    box(parent, [1.05, 0.2, 0.35], [tx, 1.48, 2.65], '#1e293b', 0.04);
-    // Glowing digital display screen
-    box(parent, [0.65, 0.12, 0.02], [tx, 1.5, 2.47], '#10b981');
+    box(parent, [1.1, 0.2, 0.36], [tx, 1.52, 3.85], '#1e293b', 0.04);
+    box(parent, [0.7, 0.12, 0.02], [tx, 1.54, 3.66], '#10b981', 0); // Green LED
   }
 
   // Workout training bench
-  box(parent, [0.7, 0.38, 1.5], [3.7, 0.22, 1.9], '#1e293b');
-  box(parent, [0.62, 0.1, 1.42], [3.7, 0.44, 1.9], '#2563eb', 0.05);
+  box(parent, [0.75, 0.38, 1.6], [7.8, 0.22, 2.8], '#1e293b', 0.04);
+  box(parent, [0.65, 0.1, 1.5], [7.8, 0.44, 2.8], '#2563eb', 0.05);
 
   // Dumbbell rack
-  box(parent, [1.4, 0.65, 0.5], [5.8, 0.35, 1.8], '#334155');
+  box(parent, [1.5, 0.7, 0.55], [10.1, 0.38, 2.8], '#334155', 0.04);
   for (let i = 0; i < 3; i++) {
-    box(parent, [0.35, 0.16, 0.16], [5.3 + i * 0.42, 0.75, 1.8], ['#3866f6', '#ef4444', '#10b981'][i], 0.04);
+    box(parent, [0.38, 0.18, 0.18], [9.6 + i * 0.45, 0.8, 2.8], ['#3866f6', '#ef4444', '#10b981'][i], 0.04);
   }
 
   // Water cooler dispenser
-  cylinder(parent, 0.2, 0.75, [6.2, 0.45, 4.8], '#ffffff');
-  cylinder(parent, 0.18, 0.45, [6.2, 1.0, 4.8], '#60a5fa');
+  cylinder(parent, 0.22, 0.8, [10.3, 0.48, 6.4], '#ffffff');
+  cylinder(parent, 0.18, 0.5, [10.3, 1.1, 6.4], '#60a5fa');
 
-  // Indoor decor plants
-  tree(parent, -7.0, -5.4, 0.85);
-  tree(parent, 6.8, -5.4, 0.85);
-  tree(parent, -0.6, 5.0, 0.85);
-  bench(parent, -0.5, 2.2);
+  // ==========================================
+  // ZONA E: POJOK SANTAI & PANTRY (Timur-Utara: x: 5...10.5, z: -7...-2)
+  // ==========================================
+  // Sofa empuk santai
+  box(parent, [2.4, 0.45, 0.95], [7.8, 0.28, -5.6], '#475569', 0.08);
+  box(parent, [2.4, 0.65, 0.3], [7.8, 0.65, -6.1], '#334155', 0.08);
+  for (const side of [-1, 1]) {
+    box(parent, [0.25, 0.5, 0.95], [7.8 + side * 1.2, 0.45, -5.6], '#334155', 0.06);
+  }
+  // Meja kopi kayu
+  box(parent, [1.6, 0.35, 0.8], [7.8, 0.22, -4.0], palette.wood, 0.06);
+  cylinder(parent, 0.08, 0.12, [7.8, 0.45, -4.0], '#fafcff');
+  // Tanaman hias pot
+  tree(parent, 10.2, -5.6, 0.9);
+
+  // ==========================================
+  // ZONA F: LOBI & PINTU MASUK (Tengah-Selatan: x: -3.5...3.5, z: 2...7)
+  // ==========================================
+  // Bangku tunggu di lobi
+  bench(parent, 0, 5.2, 0);
+  // Pintu masuk utama (Portal di z = 7.4)
+  box(parent, [3.2, 3.2, 0.15], [0, 1.6, 7.55], '#1e293b', 0.04);
+  box(parent, [2.8, 2.8, 0.08], [0, 1.45, 7.58], palette.glass, 0.02);
+  // Tanaman penyambut di lobi
+  tree(parent, -2.4, 5.4, 0.85);
+  tree(parent, 2.4, 5.4, 0.85);
 }
 
 export type WorldCharacter = {
