@@ -14,6 +14,7 @@ Setiap panduan punya peran berbeda. Kebutuhan menjelaskan target; STATUS mencata
 | [PRD](PRD.md) | Kebutuhan dan batas produk |
 | [Checklist](CHECKLIST.md) | Implementasi dan penerimaan terbuka |
 | [Desain antarmuka](DESAIN-ANTARMUKA.md) | Tema, layout, komponen dan dashboard |
+| [Dunia Koperasi](DUNIA-KOPERASI.md) | Acuan video, palet 3D/UI, karakter, cuaca, data dan cara upgrade |
 | [Arsitektur](ARSITEKTUR.md) | Folder, data, keamanan, rute dan API |
 | [Workflow](WORKFLOW.md) | Pemakaian harian dan status |
 | [Kegiatan dan tugas](KEGIATAN-DAN-TUGAS.md) | Pembedaan catatan kejadian dan pekerjaan |

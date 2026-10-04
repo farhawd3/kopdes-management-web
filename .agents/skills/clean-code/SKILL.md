@@ -71,6 +71,8 @@ Aplikasi ini diutamakan untuk penggunaan smartphone dan tablet di lapangan oleh 
 
 ## 4. Konsistensi Desain Visual & Warna Pastel
 
+Untuk Dunia Koperasi, arahan terbaru pemilik mengutamakan video biru-putih dan scene 3D. Baca `docs/DUNIA-KOPERASI.md` dan `docs/DESAIN-ANTARMUKA.md`; palet dunia dimiliki world.css/world-objects.ts, terisolasi dari tema halaman operasional. Maskot animatif adalah visualisasi dan cuaca adalah simulasi. Pedoman pastel di bawah tetap berlaku pada halaman operasional.
+
 Aplikasi menggunakan palet tema modern (arang, hijau zamrud, lavender, pastel):
 
 ### Variabel Pastel Global (`globals.css`):

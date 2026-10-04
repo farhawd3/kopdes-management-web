@@ -1,5 +1,12 @@
 # Changelog
 
+## Dunia Koperasi dan panduan aktif — 5 Oktober 2026
+
+- Tambahkan dunia Three.js layar penuh: kawasan/kantor, tujuh lahan, gedung dari catatan unit, perabot dan maskot modular, bubble, kamera serta cuaca/waktu WIB.
+- Hubungkan kartu/detail/dock ke workspace dan modul operasional; pratinjau development kosong tanpa database. Preferensi lokal Zod; tidak menambah migrasi atau layanan berbayar.
+- Simpan kontrak style dan referensi video/interior di DUNIA-KOPERASI serta docs/referensi-dunia. Ringkas STATUS/CHECKLIST/LANJUTAN-AI, perjelas dua lingkup visual, hapus arahan aktif yang rancu; selaraskan AGENTS/PRD/KEPUTUSAN/arsitektur/skill.
+- 266 tes/44 berkas, typecheck, lint dan production build lulus. QA exterior/interior kosong 360/768/1024/1440 tanpa luapan; penanda masuk kantor, bubble dan pratinjau rapat/gym. Penerimaan visual, semua interaksi/state, perangkat fisik dan data cloud masih terbuka.
+
 ## Empat anotasi lanjutan — 4 Oktober 2026
 
 - Seimbangkan Buka catatan/Opsi lainnya pada footer kartu, termasuk keadaan opsi terbuka.
@@ -990,4 +997,3 @@ Empat statistik memakai permukaan netral dan ikon tint, baris terlambat memakai 
 # 4 Oktober 2026 — PLAN-ASTRA drag sentuh
 
 Ganti HTML5 drag papan tugas/kegiatan dengan handle Pointer Events, long-press, overlay, auto-scroll dan pembatalan. Tambahkan alternatif dropdown pemindahan dan galat kegiatan yang terlihat. 181 tes dan pemeriksaan statis/build lulus; drag mouse fixture browser terverifikasi. Perangkat sentuh fisik belum diuji.
-

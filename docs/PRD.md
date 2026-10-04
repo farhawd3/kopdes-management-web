@@ -2,6 +2,8 @@
 
 ## Tujuan
 
+Prioritas visual terbaru (5 Oktober 2026): Dunia Koperasi, halaman 3D isometrik dengan kartu UI mengikuti video pengguna. Kawasan menyediakan tujuh lahan yang terisi dari data Gerai; klik kantor membuka interior dengan area rapat/tugas/kegiatan/arsip. Maskot animatif/bubble dan cuaca/waktu melengkapi lingkungan. Spesifikasi dan batas aktual: [DUNIA-KOPERASI](DUNIA-KOPERASI.md). Suplier/ekspedisi dan editor lingkungan masih rencana.
+
 Aplikasi pribadi manajer koperasi untuk mengelola banyak proyek, tugas, catatan, jadwal, dan koordinasi. Proyek memiliki durasi sendiri. Tidak ada program wajib 90 hari atau data capaian tiruan. Pengalaman terinspirasi workspace Notion, dengan fungsi yang langsung berguna bagi manajer.
 
 ## Ruang proyek
@@ -35,7 +37,7 @@ Beranda dan Hari Ini merangkum pekerjaan aktual. Kesiapan/gerai, pemangku/intera
 
 ## Desain dan akses
 
-- Sidebar berkelompok, rel tablet, navigasi bawah ponsel. Area sentuh minimal 44 px.
+- Halaman operasional memakai sidebar berkelompok, rel tablet dan navigasi bawah ponsel. Dunia Koperasi memakai layar penuh/dock sendiri dengan panel detail kanan atau bawah. Area sentuh minimal 44 px.
 - Latar lembut, teks arang dan aksen hijau lembut/lavender, kartu berlapis dan bayangan ringan, teks utama jelas, status berlabel.
 - Tema terang/gelap dan kepadatan. Tabel/Gantt menggulir dalam kontainer.
 - Dialog fokus, label input, error yang jelas, reduced-motion, data kosong tanpa angka buatan.

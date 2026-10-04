@@ -49,6 +49,7 @@ import { Modal } from '@/components/ui/Modal';
 
 const navIcons: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
   '/beranda': House,
+  '/dunia-koperasi': Landmark,
   '/hari-ini': SunMedium,
   '/tugas': CheckCheck,
   '/tindak-lanjut': AlertCircle,
@@ -75,7 +76,7 @@ const navIcons: Record<string, React.ComponentType<{ size?: number; className?: 
 const sections = [
   [
     'Pekerjaan & Proyek',
-    ['/beranda', '/hari-ini', '/tugas', '/proyek', '/roadmap', '/tindak-lanjut'],
+    ['/beranda', '/dunia-koperasi', '/hari-ini', '/tugas', '/proyek', '/roadmap', '/tindak-lanjut'],
     'blue',
   ],
   ['Kegiatan Lapangan', ['/jurnal'], 'amber'],
@@ -222,6 +223,7 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
   }, [setDesktopSidebarHidden, router]);
   const name = String(workspace?.organization?.[0]?.data.manager || 'Manajer');
   const current = navigation.find(([href]) => href === path)?.[1] || 'Beranda';
+  if (path === '/dunia-koperasi') return <>{children}</>;
   return (
     <div className={`manager-shell ${desktopSidebarHidden === 'true' ? 'sidebar-collapsed' : ''}`}>
       <a className="skip" href="#main">

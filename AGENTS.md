@@ -3,6 +3,7 @@
 ## Urutan membaca
 0. Jika melanjutkan perbaikan UI/status terbaru, baca `docs/LANJUTAN-AI.md` sebagai serah terima; verifikasi ulang keadaan Git karena dapat berubah.
    Untuk pekerjaan visual, baca juga `docs/DESAIN-ANTARMUKA.md` sebelum mengubah CSS atau layout.
+   Untuk Dunia Koperasi, baca `docs/DUNIA-KOPERASI.md`: kontrak gaya video, objek 3D, karakter, dan data.
    Untuk alur kegiatan/tugas dan SQL, baca `docs/KEGIATAN-DAN-TUGAS.md` serta `docs/MIGRASI-SQL.md`.
 1. `docs/STATUS.md`: keadaan nyata dan pekerjaan berikutnya.
 2. `docs/KEPUTUSAN.md` dan `docs/PRD.md`: keputusan pemilik dan kebutuhan.
@@ -16,6 +17,7 @@
 - Pengalaman produk berupa task/project manager terinspirasi Notion: proyek, catatan, tugas terhubung, daftar/papan/kalender/Gantt, dan catatan terformat. Jangan mengklaim editor blok drag-and-drop, baseline, jalur kritis otomatis, atau kolaborasi real-time sudah tersedia.
 - Domain `workstreams` juga menjadi proyek; pertahankan kompatibilitas bidang kerja template dan cadangan lama.
 - Bahasa Indonesia sederhana, zona waktu Asia/Jakarta.
+- Prioritas desain terbaru: halaman Dunia Koperasi 3D isometrik mengikuti video, kantor membuka interior, tujuh lahan gerai, maskot/bubble, cuaca/waktu. Suplier/ekspedisi masih rencana. Fitur operasional tetap sumber data.
 
 ## Kode yang mudah dirawat
 - Next.js App Router, React, TypeScript strict, Tailwind, Zod, Supabase.
@@ -36,17 +38,19 @@
 - Periksa 360, 768, 1024, 1440 px; navigasi bawah ponsel, rel tablet, sidebar desktop.
 - Area sentuh minimal 44 px, fokus keyboard, label form, status memakai teks selain warna.
 - Tabel/Gantt bergulir dalam kontainer; hormati reduced-motion dan safe area.
-- Tema aktif mengikuti referensi HP terbaru: arang, hijau lembut, lavender, kartu membulat, navigasi mengambang HP dan sidebar tablet/desktop. Tema gelap tetap tersedia. Lapisan visual aktif di personal.css; hindari angka ilustrasi, avatar tim palsu, tombol dekoratif dan slogan.
+- Halaman operasional memakai arang, hijau lembut, lavender, kartu membulat, navigasi HP dan sidebar/rel tablet/desktop; tema gelap tersedia. Style operasional: globals.css/personal.css/tokens.css/ui.css.
+- Dunia Koperasi memakai biru-putih, kartu mengambang, layar penuh dan dock khusus sesuai video; style dibatasi `src/features/cooperative-world/world.css`. Maskot adalah visualisasi, bukan pegawai/kehadiran nyata. Cuaca simulasi; waktu Asia/Jakarta. Hindari angka operasional palsu, tombol dekoratif dan slogan.
 
 ## Proses
 1. Periksa Git dan pertahankan perubahan pengguna.
 2. Implementasikan paket kerja konkret dan dapat diverifikasi.
 3. Jalankan `npm test`, `npm run typecheck`, `npm run build`; lint setelah tersedia.
+   Gunakan `npm test -- --maxWorkers=2` bila worker bawaan membebani mesin; cakupan tetap seluruh suite.
 4. Periksa singkat UI yang berubah pada ukuran relevan.
 5. Perbarui STATUS, checklist yang benar-benar selesai, dan CHANGELOG.
 6. Laporkan hasil dan batasan secara jujur; tes lama bukan bukti fitur baru selesai.
 
-Commit/push per paket kerja, pesan ringkas dengan judul dan isi dipisahkan baris kosong. Cabang fitur `codex/`. Repo baru memakai riwayat bersih sesuai permintaan pemilik; jangan force-push repo lama. Jangan menandai pemeriksaan perangkat yang belum dilakukan.
+Commit/push per paket kerja, pesan ringkas dengan judul dan isi dipisahkan baris kosong. Cabang fitur `codex/`. Hanya buat repo baru/riwayat bersih jika pemilik meminta secara eksplisit; jangan force-push repo lama. Jangan menandai pemeriksaan perangkat yang belum dilakukan.
 
 ## Pencatatan dan rapat
 - Acuan aktivasi: docs/PENCATATAN.md. Migrasi 20261001000002_operations.sql perlu persetujuan sebelum dijalankan cloud.

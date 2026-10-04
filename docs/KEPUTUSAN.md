@@ -1,4 +1,10 @@
-# Keputusan proyek — 30 September 2026
+# Keputusan proyek — diperbarui 5 Oktober 2026
+
+## 5 Oktober 2026 — prioritas Dunia Koperasi
+
+Pemilik mengutamakan desain 3D isometrik mengikuti video: UI biru-putih mengambang, kawasan dengan tujuh lahan gerai, gedung koperasi membuka interior, maskot animatif/bubble, cuaca dan waktu. Fokus sekarang kualitas tampilan dan kerangka backend melalui domain yang sudah ada. Suplier, ekspedisi dan upgrade lingkungan merupakan pengembangan berikutnya. Panduan harus ringkas, tidak rancu, dan menyimpan gaya untuk AI selanjutnya.
+
+Acuan aktif: [DESAIN-ANTARMUKA](DESAIN-ANTARMUKA.md) dan [DUNIA-KOPERASI](DUNIA-KOPERASI.md). Arahan mempertahankan dashboard di bawah berlaku pada halaman operasional; Dunia Koperasi memiliki style/dock sendiri. Belum ada persetujuan atas kemiripan final dengan video, migrasi baru, deployment, atau database baru pada permintaan ini. Keputusan bertanggal di bawah adalah riwayat; arahan terbaru mengatasi konflik.
 
 ## 2 Oktober 2026 — reset proyek saat ini
 

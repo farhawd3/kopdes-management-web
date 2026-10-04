@@ -47,6 +47,9 @@ Next.js 16, React 19, TypeScript strict, Tailwind 3, Zod, Supabase. Font Inter d
 
 ## Dokumentasi
 
+- [Dunia Koperasi](docs/DUNIA-KOPERASI.md): acuan video, palet, scene 3D, karakter, cuaca/waktu, pemetaan data dan panduan upgrade.
+- Menu **Dunia Koperasi** membuka `/dunia-koperasi` setelah login. Pratinjau tanpa database: `/dev/dunia-koperasi` saat `npm run dev`; tidak tersedia pada produksi.
+
 - [Peta dokumen](docs/README.md) · [PRD](docs/PRD.md) · [Checklist](docs/CHECKLIST.md)
 - [Arsitektur](docs/ARSITEKTUR.md) · [Supabase](docs/SUPABASE.md)
 - [Panduan AI](AGENTS.md) · [Status](docs/STATUS.md) · [Changelog](CHANGELOG.md)

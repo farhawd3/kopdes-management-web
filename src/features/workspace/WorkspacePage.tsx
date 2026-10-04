@@ -17,6 +17,7 @@ import { today } from '@/lib/date';
 import { SkeletonLoading } from '@/components/ui/SkeletonLoading';
 import { pageEntities } from './workspace-scope';
 import { ManagerGuide } from './ManagerGuide';
+const CooperativeWorld = dynamic(() => import('../cooperative-world/CooperativeWorld').then(module => module.CooperativeWorld));
 const Roadmap = dynamic(() => import('../roadmap/Roadmap').then((module) => module.Roadmap), {
   loading: () => <SkeletonLoading slug="roadmap" />,
 });
@@ -74,6 +75,7 @@ export function WorkspacePage({ slug }: { slug: string }) {
   }, []);
   const sectionIndex = pages[slug]?.findIndex((entity) => entity === requestedSection) ?? -1;
   const tab = tabChoice?.section === requestedSection ? tabChoice.index : Math.max(0, sectionIndex);
+  if (slug === 'dunia-koperasi') return <CooperativeWorld data={error ? {} : data} loading={loading} error={error} refresh={refresh} partial={Object.keys(more).length > 0} />;
   if (loading) return <SkeletonLoading slug={slug} />;
   if (error)
     return (
