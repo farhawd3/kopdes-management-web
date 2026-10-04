@@ -40,3 +40,7 @@ Buku kas hanya catatan uang masuk/keluar; selisih bukan saldo bank atau laba. Ba
 - Rute /riwayat-proyek dibuka pada sesi aplikasi nyata dan berhasil memuat keadaan kosong. Pemeriksaan lain memakai fixture lokal tanpa penyimpanan database.
 - 253 tes/41 berkas lulus; termasuk riwayat tugas lama, tugas mandiri/rincian tambahan, portal Gantt, penolakan referensi/proyek tertutup, dan pembaruan historis tanpa pengulangan baru. Typecheck, ESLint, build, audit sumber 97/97 lulus.
 - check:ui masih gagal pada tujuh kontrol mentah di luar komponen UI. Utang lint:ui legacy tetap terbuka. Tidak menjalankan SQL cloud atau deployment, tidak mengklaim UAT/perangkat fisik/seluruh backend produksi sudah diperiksa.
+
+## Koreksi bantuan terbaru
+
+Petunjuk form menjadi Cara mengisi yang tertutup bawaan; banner permanen halaman buku dihapus. + Kas anggota/barang membuka cash-entries dengan relasi terisi, jenis editor dibersihkan ketika ditutup. Tidak mengubah stok atau membuat transaksi otomatis.

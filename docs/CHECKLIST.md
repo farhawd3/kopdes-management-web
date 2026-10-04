@@ -1,5 +1,7 @@
 # Checklist produk aktif
 
+- [x] Tindak lanjuti 15 anotasi: + Kas, bantuan ringkas, catatan, kartu/tabel/aksi, tema dan profil. Cakupan/batas di QA-ANOTASI.md.
+
 - [x] Riwayat proyek berupa tab horizontal, bukan menu sidebar; tanggal drawer, warna kartu, dropdown kartu papan dan padding catatan dirapikan sesuai koreksi pemilik.
 
 - [x] Riwayat proyek selesai/arsip, sidebar berjalan konsisten, tugas selesai lama tetap tersedia pada detail; server menolak tugas baru di proyek tertutup.

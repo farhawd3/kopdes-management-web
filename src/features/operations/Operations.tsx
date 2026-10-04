@@ -1,7 +1,6 @@
 'use client';
 import { Button } from '@/components/ui/Button';
 import { AppIcon } from '@/components/ui/AppIcon';
-import { EntryGuide } from '../workspace/EntryGuide';
 import { Input } from '@/components/ui/Input';
 import { EmptyState } from '@/components/ui/EmptyState';
 import Link from 'next/link';
@@ -749,7 +748,6 @@ export function Operations({
               </Button>
             </div>
           </div>
-          {entity && <EntryGuide entity={entity} />}
           {entity === 'stock-counts' && ready && !data['inventory-items']?.length && (
             <p className="notice">
               Daftarkan barang terlebih dahulu di <Link href="/barang">halaman Barang →</Link>
@@ -1673,12 +1671,13 @@ export function Operations({
       {edit !== undefined && entity && (
         <OperationEditor
           draftScope={draftScope}
-          entity={entity}
+          entity={captureEntity || entity}
           item={edit || undefined}
           data={data}
           refresh={refresh}
           close={() => {
             setEdit(undefined);
+            setCaptureEntity(undefined);
             const next = new URLSearchParams(query.toString());
             ['baru', 'record', 'barang', 'arah'].forEach((key) => next.delete(key));
             router.replace('/' + slug + (next.size ? '?' + next : ''));

@@ -1,5 +1,7 @@
 # Changelog
 
+Perbaikan 15 anotasi: bantuan form dilipat, banner buku dihapus, padding catatan global, kartu/tabel/aksi ditata, + Kas membuka kas dengan relasi anggota, tema pastel dan profil berbasis data. 256 tes/42 berkas, tipe/ESLint/build lulus. Cakupan/batas: docs/QA-ANOTASI.md.
+
 ## Koreksi tab proyek dan detail visual — 4 Oktober 2026
 
 - Pindahkan riwayat ke tab horizontal Proyek; hapus menu sidebar, redirect URL lama.

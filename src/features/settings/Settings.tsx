@@ -13,14 +13,14 @@ import {
   Database,
   Building,
   RotateCcw,
-  Sparkles,
   Download,
   Upload,
   KeyRound,
 } from 'lucide-react';
 import { Select } from '@/components/ui/Select';
+import type { Item } from '@/features/schemas';
 
-export function Settings({ refresh, preferenceScope = '' }: { refresh: () => Promise<void>; preferenceScope?: string }) {
+export function Settings({ refresh, preferenceScope = '', organization }: { refresh: () => Promise<void>; preferenceScope?: string; organization?: Item }) {
   const { colorStyle, setColorStyle, preference, setTheme } = useTheme();
   const [activeTab, setActiveTab] = useState<'tampilan' | 'profil' | 'keamanan' | 'cadangan'>('tampilan');
   const [density, setDensity] = usePreference(preferenceScope + 'hub-density', 'comfortable');
@@ -28,8 +28,6 @@ export function Settings({ refresh, preferenceScope = '' }: { refresh: () => Pro
   const [navStyle, setNavStyle] = usePreference(preferenceScope + 'hub-nav-style', 'soft');
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
-
-  const selectedPalette = COLOR_STYLES.find((c) => c.id === colorStyle) || COLOR_STYLES[0];
 
   const run = async (action: () => Promise<unknown>, success: string) => {
     setBusy(true);
@@ -119,6 +117,7 @@ export function Settings({ refresh, preferenceScope = '' }: { refresh: () => Pro
                 return (
                   <Button
                     key={c.id}
+                    data-palette={c.id}
                     type="button"
                     className={`color-swatch-item ${isSelected ? 'is-selected' : ''}`}
                     onClick={() => setColorStyle(c.id)}
@@ -127,7 +126,7 @@ export function Settings({ refresh, preferenceScope = '' }: { refresh: () => Pro
                     <div className="swatch-palette-strip">
                       <span
                         className="swatch-color-pill swatch-primary-pill"
-                        style={{ backgroundColor: c.primary }}
+                        style={{ backgroundColor: 'var(--palette-accent)' }}
                         title="Warna Utama"
                       />
                       <span
@@ -155,52 +154,6 @@ export function Settings({ refresh, preferenceScope = '' }: { refresh: () => Pro
               })}
             </div>
           </section>
-
-          {/* Live Component Preview Card */}
-          <details className="card theme-live-preview-card">
-            <summary><Palette size={18} aria-hidden="true" /> Pratinjau komponen tema</summary>
-            <p>Berikut tampilan tombol, kartu tugas, dan indikator dengan tema <strong>{selectedPalette.name}</strong>:</p>
-
-            <div className="theme-preview-stage" style={{ background: 'var(--canvas)', borderColor: 'var(--line)' }}>
-              {/* Preview Button & Chip */}
-              <div className="preview-row">
-                <Button
-                  type="button"
-                  className="preview-primary-btn"
-                  style={{ background: 'var(--brand)', color: 'var(--brand-text)' }}
-                >
-                  <Sparkles size={14} />
-                  <span>+ Aksi Cepat</span>
-                </Button>
-                <span
-                  className="preview-companion-chip"
-                  style={{ background: 'var(--brand-soft)', borderColor: 'var(--brand-soft-border)', color: 'var(--ink-heading)' }}
-                >
-                  Contoh status tugas
-                </span>
-                <span className="preview-status-pill">
-                  Selesai Tepat Waktu
-                </span>
-              </div>
-
-              {/* Preview Task Card */}
-              <div className="preview-task-card" style={{ background: 'var(--surface)', borderColor: 'var(--line)' }}>
-                <div className="preview-task-header">
-                  <div className="preview-checkbox" style={{ borderColor: 'var(--brand)', background: 'var(--brand)' }}>
-                    <Check size={12} color="var(--brand-text)" />
-                  </div>
-                  <div className="preview-task-text">
-                    <strong>Contoh tugas pemeriksaan gerai</strong>
-                    <small>Pratinjau tampilan kartu tugas</small>
-                  </div>
-                  <span className="preview-tag-high">Prioritas Tinggi</span>
-                </div>
-                <div className="preview-progress-track">
-                  <div className="preview-progress-fill" style={{ width: '75%', background: 'var(--brand)' }} />
-                </div>
-              </div>
-            </div>
-          </details>
 
           {/* Display & Motion Controls */}
           <section className="card appearance-settings">
@@ -285,7 +238,7 @@ export function Settings({ refresh, preferenceScope = '' }: { refresh: () => Pro
 
       {/* ── TAB 2: PROFIL KOPERASI ──────────────────────────────── */}
       {activeTab === 'profil' && (
-        <div className="settings-content-grid">
+        <div className="settings-content-grid settings-panel-single">
           <section className="card">
             <span className="eyebrow">IDENTITAS OPERASIONAL</span>
             <h2>Profil Manajer & Koperasi</h2>
@@ -296,9 +249,9 @@ export function Settings({ refresh, preferenceScope = '' }: { refresh: () => Pro
                 <span>KD</span>
               </div>
               <div className="profile-details">
-                <h3>Koperasi Desa Merdeka Puntukrejo (KDMP)</h3>
-                <p>Badan Hukum Koperasi Konsumen Desa Puntukrejo</p>
-                <small>Kecamatan Ngargoyoso, Kabupaten Karanganyar, Jawa Tengah</small>
+                <h3>{String(organization?.data.title || 'Profil koperasi belum diisi')}</h3>
+                <p>{organization?.data.manager ? `Manajer: ${String(organization.data.manager)}` : 'Lengkapi identitas melalui formulir profil koperasi.'}</p>
+                <small>{['village', 'district', 'regency', 'province'].map((field) => organization?.data[field]).filter(Boolean).join(', ')}</small>
               </div>
             </div>
 
@@ -316,7 +269,7 @@ export function Settings({ refresh, preferenceScope = '' }: { refresh: () => Pro
 
       {/* ── TAB 3: KEAMANAN PIN ─────────────────────────────────── */}
       {activeTab === 'keamanan' && (
-        <div className="settings-content-grid">
+        <div className="settings-content-grid settings-panel-single">
           <section className="card security-settings-card">
             <div className="section-head-with-icon">
               <KeyRound size={20} className="text-brand" />
@@ -381,7 +334,7 @@ export function Settings({ refresh, preferenceScope = '' }: { refresh: () => Pro
 
       {/* ── TAB 4: CADANGAN & PEMULIHAN ─────────────────────────── */}
       {activeTab === 'cadangan' && (
-        <div className="settings-content-grid">
+        <div className="settings-content-grid settings-panel-single">
           <section className="card backup-settings-card">
             <h2>Cadangan Data Mandiri</h2>
             <p>

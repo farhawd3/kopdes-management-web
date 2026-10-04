@@ -13,5 +13,14 @@ const instructions: Partial<Record<Entity, { title: string; text: string; href?:
 export function EntryGuide({ entity }: { entity: Entity }) {
   const guide = instructions[entity];
   if (!guide) return null;
-  return <aside className="entry-guide"><strong>{guide.title}</strong><p>{guide.text}</p>{guide.href && <Link href={guide.href}>{guide.link}</Link>}</aside>;
+  return (
+    <details className="entry-guide">
+      <summary>Cara mengisi</summary>
+      <div className="entry-guide-content">
+        <strong>{guide.title}</strong>
+        <p>{guide.text}</p>
+        {guide.href && <Link href={guide.href}>{guide.link}</Link>}
+      </div>
+    </details>
+  );
 }

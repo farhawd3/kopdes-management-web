@@ -88,7 +88,7 @@
 .meeting-action-row { display: flex; flex-wrap: wrap; align-items: stretch; gap: var(--space-2); }
 .meeting-action-row > :is(a, .ui-btn) { min-height: var(--touch-target); display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); white-space: normal; }
 .settings-content-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: start; gap: var(--space-5); }
-.settings-content-grid > .color-style-card { grid-row: span 2; }
+.settings-content-grid > .color-style-card { grid-row: auto; }
 .settings-content-grid > .theme-live-preview-card { grid-column: 2; grid-row: 2; }
 .color-swatches-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-2); }
 .color-swatches-grid .ui-btn.color-swatch-item { min-width: 0; height: auto; display: flex; flex-direction: column; align-items: stretch; gap: var(--space-2); padding: var(--space-3); white-space: normal; }
@@ -171,7 +171,7 @@ dialog[open] .ui-btn.ui-btn.ui-btn, .date-picker.date-picker.date-picker button 
 .record.card > .section-head .badge { flex-shrink: 0; }
 .record.card .record-text { overflow-wrap: anywhere; }
 .record.card > .actions { flex-wrap: wrap; gap: var(--space-2); margin-top: auto; }
-.record.card > .actions > .record-options { flex: 1; border-top: 0; padding-top: 0; margin-top: 0; }
+.record.card > .actions > .record-options { flex: 0 1 auto; border-top: 0; padding-top: 0; margin-top: 0; }
 .record.card > .actions > .record-options[open] { flex-basis: 100%; }
 .record.card > .actions > .record-options > summary { min-height: var(--touch-target); display: flex; align-items: center; justify-content: flex-end; }
 .record.card > .record-text { margin-block: 0; }
@@ -338,7 +338,11 @@ dialog:has(.sprint-modal-card) {
 .ui-stat-alert strong, .ui-stat-alert .stat-label { color: var(--tone-danger-text); }
 
 /* Project hierarchy and entry workflow */
-.entry-guide { padding: 16px; margin: 16px 0; border: 1px solid var(--line); border-left: 3px solid var(--brand); border-radius: var(--r-md); background: var(--surface); }
+.entry-guide { margin: 0 0 12px; border-bottom: 1px solid var(--line); }
+.entry-guide > summary { display: flex; align-items: center; min-height: 44px; cursor: pointer; color: var(--ink); font-size: var(--fs-caption); font-weight: 600; }
+.entry-guide > summary::after { content: "+"; margin-left: auto; }
+.entry-guide[open] > summary::after { content: "-"; }
+.entry-guide-content { padding: 0 0 16px; }
 .entry-guide strong { color: var(--ink-heading); }
 .entry-guide p { margin: 8px 0 0; color: var(--ink-muted); line-height: 1.6; }
 .entry-related-fields { min-width: 0; padding: 12px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--canvas); }
@@ -374,3 +378,51 @@ dialog:has(.sprint-modal-card) {
 
 .task-detail-drawer .drawer-prop-control.date-prop-editable { padding: 0; border: 0; background: transparent; min-height: 44px; align-items: center; }
 .drawer-prop-control.date-prop-editable .ui-date-control { width: 100%; }
+
+/* Annotation review: readable notes, grouped actions and generous data rows. */
+textarea.ui-input.ui-input { height: auto; min-height: 104px; padding: 14px 16px; line-height: 1.7; resize: vertical; }
+.settings-content-grid.settings-panel-single { grid-template-columns: minmax(0, 1fr); }
+.settings-panel-single > .card { width: 100%; }
+.manager-main .recent-notes { padding: 20px; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); box-shadow: var(--shadow-sm); }
+.manager-main .recent-note.ui-btn { width: 100%; display: grid; grid-template-columns: 36px minmax(0, 1fr) 16px; gap: 12px; padding: 12px; text-align: left; min-height: 72px; background: var(--canvas); }
+.recent-note .recent-icon { width: 36px; height: 36px; display: grid; place-items: center; border-radius: var(--r-md); background: var(--brand-soft); }
+.recent-note .recent-text { min-width: 0; display: grid; gap: 6px; }
+.recent-note .recent-text strong { white-space: normal; overflow-wrap: anywhere; }
+.recent-note .recent-text small, .recent-note .recent-tag { color: var(--ink-muted); }
+.ui-task-row.ui-task-row { padding: 16px; gap: 14px; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); box-shadow: var(--shadow-sm); align-items: center; }
+.ui-task-row .task-title-row { gap: 8px; }
+.ui-task-row .task-title-text { line-height: 1.6; font-weight: 600; }
+.ui-task-row .task-actions-right { display: flex; flex-wrap: wrap; gap: 8px; }
+.ledger-table.ledger-table :is(th, td), .journal-table.journal-table :is(th, td) { padding: 16px; vertical-align: middle; }
+.ledger-table tbody tr, .journal-table tbody tr { border-bottom: 1px solid var(--line); }
+.ledger-table tbody tr:hover, .journal-table tbody tr:hover { background: var(--canvas); }
+.ledger-table .col-relation { min-width: 180px; }
+.ledger-table .col-relation > * { margin: 4px; }
+.ledger-table .col-relation .ui-btn { display: inline-flex; align-items: center; gap: 6px; white-space: normal; }
+.journal-table td > .actions { gap: 10px; flex-wrap: wrap; }
+.unit-record.unit-record, .meeting-record.meeting-record { box-shadow: var(--shadow-sm); padding: 20px; gap: 16px; }
+.unit-record > .section-head, .meeting-record > .section-head { padding: 12px; border-radius: var(--r-md); background: var(--brand-soft); }
+.record.card > .actions { padding-top: 16px; border-top: 1px solid var(--line); }
+.record.card > .actions > .record-options > summary { justify-content: center; background: var(--canvas); }
+.record-options[open] > .actions { margin-top: 8px; }
+.meeting-action-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); padding-top: 12px; }
+.meeting-action-row > :is(a, .ui-btn) { width: 100%; margin: 0; }
+@media (min-width: 768px) { .manager-sidebar .close-navigation.ui-btn { display: none; } }
+@media (max-width: 767px) {
+  .ui-task-row.ui-task-row { align-items: start; padding: 12px; }
+  .meeting-action-row { grid-template-columns: minmax(0, 1fr); }
+  .record.card > .actions > .record-options { margin-left: 0; }
+  .unit-record.unit-record, .meeting-record.meeting-record { padding: 16px; }
+}
+
+.ledger-table .table-relations-pill-group { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.ledger-table .relation-pill { display: inline-flex; flex-direction: row; align-items: center; gap: 6px; padding: 6px 10px; border-radius: var(--r-md); white-space: normal; }
+.record.card > a:not(.button), .record.card .record-link { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+
+.settings-container .eyebrow { color: var(--ink-muted); }
+
+
+.journal-table .journal-date-badge.is-today { color: var(--ink); }
+.journal-table .journal-relation-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.journal-table .journal-title-interactive { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; min-height: 44px; text-align: left; }
+.journal-table .journal-notes-preview { margin: 10px 0 0; line-height: 1.6; }

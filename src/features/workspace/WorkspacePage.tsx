@@ -134,7 +134,7 @@ export function WorkspacePage({ slug }: { slug: string }) {
       )}
       {slug === 'roadmap' && <Roadmap data={data} refresh={refresh} />}
       {slug === 'laporan' && <Reports />}
-      {slug === 'pengaturan' && <Settings refresh={refresh} />}
+      {slug === 'pengaturan' && <Settings refresh={refresh} organization={data.organization?.[0]} />}
       {slug === 'hari-ini' && <TodayView workspace={data} refresh={refresh} />}
       {pages[slug] && (
         <>
