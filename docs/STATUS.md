@@ -1,5 +1,7 @@
 # Status produk — 4 Oktober 2026
 
+Animasi grafik dimulai ketika elemen terlihat; angka statistik mengikuti count-up 400 ms dengan nilai asli untuk pembaca layar. Reduced-motion dipusatkan di tokens.css; sembilan blok legacy dihapus. 187 tes/29 berkas dan pemeriksaan statis/build lulus. Pintasan N diverifikasi membuka formulir tanpa menyimpan.
+
 Interaksi Hari Ini: geser kanan menyelesaikan, geser kiri membuka penyunting; perubahan status/tanggal menyediakan Batalkan selama 5 detik. Pintasan N/T/? tersedia dan menghindari form/modal. Panel dashboard mengingat buka/tutup. 185 tes/28 berkas, typecheck, lint dan build lulus; perangkat sentuh fisik belum diuji.
 
 Pelaksanaan PLAN-ASTRA: audit dan fondasi token tersedia; kontrol mentah luar UI sudah 289 → 0. Tanggal tunggal, DateNav, dock serta permukaan dialog bersama diterapkan. Paket kontrol lulus 175 tes, typecheck, lint, lint:ui, check:ui, build dan audit sumber 83/83. Galeri 360 terang/gelap serta Beranda 360/768 terang diperiksa. Hasil dan kriteria yang masih terbuka ada di [LAPORAN-ASTRA](LAPORAN-ASTRA.md); migrasi visual keseluruhan belum selesai.

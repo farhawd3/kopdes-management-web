@@ -1,5 +1,10 @@
 # Changelog
 
+## PLAN-ASTRA — animasi saat terlihat — 4 Oktober 2026
+
+- Observer grafik, count-up statistik, animasi kartu/tombol dan reduced-motion terpusat. Hapus duplikat permukaan dialog di CSS baru.
+- Perbaiki N menggunakan event pembuat tugas yang sudah tersedia.
+
 ## PLAN-ASTRA — interaksi tugas — 4 Oktober 2026
 
 - Pintasan keyboard, preferensi panel, swipe tugas dan Batalkan setelah penyimpanan status/tanggal.

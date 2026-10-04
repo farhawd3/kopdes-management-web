@@ -1,5 +1,7 @@
 # Checklist produk aktif
 
+- [x] PLAN-ASTRA 6: observer grafik, count-up, animasi kartu/tombol dan reduced-motion terpusat; pemeriksaan perangkat/performa lengkap masih terbuka.
+
 - [x] PLAN-ASTRA 5B: pintasan N/T/?, panel tersimpan, swipe Hari Ini dan undo status/tanggal; tes regresi otomatis tersedia.
 
 Implementasi dan penerimaan dipisahkan. Bukti terakhir ada di [STATUS](STATUS.md), riwayat paket di [CHANGELOG](../CHANGELOG.md).

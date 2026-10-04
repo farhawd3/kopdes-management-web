@@ -172,9 +172,9 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
       }
       const target = event.target instanceof Element ? event.target : null;
       if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey ||
-        target?.closest('input, textarea, select, [contenteditable="true"], [role="listbox"]') ||
+        target?.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="listbox"]') ||
         document.querySelector('dialog[open], [role="dialog"][aria-modal="true"]')) return;
-      if (event.key.toLowerCase() === 'n') { event.preventDefault(); router.push('/tugas?baru=1'); }
+      if (event.key.toLowerCase() === 'n') { event.preventDefault(); window.dispatchEvent(new CustomEvent('hub-task', { detail: {} })); }
       if (event.key.toLowerCase() === 't') { event.preventDefault(); router.push('/hari-ini'); }
       if (event.key === '?') { event.preventDefault(); setShortcutHelp(true); }
     };

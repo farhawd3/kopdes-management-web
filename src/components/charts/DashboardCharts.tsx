@@ -1,5 +1,6 @@
 'use client';
 import { Button } from '@/components/ui/Button';
+import { useMotionEntry } from '@/components/ui/useMotionEntry';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
@@ -25,16 +26,12 @@ export function WeekBarChart({
   const total = data.reduce((sum, day) => sum + day.value, 0);
   const avgPerDay = (total / 7).toFixed(1);
   const peakDay = [...data].sort((a, b) => b.value - a.value)[0];
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    const t = setTimeout(() => setMounted(true), 60);
-    return () => clearTimeout(t);
-  }, []);
+  const { ref: motionRef, entered: mounted } = useMotionEntry<HTMLElement>();
 
   const activeDay = data.find((d) => d.date === selectedDate);
 
   return (
-    <div className="dash-chart-wrap week-barchart-modern">
+    <div ref={motionRef} className="dash-chart-wrap week-barchart-modern">
       <div className="week-barchart-header">
         <div className="week-barchart-metric">
           <div className="week-metric-main">
@@ -99,7 +96,7 @@ export function WeekBarChart({
                 <div
                   className="dash-bar-fill"
                   style={{
-                    height: mounted ? `${Math.max(pct, d.value > 0 ? 14 : 4)}%` : '4%',
+                    height: mounted ? `${Math.max(pct, 0)}%` : '0%',
                     transitionDelay: `${i * 35}ms`,
                   }}
                 />
@@ -145,11 +142,7 @@ export function TaskDonutChart({
   selected?: string;
   onSelect?: (status: string) => void;
 }) {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    const t = setTimeout(() => setMounted(true), 80);
-    return () => clearTimeout(t);
-  }, []);
+  const { ref: motionRef, entered: mounted } = useMotionEntry<HTMLElement>();
 
   const R = 44;
   const C = 2 * Math.PI * R;
@@ -166,7 +159,7 @@ export function TaskDonutChart({
   });
 
   return (
-    <div className="dash-donut-wrap">
+    <div ref={motionRef} className="dash-donut-wrap">
       <div className="dash-donut-svg-wrap">
         <svg viewBox="0 0 120 120" className="dash-donut-svg" aria-hidden="true">
           <circle cx="60" cy="60" r={R} fill="none" stroke="var(--line)" strokeWidth="14" />
@@ -238,22 +231,32 @@ export function AnimatedCounter({
   prefix?: string;
   suffix?: string;
 }) {
+  const { ref, entered } = useMotionEntry<HTMLSpanElement>();
+  const [display, setDisplay] = useState(0);
+  useEffect(() => {
+    if (!entered) return;
+    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    let frame = 0;
+    let start: number | undefined;
+    const advance = (time: number) => {
+      start ??= time;
+      const fraction = reduced ? 1 : Math.min((time - start) / 400, 1);
+      setDisplay(Math.round(value * (1 - (1 - fraction) ** 3)));
+      if (fraction < 1) frame = requestAnimationFrame(advance);
+    };
+    frame = requestAnimationFrame(advance);
+    return () => cancelAnimationFrame(frame);
+  }, [entered, value]);
   return (
-    <>
-      {prefix}
-      {value.toLocaleString('id-ID')}
-      {suffix}
-    </>
+    <span ref={ref} aria-label={`${prefix}${value.toLocaleString('id-ID')}${suffix}`}>
+      <span aria-hidden="true">{prefix}{display.toLocaleString('id-ID')}{suffix}</span>
+    </span>
   );
 }
 
 /* ─── SparkLine ───────────────────────────────────────────── */
 export function SparkLine({ data, color = 'var(--brand)' }: { data: number[]; color?: string }) {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    const t = setTimeout(() => setMounted(true), 120);
-    return () => clearTimeout(t);
-  }, []);
+  const { ref: motionRef, entered: mounted } = useMotionEntry<SVGSVGElement>();
   if (data.length < 2) return null;
   const W = 120,
     H = 36;
@@ -267,7 +270,7 @@ export function SparkLine({ data, color = 'var(--brand)' }: { data: number[]; co
   const flatline = pts.map((p) => `${p.x},${H}`).join(' ');
 
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="dash-sparkline" aria-hidden="true">
+    <svg ref={motionRef} viewBox={`0 0 ${W} ${H}`} className="dash-sparkline" aria-hidden="true">
       <polyline
         points={mounted ? polyline : flatline}
         fill="none"
@@ -275,17 +278,19 @@ export function SparkLine({ data, color = 'var(--brand)' }: { data: number[]; co
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        style={{ transition: 'points 0.65s cubic-bezier(0.34,1.56,0.64,1)' }}
+        pathLength="1"
+        strokeDasharray="1"
+        strokeDashoffset={mounted ? 0 : 1}
       />
       {pts.map((p, i) =>
         p.v > 0 ? (
           <circle
             key={i}
             cx={p.x}
-            cy={mounted ? p.y : H}
+            cy={p.y}
             r="2.5"
             fill={color}
-            style={{ transition: `cy 0.65s cubic-bezier(0.34,1.56,0.64,1) ${i * 40}ms` }}
+            style={{ opacity: mounted ? 1 : 0, transitionDelay: `${i * 40}ms` }}
           />
         ) : null,
       )}
@@ -305,11 +310,7 @@ export function RadialProgressRing({
   strokeWidth?: number;
   color?: string;
 }) {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    const t = setTimeout(() => setMounted(true), 80);
-    return () => clearTimeout(t);
-  }, []);
+  const { ref: motionRef, entered: mounted } = useMotionEntry<HTMLElement>();
 
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -317,7 +318,7 @@ export function RadialProgressRing({
   const offset = circumference - ((mounted ? safePct : 0) / 100) * circumference;
 
   return (
-    <div className="stat-radial-wrap" style={{ width: size, height: size }}>
+    <div ref={motionRef} className="stat-radial-wrap" style={{ width: size, height: size }}>
       <svg width={size} height={size} className="stat-radial-svg" aria-hidden="true">
         <circle
           cx={size / 2}
@@ -339,7 +340,7 @@ export function RadialProgressRing({
           strokeLinecap="round"
           transform={`rotate(-90 ${size / 2} ${size / 2})`}
           className="stat-radial-circle"
-          style={{ transition: 'stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1)' }}
+          
         />
       </svg>
       <span className="stat-radial-val">{percentage}%</span>
@@ -431,14 +432,10 @@ export function ProjectProgressBar({
   href: string;
   index?: number;
 }) {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    const t = setTimeout(() => setMounted(true), 120 + index * 90);
-    return () => clearTimeout(t);
-  }, [index]);
+  const { ref: motionRef, entered: mounted } = useMotionEntry<HTMLElement>();
 
   return (
-    <Link className="dash-proj-bar-row" href={href}>
+    <Link ref={motionRef} className="dash-proj-bar-row" href={href}>
       <div className="dash-proj-bar-meta">
         <span className="dash-proj-bar-label">{label}</span>
         <span className="dash-proj-bar-pct">{pct}%</span>

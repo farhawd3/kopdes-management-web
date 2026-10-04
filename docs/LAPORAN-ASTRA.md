@@ -65,3 +65,12 @@ Migrasi visual penuh, interaktivitas, animasi dan QA menyeluruh masih berjalan. 
 - Verifikasi: 185 tes/28 berkas, typecheck, lint, lint:ui, check:ui dan build lulus. Tes baru memeriksa undo, galat API, swipe/scroll dan klik detail.
 - [x] Pintasan, preferensi panel, swipe dan undo.
 - [ ] Pratinjau gestur swipe serta QA sentuh fisik.
+
+## Fase 6 — animasi saat terlihat
+
+- Grafik memakai IntersectionObserver sekali saat terlihat dengan cleanup/fallback; counter berjalan 400 ms dan menyediakan nilai sebenarnya pada accessible name. Sparkline memakai stroke reveal, titik opacity. Kartu/tombol memakai transform/opacity bertoken; progress/SVG mengisi 400 ms.
+- Reduced-motion terpusat satu blok tokens.css; sembilan blok lama dihapus. Tiga important hanya untuk menghentikan animasi legacy. Duplikat identik permukaan dialog baru dihapus.
+- Metrik saat ini: important 2.268, duplikat selector 517, CSS 611.635 byte, elemen mentah luar UI 0.
+- Verifikasi: 187 tes/29 berkas, typecheck, lint, lint:ui, check:ui, build dan audit sumber 88/88 lulus. Beranda gelap 360 diperiksa visual; N membuka formulir dan ditutup tanpa menyimpan.
+- [x] Observer, count-up, motion bertoken dan reduced-motion terpusat.
+- [ ] Animasi semua modul, pengukuran 60fps dan perangkat reduced-motion fisik.

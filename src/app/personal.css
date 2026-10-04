@@ -925,13 +925,6 @@ button:not(.ui-btn),
     display: none;
   }
 }
-@media (prefers-reduced-motion: reduce) {
-  button:not(.ui-btn),
-  .button,
-  .primary {
-    transition: none;
-  }
-}
 @media print {
   .workspace-banner,
   .timeline-toolbar,
@@ -1877,16 +1870,6 @@ select:not([multiple]):hover {
   }
   .calendar-controls {
     gap: 4px;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .project-card,
-  .recording-card {
-    transition: none;
-  }
-  .project-card:hover,
-  .recording-card:hover {
-    transform: none;
   }
 }
 @media (max-width: 1023px) {
@@ -6745,15 +6728,6 @@ select option {
 }
 .focus-filters::-webkit-scrollbar {
   display: none;
-}
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *:before,
-  *:after {
-    scroll-behavior: auto;
-    animation: none;
-    transition: none;
-  }
 }
 @media (max-width: 767px) {
   .manager-sidebar {
@@ -13053,15 +13027,6 @@ button:not(.ui-btn).task-round-check::after,
 .manager-home > *:nth-child(2) { animation-delay: 55ms; }
 .manager-home > *:nth-child(3) { animation-delay: 110ms; }
 .manager-home > *:nth-child(4) { animation-delay: 165ms; }
-
-@media (prefers-reduced-motion: reduce) {
-  .manager-home > *,
-  .dash-bar-fill,
-  .dash-proj-bar-fill {
-    animation: none !important;
-    transition: none !important;
-  }
-}
 .today-task-card button:not(.ui-btn).task-title-text { padding:0; border:0; background:transparent; text-align:left; min-height:44px; font-weight:600; }
 /* Shared card rhythm and linked dashboard charts. */
 :is(.home-panel, .project-card, .record.card, .metric-card, .dash-stat-card, .book-card) {
@@ -13456,7 +13421,6 @@ button:not(.ui-btn).donut-legend-row[aria-pressed='true'] {
 :is(.dash-bar-col, .donut-legend-row):focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
 @media (hover: hover) { :is(.project-card, .dash-stat-link, .home-record-links > a) { transition: transform 0.2s ease, box-shadow 0.2s ease; } :is(.project-card, .dash-stat-link, .home-record-links > a):hover { transform: translateY(-2px); } }
 @media (max-width: 600px) { .dashboard-controls { padding: 14px; } .dashboard-controls label { width: 100%; } .dashboard-controls select { flex: 1; min-width: 0; } .dash-donut-wrap { gap: 12px; } .home-panel { padding: 20px 16px; } }
-@media (prefers-reduced-motion: reduce) { .manager-home *, .project-card { animation: none !important; transition: none !important; } }
 .dash-stat-top { flex-wrap: wrap; gap: 10px; }
 .dash-stat-label { flex: 1 1 110px; overflow-wrap: normal; }
 .dash-stat-sub { white-space: normal; text-overflow: clip; overflow: visible; }
@@ -15177,7 +15141,6 @@ button:not(.ui-btn).donut-legend-row[aria-pressed='true'] {
   .editor-form-actions { position:sticky; bottom:0; background:var(--surface); padding-bottom:max(16px,env(safe-area-inset-bottom)); z-index:3; }
 }
 :root[data-motion=minimal] :is(.manager-shell,.editor) *,:root[data-motion=minimal] :is(.manager-shell,.editor) *::before { animation:none!important; transition:none!important; scroll-behavior:auto!important; }
-@media (prefers-reduced-motion:reduce) { .manager-shell *, .editor * { animation:none!important; transition:none!important; scroll-behavior:auto!important; } }
 .manager-actions .quick-action-hub-btn { width:36px; min-width:36px; height:36px; display:grid; place-items:center; padding:0; background:var(--brand); color:var(--brand-text,#1a1a1a); border:0; border-radius:10px; box-shadow:none; }
 .manager-actions .quick-action-hub-btn:hover { filter:brightness(0.92); box-shadow:none; }
 .manager-actions .quick-action-hub-btn svg { color:inherit; }
@@ -16925,38 +16888,6 @@ dialog.editor textarea:not(.ui-input):focus,
 }
 .task-project-pill:hover {
   background: var(--brand-soft);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .today-view-wrapper,
-  .today-header-card,
-  .today-quick-add-card,
-  .today-grid-layout,
-  .daily-tasks-container,
-  .daily-group-card,
-  .follow-up-wrapper,
-  .follow-up-panel,
-  .follow-up-card,
-  .module-intro,
-  .task-timeline,
-  .timeline-card,
-  .timeline-container,
-  .recording-tabs,
-  .notebook-toolbar,
-  .ledger-head,
-  .notebook-layout,
-  .notebook-index .notebook-row,
-  .recent-notes,
-  .ledger-metrics .metric-card,
-  .ledger-wrap,
-  .settings-container,
-  .settings-tabs-row,
-  .settings-panel-wrap,
-  .settings-card {
-    animation: none !important;
-    transform: none !important;
-    transition: none !important;
-  }
 }
 
 /* ==========================================================================
@@ -20573,36 +20504,6 @@ button:not(.ui-btn).dash-bar-col.is-selected-bar {
   }
   .workspace-scope-control button:not(.ui-btn) {
     flex: 1;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .workspace-page
-    > :is(
-      .card,
-      .home-panel,
-      .follow-up-wrapper,
-      .follow-up-panel,
-      .domain-records,
-      .task-database,
-      .project-card,
-      .today-view-wrapper,
-      .daily-tasks-container,
-      .module-intro,
-      .task-timeline,
-      .recording-tabs,
-      .notebook-toolbar,
-      .notebook-layout,
-      .ledger-head,
-      .ledger-metrics,
-      .ledger-wrap,
-      .activation-notice,
-      .settings-container,
-      .page-heading
-    ) {
-    animation: none;
-  }
-  .sidebar-nav-item {
-    transition: none;
   }
 }
 :root[data-motion='minimal']
