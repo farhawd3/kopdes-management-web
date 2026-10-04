@@ -1,5 +1,7 @@
 # Checklist produk aktif
 
+- [x] Font/radius legacy memakai token; filter rentang dan tanggal Gantt terbaca pada 320/768 px.
+
 - [x] Pembersihan awal deklarasi CSS identik dan statistik legacy; ukuran total sudah turun dibanding audit awal.
 
 - [x] PLAN-ASTRA 6: observer grafik, count-up, animasi kartu/tombol dan reduced-motion terpusat; pemeriksaan perangkat/performa lengkap masih terbuka.

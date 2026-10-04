@@ -82,3 +82,11 @@ Migrasi visual penuh, interaktivitas, animasi dan QA menyeluruh masih berjalan. 
 - Verifikasi: 187 tes/29 berkas, typecheck, lint, lint:ui, check:ui, build dan audit sumber 88/88 lulus. Beranda gelap 360 diperiksa tanpa luapan.
 - [x] Pembersihan deklarasi identik dan statistik yang sudah termigrasi.
 - [ ] personal.css dihapus, important <20, nol duplikat dan normalisasi seluruh geometri legacy.
+
+## Fase 7B — token geometri legacy
+
+- 852 deklarasi font dan 796 radius numerik/alias dipetakan ke token bersama; sudut nol dan susunan sudut khusus dipertahankan. Font deklarasi menjadi enam token; radius mencakup empat token dan susunan sudut khusus.
+- QA menemukan overflow filter rentang dan tanggal Gantt sempit. Filter sekarang grid, tanggal tersusun penuh di bawah 390 px, label tidak uppercase, selected button memakai warna semantik. Tugas 320/768 tidak meluap.
+- Verifikasi: 187 tes/29 berkas, typecheck, lint, lint:ui dan build lulus. CSS tetap lebih kecil dibanding awal; important dan duplikat belum mencapai target.
+- [x] Normalisasi font/radius dan perbaikan Gantt sempit.
+- [ ] Seluruh state/tema/halaman dan penghapusan personal.css.

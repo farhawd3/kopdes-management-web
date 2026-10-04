@@ -1,5 +1,10 @@
 # Changelog
 
+## PLAN-ASTRA — geometri legacy dan Gantt sempit — 4 Oktober 2026
+
+- Normalisasi font/radius numerik dan alias ke token bersama. Perbaiki filter rentang tugas, status aktif, dan susunan tanggal Gantt pada layar sempit.
+- 187 tes, typecheck/lint dan build lulus; tugas 320/768 diperiksa tanpa scrollbar horizontal halaman.
+
 ## PLAN-ASTRA — pembersihan CSS awal — 4 Oktober 2026
 
 - Hapus deklarasi identik dan selector statistik lama; pertahankan konteks media dan aturan gabungan.

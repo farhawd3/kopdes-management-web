@@ -15,21 +15,21 @@ Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at
 | hexTsx | 24 |
 | hexCss | 858 |
 | important | 2058 |
-| bytes | 576130 |
+| bytes | 589385 |
 | Elemen mentah di luar components/ui | 0 |
 | Selector berulang | 457 |
-| Nilai border-radius unik | 59 |
-| Nilai font-size unik | 60 |
+| Nilai border-radius unik | 11 |
+| Nilai font-size unik | 6 |
 | Nilai height unik | 61 |
 
 ## CSS
 
 | Berkas | Byte | !important |
 |---|---:|---:|
-| src/app/globals.css | 27354 | 2 |
-| src/app/personal.css | 533468 | 2053 |
+| src/app/globals.css | 27982 | 2 |
+| src/app/personal.css | 544384 | 2053 |
 | src/app/tokens.css | 3056 | 3 |
-| src/app/ui.css | 12252 | 0 |
+| src/app/ui.css | 13963 | 0 |
 
 ## Inventaris halaman dan overlay
 
@@ -533,127 +533,25 @@ Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at
 ### border-radius
 
 - `0`
-- `0 4px 4px 0`
-- `0 8px 8px 0`
-- `10px`
-- `11px`
-- `12px`
-- `13px`
-- `14px`
-- `15px`
-- `16px`
-- `18px`
-- `1px`
-- `20px`
-- `20px 20px 0 0`
-- `22px`
-- `24px`
-- `24px 24px 0 0`
-- `28px`
-- `28px 28px 0 0`
-- `2px`
-- `30px`
-- `3px`
-- `4px`
-- `50%`
-- `50% 50% 20px 20px`
-- `5px`
-- `6px`
-- `7px`
-- `8px`
-- `8px 8px 0 0`
-- `8px 8px 3px 3px`
-- `9999px`
-- `999px`
-- `99px`
-- `9px`
-- `var(--btn-radius-md)`
-- `var(--btn-radius-sm)`
-- `var(--control-radius-md)`
-- `var(--control-radius-md, 10px)`
-- `var(--control-radius-sm)`
+- `0 var(--r-md) var(--r-md) 0`
+- `0 var(--r-sm) var(--r-sm) 0`
 - `var(--r-full)`
+- `var(--r-full) var(--r-full) var(--r-lg) var(--r-lg)`
 - `var(--r-lg)`
+- `var(--r-lg) var(--r-lg) 0 0`
 - `var(--r-md)`
+- `var(--r-md) var(--r-md) 0 0`
+- `var(--r-md) var(--r-md) var(--r-sm) var(--r-sm)`
 - `var(--r-sm)`
-- `var(--radius-lg)`
-- `var(--radius-lg, 14px)`
-- `var(--radius-md)`
-- `var(--radius-md, 14px)`
-- `var(--radius-md, 18px)`
-- `var(--radius-md, 8px)`
-- `var(--radius-pill)`
-- `var(--radius-pill, 20px)`
-- `var(--radius-pill, 9999px)`
-- `var(--radius-sm)`
-- `var(--radius-sm, 6px)`
-- `var(--radius-xl)`
-- `var(--radius-xs)`
-- `var(--radius-xs, 6px)`
-- `var(--table-radius)`
 
 ### font-size
 
-- `0.68rem`
-- `0.73rem`
-- `0.76rem`
-- `0.78rem`
-- `0.82rem`
-- `0.84rem`
-- `0.88rem`
-- `0.8rem`
-- `0.95rem`
-- `10.5px`
-- `10px`
-- `11.5px`
-- `11px`
-- `12.5px`
-- `12px`
-- `13.5px`
-- `13px`
-- `14.5px`
-- `14px`
-- `15.5px`
-- `15px`
-- `16px`
-- `17px`
-- `18px`
-- `19px`
-- `20px`
-- `22px`
-- `23px`
-- `24px`
-- `26px`
-- `28px`
-- `32px`
-- `34px`
-- `7.5px`
-- `8.5px`
-- `8px`
-- `9.5px`
-- `9px`
-- `clamp(15px, 1.8vw, 18px)`
-- `clamp(16px, 2vw, 20px)`
-- `clamp(20px, 2vw, 28px)`
-- `var(--btn-font-size-md)`
-- `var(--btn-font-size-sm)`
-- `var(--card-title-size)`
-- `var(--control-font-size-sm)`
-- `var(--control-text-size)`
-- `var(--control-text-size, 14px)`
-- `var(--font-size-base)`
-- `var(--font-size-sm)`
-- `var(--font-size-xs)`
 - `var(--fs-body)`
 - `var(--fs-caption)`
 - `var(--fs-h2)`
 - `var(--fs-label)`
 - `var(--fs-overline)`
 - `var(--fs-title)`
-- `var(--page-title-size)`
-- `var(--section-title-size)`
-- `var(--table-td-font-size)`
-- `var(--table-th-font-size)`
 
 ### height
 
