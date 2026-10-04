@@ -8,6 +8,7 @@ Implementasi dan penerimaan dipisahkan. Bukti terakhir ada di [STATUS](STATUS.md
 - [x] Fondasi token semantik dan stylelint CSS baru tanpa hex/important; migrasi legacy belum selesai.
 - [x] Primitive tombol/input, nol kontrol mentah luar UI; tanggal tunggal, DateNav, BottomNav, dialog bersama dan galeri development. Batas QA tercatat di LAPORAN-ASTRA.
 - [x] Kartu statistik dashboard netral, baris terlambat dan tata letak adaptif; pemeriksaan Beranda empat lebar terang dan gelap 1440.
+- [x] Drag Pointer Events pada handle papan tugas/kegiatan dan alternatif dropdown; 181 tes lulus serta drag mouse fixture browser berhasil.
 
 - [x] Contoh konfigurasi/panduan lokal memakai host yang sama dengan server; penolakan origin lokal diperbaiki dan diprobe tanpa mutasi database.
 

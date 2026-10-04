@@ -232,11 +232,11 @@ describe('Fitur Redesain Behance', () => {
       />,
     );
 
-    expect(screen.getByText('Rencana')).toBeTruthy();
-    expect(screen.getByText('Dibatalkan')).toBeTruthy();
-    expect(screen.getByText('Dikerjakan')).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'Rencana' })).toBeTruthy();
+    expect(screen.getAllByText('Dibatalkan')[0]).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'Dikerjakan' })).toBeTruthy();
 
-    expect(screen.getByText('Selesai')).toBeTruthy();
+    expect(screen.getAllByText('Selesai')[0]).toBeTruthy();
     expect(screen.getByText('KD-44010')).toBeTruthy();
     expect(screen.getByText('Penataan Rak Etalase Gerai')).toBeTruthy();
     expect(screen.getByText('Mulai Kerja →')).toBeTruthy();
@@ -486,6 +486,7 @@ describe('Fitur Redesain Behance', () => {
     expect(screen.getByRole('button', { name: 'Selesai' })).toBeTruthy();
   });
 });
+
 
 
 

@@ -1,4 +1,9 @@
 'use client';
+import { useDragSort } from '@/components/ui/useDragSort';
+import { DragOverlay } from '@/components/ui/DragOverlay';
+import { IconButton } from '@/components/ui/Button';
+import { GripVertical } from 'lucide-react';
+import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { useState } from 'react';
 import Link from 'next/link';
@@ -66,8 +71,6 @@ export function ScrumBoardView({
   onCreateTask: (status: string) => void;
   onRefresh: () => Promise<void>;
 }) {
-  const [draggedTaskId, setDraggedTaskId] = useState<string | null>(null);
-  const [dragOverCol, setDragOverCol] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [busyId, setBusyId] = useState<string | null>(null);
   const [showArchiveCols, setShowArchiveCols] = useState(false);
@@ -92,7 +95,7 @@ export function ScrumBoardView({
     });
   }
 
-  async function handleDrop(targetColKey: string) {
+  async function handleDrop(targetColKey: string, draggedTaskId: string) {
     if (!draggedTaskId || busyId) return;
     const task = tasks.find((t) => t.id === draggedTaskId);
     if (!task) return;
@@ -102,8 +105,6 @@ export function ScrumBoardView({
     const nextStatus = targetColKey as TaskStatus;
 
     if (task.data.status === nextStatus) {
-      setDraggedTaskId(null);
-      setDragOverCol(null);
       return;
     }
 
@@ -122,8 +123,6 @@ export function ScrumBoardView({
       setError((error as Error).message);
     } finally {
       setBusyId(null);
-      setDraggedTaskId(null);
-      setDragOverCol(null);
     }
   }
 
@@ -150,8 +149,25 @@ export function ScrumBoardView({
     }
   }
 
+  const {
+    root: dragRef,
+    preview: dragPreview,
+    over: dragOver,
+    handle: dragHandle,
+  } = useDragSort((id, target) => {
+    void handleDrop(target, id);
+  }, Boolean(busyId));
+  const draggedTaskId = dragPreview?.id ?? null;
+  const dragOverCol = dragOver;
   return (
-    <div className="scrum-view-container" aria-label="Papan tugas">
+    <div ref={dragRef} className="scrum-view-container" aria-label="Papan tugas">
+      <DragOverlay
+        preview={dragPreview}
+        title={String(tasks.find((task) => task.id === dragPreview?.id)?.data.title || '')}
+      />
+      <p className="sr-only" role="status">
+        {dragPreview ? 'Kartu dipilih. Lepaskan pada kolom tujuan; Escape membatalkan.' : ''}
+      </p>
       {error && (
         <p role="alert" className="notice error">
           {error}
@@ -184,17 +200,7 @@ export function ScrumBoardView({
             <div
               key={col.id}
               className={`scrum-column ${isOver ? 'drag-over' : ''}`}
-              onDragOver={(e) => {
-                e.preventDefault();
-                if (dragOverCol !== col.key) setDragOverCol(col.key);
-              }}
-              onDragLeave={() => {
-                if (dragOverCol === col.key) setDragOverCol(null);
-              }}
-              onDrop={(e) => {
-                e.preventDefault();
-                void handleDrop(col.key);
-              }}
+              data-drop-zone={col.key}
             >
               {/* Column Header */}
               <div className="scrum-column-header">
@@ -268,33 +274,69 @@ export function ScrumBoardView({
                       <article
                         key={task.id}
                         className={`scrum-task-card ${busyId === task.id ? 'card-busy' : ''}`}
-                        draggable
-                        onDragStart={() => setDraggedTaskId(task.id)}
+
                         onClick={() => onOpenTask(task)}
                         role="button"
                         tabIndex={0}
                         onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
+                          if (
+                            e.target === e.currentTarget &&
+                            (e.key === 'Enter' || e.key === ' ')
+                          ) {
                             e.preventDefault();
                             onOpenTask(task);
                           }
                         }}
                       >
                         {/* Top Meta Strip: Task Code + Project on left, Priority + Due Date on right */}
+                        <div
+                          className="ui-card-move"
+                          onClick={(event) => event.stopPropagation()}
+                          onKeyDown={(event) => event.stopPropagation()}
+                        >
+                          <IconButton
+                            type="button"
+                            className="ui-drag-handle"
+                            aria-label={'Seret ' + String(data.title)}
+                            disabled={Boolean(busyId)}
+                            {...dragHandle(task.id)}
+                          >
+                            <GripVertical />
+                          </IconButton>
+                          <Select
+                            ariaLabel={'Pindahkan ' + String(data.title) + ' ke'}
+                            value={String(data.status)}
+                            disabled={Boolean(busyId)}
+                            onChange={(target) => {
+                              void handleQuickMove(task, target);
+                            }}
+                            options={[
+                              { value: 'rencana', label: 'Rencana' },
+                              { value: 'proses', label: 'Dikerjakan' },
+                              { value: 'selesai', label: 'Selesai' },
+                              { value: 'dibatalkan', label: 'Dibatalkan' },
+                            ]}
+                          />
+                        </div>
                         <div className="card-top-row">
                           <div className="card-top-left">
                             <span className="card-task-code">
                               {formatDisplayCode(String(data.code), 'work-items', task.id)}
                             </span>
                             {project && (
-                              <span className="card-project-pill" title={String(project.data.title)}>
+                              <span
+                                className="card-project-pill"
+                                title={String(project.data.title)}
+                              >
                                 <span
                                   className="project-dot"
                                   style={{
                                     backgroundColor: String(project.data.color || 'var(--brand)'),
                                   }}
                                 />
-                                <span className="card-project-name">{String(project.data.title)}</span>
+                                <span className="card-project-name">
+                                  {String(project.data.title)}
+                                </span>
                               </span>
                             )}
                           </div>
@@ -302,12 +344,19 @@ export function ScrumBoardView({
                           <div className="card-top-right">
                             {Boolean(data.priority) && data.priority !== 'normal' && (
                               <span className={`card-priority-pill priority-${data.priority}`}>
-                                {data.priority === 'tinggi' && <Flame size={10} className="inline-icon" />}
-                                {data.priority === 'mendesak' && <AlertCircle size={10} className="inline-icon" />}
+                                {data.priority === 'tinggi' && (
+                                  <Flame size={10} className="inline-icon" />
+                                )}
+                                {data.priority === 'mendesak' && (
+                                  <AlertCircle size={10} className="inline-icon" />
+                                )}
                                 <span>{String(data.priority)}</span>
                               </span>
                             )}
-                            <span className={`card-date-pill ${isLate ? 'is-late' : ''}`} title={`Tenggat: ${datePill}`}>
+                            <span
+                              className={`card-date-pill ${isLate ? 'is-late' : ''}`}
+                              title={`Tenggat: ${datePill}`}
+                            >
                               {isLate ? (
                                 <AlertCircle size={11} className="inline-icon" />
                               ) : (
@@ -332,7 +381,10 @@ export function ScrumBoardView({
                         {/* Card Bottom Row: Assignee, Subtasks & Quick Move */}
                         <div className="card-bottom-section">
                           <div className="card-footer-left">
-                            <span className="scrum-assignee-pill" title={`Penanggung jawab: ${assignee}`}>
+                            <span
+                              className="scrum-assignee-pill"
+                              title={`Penanggung jawab: ${assignee}`}
+                            >
                               <span className="assignee-mini-avatar">{initials}</span>
                               <span className="assignee-name">{assignee}</span>
                             </span>
@@ -343,7 +395,9 @@ export function ScrumBoardView({
                                 title={`${doneSubtasks} dari ${subtasks.length} subtugas selesai (${progressPct}%)`}
                               >
                                 <CheckSquare size={11} className="subtask-chip-icon" />
-                                <span className="subtask-chip-text">{doneSubtasks}/{subtasks.length}</span>
+                                <span className="subtask-chip-text">
+                                  {doneSubtasks}/{subtasks.length}
+                                </span>
                                 <div className="subtask-mini-track">
                                   <div
                                     className="subtask-mini-fill"
@@ -355,10 +409,7 @@ export function ScrumBoardView({
                           </div>
 
                           {/* Quick Status Shift Row */}
-                          <div
-                            className="card-quick-move-row"
-                            onClick={(e) => e.stopPropagation()}
-                          >
+                          <div className="card-quick-move-row" onClick={(e) => e.stopPropagation()}>
                             {data.status === 'rencana' && (
                               <Button
                                 type="button"
@@ -435,24 +486,16 @@ export function ScrumBoardView({
       <div className="scrum-drop-targets-row" aria-label="Zona seret penyelesaian tugas">
         <div
           className={`scrum-drop-target drop-target-complete ${dragOverCol === 'selesai' ? 'is-drag-over' : ''} ${draggedTaskId ? 'is-active-drop' : ''}`}
-          onDragOver={(e) => {
-            e.preventDefault();
-            if (dragOverCol !== 'selesai') setDragOverCol('selesai');
-          }}
-          onDragLeave={() => {
-            if (dragOverCol === 'selesai') setDragOverCol(null);
-          }}
-          onDrop={(e) => {
-            e.preventDefault();
-            void handleDrop('selesai');
-          }}
+          data-drop-zone={'selesai'}
         >
           <div className="drop-target-icon">
             <CheckCircle2 size={20} />
           </div>
           <div className="drop-target-text">
             <strong>Selesai</strong>
-            <small>Seret kartu ke sini untuk menyelesaikan tugas & memindahkan ke Riwayat Selesai</small>
+            <small>
+              Seret kartu ke sini untuk menyelesaikan tugas & memindahkan ke Riwayat Selesai
+            </small>
           </div>
           <Link
             href="/tugas?status=selesai"
@@ -465,17 +508,7 @@ export function ScrumBoardView({
 
         <div
           className={`scrum-drop-target drop-target-cancel ${dragOverCol === 'dibatalkan' ? 'is-drag-over' : ''} ${draggedTaskId ? 'is-active-drop' : ''}`}
-          onDragOver={(e) => {
-            e.preventDefault();
-            if (dragOverCol !== 'dibatalkan') setDragOverCol('dibatalkan');
-          }}
-          onDragLeave={() => {
-            if (dragOverCol === 'dibatalkan') setDragOverCol(null);
-          }}
-          onDrop={(e) => {
-            e.preventDefault();
-            void handleDrop('dibatalkan');
-          }}
+          data-drop-zone={'dibatalkan'}
         >
           <div className="drop-target-icon">
             <AlertCircle size={20} />

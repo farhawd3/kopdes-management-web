@@ -835,3 +835,7 @@ Migrasikan kontrol form/tombol ke pustaka UI, satukan pemicu tanggal dan navigas
 
 Empat statistik memakai permukaan netral dan ikon tint, baris terlambat memakai badge, serta layout dashboard menyesuaikan lebar. Dropdown gelap mengikuti token aktif. 175 tes dan pemeriksaan statis/build lulus; Beranda empat lebar terang serta gelap 1440 diperiksa.
 
+# 4 Oktober 2026 — PLAN-ASTRA drag sentuh
+
+Ganti HTML5 drag papan tugas/kegiatan dengan handle Pointer Events, long-press, overlay, auto-scroll dan pembatalan. Tambahkan alternatif dropdown pemindahan dan galat kegiatan yang terlihat. 181 tes dan pemeriksaan statis/build lulus; drag mouse fixture browser terverifikasi. Perangkat sentuh fisik belum diuji.
+

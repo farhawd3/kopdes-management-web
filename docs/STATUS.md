@@ -4,6 +4,8 @@ Pelaksanaan PLAN-ASTRA: audit dan fondasi token tersedia; kontrol mentah luar UI
 
 Kartu statistik dashboard kini netral dengan ikon tint; perhatian dan tugas terlambat lebih tenang. Empat informasi statistik dan tautannya dipertahankan. Beranda terang pada 360/768/1024/1440 tidak meluap; gelap 1440 dan dropdown gelap diperiksa. Paket lulus 175 tes serta pemeriksaan statis/build. Pemeriksaan seluruh tema/grafik belum lengkap.
 
+Papan tugas/kegiatan memakai drag Pointer Events pada handle khusus, long-press, overlay, gulir tepi dan dropdown pemindahan tanpa drag. 181 tes/26 berkas serta typecheck/lint/build/penjaga UI lulus. Drag mouse pada galeri tanpa data berhasil memindahkan kartu; Android/iOS fisik belum diperiksa. Rincian fase 5A di LAPORAN-ASTRA.
+
 Keadaan aktif dirangkum di sini; riwayat paket ada di [CHANGELOG](../CHANGELOG.md), kebutuhan di [PRD](PRD.md) dan penerimaan di [CHECKLIST](CHECKLIST.md). Periksa Git kembali sebelum bekerja.
 
 ## Implementasi aktif

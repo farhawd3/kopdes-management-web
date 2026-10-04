@@ -1,4 +1,8 @@
 'use client';
+import { useDragSort } from '@/components/ui/useDragSort';
+import { DragOverlay } from '@/components/ui/DragOverlay';
+import { IconButton } from '@/components/ui/Button';
+import { GripVertical } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import React from 'react';
@@ -13,7 +17,12 @@ import { TaskBatchActions } from './tasks/TaskBatchActions';
 import { Editor } from './Editor';
 import { api } from '@/lib/client';
 import { today, addDays, formatDate } from '@/lib/date';
-import { selectTaskStatus, taskStatusChange, isActiveTask, type TaskStatus } from '@/lib/task-status';
+import {
+  selectTaskStatus,
+  taskStatusChange,
+  isActiveTask,
+  type TaskStatus,
+} from '@/lib/task-status';
 import { readiness, subtaskProgress } from '@/lib/progress';
 import { Meter, RiskMatrix } from '@/components/charts/Charts';
 import { TaskCalendar } from './tasks/TaskCalendar';
@@ -279,9 +288,8 @@ function JournalBoardView({
   onCreateItem: (date: string) => void;
   onRefresh: () => Promise<void>;
 }) {
-  const [draggedId, setDraggedId] = useState<string | null>(null);
-  const [dragOverCol, setDragOverCol] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [moveError, setMoveError] = useState('');
   const todayStr = today();
 
   const cols = [
@@ -311,7 +319,7 @@ function JournalBoardView({
     },
   ];
 
-  async function handleDrop(targetColId: string) {
+  async function handleDrop(targetColId: string, draggedId: string) {
     if (!draggedId || busy) return;
     const item = activities.find((a) => a.id === draggedId);
     if (!item) return;
@@ -325,27 +333,48 @@ function JournalBoardView({
     }
 
     if (targetDate === item.data.date) {
-      setDraggedId(null);
-      setDragOverCol(null);
       return;
     }
 
     setBusy(true);
+    setMoveError('');
     try {
       await api('journal', {
         id: item.id,
         data: { ...item.data, date: targetDate },
       });
       await onRefresh();
+    } catch (error) {
+      setMoveError(error instanceof Error ? error.message : 'Gagal memindahkan kegiatan.');
     } finally {
       setBusy(false);
-      setDraggedId(null);
-      setDragOverCol(null);
     }
   }
 
+  const {
+    root: dragRef,
+    preview: dragPreview,
+    over: dragOver,
+    handle: dragHandle,
+  } = useDragSort((id, target) => {
+    void handleDrop(target, id);
+  }, busy);
+  const dragOverCol = dragOver;
   return (
-    <div className="journal-board-container" aria-label="Papan alur kegiatan lapangan">
+    <div
+      ref={dragRef}
+      className="journal-board-container"
+      aria-label="Papan alur kegiatan lapangan"
+    >
+      <DragOverlay
+        preview={dragPreview}
+        title={String(activities.find((item) => item.id === dragPreview?.id)?.data.title || '')}
+      />
+      {moveError && (
+        <p role="alert" className="notice error">
+          {moveError}
+        </p>
+      )}
       <div className="scrum-board-columns cols-3">
         {cols.map((col) => {
           const colItems = activities.filter(col.filter);
@@ -355,17 +384,7 @@ function JournalBoardView({
             <div
               key={col.id}
               className={`scrum-column ${isOver ? 'drag-over' : ''}`}
-              onDragOver={(e) => {
-                e.preventDefault();
-                if (dragOverCol !== col.id) setDragOverCol(col.id);
-              }}
-              onDragLeave={() => {
-                if (dragOverCol === col.id) setDragOverCol(null);
-              }}
-              onDrop={(e) => {
-                e.preventDefault();
-                void handleDrop(col.id);
-              }}
+              data-drop-zone={col.id}
             >
               <div className="scrum-column-header">
                 <div className="scrum-col-title-group">
@@ -408,10 +427,32 @@ function JournalBoardView({
                       <article
                         key={item.id}
                         className="scrum-task-card"
-                        draggable
-                        onDragStart={() => setDraggedId(item.id)}
+
                         onClick={() => onOpenItem(item)}
                       >
+                        <div className="ui-card-move" onClick={(event) => event.stopPropagation()}>
+                          <IconButton
+                            type="button"
+                            className="ui-drag-handle"
+                            aria-label={'Seret ' + String(item.data.title)}
+                            disabled={busy}
+                            {...dragHandle(item.id)}
+                          >
+                            <GripVertical />
+                          </IconButton>
+                          <Select
+                            ariaLabel={'Pindahkan ' + String(item.data.title) + ' ke'}
+                            value={col.id}
+                            disabled={busy}
+                            onChange={(target) => {
+                              void handleDrop(target, item.id);
+                            }}
+                            options={cols.map((column) => ({
+                              value: column.id,
+                              label: column.title,
+                            }))}
+                          />
+                        </div>
                         <div className="card-top-row">
                           <span className="task-code-tag">
                             {formatDisplayCode(
@@ -445,9 +486,7 @@ function JournalBoardView({
                               </span>
                             )}
                             {linkedMeeting && (
-                              <span className="scrum-assignee-pill">
-                                Rapat Terkait
-                              </span>
+                              <span className="scrum-assignee-pill">Rapat Terkait</span>
                             )}
                           </div>
                         </div>
@@ -633,7 +672,10 @@ function JournalTableView({
                 <td className="col-journal-relation">
                   <div className="journal-relation-chips">
                     {unit && (
-                      <span className="relation-pill pill-unit" title={`Gerai: ${String(unit.data.title)}`}>
+                      <span
+                        className="relation-pill pill-unit"
+                        title={`Gerai: ${String(unit.data.title)}`}
+                      >
                         <Building2 size={11} />
                         <span>{String(unit.data.title)}</span>
                       </span>
@@ -646,7 +688,9 @@ function JournalTableView({
                       >
                         <CheckSquare size={11} />
                         <span>{String(task.data.title)}</span>
-                        <span className={`task-status-mini status-${String(task.data.status || 'rencana')}`}>
+                        <span
+                          className={`task-status-mini status-${String(task.data.status || 'rencana')}`}
+                        >
                           {String(task.data.status || 'rencana')}
                         </span>
                       </Link>
@@ -672,7 +716,10 @@ function JournalTableView({
                       </Button>
                     )}
                     {stakeholder && (
-                      <span className="relation-pill pill-stakeholder" title={`Mitra: ${String(stakeholder.data.title)}`}>
+                      <span
+                        className="relation-pill pill-stakeholder"
+                        title={`Mitra: ${String(stakeholder.data.title)}`}
+                      >
                         <Handshake size={11} />
                         <span>{String(stakeholder.data.title)}</span>
                       </span>
@@ -792,7 +839,10 @@ export function Records({
   // Reconcile a changed navigation request before rendering a stale view.
   if (previousRequestedView !== requestedView) {
     setPreviousRequestedView(requestedView);
-    if (requestedView && ['daftar', 'papan', 'kalender', 'gantt', 'harian'].includes(requestedView)) {
+    if (
+      requestedView &&
+      ['daftar', 'papan', 'kalender', 'gantt', 'harian'].includes(requestedView)
+    ) {
       setView(requestedView);
     }
   }
@@ -892,12 +942,7 @@ export function Records({
     const priority = String(row.data.priority || 'normal').toLowerCase();
 
     return (
-      <article
-        key={row.id}
-        className={`calendar-task-card ${isDone ? 'is-completed' : ''}`}
-        draggable={view === 'papan'}
-        onDragStart={(e) => e.dataTransfer.setData('text/plain', row.id)}
-      >
+      <article key={row.id} className={`calendar-task-card ${isDone ? 'is-completed' : ''}`}>
         {/* Top metadata strip */}
         <div className="cal-card-top-row">
           <div className="cal-card-top-left">
@@ -905,9 +950,7 @@ export function Records({
               type="button"
               className={`task-round-check ${isDone ? 'checked' : ''}`}
               disabled={busy}
-              onClick={() =>
-                void update(row, taskStatusChange(isDone ? 'reopen' : 'complete'))
-              }
+              onClick={() => void update(row, taskStatusChange(isDone ? 'reopen' : 'complete'))}
               title={isDone ? 'Tandai belum selesai' : 'Tandai selesai'}
               aria-label={isDone ? 'Tandai belum selesai' : 'Tandai selesai'}
             >
@@ -973,18 +1016,12 @@ export function Records({
                 </span>
               </div>
               <div className="subtask-mini-track">
-                <div
-                  className="subtask-mini-fill"
-                  style={{ width: `${progressPct}%` }}
-                />
+                <div className="subtask-mini-fill" style={{ width: `${progressPct}%` }} />
               </div>
             </div>
             <div className="cal-subtasks-list">
               {subtasks.map((task, index) => (
-                <div
-                  key={index}
-                  className={`cal-subtask-item ${task.done ? 'is-done' : ''}`}
-                >
+                <div key={index} className={`cal-subtask-item ${task.done ? 'is-done' : ''}`}>
                   <Button
                     type="button"
                     className={`subtask-round-check ${task.done ? 'checked' : ''}`}
@@ -1079,7 +1116,9 @@ export function Records({
                   disabled={busy}
                   onClick={(e) => {
                     e.currentTarget.closest('details')?.removeAttribute('open');
-                    void update(row, { due_date: addDays(String(row.data.due_date || today()), 7) });
+                    void update(row, {
+                      due_date: addDays(String(row.data.due_date || today()), 7),
+                    });
                   }}
                 >
                   +1 minggu
@@ -1118,565 +1157,562 @@ export function Records({
       return renderCalendarTaskCard(row);
     }
     return (
-      <article
-        className="record card"
-        key={row.id}
-        draggable={entity === 'work-items' && view === 'papan'}
-        onDragStart={(e) => e.dataTransfer.setData('text/plain', row.id)}
-      >
-      <div className="section-head">
-        <h3>
-          {['work-items', 'journal'].includes(entity) && (
-            <span className="task-code-tag mr-2">
-              {formatDisplayCode(String(row.data.code), entity, row.id)}
+      <article className="record card" key={row.id}>
+        <div className="section-head">
+          <h3>
+            {['work-items', 'journal'].includes(entity) && (
+              <span className="task-code-tag mr-2">
+                {formatDisplayCode(String(row.data.code), entity, row.id)}
+              </span>
+            )}
+            {String(row.data.title)}
+          </h3>
+          {Boolean(row.data.status) && (
+            <span className={'badge ' + (row.data.status === 'selesai' ? 'ok' : '')}>
+              {String(row.data.status)}
             </span>
           )}
-          {String(row.data.title)}
-        </h3>
-        {Boolean(row.data.status) && (
-          <span className={'badge ' + (row.data.status === 'selesai' ? 'ok' : '')}>
-            {String(row.data.status)}
-          </span>
-        )}
-        {entity === 'stakeholders' && Boolean(row.data.category) && (
-          <span
-            className={`stakeholder-badge ${getStakeholderCategoryClass(String(row.data.category))}`}
-          >
-            {getStakeholderCategoryIcon(String(row.data.category))} {String(row.data.category)}
-          </span>
-        )}
-      </div>
-      <div className="record-meta">
-        {entity === 'meetings' && (
-          <>
-            <span className="meeting-time-tag">
-              <Clock size={12} /> {String(row.data.time)} WIB
-            </span>
+          {entity === 'stakeholders' && Boolean(row.data.category) && (
             <span
-              className={`meeting-mode-tag mode-${String(row.data.mode || 'tatap muka').replace(' ', '-')}`}
+              className={`stakeholder-badge ${getStakeholderCategoryClass(String(row.data.category))}`}
             >
-              {String(row.data.mode).toLowerCase() === 'online'
-                ? 'Online'
-                : String(row.data.mode).toLowerCase() === 'hybrid'
-                  ? 'Hybrid'
-                  : 'Tatap Muka'}
+              {getStakeholderCategoryIcon(String(row.data.category))} {String(row.data.category)}
             </span>
-          </>
-        )}
-        {entity === 'journal' && (
-          <>
-            {Boolean(row.data.work_item_id) && (
-              <span>
-                Tugas:{' '}
-                {String(
-                  workspace['work-items']?.find((t) => t.id === row.data.work_item_id)?.data
-                    .title || 'tidak ditemukan',
-                )}
-              </span>
-            )}
-            {Boolean(row.data.stakeholder_id) && (
-              <span>
-                Mitra:{' '}
-                {String(
-                  workspace.stakeholders?.find((s) => s.id === row.data.stakeholder_id)?.data
-                    .title || 'tidak ditemukan',
-                )}
-              </span>
-            )}
-            {Boolean(row.data.unit_id) && (
-              <span>
-                Gerai:{' '}
-                {String(
-                  workspace.units?.find((u) => u.id === row.data.unit_id)?.data.title ||
-                    'tidak ditemukan',
-                )}
-              </span>
-            )}
-            {(() => {
-              const meeting = workspace.meetings?.find((m) => m.id === row.data.meeting_id);
-              const joinUrl = meetingJoinUrl(meeting);
-              return joinUrl ? (
-                <a
-                  href={joinUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="journal-join-link"
-                  title="Masuk ruang rapat daring (Google Meet / Zoom)"
-                >
-                  <Video size={13} className="inline-icon" />
-                  <span>Gabung rapat ↗</span>
-                </a>
-              ) : null;
-            })()}
-          </>
-        )}
-        {Boolean(row.data.assignee) && <span>{String(row.data.assignee)}</span>}
-        {Boolean(row.data.priority) && <span>Prioritas {String(row.data.priority)}</span>}
-        {Boolean(row.data.due_date || row.data.date) && (
-          <span
-            className={
-              String(row.data.due_date) < today() && isActiveTask(row.data.status) ? 'late' : ''
-            }
-          >
-            {formatDate(String(row.data.due_date || row.data.date))}
-          </span>
-        )}
-      </div>
-      {entity === 'units' && (
-        <Meter
-          value={readiness(
-            (workspace.checklist || [])
-              .filter((i) => i.data.unit_id === row.id)
-              .map((i) => schemas.checklist.parse(i.data)),
           )}
-        />
-      )}
-      {entity === 'units' && (
-        <ReadinessRadar
-          items={(workspace.checklist || [])
-            .filter((item) => item.data.unit_id === row.id)
-            .map((item) => schemas.checklist.parse(item.data))}
-        />
-      )}
-      {entity === 'checklist' && (
-        <p>
-          {row.data.required ? 'Wajib' : 'Opsional'} · {String(row.data.dimension)}
-          {row.data.evidence ? ` · ${String(row.data.evidence)}` : ''}
-        </p>
-      )}
-      {entity === 'documents' && (
-        <div className="document-card-details">
-          <div className="doc-meta-pills">
-            {Boolean(row.data.number) && (
-              <span className="doc-number-pill">No: {String(row.data.number)}</span>
-            )}
-            {Boolean(row.data.kind) && (
-              <span className="doc-kind-pill">{String(row.data.kind)}</span>
-            )}
-            <span
-              className={`doc-status-pill status-${String(row.data.status || 'belum ada').replace(/\s+/g, '-')}`}
-            >
-              {String(row.data.status) === 'tersedia' ? (
-                <>
-                  <CheckCircle2 size={12} />
-                  <span>Tersedia Lengkap</span>
-                </>
-              ) : String(row.data.status) === 'diproses' ? (
-                <>
-                  <Clock size={12} />
-                  <span>Sedang Diproses</span>
-                </>
-              ) : (
-                <>
-                  <AlertCircle size={12} />
-                  <span>Belum Ada / Diurus</span>
-                </>
-              )}
-            </span>
-          </div>
-          <div className="doc-dates-row">
-            {Boolean(row.data.issued_date) && (
-              <span className="doc-date">Terbit: {formatDate(String(row.data.issued_date))}</span>
-            )}
-            {Boolean(row.data.expires_date) ? (
+        </div>
+        <div className="record-meta">
+          {entity === 'meetings' && (
+            <>
+              <span className="meeting-time-tag">
+                <Clock size={12} /> {String(row.data.time)} WIB
+              </span>
               <span
-                className={`doc-expiry ${
-                  String(row.data.expires_date) < today()
-                    ? 'is-expired'
-                    : String(row.data.expires_date) <= addDays(today(), 30)
-                      ? 'is-near-expiry'
-                      : 'is-valid'
-                }`}
+                className={`meeting-mode-tag mode-${String(row.data.mode || 'tatap muka').replace(' ', '-')}`}
               >
-                {String(row.data.expires_date) < today() ? (
+                {String(row.data.mode).toLowerCase() === 'online'
+                  ? 'Online'
+                  : String(row.data.mode).toLowerCase() === 'hybrid'
+                    ? 'Hybrid'
+                    : 'Tatap Muka'}
+              </span>
+            </>
+          )}
+          {entity === 'journal' && (
+            <>
+              {Boolean(row.data.work_item_id) && (
+                <span>
+                  Tugas:{' '}
+                  {String(
+                    workspace['work-items']?.find((t) => t.id === row.data.work_item_id)?.data
+                      .title || 'tidak ditemukan',
+                  )}
+                </span>
+              )}
+              {Boolean(row.data.stakeholder_id) && (
+                <span>
+                  Mitra:{' '}
+                  {String(
+                    workspace.stakeholders?.find((s) => s.id === row.data.stakeholder_id)?.data
+                      .title || 'tidak ditemukan',
+                  )}
+                </span>
+              )}
+              {Boolean(row.data.unit_id) && (
+                <span>
+                  Gerai:{' '}
+                  {String(
+                    workspace.units?.find((u) => u.id === row.data.unit_id)?.data.title ||
+                      'tidak ditemukan',
+                  )}
+                </span>
+              )}
+              {(() => {
+                const meeting = workspace.meetings?.find((m) => m.id === row.data.meeting_id);
+                const joinUrl = meetingJoinUrl(meeting);
+                return joinUrl ? (
+                  <a
+                    href={joinUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="journal-join-link"
+                    title="Masuk ruang rapat daring (Google Meet / Zoom)"
+                  >
+                    <Video size={13} className="inline-icon" />
+                    <span>Gabung rapat ↗</span>
+                  </a>
+                ) : null;
+              })()}
+            </>
+          )}
+          {Boolean(row.data.assignee) && <span>{String(row.data.assignee)}</span>}
+          {Boolean(row.data.priority) && <span>Prioritas {String(row.data.priority)}</span>}
+          {Boolean(row.data.due_date || row.data.date) && (
+            <span
+              className={
+                String(row.data.due_date) < today() && isActiveTask(row.data.status) ? 'late' : ''
+              }
+            >
+              {formatDate(String(row.data.due_date || row.data.date))}
+            </span>
+          )}
+        </div>
+        {entity === 'units' && (
+          <Meter
+            value={readiness(
+              (workspace.checklist || [])
+                .filter((i) => i.data.unit_id === row.id)
+                .map((i) => schemas.checklist.parse(i.data)),
+            )}
+          />
+        )}
+        {entity === 'units' && (
+          <ReadinessRadar
+            items={(workspace.checklist || [])
+              .filter((item) => item.data.unit_id === row.id)
+              .map((item) => schemas.checklist.parse(item.data))}
+          />
+        )}
+        {entity === 'checklist' && (
+          <p>
+            {row.data.required ? 'Wajib' : 'Opsional'} · {String(row.data.dimension)}
+            {row.data.evidence ? ` · ${String(row.data.evidence)}` : ''}
+          </p>
+        )}
+        {entity === 'documents' && (
+          <div className="document-card-details">
+            <div className="doc-meta-pills">
+              {Boolean(row.data.number) && (
+                <span className="doc-number-pill">No: {String(row.data.number)}</span>
+              )}
+              {Boolean(row.data.kind) && (
+                <span className="doc-kind-pill">{String(row.data.kind)}</span>
+              )}
+              <span
+                className={`doc-status-pill status-${String(row.data.status || 'belum ada').replace(/\s+/g, '-')}`}
+              >
+                {String(row.data.status) === 'tersedia' ? (
                   <>
-                    <AlertCircle size={13} /> Kadaluwarsa (
-                    {formatDate(String(row.data.expires_date))})
+                    <CheckCircle2 size={12} />
+                    <span>Tersedia Lengkap</span>
                   </>
-                ) : String(row.data.expires_date) <= addDays(today(), 30) ? (
+                ) : String(row.data.status) === 'diproses' ? (
                   <>
-                    <Clock size={13} /> Berakhir dalam 30 hari (
-                    {formatDate(String(row.data.expires_date))})
+                    <Clock size={12} />
+                    <span>Sedang Diproses</span>
                   </>
                 ) : (
                   <>
-                    <CheckCircle2 size={13} /> Berlaku s.d.{' '}
-                    {formatDate(String(row.data.expires_date))}
+                    <AlertCircle size={12} />
+                    <span>Belum Ada / Diurus</span>
                   </>
                 )}
               </span>
-            ) : (
-              <span className="doc-expiry is-permanent">
-                <ShieldCheck size={13} /> Masa berlaku tetap
-              </span>
-            )}
-          </div>
-        </div>
-      )}
-      {entity === 'risks' &&
-        (() => {
-          const prob = Number(row.data.probability || 3);
-          const imp = Number(row.data.impact || 3);
-          const score = prob * imp;
-          const level =
-            score >= 15
-              ? { label: 'Bahaya Kritis', cls: 'risk-critical', desc: 'Perlu tindakan segera' }
-              : score >= 8
-                ? { label: 'Perlu Waspada', cls: 'risk-warning', desc: 'Siapkan mitigasi' }
-                : { label: 'Terkendali', cls: 'risk-safe', desc: 'Dalam SOP standar' };
-          return (
-            <div className="risk-card-details">
-              <div className="risk-level-strip">
-                <span className={`risk-level-badge ${level.cls}`}>
-                  {level.label} ({score}/25)
-                </span>
-                <span className="risk-level-desc">{level.desc}</span>
-              </div>
-              {Boolean(row.data.mitigation) && (
-                <p className="record-text">
-                  <strong>Rencana Mitigasi: </strong>
-                  {String(row.data.mitigation)}
-                </p>
+            </div>
+            <div className="doc-dates-row">
+              {Boolean(row.data.issued_date) && (
+                <span className="doc-date">Terbit: {formatDate(String(row.data.issued_date))}</span>
               )}
-              {Boolean(row.data.review_date) && (
-                <small className="risk-review-date">
-                  Jadwal Tinjau: {formatDate(String(row.data.review_date))}
-                </small>
+              {Boolean(row.data.expires_date) ? (
+                <span
+                  className={`doc-expiry ${
+                    String(row.data.expires_date) < today()
+                      ? 'is-expired'
+                      : String(row.data.expires_date) <= addDays(today(), 30)
+                        ? 'is-near-expiry'
+                        : 'is-valid'
+                  }`}
+                >
+                  {String(row.data.expires_date) < today() ? (
+                    <>
+                      <AlertCircle size={13} /> Kadaluwarsa (
+                      {formatDate(String(row.data.expires_date))})
+                    </>
+                  ) : String(row.data.expires_date) <= addDays(today(), 30) ? (
+                    <>
+                      <Clock size={13} /> Berakhir dalam 30 hari (
+                      {formatDate(String(row.data.expires_date))})
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 size={13} /> Berlaku s.d.{' '}
+                      {formatDate(String(row.data.expires_date))}
+                    </>
+                  )}
+                </span>
+              ) : (
+                <span className="doc-expiry is-permanent">
+                  <ShieldCheck size={13} /> Masa berlaku tetap
+                </span>
               )}
             </div>
-          );
-        })()}
-      {entity === 'stakeholders' &&
-        (() => {
-          const rawContact = String(row.data.contact || '').trim();
-          const phoneDigits = rawContact.replace(/[^\d+]/g, '');
-          const isPhone = phoneDigits.length >= 8;
-          const waPhone = phoneDigits.startsWith('0')
-            ? '62' + phoneDigits.slice(1)
-            : phoneDigits.replace(/^\+/, '');
-          const lastContactStr = String(row.data.last_contact || '');
-          const isLate = Boolean(lastContactStr && lastContactStr < addDays(today(), -14));
-          const interactions = (workspace.interactions || []).filter(
-            (i) => i.data.stakeholder_id === row.id,
-          );
-
-          return (
-            <div className="stakeholder-card-body">
-              {rawContact && (
-                <div className="stakeholder-contact-row">
-                  <span className="contact-text">
-                    <span className="contact-icon">
-                      <Phone size={12} />
-                    </span>{' '}
-                    {rawContact}
+          </div>
+        )}
+        {entity === 'risks' &&
+          (() => {
+            const prob = Number(row.data.probability || 3);
+            const imp = Number(row.data.impact || 3);
+            const score = prob * imp;
+            const level =
+              score >= 15
+                ? { label: 'Bahaya Kritis', cls: 'risk-critical', desc: 'Perlu tindakan segera' }
+                : score >= 8
+                  ? { label: 'Perlu Waspada', cls: 'risk-warning', desc: 'Siapkan mitigasi' }
+                  : { label: 'Terkendali', cls: 'risk-safe', desc: 'Dalam SOP standar' };
+            return (
+              <div className="risk-card-details">
+                <div className="risk-level-strip">
+                  <span className={`risk-level-badge ${level.cls}`}>
+                    {level.label} ({score}/25)
                   </span>
-                  {isPhone && (
-                    <div className="contact-actions">
-                      <a
-                        href={`https://wa.me/${waPhone}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="button wa-btn"
-                        title="Kirim pesan WhatsApp"
-                      >
-                        WhatsApp ↗
-                      </a>
-                      <a
-                        href={`tel:${phoneDigits}`}
-                        className="button call-btn"
-                        title="Panggil nomor telepon"
-                      >
-                        Telepon
-                      </a>
-                    </div>
-                  )}
+                  <span className="risk-level-desc">{level.desc}</span>
                 </div>
-              )}
-
-              <div className="stakeholder-comm-status">
-                <span className={`comm-date ${isLate ? 'late-warning' : ''}`}>
-                  {lastContactStr
-                    ? `Kontak terakhir: ${formatDate(lastContactStr)}`
-                    : 'Belum ada catatan interaksi'}
-                  {isLate ? ' · Perlu dihubungi kembali (>14 hari)' : ''}
-                </span>
-                {interactions.length > 0 && (
-                  <span className="comm-count">{interactions.length} riwayat interaksi</span>
+                {Boolean(row.data.mitigation) && (
+                  <p className="record-text">
+                    <strong>Rencana Mitigasi: </strong>
+                    {String(row.data.mitigation)}
+                  </p>
+                )}
+                {Boolean(row.data.review_date) && (
+                  <small className="risk-review-date">
+                    Jadwal Tinjau: {formatDate(String(row.data.review_date))}
+                  </small>
                 )}
               </div>
-            </div>
-          );
-        })()}
-      {['description', 'notes', 'minutes', 'reason', 'follow_up']
-        .filter((key) => entity !== 'stakeholders' || key !== 'follow_up')
-        .map((key) =>
-          row.data[key] ? (
-            <p className="record-text" key={key}>
-              <strong>{labels[key]}: </strong>
-              {String(row.data[key])}
-            </p>
-          ) : null,
-        )}
-      {entity === 'stakeholders' && Boolean(row.data.follow_up) && (
-        <div className="stakeholder-followup-callout">
-          <strong>Tindak Lanjut:</strong> {String(row.data.follow_up)}
-        </div>
-      )}
-      {Boolean(row.data.link) && (
-        <a href={String(row.data.link)} target="_blank" rel="noreferrer">
-          Buka tautan ↗
-        </a>
-      )}
-      {entity === 'meetings' &&
-        (() => {
-          const linkedDecisions = (workspace.decisions || []).filter(
-            (d) => d.data.meeting_id === row.id,
-          );
-          return (
-            <div className="meeting-card-details">
-              {Boolean(row.data.location) && String(row.data.mode).toLowerCase() !== 'online' && (
-                <p className="meeting-detail-row">
-                  <MapPin size={13} />
-                  <strong>Tempat / Lokasi: </strong>
-                  <span>{String(row.data.location)}</span>
-                </p>
-              )}
-              {Boolean(row.data.participants) && (
-                <p className="meeting-detail-row">
-                  <Users size={13} />
-                  <strong>Peserta Rapat: </strong>
-                  <span>{String(row.data.participants)}</span>
-                </p>
-              )}
-              {Boolean(row.data.agenda) && (
-                <div className="meeting-section-box">
-                  <BookOpen size={13} />
-                  <strong>Agenda Pembahasan: </strong>
-                  <p className="record-text">{String(row.data.agenda)}</p>
-                </div>
-              )}
-              {Boolean(row.data.minutes) && (
-                <div className="meeting-section-box">
-                  <FileText size={13} />
-                  <strong>Notulen / Hasil Kesepakatan: </strong>
-                  <p className="record-text">{String(row.data.minutes)}</p>
-                </div>
-              )}
-              {linkedDecisions.length > 0 && (
-                <div className="meeting-section-box meeting-decisions-box">
-                  <div className="meeting-decisions-head">
-                    <CheckCircle2 size={13} />
-                    <strong>Keputusan Terkait ({linkedDecisions.length}):</strong>
+            );
+          })()}
+        {entity === 'stakeholders' &&
+          (() => {
+            const rawContact = String(row.data.contact || '').trim();
+            const phoneDigits = rawContact.replace(/[^\d+]/g, '');
+            const isPhone = phoneDigits.length >= 8;
+            const waPhone = phoneDigits.startsWith('0')
+              ? '62' + phoneDigits.slice(1)
+              : phoneDigits.replace(/^\+/, '');
+            const lastContactStr = String(row.data.last_contact || '');
+            const isLate = Boolean(lastContactStr && lastContactStr < addDays(today(), -14));
+            const interactions = (workspace.interactions || []).filter(
+              (i) => i.data.stakeholder_id === row.id,
+            );
+
+            return (
+              <div className="stakeholder-card-body">
+                {rawContact && (
+                  <div className="stakeholder-contact-row">
+                    <span className="contact-text">
+                      <span className="contact-icon">
+                        <Phone size={12} />
+                      </span>{' '}
+                      {rawContact}
+                    </span>
+                    {isPhone && (
+                      <div className="contact-actions">
+                        <a
+                          href={`https://wa.me/${waPhone}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="button wa-btn"
+                          title="Kirim pesan WhatsApp"
+                        >
+                          WhatsApp ↗
+                        </a>
+                        <a
+                          href={`tel:${phoneDigits}`}
+                          className="button call-btn"
+                          title="Panggil nomor telepon"
+                        >
+                          Telepon
+                        </a>
+                      </div>
+                    )}
                   </div>
-                  <ul className="meeting-decisions-list">
-                    {linkedDecisions.map((dec) => (
-                      <li key={dec.id}>
-                        <span className="decision-title">{String(dec.data.title)}</span>
-                        {dec.data.reason ? (
-                          <span className="decision-reason"> · {String(dec.data.reason)}</span>
-                        ) : null}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              <div className="meeting-action-row">
-                {Boolean(row.data.meeting_url) &&
-                  String(row.data.mode).toLowerCase() !== 'tatap muka' &&
-                  /^https?:\/\//.test(String(row.data.meeting_url)) && (
-                    <a
-                      className="button meeting-join btn-join-meeting"
-                      href={String(row.data.meeting_url)}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      <Video size={13} />
-                      Masuk Rapat Online ↗
-                    </a>
+                )}
+
+                <div className="stakeholder-comm-status">
+                  <span className={`comm-date ${isLate ? 'late-warning' : ''}`}>
+                    {lastContactStr
+                      ? `Kontak terakhir: ${formatDate(lastContactStr)}`
+                      : 'Belum ada catatan interaksi'}
+                    {isLate ? ' · Perlu dihubungi kembali (>14 hari)' : ''}
+                  </span>
+                  {interactions.length > 0 && (
+                    <span className="comm-count">{interactions.length} riwayat interaksi</span>
                   )}
+                </div>
+              </div>
+            );
+          })()}
+        {['description', 'notes', 'minutes', 'reason', 'follow_up']
+          .filter((key) => entity !== 'stakeholders' || key !== 'follow_up')
+          .map((key) =>
+            row.data[key] ? (
+              <p className="record-text" key={key}>
+                <strong>{labels[key]}: </strong>
+                {String(row.data[key])}
+              </p>
+            ) : null,
+          )}
+        {entity === 'stakeholders' && Boolean(row.data.follow_up) && (
+          <div className="stakeholder-followup-callout">
+            <strong>Tindak Lanjut:</strong> {String(row.data.follow_up)}
+          </div>
+        )}
+        {Boolean(row.data.link) && (
+          <a href={String(row.data.link)} target="_blank" rel="noreferrer">
+            Buka tautan ↗
+          </a>
+        )}
+        {entity === 'meetings' &&
+          (() => {
+            const linkedDecisions = (workspace.decisions || []).filter(
+              (d) => d.data.meeting_id === row.id,
+            );
+            return (
+              <div className="meeting-card-details">
+                {Boolean(row.data.location) && String(row.data.mode).toLowerCase() !== 'online' && (
+                  <p className="meeting-detail-row">
+                    <MapPin size={13} />
+                    <strong>Tempat / Lokasi: </strong>
+                    <span>{String(row.data.location)}</span>
+                  </p>
+                )}
+                {Boolean(row.data.participants) && (
+                  <p className="meeting-detail-row">
+                    <Users size={13} />
+                    <strong>Peserta Rapat: </strong>
+                    <span>{String(row.data.participants)}</span>
+                  </p>
+                )}
+                {Boolean(row.data.agenda) && (
+                  <div className="meeting-section-box">
+                    <BookOpen size={13} />
+                    <strong>Agenda Pembahasan: </strong>
+                    <p className="record-text">{String(row.data.agenda)}</p>
+                  </div>
+                )}
+                {Boolean(row.data.minutes) && (
+                  <div className="meeting-section-box">
+                    <FileText size={13} />
+                    <strong>Notulen / Hasil Kesepakatan: </strong>
+                    <p className="record-text">{String(row.data.minutes)}</p>
+                  </div>
+                )}
+                {linkedDecisions.length > 0 && (
+                  <div className="meeting-section-box meeting-decisions-box">
+                    <div className="meeting-decisions-head">
+                      <CheckCircle2 size={13} />
+                      <strong>Keputusan Terkait ({linkedDecisions.length}):</strong>
+                    </div>
+                    <ul className="meeting-decisions-list">
+                      {linkedDecisions.map((dec) => (
+                        <li key={dec.id}>
+                          <span className="decision-title">{String(dec.data.title)}</span>
+                          {dec.data.reason ? (
+                            <span className="decision-reason"> · {String(dec.data.reason)}</span>
+                          ) : null}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                <div className="meeting-action-row">
+                  {Boolean(row.data.meeting_url) &&
+                    String(row.data.mode).toLowerCase() !== 'tatap muka' &&
+                    /^https?:\/\//.test(String(row.data.meeting_url)) && (
+                      <a
+                        className="button meeting-join btn-join-meeting"
+                        href={String(row.data.meeting_url)}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <Video size={13} />
+                        Masuk Rapat Online ↗
+                      </a>
+                    )}
+                  <Button
+                    className="button meeting-join btn-download-ics"
+                    onClick={() => downloadMeeting(row)}
+                    title="Unduh jadwal rapat .ics"
+                  >
+                    Unduh Jadwal (.ics)
+                  </Button>
+                  <Button
+                    className="button meeting-followup-btn"
+                    onClick={() => {
+                      window.dispatchEvent(
+                        new CustomEvent('hub-task', {
+                          detail: {
+                            title: `Tindak lanjut: ${row.data.title}`,
+                            description: String(row.data.minutes || row.data.agenda || ''),
+                            notes: `Sumber meetings: ${row.id}`,
+                            meeting_id: row.id,
+                          },
+                        }),
+                      );
+                    }}
+                    title="Buat tugas tindak lanjut rapat"
+                  >
+                    + Tindak Lanjut
+                  </Button>
+                </div>
+              </div>
+            );
+          })()}
+        {entity === 'work-items' &&
+          Array.isArray(row.data.subtasks) &&
+          row.data.subtasks.length > 0 && (
+            <div className="subtask-list">
+              <small>
+                {row.data.subtasks.filter((task) => task.done).length}/{row.data.subtasks.length}{' '}
+                subtugas selesai
+              </small>
+              {(row.data.subtasks as { title: string; done: boolean }[]).map((task, index) => (
+                <label className="check" key={index}>
+                  <Input
+                    type="checkbox"
+                    checked={task.done}
+                    disabled={busy}
+                    onChange={(event) =>
+                      void update(row, {
+                        subtasks: (row.data.subtasks as { title: string; done: boolean }[]).map(
+                          (subtask, i) =>
+                            i === index ? { ...subtask, done: event.target.checked } : subtask,
+                        ),
+                      })
+                    }
+                  />
+                  <span>{task.title}</span>
+                </label>
+              ))}
+            </div>
+          )}
+        <div className="actions">
+          <Button onClick={() => (entity === 'work-items' ? setDetailTask(row) : setEdit(row))}>
+            Buka catatan
+          </Button>
+          {entity === 'journal' && (
+            <Button
+              type="button"
+              className="btn-journal-followup"
+              onClick={() => {
+                window.dispatchEvent(
+                  new CustomEvent('hub-task', {
+                    detail: {
+                      title: `Tindak lanjut: ${row.data.title}`,
+                      description: String(row.data.notes || ''),
+                      notes: `Sumber kegiatan: ${row.id}`,
+                      ...(row.data.work_item_id ? { parent_id: row.data.work_item_id } : {}),
+                    },
+                  }),
+                );
+              }}
+              title="Buat tugas tindak lanjut dari kegiatan ini"
+            >
+              + Tindak lanjut
+            </Button>
+          )}
+          {(entity === 'work-items' || entity === 'checklist') && row.data.status !== 'selesai' && (
+            <Button
+              disabled={busy}
+              onClick={() =>
+                void update(row, {
+                  ...(entity === 'work-items'
+                    ? taskStatusChange('complete')
+                    : { status: 'selesai' }),
+                })
+              }
+            >
+              Selesai
+            </Button>
+          )}
+          <details className="record-options">
+            <summary>Opsi lainnya</summary>
+            <div className="actions">
+              {entity === 'work-items' && (
+                <>
+                  <Button
+                    disabled={busy}
+                    onClick={() =>
+                      void update(row, { due_date: addDays(String(row.data.due_date), 1) })
+                    }
+                  >
+                    +1 hari
+                  </Button>
+                  <Button
+                    disabled={busy}
+                    onClick={() =>
+                      void update(row, { due_date: addDays(String(row.data.due_date), 7) })
+                    }
+                  >
+                    +1 minggu
+                  </Button>
+                  <div className="inline-label">
+                    <span>Status</span>
+                    <Select
+                      value={String(row.data.status)}
+                      disabled={busy}
+                      onChange={(val) =>
+                        void update(row, {
+                          ...(entity === 'work-items'
+                            ? selectTaskStatus(val as TaskStatus)
+                            : { status: val }),
+                        })
+                      }
+                      options={options['work-items.status'].map((value) => ({
+                        value,
+                        label: formatChoiceLabel(value),
+                      }))}
+                      ariaLabel="Status"
+                    />
+                  </div>
+                </>
+              )}
+              {(entity === 'meetings' || entity === 'issues') && (
                 <Button
-                  className="button meeting-join btn-download-ics"
-                  onClick={() => downloadMeeting(row)}
-                  title="Unduh jadwal rapat .ics"
-                >
-                  Unduh Jadwal (.ics)
-                </Button>
-                <Button
-                  className="button meeting-followup-btn"
                   onClick={() => {
                     window.dispatchEvent(
                       new CustomEvent('hub-task', {
                         detail: {
                           title: `Tindak lanjut: ${row.data.title}`,
-                          description: String(row.data.minutes || row.data.agenda || ''),
-                          notes: `Sumber meetings: ${row.id}`,
-                          meeting_id: row.id,
+                          description:
+                            entity === 'meetings'
+                              ? String(row.data.minutes || row.data.agenda || '')
+                              : String(row.data.description || ''),
+                          notes: `Sumber ${entity}: ${row.id}`,
+                          ...(entity === 'meetings'
+                            ? { meeting_id: row.id }
+                            : { issue_id: row.id }),
                         },
                       }),
                     );
                   }}
-                  title="Buat tugas tindak lanjut rapat"
                 >
-                  + Tindak Lanjut
+                  + Tindak lanjut
                 </Button>
-              </div>
-            </div>
-          );
-        })()}
-      {entity === 'work-items' &&
-        Array.isArray(row.data.subtasks) &&
-        row.data.subtasks.length > 0 && (
-          <div className="subtask-list">
-            <small>
-              {row.data.subtasks.filter((task) => task.done).length}/{row.data.subtasks.length}{' '}
-              subtugas selesai
-            </small>
-            {(row.data.subtasks as { title: string; done: boolean }[]).map((task, index) => (
-              <label className="check" key={index}>
-                <Input
-                  type="checkbox"
-                  checked={task.done}
-                  disabled={busy}
-                  onChange={(event) =>
-                    void update(row, {
-                      subtasks: (row.data.subtasks as { title: string; done: boolean }[]).map(
-                        (subtask, i) =>
-                          i === index ? { ...subtask, done: event.target.checked } : subtask,
-                      ),
-                    })
-                  }
-                />
-                <span>{task.title}</span>
-              </label>
-            ))}
-          </div>
-        )}
-      <div className="actions">
-        <Button onClick={() => (entity === 'work-items' ? setDetailTask(row) : setEdit(row))}>
-          Buka catatan
-        </Button>
-        {entity === 'journal' && (
-          <Button
-            type="button"
-            className="btn-journal-followup"
-            onClick={() => {
-              window.dispatchEvent(
-                new CustomEvent('hub-task', {
-                  detail: {
-                    title: `Tindak lanjut: ${row.data.title}`,
-                    description: String(row.data.notes || ''),
-                    notes: `Sumber kegiatan: ${row.id}`,
-                    ...(row.data.work_item_id ? { parent_id: row.data.work_item_id } : {}),
-                  },
-                }),
-              );
-            }}
-            title="Buat tugas tindak lanjut dari kegiatan ini"
-          >
-            + Tindak lanjut
-          </Button>
-        )}
-        {(entity === 'work-items' || entity === 'checklist') && row.data.status !== 'selesai' && (
-          <Button
-            disabled={busy}
-            onClick={() =>
-              void update(row, {
-                ...(entity === 'work-items'
-                  ? taskStatusChange('complete')
-                  : { status: 'selesai' }),
-              })
-            }
-          >
-            Selesai
-          </Button>
-        )}
-        <details className="record-options">
-          <summary>Opsi lainnya</summary>
-          <div className="actions">
-            {entity === 'work-items' && (
-              <>
+              )}
+              {!['organization', 'workstreams'].includes(entity) && (
                 <Button
+                  className="danger"
                   disabled={busy}
-                  onClick={() =>
-                    void update(row, { due_date: addDays(String(row.data.due_date), 1) })
-                  }
-                >
-                  +1 hari
-                </Button>
-                <Button
-                  disabled={busy}
-                  onClick={() =>
-                    void update(row, { due_date: addDays(String(row.data.due_date), 7) })
-                  }
-                >
-                  +1 minggu
-                </Button>
-                <div className="inline-label">
-                  <span>Status</span>
-                  <Select
-                    value={String(row.data.status)}
-                    disabled={busy}
-                    onChange={(val) =>
-                      void update(row, {
-                        ...(entity === 'work-items'
-                          ? selectTaskStatus(val as TaskStatus)
-                          : { status: val }),
-                      })
+                  onClick={async () => {
+                    if (!confirm(`Hapus “${row.data.title}”?`)) return;
+                    setBusy(true);
+                    try {
+                      await api(entity, { id: row.id }, 'DELETE');
+                      await refresh();
+                    } catch (e) {
+                      setError((e as Error).message);
+                    } finally {
+                      setBusy(false);
                     }
-                    options={options['work-items.status'].map((value) => ({
-                      value,
-                      label: formatChoiceLabel(value),
-                    }))}
-                    ariaLabel="Status"
-                  />
-                </div>
-              </>
-            )}
-            {(entity === 'meetings' || entity === 'issues') && (
-              <Button
-                onClick={() => {
-                  window.dispatchEvent(
-                    new CustomEvent('hub-task', {
-                      detail: {
-                        title: `Tindak lanjut: ${row.data.title}`,
-                        description:
-                          entity === 'meetings'
-                            ? String(row.data.minutes || row.data.agenda || '')
-                            : String(row.data.description || ''),
-                        notes: `Sumber ${entity}: ${row.id}`,
-                        ...(entity === 'meetings' ? { meeting_id: row.id } : { issue_id: row.id }),
-                      },
-                    }),
-                  );
-                }}
-              >
-                + Tindak lanjut
-              </Button>
-            )}
-            {!['organization', 'workstreams'].includes(entity) && (
-              <Button
-                className="danger"
-                disabled={busy}
-                onClick={async () => {
-                  if (!confirm(`Hapus “${row.data.title}”?`)) return;
-                  setBusy(true);
-                  try {
-                    await api(entity, { id: row.id }, 'DELETE');
-                    await refresh();
-                  } catch (e) {
-                    setError((e as Error).message);
-                  } finally {
-                    setBusy(false);
-                  }
-                }}
-              >
-                Hapus
-              </Button>
-            )}
-          </div>
-        </details>
-      </div>
-    </article>
+                  }}
+                >
+                  Hapus
+                </Button>
+              )}
+            </div>
+          </details>
+        </div>
+      </article>
     );
   };
   return (
@@ -1695,7 +1731,10 @@ export function Records({
             </div>
             <div>
               <h2>Arsip Riwayat Selesai</h2>
-              <p>Rekap tugas yang telah tuntas dikerjakan, diurutkan dan dikelompokkan secara kronologis.</p>
+              <p>
+                Rekap tugas yang telah tuntas dikerjakan, diurutkan dan dikelompokkan secara
+                kronologis.
+              </p>
             </div>
           </div>
           <div className="completed-archive-stats">
@@ -1818,21 +1857,25 @@ export function Records({
           )}
         </div>
       )}
-      {entity === 'work-items' && (workspace.sprints || []).length > 0 && !sprintFilter && !isCompletedArchive && view === 'daftar' && (
-        <div className="active-sprints-row">
-          {(workspace.sprints || [])
-            .filter((s) => s.data.status === 'aktif')
-            .map((sprint) => (
-              <SprintCard
-                key={sprint.id}
-                sprint={sprint}
-                tasks={all}
-                onEdit={(item) => setShowSprintModal(item)}
-                onRefresh={refresh}
-              />
-            ))}
-        </div>
-      )}
+      {entity === 'work-items' &&
+        (workspace.sprints || []).length > 0 &&
+        !sprintFilter &&
+        !isCompletedArchive &&
+        view === 'daftar' && (
+          <div className="active-sprints-row">
+            {(workspace.sprints || [])
+              .filter((s) => s.data.status === 'aktif')
+              .map((sprint) => (
+                <SprintCard
+                  key={sprint.id}
+                  sprint={sprint}
+                  tasks={all}
+                  onEdit={(item) => setShowSprintModal(item)}
+                  onRefresh={refresh}
+                />
+              ))}
+          </div>
+        )}
       {entity === 'work-items' && !isCompletedArchive && view === 'daftar' && (
         <form
           className="today-quick-add-card"
@@ -1892,159 +1935,161 @@ export function Records({
             Cari & filter{search || effectiveFilter || workstream || priority ? ' · aktif' : ''}
           </Button>
           <div className={`filters ${filtersOpen ? 'filters-expanded' : ''}`}>
-        <label>
-          <span className="field-caption">
-            <Search size={14} /> Cari
-          </span>
-          <Input
-            type="search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Judul, penanggung jawab, catatan…"
-          />
-        </label>
-        {options[entity + '.status'] && view !== 'papan' && (
-          <label>
-            <span className="field-caption">Status</span>
-            <Select
-              value={effectiveFilter}
-              onChange={(value) => {
-                setFilter(value);
-                if (entity === 'work-items' && query.has('status')) {
-                  const next = new URLSearchParams(query.toString());
-                  next.delete('status');
-                  router.replace(
-                    (scopeId ? '/proyek' : '/tugas') + (next.size ? '?' + next.toString() : ''),
-                  );
-                }
-              }}
-              options={[
-                { value: '', label: 'Semua Status' },
-                ...(entity === 'work-items' ? [{ value: 'terlambat', label: 'Terlambat' }] : []),
-                ...options[entity + '.status'].map((value) => ({
-                  value,
-                  label: formatChoiceLabel(value),
-                })),
-              ]}
-              ariaLabel="Status"
-            />
-          </label>
-        )}
-        {entity === 'journal' && (
-          <>
             <label>
-              <span className="field-caption">Gerai</span>
-              <Select
-                value={journalUnit}
-                onChange={setJournalUnit}
-                options={[
-                  { value: '', label: 'Semua Gerai' },
-                  ...(workspace.units || []).map((row) => ({
-                    value: row.id,
-                    label: String(row.data.title),
-                  })),
-                ]}
-                ariaLabel="Gerai"
+              <span className="field-caption">
+                <Search size={14} /> Cari
+              </span>
+              <Input
+                type="search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Judul, penanggung jawab, catatan…"
               />
             </label>
-            <label>
-              <span className="field-caption">Mitra / Pemangku</span>
-              <Select
-                value={journalStakeholder}
-                onChange={setJournalStakeholder}
-                options={[
-                  { value: '', label: 'Semua Mitra' },
-                  ...(workspace.stakeholders || []).map((row) => ({
-                    value: row.id,
-                    label: String(row.data.title),
-                  })),
-                ]}
-                ariaLabel="Mitra"
-              />
-            </label>
-            <label>
-              <span className="field-caption">Rapat Terkait</span>
-              <Select
-                value={journalMeeting}
-                onChange={setJournalMeeting}
-                options={[
-                  { value: '', label: 'Semua Rapat' },
-                  ...(workspace.meetings || []).map((row) => ({
-                    value: row.id,
-                    label: String(row.data.title),
-                  })),
-                ]}
-                ariaLabel="Rapat Terkait"
-              />
-            </label>
-          </>
-        )}
-        {!scopeId && ['work-items', 'checklist'].includes(entity) && (
-          <label>
-            <span className="field-caption">Proyek / bidang kerja</span>
-            <Select
-              value={workstream}
-              onChange={setWorkstream}
-              options={[
-                { value: '', label: 'Semua Proyek' },
-                ...(workspace.workstreams || []).map((row) => ({
-                  value: row.id,
-                  label: String(row.data.title),
-                })),
-              ]}
-              ariaLabel="Proyek / bidang kerja"
-            />
-          </label>
-        )}
-        {entity === 'work-items' && (workspace.sprints || []).length > 0 && (
-          <label>
-            <span className="field-caption">Target periode</span>
-            <Select
-              value={sprintFilter}
-              onChange={setSprintFilter}
-              options={[
-                { value: '', label: 'Semua Target Periode (Sprint)' },
-                ...(workspace.sprints || []).map((row) => ({
-                  value: row.id,
-                  label: String(row.data.title),
-                })),
-              ]}
-              ariaLabel="Target periode"
-            />
-          </label>
-        )}
-        {entity === 'work-items' && (
-          <>
-            <label>
-              <span className="field-caption">Prioritas</span>
-              <Select
-                value={priority}
-                onChange={setPriority}
-                options={[
-                  { value: '', label: 'Semua Prioritas' },
-                  ...options.priority.map((value) => ({
-                    value,
-                    label: formatChoiceLabel(value),
-                  })),
-                ]}
-                ariaLabel="Prioritas"
-              />
-            </label>
-            <label>
-              <span className="field-caption">Urutkan</span>
-              <Select
-                value={sort}
-                onChange={setSort}
-                options={[
-                  { value: 'due', label: 'Tenggat Terdekat' },
-                  { value: 'title', label: 'Nama Tugas (A–Z)' },
-                  { value: 'updated', label: 'Terakhir Diubah' },
-                ]}
-                ariaLabel="Urutkan"
-              />
-            </label>
-          </>
-        )}
+            {options[entity + '.status'] && view !== 'papan' && (
+              <label>
+                <span className="field-caption">Status</span>
+                <Select
+                  value={effectiveFilter}
+                  onChange={(value) => {
+                    setFilter(value);
+                    if (entity === 'work-items' && query.has('status')) {
+                      const next = new URLSearchParams(query.toString());
+                      next.delete('status');
+                      router.replace(
+                        (scopeId ? '/proyek' : '/tugas') + (next.size ? '?' + next.toString() : ''),
+                      );
+                    }
+                  }}
+                  options={[
+                    { value: '', label: 'Semua Status' },
+                    ...(entity === 'work-items'
+                      ? [{ value: 'terlambat', label: 'Terlambat' }]
+                      : []),
+                    ...options[entity + '.status'].map((value) => ({
+                      value,
+                      label: formatChoiceLabel(value),
+                    })),
+                  ]}
+                  ariaLabel="Status"
+                />
+              </label>
+            )}
+            {entity === 'journal' && (
+              <>
+                <label>
+                  <span className="field-caption">Gerai</span>
+                  <Select
+                    value={journalUnit}
+                    onChange={setJournalUnit}
+                    options={[
+                      { value: '', label: 'Semua Gerai' },
+                      ...(workspace.units || []).map((row) => ({
+                        value: row.id,
+                        label: String(row.data.title),
+                      })),
+                    ]}
+                    ariaLabel="Gerai"
+                  />
+                </label>
+                <label>
+                  <span className="field-caption">Mitra / Pemangku</span>
+                  <Select
+                    value={journalStakeholder}
+                    onChange={setJournalStakeholder}
+                    options={[
+                      { value: '', label: 'Semua Mitra' },
+                      ...(workspace.stakeholders || []).map((row) => ({
+                        value: row.id,
+                        label: String(row.data.title),
+                      })),
+                    ]}
+                    ariaLabel="Mitra"
+                  />
+                </label>
+                <label>
+                  <span className="field-caption">Rapat Terkait</span>
+                  <Select
+                    value={journalMeeting}
+                    onChange={setJournalMeeting}
+                    options={[
+                      { value: '', label: 'Semua Rapat' },
+                      ...(workspace.meetings || []).map((row) => ({
+                        value: row.id,
+                        label: String(row.data.title),
+                      })),
+                    ]}
+                    ariaLabel="Rapat Terkait"
+                  />
+                </label>
+              </>
+            )}
+            {!scopeId && ['work-items', 'checklist'].includes(entity) && (
+              <label>
+                <span className="field-caption">Proyek / bidang kerja</span>
+                <Select
+                  value={workstream}
+                  onChange={setWorkstream}
+                  options={[
+                    { value: '', label: 'Semua Proyek' },
+                    ...(workspace.workstreams || []).map((row) => ({
+                      value: row.id,
+                      label: String(row.data.title),
+                    })),
+                  ]}
+                  ariaLabel="Proyek / bidang kerja"
+                />
+              </label>
+            )}
+            {entity === 'work-items' && (workspace.sprints || []).length > 0 && (
+              <label>
+                <span className="field-caption">Target periode</span>
+                <Select
+                  value={sprintFilter}
+                  onChange={setSprintFilter}
+                  options={[
+                    { value: '', label: 'Semua Target Periode (Sprint)' },
+                    ...(workspace.sprints || []).map((row) => ({
+                      value: row.id,
+                      label: String(row.data.title),
+                    })),
+                  ]}
+                  ariaLabel="Target periode"
+                />
+              </label>
+            )}
+            {entity === 'work-items' && (
+              <>
+                <label>
+                  <span className="field-caption">Prioritas</span>
+                  <Select
+                    value={priority}
+                    onChange={setPriority}
+                    options={[
+                      { value: '', label: 'Semua Prioritas' },
+                      ...options.priority.map((value) => ({
+                        value,
+                        label: formatChoiceLabel(value),
+                      })),
+                    ]}
+                    ariaLabel="Prioritas"
+                  />
+                </label>
+                <label>
+                  <span className="field-caption">Urutkan</span>
+                  <Select
+                    value={sort}
+                    onChange={setSort}
+                    options={[
+                      { value: 'due', label: 'Tenggat Terdekat' },
+                      { value: 'title', label: 'Nama Tugas (A–Z)' },
+                      { value: 'updated', label: 'Terakhir Diubah' },
+                    ]}
+                    ariaLabel="Urutkan"
+                  />
+                </label>
+              </>
+            )}
           </div>
         </>
       )}
@@ -2164,9 +2209,7 @@ export function Records({
                 <th className="col-task-title">Tugas & Proyek</th>
                 <th className="col-task-status">Status</th>
                 <th className="col-task-priority">Prioritas</th>
-                <th className="col-task-due">
-                  {isCompletedArchive ? 'Diselesaikan' : 'Tenggat'}
-                </th>
+                <th className="col-task-due">{isCompletedArchive ? 'Diselesaikan' : 'Tenggat'}</th>
                 <th className="col-task-assignee">Penanggung Jawab</th>
                 <th className="col-task-action">
                   <span className="sr-only">Aksi</span>
@@ -2181,7 +2224,9 @@ export function Records({
                     String(row.data.due_date) < today() && isActiveTask(row.data.status);
                   const isToday =
                     String(row.data.due_date) === today() && isActiveTask(row.data.status);
-                  const project = workspace.workstreams?.find((p) => p.id === row.data.workstream_id);
+                  const project = workspace.workstreams?.find(
+                    (p) => p.id === row.data.workstream_id,
+                  );
                   const subtasks = Array.isArray(row.data.subtasks) ? row.data.subtasks : [];
                   const doneSubtasks = subtasks.filter((s: { done?: boolean }) => s.done).length;
                   const assigneeName = String(row.data.assignee || '').trim();
@@ -2203,9 +2248,7 @@ export function Records({
                               <span className="task-title-text">{String(row.data.title)}</span>
                             </span>
                             <span className="task-title-sub">
-                              <span
-                                className={`task-project-name ${project ? 'has-project' : ''}`}
-                              >
+                              <span className={`task-project-name ${project ? 'has-project' : ''}`}>
                                 {String(project?.data.title || 'Tanpa proyek')}
                               </span>
                               {subtasks.length > 0 && (
@@ -2248,7 +2291,10 @@ export function Records({
                       </td>
                       <td className="col-task-due">
                         {isDone && row.data.completed_at ? (
-                          <span className="task-due-chip task-due-done" title="Tanggal diselesaikan">
+                          <span
+                            className="task-due-chip task-due-done"
+                            title="Tanggal diselesaikan"
+                          >
                             <Calendar size={12} className="task-due-icon" />
                             <span>Selesai {formatDate(String(row.data.completed_at))}</span>
                           </span>
@@ -2258,7 +2304,10 @@ export function Records({
                             <span>{formatDate(String(row.data.due_date))}</span>
                           </span>
                         ) : isToday ? (
-                          <span className="task-due-chip task-due-today" title="Jatuh tempo hari ini">
+                          <span
+                            className="task-due-chip task-due-today"
+                            title="Jatuh tempo hari ini"
+                          >
                             <Calendar size={12} className="task-due-icon" />
                             <span>Hari Ini</span>
                           </span>
@@ -2273,7 +2322,10 @@ export function Records({
                       </td>
                       <td className="col-task-assignee">
                         {assigneeName ? (
-                          <span className="task-assignee-pill" title={`Penanggung jawab: ${assigneeName}`}>
+                          <span
+                            className="task-assignee-pill"
+                            title={`Penanggung jawab: ${assigneeName}`}
+                          >
                             {assigneeName}
                           </span>
                         ) : (
@@ -2376,7 +2428,8 @@ export function Records({
           workspace={workspace}
           onClose={() => {
             setEdit(undefined);
-            if (quickAdd) router.replace(entity === 'work-items' ? '/tugas' : window.location.pathname);
+            if (quickAdd)
+              router.replace(entity === 'work-items' ? '/tugas' : window.location.pathname);
           }}
           onSaved={refresh}
         />
@@ -2395,7 +2448,12 @@ export function Records({
             setEdit(task);
           }}
           onDelete={async (task) => {
-            if (!window.confirm(`Hapus tugas "${task.data.title || 'ini'}"? Tindakan ini tidak dapat dibatalkan.`)) return;
+            if (
+              !window.confirm(
+                `Hapus tugas "${task.data.title || 'ini'}"? Tindakan ini tidak dapat dibatalkan.`,
+              )
+            )
+              return;
             closeTaskDetail();
             await api('work-items', { id: task.id, data: { ...task.data, status: 'dibatalkan' } });
             await refresh();

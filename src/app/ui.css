@@ -63,6 +63,12 @@
 .ui-card-header { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-4); }
 .ui-card-header h2 { margin: 0; font-size: var(--fs-h2); }
 .ui-bottom-nav { display: none; }
+.ui-drag-handle.ui-drag-handle { touch-action: none; user-select: none; -webkit-touch-callout: none; cursor: grab; padding: var(--space-2); }
+.scrum-task-card { touch-action: pan-y; }
+.ui-card-move { display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-2); min-width: 0; }
+.ui-card-move > .custom-select-wrap { flex: 1; min-width: 0; }
+.ui-drag-overlay { position: fixed; top: var(--drag-y); left: var(--drag-x); transform: translate(-50%, -50%) scale(1.03) rotate(1.5deg); max-width: calc(100vw - var(--space-8)); width: var(--ui-calendar-width); padding: var(--space-4); background: var(--surface); color: var(--ink); border: var(--border-width) solid var(--brand); border-radius: var(--r-lg); box-shadow: var(--shadow-lg); z-index: 1000; pointer-events: none; }
+[data-drop-zone].drag-over { outline: var(--focus-width) dashed var(--brand); outline-offset: var(--space-1); }
 .ui-stats-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); margin-block: var(--space-5); }
 .ui-stat-link { min-width: 0; display: block; }
 .ui-stat-card { height: 100%; min-width: 0; padding: var(--space-5); background: var(--surface); border: var(--border-width) solid var(--line); border-radius: var(--r-lg); box-shadow: var(--shadow-sm); }

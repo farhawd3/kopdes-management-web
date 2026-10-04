@@ -46,3 +46,14 @@ Migrasi visual penuh, interaktivitas, animasi dan QA menyeluruh masih berjalan. 
 - Verifikasi: 175 tes/24 berkas, typecheck, lint, lint:ui, check:ui dan build lulus. Beranda terang 360/768/1024/1440 tanpa luapan; gelap 1440 diperiksa visual. Dropdown gelap terukur memakai latar/teks gelap yang sesuai token.
 - [x] Statistik netral, informasi/tautan dan layout adaptif.
 - [ ] Legenda semua grafik, seluruh empty state dan audit kontras seluruh lima tema.
+
+## Fase 5A — drag Pointer Events
+
+- Hook `useDragSort` mengganti HTML5 drag pada papan tugas/kegiatan: long-press 220 ms, toleransi awal 8 px, pointer capture, Escape/pointercancel/lost capture, zona terbatas pada papan, gulir tepi dan vibrasi opsional. Touch-action none hanya pada handle; badan kartu pan-y.
+- Overlay kartu tampil melalui portal; zona tujuan ditandai outline. Dropdown “Pindahkan … ke” menyediakan pemindahan tanpa drag/keyboard. Pemindahan tugas tetap memakai aturan status domain dan kegiatan tetap memakai aturan tanggal sebelumnya. Galat kegiatan kini terlihat.
+- Atribut drag pada kartu daftar/kalender yang tidak memiliki target drop dihapus. CsvDropzone tetap memakai HTML5 file drop.
+- Verifikasi: 181 tes/26 berkas, typecheck, lint, lint:ui, check:ui, build dan audit sumber 85/85 lulus. Tes baru memeriksa long-press, scroll awal, sekali kirim, Escape/cancel, busy, batas papan, tanggal selesai dan galat server. Galeri browser desktop membuktikan kartu contoh berpindah rencana → proses tanpa database.
+- [x] Drag berbasis pointer, handle, overlay, auto-scroll dan alternatif tanpa drag.
+- [ ] Placeholder posisi urut di dalam kolom (papan saat ini memindahkan status/tanggal, bukan urutan manual).
+- [ ] Chrome Android, Samsung Internet, WebView dan iOS Safari fisik.
+- [ ] Interaksi tambahan bagian 5B.

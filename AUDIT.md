@@ -11,11 +11,11 @@ Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at
 | select | 1 |
 | textarea | 1 |
 | date | 1 |
-| inline | 86 |
+| inline | 87 |
 | hexTsx | 24 |
 | hexCss | 945 |
 | important | 2278 |
-| bytes | 611793 |
+| bytes | 612701 |
 | Elemen mentah di luar components/ui | 0 |
 | Selector berulang | 519 |
 | Nilai border-radius unik | 59 |
@@ -29,7 +29,7 @@ Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at
 | src/app/globals.css | 27511 | 5 |
 | src/app/personal.css | 571354 | 2273 |
 | src/app/tokens.css | 2753 | 0 |
-| src/app/ui.css | 10175 | 0 |
+| src/app/ui.css | 11083 | 0 |
 
 ## Inventaris halaman dan overlay
 
@@ -584,11 +584,11 @@ Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at
 | src/app/personal.css | .project-properties-grid | 23594, 24140 |
 | src/app/personal.css | .project-progress-card | 23681, 24144 |
 | src/app/tokens.css | :root | 2, 49 |
-| src/app/ui.css | .ui-modal | 84, 89 |
-| src/app/ui.css | .ui-modal::backdrop | 85, 90 |
-| src/app/ui.css | .ui-modal > header | 86, 87, 91, 92 |
-| src/app/ui.css | .ui-modal > footer | 86, 88, 91, 93 |
-| src/app/ui.css | @media (max-width: 767px) → .ui-modal | 99, 100 |
+| src/app/ui.css | .ui-modal | 90, 95 |
+| src/app/ui.css | .ui-modal::backdrop | 91, 96 |
+| src/app/ui.css | .ui-modal > header | 92, 93, 97, 98 |
+| src/app/ui.css | .ui-modal > footer | 92, 94, 97, 99 |
+| src/app/ui.css | @media (max-width: 767px) → .ui-modal | 105, 106 |
 
 ## Nilai deklarasi
 
