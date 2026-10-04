@@ -1,5 +1,9 @@
 # Checklist produk aktif
 
+- [x] Koreksi lima screenshot: satu bingkai fokus pencarian, menu dropdown terpisah dari lebar pemicu, ukuran teks aksi berdasarkan konteks, form satu kolom/tab dua kolom mobile, kartu Gerai tanpa radar kosong, Hari ini sesuai tanggal Jakarta.
+- [x] Konten contoh 21 domain pada 360 terang/gelap; lima jenis kartu dan empat form relasi di empat lebar diperiksa ulang. Rincian/batasan di QA-POPUP.md.
+- [ ] lint:ui legacy dan 34 kontrol mentah pada checkout terbaru belum memenuhi audit UI.
+
 - [x] Inventaris popup dan fixture 21 domain; panggilan API diblokir, draft/preferensi QA terpisah.
 - [x] Form panjang, input rutinitas, label tanggal, target tombol dialog dan Escape popup bertingkat diperbaiki.
 - [x] Impor CSV/rutinitas/konfirmasi laporan memakai modal native; pencarian/bantuan/menu diperiksa, fokus menu ponsel dibatasi dan dipulihkan.

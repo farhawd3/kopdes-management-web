@@ -792,12 +792,14 @@ export function Records({
   refresh,
   initialFilter = '',
   scopeId,
+  draftScope,
 }: {
   entity: Entity;
   workspace: Workspace;
   refresh: () => Promise<void>;
   initialFilter?: string;
   scopeId?: string;
+  draftScope?: string;
 }) {
   const query = useSearchParams(),
     router = useRouter();
@@ -829,7 +831,7 @@ export function Records({
       }
       if (typeof window !== 'undefined') {
         try {
-          const savedView = localStorage.getItem(`preferred_view_${entity}`);
+          const savedView = localStorage.getItem(`${draftScope ? draftScope + ':' : ''}preferred_view_${entity}`);
           if (savedView && ['daftar', 'papan', 'kalender', 'gantt', 'harian'].includes(savedView)) {
             return savedView;
           }
@@ -843,7 +845,7 @@ export function Records({
     setView(newView);
     if (typeof window !== 'undefined') {
       try {
-        localStorage.setItem(`preferred_view_${entity}`, newView);
+        localStorage.setItem(`${draftScope ? draftScope + ':' : ''}preferred_view_${entity}`, newView);
       } catch {}
     }
   };
@@ -1187,7 +1189,7 @@ export function Records({
       return renderCalendarTaskCard(row);
     }
     return (
-      <article className="record card" key={row.id}>
+      <article className={`record card ${entity === 'units' ? 'unit-record' : ''}`} key={row.id}>
         <div className="section-head">
           <h3>
             {['work-items', 'journal'].includes(entity) && (
@@ -2518,6 +2520,7 @@ export function Records({
           entity={entity}
           item={edit || undefined}
           quick={quickAdd && entity === 'work-items'}
+          draftScope={draftScope}
           workspace={workspace}
           onClose={() => {
             setEdit(undefined);

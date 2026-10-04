@@ -82,7 +82,7 @@ export function TaskTimeline({
   return (
     <section className={`timeline-panel ${showMobileChart ? 'mobile-chart-open' : ''}`}>
       <div className="timeline-toolbar">
-        <DateNav onPrevious={() => setStart(addDays(start, -days))} onToday={() => setStart(addDays(today(), -7))} onNext={() => setStart(addDays(start, days))} />
+        <DateNav onPrevious={() => setStart(addDays(start, -days))} onToday={() => setStart(today())} onNext={() => setStart(addDays(start, days))} />
         <label>
           Mulai
           <DateInput

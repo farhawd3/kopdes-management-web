@@ -1,5 +1,7 @@
 # Serah terima AI
 
+Koreksi screenshot 4 Oktober: baca bagian terbaru QA-POPUP.md. Fixture daftar memakai draftScope, bukan scopeId yang menyembunyikan data; preferensi view QA terpisah. Lebar dropdown mengikuti batas panel dengan minimum yang diinginkan 220 px; opsi tidak flex-shrink. Form mobile satu kolom, tab dua kolom. Hari ini kini mengatur start=today() (varian layar penuh masih dalam perubahan kerja TaskTimeline milik pemilik). Kartu Gerai tanpa radar kosong, contoh 40/100% berasal dari checklist fixture. 245 tes/37 berkas, tipe/ESLint/build lulus; lint:ui dan check:ui tetap gagal pada utang checkout, bukan seluruh audit selesai.
+
 ## Lanjutan PLAN-ASTRA — 4 Oktober 2026
 
 - Rujuk docs/QA-POPUP.md untuk audit popup terbaru. /dev/popup hanya development, fixture 21 domain, API diblokir sebelum fetch; draft form dan preferensi rutinitas QA terpisah. Jangan menghapus guard atau memakai fixture sebagai data operasional.

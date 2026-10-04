@@ -18399,9 +18399,10 @@ select:not(.custom-select-native):focus {
 .custom-select-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: inherit; font: inherit; }
 .custom-select-menu {
   position: absolute;
-  inset: calc(100% + 6px) 0 auto;
+  inset: calc(100% + 6px) auto auto var(--popover-offset, 0px);
   z-index: 650;
-  min-width: 100%;
+  width: var(--popover-width, 100%);
+  min-width: 0;
   padding: 6px;
   display: flex;
   flex-direction: column;
@@ -18422,9 +18423,10 @@ button:not(.ui-btn).custom-select-option,
 .custom-select-menu [role='option'],
 .custom-select-option {
   all: unset !important;
+  flex-shrink: 0 !important;
   box-sizing: border-box !important;
   width: 100% !important;
-  min-height: 38px !important;
+  min-height: var(--touch-target) !important;
   height: auto !important;
   display: flex !important;
   align-items: center !important;
@@ -18831,8 +18833,8 @@ button:not(.ui-btn).custom-select-option.is-selected,
 
 .drawer-status-select-wrap .custom-select-menu,
 .drawer-priority-select-wrap .custom-select-menu {
-  min-width: 150px !important;
-  width: max-content !important;
+  min-width: 0;
+  width: var(--popover-width, 220px);
   z-index: 700 !important;
 }
 

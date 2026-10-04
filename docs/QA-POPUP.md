@@ -1,5 +1,18 @@
 # Pemeriksaan popup — 4 Oktober 2026
 
+## Koreksi berdasarkan lima screenshot pemilik
+
+- Pencarian: input di dalam bingkai pencarian tidak lagi mendapat border/focus ring kedua. Pengukuran fokus memastikan input border 0 dan shadow none; fokus tetap terlihat pada pembungkus.
+- Tombol: token teks aksi 13 px, ukuran kecil 12 px dan besar 14 px. Aksi tambah relasi memakai 12 px tanpa mengurangi target dialog. Form ponsel satu kolom; tab tampilan menjadi dua kolom dan label membungkus.
+- Dropdown: lebar menu minimal yang diinginkan 220 px, dibatasi viewport/panel, terpisah dari lebar tombol status. Pilihan tidak menyusut saat menu bergulir dan target minimum 44 px. Label pilihan panjang pada form membungkus.
+- Gerai/kartu umum: hierarki judul/status, jarak isi, aksi dan opsi dirapikan. Kartu mengikuti tinggi isi. Radar tanpa penilaian dihilangkan, lima nilai tetap menyebut Belum dinilai; radar berdata dibatasi ukurannya. Fixture Gerai mencakup belum dinilai, 40% dan 100% berdasarkan checklist contoh.
+- Hari ini: sebelumnya awal rentang diatur `today() - 7`, sehingga 4 Oktober menjadi 27 September. Kini tombol menetapkan tanggal Jakarta hari ini; tanggal 04/10/2026 diverifikasi di browser. Perubahan yang sama diterapkan pada varian layar penuh yang masih berada dalam perubahan kerja pemilik.
+- Fixture daftar sebelumnya terfilter `scopeId="qa-popup"` sehingga data tersembunyi. Lingkup draft/preferensi sekarang dipisahkan dari filter proyek. API tetap diblokir. Tabel tugas/kegiatan dan matriks risiko memiliki kontainer gulir yang terisolasi.
+
+Pengukuran terbaru: konten 21 domain pada 360 px terang/gelap, lima jenis kartu (Gerai, Dokumen, Mitra, Rapat, Risiko) pada 360/768/1024/1440, serta empat form terisi (Tugas, Gerai, Mitra, Rapat) pada empat lebar dalam tema gelap. Semua pengukuran final tersebut tanpa luapan halaman/kartu/dialog. Ini tidak mengklaim semua form/state/tema sudah diverifikasi ulang secara visual. Bukti lokal: cards-360-dark-current.json, cards-light-current.json, forms-current-four-widths.json dan gerai-card-current.jpg dalam artifacts/astra.
+
+245 tes/37 berkas, typecheck, ESLint, build dan audit sumber 94/94 lulus. lint:ui masih gagal pada aturan legacy ui.css (important, angka font/radius dan satu hex); check:ui masih gagal karena 34 kontrol mentah di luar primitive. Utang yang sudah ada pada checkout ini tetap terbuka; tidak dilabeli lulus dan aturan pemeriksa tidak dilonggarkan. Token tombol baru ditambahkan ke daftar token font yang diizinkan.
+
 ## Cakupan dan cara memeriksa
 
 Pemeriksaan awal belum mencakup semua popup yang membutuhkan data. Paket ini menambah `/dev/popup`, hanya tersedia dalam development. Fixture berasal dari skema sah dan ditandai sebagai contoh, bukan catatan operasional. Semua panggilan API dari halaman ini ditolak sebelum `fetch`, termasuk baca, tambah, ubah, dan hapus. Draft form serta preferensi rutinitas memakai lingkup QA terpisah. Tema berubah sementara dan dipulihkan saat keluar.

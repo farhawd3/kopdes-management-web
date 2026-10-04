@@ -36,3 +36,13 @@ task.data = schemas['work-items'].parse({ ...task.data,
   activities: [{ id: 'qa-comment', user: 'Contoh QA', role: '', text: 'Komentar contoh untuk pemeriksaan tata letak.', created_at: task.created_at, type: 'comment' }],
 });
 popupWorkspace['stock-counts']![0].data.item_id = popupWorkspace['inventory-items']![0].id;
+
+const readyUnit = { ...popupWorkspace.units![0], id: '00000000-0000-4000-8000-000000009001', data: schemas.units.parse({ title: 'Contoh gerai dengan penilaian sebagian', status: 'persiapan', assignee: 'Contoh QA' }) };
+const completeUnit = { ...readyUnit, id: '00000000-0000-4000-8000-000000009002', data: schemas.units.parse({ title: 'Contoh gerai dengan seluruh syarat selesai', status: 'siap uji' }) };
+export const cardWorkspace: Workspace = { ...popupWorkspace, units: [...popupWorkspace.units!, readyUnit, completeUnit], checklist: [
+  ...popupWorkspace.checklist!,
+  ...(['legalitas', 'fisik', 'sdm', 'sop', 'sistem'] as const).flatMap((dimension, index) => [readyUnit, completeUnit].map((unit, unitIndex) => ({
+    ...popupWorkspace.checklist![0], id: `00000000-0000-4000-8000-${String(9100 + index * 2 + unitIndex).padStart(12, '0')}`,
+    data: schemas.checklist.parse({ title: `Contoh syarat ${dimension}`, unit_id: unit.id, dimension, required: true, status: unitIndex === 1 || index < 2 ? 'selesai' : 'rencana' }),
+  }))),
+] };

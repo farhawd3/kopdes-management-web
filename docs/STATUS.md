@@ -1,5 +1,7 @@
 # Status produk — 4 Oktober 2026
 
+Koreksi lima screenshot pemilik selesai: fokus pencarian tunggal, kartu Gerai/rincian kesiapan lebih padat, font aksi sesuai konteks, form/tab mobile dan dropdown tidak terpotong, Hari ini sesuai tanggal Jakarta. QA fixture 21 domain 360 terang/gelap; lima kartu dan empat form pada empat lebar. 245 tes/37 berkas, tipe, ESLint, build dan audit sumber 94/94 lulus. lint:ui dan check:ui tetap gagal pada utang legacy checkout (termasuk 34 kontrol mentah). Rincian dan batasan: docs/QA-POPUP.md.
+
 Penyempurnaan visual, konsistensi tipografi, perbaikan tampilan kegiatan, dan tampilan pencatatan modern:
 - **Penyederhanaan Breadcrumb Topbar (`.manager-location-wrap`, `AppShell`)**:
   - **Meredakan Penonjolan Breadcrumb Lokasi**: Menghilangkan kapsul tebal berwarna latar hijau dan garis tepi (`border: 1px solid var(--line)`) pada breadcrumb topbar desktop. Menghilangkan titik hijau mencolok (`.manager-location-dot`) sehingga judul halaman (seperti "Daftar Tugas") hadir sebagai teks breadcrumb yang tenang, elegan, dan proporsional sesuai kaidah hierarki antarmuka modern.

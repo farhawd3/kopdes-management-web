@@ -11,7 +11,9 @@ import { Records } from '../Records';
 import { Dashboard } from '../dashboard/Dashboard';
 import { Reports } from '../reports/Reports';
 import { reportSnapshot } from '../reports/report-snapshot';
-import { popupEntities, popupLabels, popupWorkspace } from './popup-fixtures';
+import { WorkspaceSearch } from '../workspace/WorkspaceSearch';
+import { TaskTimeline } from '../tasks/TaskTimeline';
+import { popupEntities, popupLabels, popupWorkspace, cardWorkspace } from './popup-fixtures';
 import type { Entity } from '../schemas';
 const sampleReports = [{ id: 'qa-report', title: 'Laporan contoh pemeriksaan', period_start: '2026-10-01', period_end: '2026-10-04', snapshot: { ...reportSnapshot(popupWorkspace, '2026-10-01', '2026-10-04'), notes: 'Catatan contoh pemeriksaan', status: 'draft' as const } }];
 
@@ -38,7 +40,7 @@ export function PopupGallery() {
     <Button onClick={() => setDark(!dark)}>{dark ? 'Tema terang' : 'Tema gelap'}</Button>
     <Select ariaLabel="Domain contoh" value={entity} onChange={value => setEntity(value as Entity)} options={popupEntities.map(value => ({value, label: popupLabels[value]}))} />
     <div className="ui-gallery-row">
-      {['Tambah', 'Ubah', 'Tugas cepat', 'Detail tugas', 'Sprint baru', 'Sprint terisi', 'Jadwal berulang', 'Pusat aksi', 'Daftar dan CSV', 'Dashboard dan rutinitas', 'Laporan terisi'].map(label => <Button key={label} onClick={() => setPopup(label)}>{label}</Button>)}
+      {['Tambah', 'Ubah', 'Tugas cepat', 'Detail tugas', 'Sprint baru', 'Sprint terisi', 'Jadwal berulang', 'Pusat aksi', 'Daftar dan CSV', 'Dashboard dan rutinitas', 'Laporan terisi', 'Pencarian contoh', 'Linimasa contoh'].map(label => <Button key={label} onClick={() => setPopup(label)}>{label}</Button>)}
     </div>
     {(popup === 'Tambah' || popup === 'Ubah' || popup === 'Tugas cepat') && <Editor
       entity={popup === 'Tugas cepat' ? 'work-items' : entity}
@@ -49,8 +51,10 @@ export function PopupGallery() {
     {(popup === 'Sprint baru' || popup === 'Sprint terisi') && <SprintModal sprint={popup === 'Sprint terisi' ? popupWorkspace.sprints?.[0] : undefined} onClose={close} onSaved={async () => {}} />}
     {popup === 'Jadwal berulang' && <RecursiveScheduleModal currentType="mingguan" onClose={close} onSave={() => {}} />}
     <ManagerActionModal open={popup === 'Pusat aksi'} onClose={close} />
-    {popup === 'Daftar dan CSV' && <Records entity={entity} workspace={popupWorkspace} refresh={async () => {}} scopeId="qa-popup" />}
+    {popup === 'Daftar dan CSV' && <Records key={entity} entity={entity} workspace={cardWorkspace} refresh={async () => {}} draftScope="qa-popup" />}
     {popup === 'Dashboard dan rutinitas' && <Dashboard data={popupWorkspace} preferenceScope="qa-popup:" />}
     {popup === 'Laporan terisi' && <Reports previewReports={sampleReports} />}
+    {popup === 'Pencarian contoh' && <WorkspaceSearch workspace={popupWorkspace} onNavigate={() => {}} />}
+    {popup === 'Linimasa contoh' && <TaskTimeline items={popupWorkspace['work-items']!} workspace={popupWorkspace} refresh={async () => {}} />}
   </main>;
 }

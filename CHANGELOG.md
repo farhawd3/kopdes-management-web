@@ -1,5 +1,13 @@
 # Changelog
 
+## Koreksi pencarian, kartu dan kontrol mobile — 4 Oktober 2026
+
+- Hilangkan bingkai fokus ganda, sesuaikan teks aksi menurut ukuran/konteks, gunakan form satu kolom dan tab dua kolom pada ponsel.
+- Dropdown status punya lebar menu sendiri, dibatasi panel; pilihan tidak menyusut dan label form panjang membungkus.
+- Rapikan kartu Gerai/kartu umum dan rincian kesiapan; radar kosong tidak ditampilkan. Isolasi gulir tabel/matriks. Fixture daftar menampilkan data tanpa filter QA palsu.
+- Hari ini menetapkan tanggal Jakarta hari ini, bukan tujuh hari sebelumnya. Regresi tanggal dan kesiapan ditambahkan.
+- 245 tes/37 berkas, tipe, ESLint, build, sumber 94/94 lulus. lint:ui/check:ui legacy masih gagal; cakupan browser dan batasnya di QA-POPUP.md.
+
 ## Penyederhanaan Breadcrumb Topbar & Reduksi Penonjolan Judul Lokasi — 4 Oktober 2026
 
 - **Eliminasi Kapsul & Border Hijau Tebal (`.manager-location-wrap`)**:
