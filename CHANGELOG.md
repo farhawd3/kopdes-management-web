@@ -1,13 +1,5 @@
 # Changelog
 
-## Dunia Koperasi — 4 Oktober 2026
-
-- Tambah menu khusus dan dua scene isometrik interaktif, tujuh slot Gerai, gudang, kendaraan dan meja modul dari catatan dimuat; kamera, rincian, keyboard dan mode daftar.
-- Terapkan kartu melayang/palet biru-lavender, preferensi karakter dari renderer paket, cuaca manual dan pencahayaan waktu Jakarta; pertahankan halaman kerja serta tema gelap.
-- Tambah domain Suplier, relasi catatan, capability server, validasi Zod dan migrasi 8; SQL gabungan diperbarui lokal. Cloud tidak diubah sesuai arahan pemilik.
-- Siapkan panduan dan skrip salinan riwayat bersih untuk kopdes-dunia-koperasi publik. Arsipkan salinan panduan visual lama tanpa menghapus log/pengetahuan AI.
-- 266 tes/44 berkas, typecheck, ESLint dan build lulus; QA kosong empat lebar tanpa luapan. Cakupan dan batas fitur lanjutan/perangkat ada di docs/DUNIA-KOPERASI.md. Tujuh perubahan awal pemilik dipertahankan.
-
 ## Empat anotasi lanjutan — 4 Oktober 2026
 
 - Seimbangkan Buka catatan/Opsi lainnya pada footer kartu, termasuk keadaan opsi terbuka.

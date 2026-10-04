@@ -5,10 +5,6 @@ import { references } from './catalog';
 import { today, nextOccurrence, addDays } from '@/lib/date';
 import type { ListQuery } from './query';
 import { makeTaskCode, makeActivityCode } from './tasks/task-code';
-export async function requireSupplierReady() {
-  const { data, error } = await db().rpc('hub_supplier_ready');
-  if (error || data !== true) throw new Error('Modul suplier belum aktif atau statusnya belum dapat diperiksa. Periksa migrasi suplier.');
-}
 
 export async function listPage(entity: Entity, input: ListQuery) {
   let query = db().from('hub_records').select('*').eq('entity', entity);

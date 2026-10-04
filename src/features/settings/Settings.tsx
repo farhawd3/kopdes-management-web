@@ -19,7 +19,6 @@ import {
 } from 'lucide-react';
 import { Select } from '@/components/ui/Select';
 import type { Item } from '@/features/schemas';
-import { CharacterPreferences } from '../cooperative-world/CharacterPreferences';
 
 export function Settings({ refresh, preferenceScope = '', organization }: { refresh: () => Promise<void>; preferenceScope?: string; organization?: Item }) {
   const { colorStyle, setColorStyle, preference, setTheme } = useTheme();
@@ -108,7 +107,6 @@ export function Settings({ refresh, preferenceScope = '', organization }: { refr
       {activeTab === 'tampilan' && (
         <div className="settings-content-grid">
           {/* Color Palettes Selection */}
-          <CharacterPreferences preferenceScope={preferenceScope} />
           <section className="card color-style-card">
             <span className="eyebrow">TEMA WARNA</span>
             <h2>Palet Warna</h2>

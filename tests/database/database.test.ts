@@ -25,19 +25,11 @@ beforeAll(async () => {
   await database.exec(
     readFileSync('supabase/migrations/20261002000007_document_relation_check.sql', 'utf8'),
   );
-  await database.exec(readFileSync('supabase/migrations/20261004000008_supplier.sql', 'utf8'));
 }, 60000);
 afterAll(async () => {
   await database?.close();
 });
 describe('Migrasi PostgreSQL nyata di mesin lokal', () => {
-  it('domain suplier tersedia tanpa memberikan akses anonim', async () => {
-    const result = await database.query<{ ready: boolean; anon_access: boolean }>("select public.hub_supplier_ready() as ready, has_function_privilege('anon','public.hub_supplier_ready()','EXECUTE') as anon_access");
-    expect(result.rows[0]).toEqual({ ready: true, anon_access: false });
-    await database.query("insert into public.hub_records(entity,data) values('supplier',$1::jsonb)", [JSON.stringify({ title: 'Suplier uji', status: 'aktif' })]);
-    await expect(database.query("insert into public.hub_records(entity,data) values('supplier',$1::jsonb)", [JSON.stringify({ title: 'Suplier uji', status: 'tidak sah' })])).rejects.toThrow('Invalid supplier');
-    await expect(database.query("insert into public.hub_records(entity,data) values('supplier',$1::jsonb)", [JSON.stringify({ title: 'Suplier uji', status: 'aktif', journal_id: randomUUID() })])).rejects.toThrow('Missing related record');
-  });
   it('modul pencatatan aktif hanya untuk server', async () => {
     const result = await database.query<{ ready: boolean; anon_access: boolean }>(
       "select public.hub_operations_ready() as ready, has_function_privilege('anon','public.hub_operations_ready()','EXECUTE') as anon_access",

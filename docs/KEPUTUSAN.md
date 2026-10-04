@@ -1,9 +1,5 @@
 # Keputusan proyek — 30 September 2026
 
-## 4 Oktober 2026 — Dunia Koperasi isometrik
-
-Arahan pemilik terbaru mengganti arah visual sebelumnya dengan paket `docs/paket_koperasi_isometrik`: dua scene, kartu putih melayang, aksen biru/pastel dan menu khusus Dunia Koperasi. Fitur dan data lama dipertahankan. Suplier ditambahkan sebagai domain hub_records dengan migrasi baru; cloud memerlukan konfirmasi. Pemilik memilih repositori baru `kopdes-dunia-koperasi` **publik**, dengan riwayat bersih dan repositori lama dipertahankan. Publikasi belum dilakukan; panduan ada di GITHUB-DUNIA-KOPERASI.md.
-
 ## 2 Oktober 2026 — reset proyek saat ini
 
 Pemilik meminta memakai kembali `mqycnhebhzqaziouipet` dan meresetnya karena belum berisi data. Target ini adalah proyek Kopdes yang sekarang, bukan proyek legacy. Siapkan SQL reset dengan pengaman data kosong; pemilik tetap menjalankan langkah cloud. PIN dan sesi dibuat ulang, URL proyek tetap sama.

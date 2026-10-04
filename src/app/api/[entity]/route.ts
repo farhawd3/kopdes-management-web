@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { requireSession } from '@/lib/server/auth';
 import { sameOrigin, failure, readJson } from '@/lib/server/http';
 import { entityName } from '@/features/schemas';
-import { listPage, save, requireSupplierReady } from '@/features/service';
+import { listPage, save } from '@/features/service';
 import { listQuerySchema } from '@/features/query';
 import { db } from '@/lib/server/db';
 type Context = { params: Promise<{ entity: string }> };
@@ -12,7 +12,6 @@ export async function GET(request: Request, context: Context) {
     await requireSession();
     const entity = entityName((await context.params).entity);
     if (!entity) return NextResponse.json({ error: 'Rute tidak ditemukan.' }, { status: 404 });
-    if (entity === 'supplier') await requireSupplierReady();
     const query = listQuerySchema.parse(Object.fromEntries(new URL(request.url).searchParams));
     return NextResponse.json(await listPage(entity, query), {
       headers: { 'Cache-Control': 'no-store' },
@@ -27,7 +26,6 @@ export async function POST(request: Request, context: Context) {
     await requireSession();
     const entity = entityName((await context.params).entity);
     if (!entity) return NextResponse.json({ error: 'Rute tidak ditemukan.' }, { status: 404 });
-    if (entity === 'supplier') await requireSupplierReady();
     const body = z
       .object({ id: z.string().uuid().optional(), data: z.unknown() })
       .strict()
@@ -48,7 +46,6 @@ export async function DELETE(request: Request, context: Context) {
       .parse(await readJson(request));
     if (!entity || entity === 'organization' || entity === 'workstreams')
       throw new Error('Catatan ini tidak dapat dihapus.');
-    if (entity === 'supplier') await requireSupplierReady();
     const { error } = await db().from('hub_records').delete().eq('id', id).eq('entity', entity);
     if (error) throw new Error('Penghapusan gagal.');
     return NextResponse.json({ success: true });

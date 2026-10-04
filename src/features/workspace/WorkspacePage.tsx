@@ -29,7 +29,6 @@ const Reports = dynamic(() => import('../reports/Reports').then((module) => modu
 const Projects = dynamic(() => import('../projects/Projects').then((module) => module.Projects), {
   loading: () => <SkeletonLoading slug="proyek" />,
 });
-const CooperativeWorld = dynamic(() => import('../cooperative-world/CooperativeWorld').then((module) => module.CooperativeWorld));
 export function WorkspacePage({ slug }: { slug: string }) {
   const query = useSearchParams();
   const router = useRouter();
@@ -53,7 +52,7 @@ export function WorkspacePage({ slug }: { slug: string }) {
     /^[a-f\d-]{36}$/i.test(requestedRecord)
       ? { entity: selectedEntity, id: requestedRecord }
       : undefined;
-  const { data, loading, error, refresh, operations, supplier, more, loadMore, fetching } = useWorkspace(
+  const { data, loading, error, refresh, operations, more, loadMore, fetching } = useWorkspace(
       slug,
       { scope: taskScope, ...(['proyek', 'riwayat-proyek'].includes(slug) && /^[a-f\d-]{36}$/i.test(query.get('id') || '') ? { project: query.get('id')! } : {}) },
       detail,
@@ -87,7 +86,6 @@ export function WorkspacePage({ slug }: { slug: string }) {
         </p>
       </section>
     );
-  if (slug === 'suplier' && !supplier) return <section className="card"><h1>Suplier belum aktif</h1><p>Migrasi suplier perlu dipasang setelah persetujuan. Data suplier belum dapat diperiksa.</p><Button onClick={() => void refresh()}>Periksa lagi</Button></section>;
   return (
     <div className={`workspace-page page-${slug}`}>
       {slug === 'tugas' && (
@@ -124,7 +122,6 @@ export function WorkspacePage({ slug }: { slug: string }) {
       )}
       {slug === 'tindak-lanjut' && <FollowUps data={data} />}
       {slug === 'beranda' && <Dashboard data={data} />}
-      {slug === 'dunia-koperasi' && <CooperativeWorld data={data} refresh={refresh} operations={operations} supplierReady={supplier} partial={Object.keys(more).length > 0} />}
       {['proyek', 'riwayat-proyek'].includes(slug) && <Projects key={query.get('tab') || slug} data={data} refresh={refresh} history={slug === 'riwayat-proyek' || query.get('tab') === 'riwayat'} />}
       {recordingPaths.includes(slug) && (
         <Operations

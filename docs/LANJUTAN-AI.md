@@ -1,9 +1,5 @@
 # Serah terima AI
 
-## Dunia Koperasi — 4 Oktober 2026 (arahan terbaru)
-
-Pemilik meminta desain mengikuti paket_koperasi_isometrik dan menu khusus Dunia Koperasi. Cabang paket: `codex/dunia-koperasi`; verifikasi Git ulang. Baca DUNIA-KOPERASI.md, DESAIN-ANTARMUKA.md terbaru dan GITHUB-DUNIA-KOPERASI.md. world.css ditambahkan setelah ui.css; tujuh perubahan awal pemilik tetap di working tree. Referensi visual sebelumnya diarsipkan, log/pengetahuan AI dipertahankan. Dunia memakai catatan dimuat, bukan contoh operasional. Suplier memakai migrasi 8, capability server dan validasi yang sama. Pemilik meminta SQL lokal dahulu dan akan memasukkannya sendiri ke cloud; jangan eksekusi cloud otomatis. Repositori baru yang dipilih: kopdes-dunia-koperasi publik, belum dibuat/dipush. Skrip salinan menghindari .git lama dan berkas konfigurasi lokal. 266 tes/44 berkas, TypeScript, ESLint dan build lulus. QA kosong empat lebar lulus; cakupan fitur lanjutan/UAT tidak dianggap selesai.
-
 Empat anotasi terbaru ditangani pada ui.css dan Records.tsx: footer aksi dua kolom seimbang (44 px), judul Jurnal memakai Button bersama dan kartu mobile, metadata kegiatan membungkus, donut mobile dengan legenda dua kolom. QA terang lima lebar termasuk 383 px; screenshot lokal annotations-journal-mobile.png dan annotations-donut-mobile.png di artifacts/astra. Tema gelap tambahan belum selesai setelah browser terputus. 256 tes/42 berkas, typecheck/lint/build lulus. check:ui tersisa enam kontrol mentah; lint:ui tetap 111 legacy. Pertahankan perubahan pengguna di tujuh berkas yang disebut QA-ANOTASI.md serta PLAN-ASTRA-Kopdes.md yang belum terlacak.
 
 Perbaikan 15 anotasi: bantuan form dilipat, banner buku dihapus, padding catatan global, kartu/tabel/aksi ditata, + Kas membuka kas dengan relasi anggota, tema pastel dan profil berbasis data. 256 tes/42 berkas, tipe/ESLint/build lulus. Cakupan/batas: docs/QA-ANOTASI.md.

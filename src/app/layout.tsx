@@ -5,7 +5,6 @@ import './globals.css';
 import './personal.css';
 import './tokens.css';
 import './ui.css';
-import './world.css';
 export const metadata: Metadata = {
   title: 'Kopdes Management Web',
   description: 'Ruang kerja pribadi manajer koperasi: rencana, koordinasi, kesiapan, dan laporan.',

@@ -1,10 +1,5 @@
 import type { Entity } from './schemas';
 export const catalog: Record<Entity, { title: string; description: string; fields: string[] }> = {
-  supplier: {
-    title: 'Suplier',
-    description: 'Pemasok barang, kontak dan dokumen terkait.',
-    fields: ['title', 'contact', 'category', 'status', 'item_id', 'stakeholder_id', 'document_id', 'journal_id', 'work_item_id', 'notes'],
-  },
   members: {
     title: 'Anggota',
     description: 'Daftar anggota dan status keanggotaan.',
@@ -267,7 +262,6 @@ export const labels: Record<string, string> = {
   follow_up: 'Tindak lanjut',
   stakeholder_id: 'Mitra atau kontak',
   document_id: 'Dokumen atau kontrak',
-  journal_id: 'Kegiatan terkait',
   issue_id: 'Kendala terkait',
   date: 'Tanggal',
   time: 'Waktu WIB',
@@ -297,7 +291,6 @@ export const labels: Record<string, string> = {
   stock_status: 'Kondisi Stok',
 };
 export const references: Record<string, Entity> = {
-  journal_id: 'journal',
   item_id: 'inventory-items',
   member_id: 'members',
   issue_id: 'issues',
@@ -312,7 +305,6 @@ export const references: Record<string, Entity> = {
   work_item_id: 'work-items',
 };
 export const options: Record<string, string[]> = {
-  'supplier.status': ['aktif', 'nonaktif'],
   'members.status': ['aktif', 'nonaktif'],
   direction: ['masuk', 'keluar'],
   mode: ['tatap muka', 'online', 'hybrid'],
@@ -418,8 +410,6 @@ export function formatChoiceLabel(value: string): string {
 }
 
 export const navigation = [
-  ['/dunia-koperasi', 'Dunia Koperasi', ''],
-  ['/suplier', 'Suplier', ''],
   ['/beranda', 'Beranda', ''],
   ['/hari-ini', 'Hari Ini', ''],
   ['/tugas', 'Daftar Tugas', ''],
@@ -444,7 +434,6 @@ export const navigation = [
   ['/panduan', 'Panduan', ''],
 ] as const;
 export const pages: Record<string, Entity[]> = {
-  suplier: ['supplier'],
   tugas: ['work-items'],
   kesiapan: ['checklist'],
   gerai: ['units'],

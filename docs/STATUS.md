@@ -1,13 +1,5 @@
 # Status produk — 4 Oktober 2026
 
-## Dunia Koperasi — 4 Oktober 2026
-
-Menu khusus `/dunia-koperasi`, dua scene SVG, tujuh slot Gerai, gudang, kendaraan mitra/suplier, meja modul, panel rincian, mode daftar, kamera geser/zoom, cuaca manual/waktu Jakarta dan karakter yang dapat diatur tersedia. Halaman kerja memakai lapisan pastel/biru baru tanpa menghapus fungsi dan data. Suplier memakai hub_records, relasi catatan, validasi server dan pemeriksaan kemampuan; migrasi 8 serta SQL instalasi/reset dibuat ulang dan diuji lokal. Pemilik meminta menyiapkan lokal dan akan memasukkan SQL sendiri ke cloud; cloud tidak diubah.
-
-266 tes/44 berkas lulus dengan dua worker; typecheck, lint dan build lulus. UI kosong dunia luar/kantor diukur pada 360/768/1024/1440 px tanpa luapan halaman; navigasi dan panel diverifikasi. Rincian implementasi serta fitur/perangkat yang belum diuji ada di [DUNIA-KOPERASI](DUNIA-KOPERASI.md). Tidak mengklaim seluruh brief/perangkat/cloud atau render identik video selesai.
-
-Cabang `codex/dunia-koperasi`; tujuh perubahan awal pemilik dipertahankan. Repositori publik baru `kopdes-dunia-koperasi` dipilih pemilik; [panduan](GITHUB-DUNIA-KOPERASI.md) dan skrip salinan dengan riwayat bersih tersedia. Repo baru belum dibuat/dipush, remote lama tidak diubah.
-
 Empat anotasi lanjutan selesai: footer Gerai simetris, Jurnal menjadi kartu pada ponsel, metadata kegiatan Beranda tidak bertumpuk dengan tombol rapat, dan grafik status memakai legenda dua kolom pada ponsel. 256 tes/42 berkas, TypeScript, ESLint dan build lulus. QA terang pada 360/383/768/1024/1440 px; pemeriksaan gelap tambahan belum lengkap karena sesi browser terputus. Rincian di bagian lanjutan QA-ANOTASI.md. Audit UI tetap terbuka: 111 temuan CSS legacy dan enam kontrol mentah.
 
 Perbaikan 15 anotasi browser: bantuan form dilipat, banner buku dihapus, padding textarea global, kartu/tabel/aksi ditata, + Kas membuka domain kas dengan relasi anggota, tema pastel dan profil berbasis data. 256 tes/42 berkas, tipe, ESLint dan build lulus. QA 10 halaman pada 360/768/1024/1440 px serta form proyek empat lebar dua tema. Batas dan pemetaan: docs/QA-ANOTASI.md.

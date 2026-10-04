@@ -1,9 +1,5 @@
 # PRD — Ruang kerja proyek Kopdes
 
-## Arahan terbaru 4 Oktober 2026
-
-Pengalaman baru memakai [paket Dunia Koperasi](paket_koperasi_isometrik/01_panduan/00_BACA_DULU.md): dunia isometrik dua scene dan navigasi khusus, dengan modul kerja tetap tersedia. Bagian desain lama di bawah adalah kebutuhan historis yang telah diganti oleh DESAIN-ANTARMUKA.md terbaru. Produk tetap ruang kerja manajer; anggota/kas/barang/opname tetap pencatatan sederhana. Suplier memakai hub_records dengan relasi barang, mitra, dokumen, kegiatan dan tugas. Bukti implementasi dan keterbatasan ada di DUNIA-KOPERASI.md.
-
 ## Tujuan
 
 Aplikasi pribadi manajer koperasi untuk mengelola banyak proyek, tugas, catatan, jadwal, dan koordinasi. Proyek memiliki durasi sendiri. Tidak ada program wajib 90 hari atau data capaian tiruan. Pengalaman terinspirasi workspace Notion, dengan fungsi yang langsung berguna bagi manajer.
