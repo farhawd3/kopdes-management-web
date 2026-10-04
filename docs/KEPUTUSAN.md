@@ -1,5 +1,9 @@
 # Keputusan proyek — diperbarui 5 Oktober 2026
 
+## 5 Oktober 2026 — satu acuan style dan revisi kawasan
+
+Pemilik meminta style benar-benar tersimpan tanpa panduan MD yang saling merusak. DUNIA-KOPERASI menjadi satu kontrak gaya dan rencana; dokumen lain mengarahkan ke sana. Penilaian terbaru: map kecil/sepi, kendaraan tidak ada, pencahayaan gelap/kontrol waktu sulit ditemukan, gerak karakter belum terasa. Rencanakan map lebih besar, mobil seperti video, patroli manajer tidak sering dengan pertanyaan tugas/kegiatan, serta gym dalam kantor yang digunakan saat kegiatan. Rencana bukan fitur yang telah selesai.
+
 ## 5 Oktober 2026 — prioritas Dunia Koperasi
 
 Pemilik mengutamakan desain 3D isometrik mengikuti video: UI biru-putih mengambang, kawasan dengan tujuh lahan gerai, gedung koperasi membuka interior, maskot animatif/bubble, cuaca dan waktu. Fokus sekarang kualitas tampilan dan kerangka backend melalui domain yang sudah ada. Suplier, ekspedisi dan upgrade lingkungan merupakan pengembangan berikutnya. Panduan harus ringkas, tidak rancu, dan menyimpan gaya untuk AI selanjutnya.

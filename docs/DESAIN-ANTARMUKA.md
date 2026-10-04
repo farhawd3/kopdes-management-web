@@ -13,16 +13,7 @@ Acuan e8fc8b4 dan arahan 3 Oktober untuk tweak kecil berlaku pada halaman operas
 
 ## Dunia Koperasi
 
-- Geometri 3D sungguhan dengan kamera ortografis; terlihat sisi atas dan dua sisi objek, bayangan lembut, diorama bersih.
-- Komposisi video: header putih, tiga ringkasan kiri atas, kontrol kamera, panel kanan dan ringkasan kegiatan kiri bawah. Dock bawah menghubungkan kawasan/kantor/karakter/suasana.
-- Ponsel: panel kanan menjadi panel bawah bergulir dan dapat ditutup. Penanda serta daftar lokasi menyediakan akses alternatif.
-- Exterior: kantor biru, gerai putih/biru, lahan hijau pucat bergaris, pohon hijau dan jalan biru abu.
-- Interior cutaway: dinding/lantai putih, kaca kebiruan, meja kayu muda, kursi abu biru, workstation dan ruang rapat.
-- Maskot ekspresif dan animatif sesuai permintaan pemilik. Identitas, pendapat dan kehadiran pegawai nyata tidak boleh dikarang.
-- Bubble di atas kepala memakai konteks catatan atau label pratinjau. Belum layanan AI percakapan.
-- Cuaca simulasi; waktu otomatis Asia/Jakarta atau pencahayaan manual. Suasana tidak mengubah tanggal catatan.
-- Kartu putih transparan, border/bayangan ringan, radius sekitar 11 px, font Inter. Hindari backdrop blur: telah mengganggu ketajaman render dunia.
-- Gedung, perabot, pakaian, tata lahan dan cuaca harus modular agar dapat ditingkatkan lewat prompt berikutnya.
+Seluruh palet, komposisi kartu, scene, karakter, waktu, kendaraan dan rencana upgrade berada di [DUNIA-KOPERASI](DUNIA-KOPERASI.md). Dokumen ini tidak menyimpan salinan spesifikasi dunia. Jika ada konflik lama, ikuti kontrak dunia dan arahan pemilik terbaru.
 
 ## Halaman operasional
 

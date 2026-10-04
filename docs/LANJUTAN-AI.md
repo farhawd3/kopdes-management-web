@@ -13,6 +13,10 @@ Arahan 3 Oktober untuk mempertahankan dashboard berlaku pada halaman operasional
 3. Baca `src/features/cooperative-world/` dan periksa render sebelum mengubah desain.
 4. Jalankan pemeriksaan lalu catat bukti baru. Angka tes lama bukan bukti paket ini.
 
+## Arahan pemilik terbaru dan langkah berikutnya
+
+Pemilik menilai map kecil/sepi, kendaraan belum ada, tampilan gelap, kontrol waktu sulit ditemukan, dan karakter belum tampak berpindah. Jangan menganggap animasi dasar/treadmill saat ini sudah memenuhi permintaan. Rencana konkret disimpan hanya pada bagian **Rencana revisi setelah penilaian pemilik** di [DUNIA-KOPERASI](DUNIA-KOPERASI.md): terang/map lebih luas → kendaraan/interaksi → patroli manajer jarang dengan bubble → gym aktif. Ini rencana, belum perubahan runtime. Jangan membuat MD gaya tandingan.
+
 ## Keadaan kode
 
 - `/dunia-koperasi`: navigasi aplikasi, sesi yang sudah ada, data workspace; AppShell menyerahkan layar penuh.

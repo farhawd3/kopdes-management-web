@@ -13,6 +13,11 @@ Implementasi, bukti pemeriksaan dan penerimaan dibedakan. STATUS adalah keadaan 
 - [x] Cuaca simulasi/waktu WIB/pakaian; preferensi lokal tervalidasi.
 - [x] Tes adapter/UI, typecheck, lint dan production build. Cakupan aktual di STATUS.
 - [x] QA lokal kosong exterior/interior 360/768/1024/1440, tanpa luapan; penanda masuk kantor/bubble/pratinjau rapat-gym.
+- [ ] Map lebih luas dengan jalur, parkir, plaza dan ruang interaksi; detail rencana di DUNIA-KOPERASI.
+- [ ] Default siang terang dan kontrol waktu/cuaca terlihat serta berfungsi setelah reload.
+- [ ] Mobil manajer/van/truk boks, jalur gerak dan interaksi dengan label simulasi.
+- [ ] Manajer berpindah saat patroli jarang; bubble pertanyaan sesekali mengikuti kepala.
+- [ ] Zona gym jelas dan karakter beraksi di sana sesuai kegiatan, rapat duduk di kursi.
 - [ ] Penerimaan pemilik atas kualitas dan kemiripan final dengan video.
 - [ ] Semua interaksi/state, raycast objek langsung, semua cuaca/waktu, keyboard/reduced-motion dan fallback WebGL.
 - [ ] Semua target sentuh/kontras, perangkat fisik, WebGL perangkat rendah dan benchmark performa.

@@ -1,5 +1,12 @@
 # Changelog
 
+## Kontrak style tunggal dan rencana revisi dunia — 5 Oktober 2026
+
+- Jadikan DUNIA-KOPERASI satu acuan style/rencana, hapus salinan spesifikasi dunia dari DESAIN-ANTARMUKA, dan arahkan AGENTS/indeks/serah terima ke acuan yang sama.
+- Simpan penilaian pemilik dan rencana map lebih luas, pencahayaan/kontrol waktu, mobil, patroli jarang/bubble dan gym aktif beserta kriteria penerimaan.
+- Perubahan dokumentasi saja; belum mengubah scene/runtime. Pemeriksaan diff dan tautan lokal dilakukan, tes aplikasi tidak diulang untuk perubahan MD.
+
+
 ## Dunia Koperasi dan panduan aktif — 5 Oktober 2026
 
 - Tambahkan dunia Three.js layar penuh: kawasan/kantor, tujuh lahan, gedung dari catatan unit, perabot dan maskot modular, bubble, kamera serta cuaca/waktu WIB.

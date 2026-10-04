@@ -3,7 +3,7 @@
 ## Urutan membaca
 0. Jika melanjutkan perbaikan UI/status terbaru, baca `docs/LANJUTAN-AI.md` sebagai serah terima; verifikasi ulang keadaan Git karena dapat berubah.
    Untuk pekerjaan visual, baca juga `docs/DESAIN-ANTARMUKA.md` sebelum mengubah CSS atau layout.
-   Untuk Dunia Koperasi, baca `docs/DUNIA-KOPERASI.md`: kontrak gaya video, objek 3D, karakter, dan data.
+   Untuk Dunia Koperasi, `docs/DUNIA-KOPERASI.md` adalah satu acuan gaya dan rencana. Jangan membuat salinan kontrak di MD baru; STATUS mencatat bukti, bukan menentukan gaya. Arahan pemilik terbaru mengatasi konflik historis.
    Untuk alur kegiatan/tugas dan SQL, baca `docs/KEGIATAN-DAN-TUGAS.md` serta `docs/MIGRASI-SQL.md`.
 1. `docs/STATUS.md`: keadaan nyata dan pekerjaan berikutnya.
 2. `docs/KEPUTUSAN.md` dan `docs/PRD.md`: keputusan pemilik dan kebutuhan.

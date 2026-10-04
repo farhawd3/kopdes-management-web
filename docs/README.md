@@ -26,4 +26,6 @@ Setiap panduan punya peran berbeda. Kebutuhan menjelaskan target; STATUS mencata
 | [Git paralel](GIT-KERJA-PARALEL.md) | Pemisahan checkout ketika kerja paralel diizinkan |
 | [Changelog](../CHANGELOG.md) | Riwayat perubahan dan pemeriksaan |
 
+Untuk pekerjaan Dunia Koperasi cukup gunakan AGENTS (proses), DUNIA-KOPERASI (satu kontrak gaya/rencana), dan STATUS (bukti). LANJUTAN-AI adalah pintu masuk. Dokumen domain lain dibaca hanya ketika pekerjaannya terkait; banyak berkas bukan banyak sumber gaya. Jangan menyalin spesifikasi dunia ke rencana baru.
+
 Peta ini sendiri menjadi indeks dokumentasi. Cadangan pribadi dan Markdown dependensi bukan panduan repo aktif.
