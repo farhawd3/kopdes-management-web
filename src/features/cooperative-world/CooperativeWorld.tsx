@@ -98,6 +98,7 @@ export function CooperativeWorld({
   const [query, setQuery] = useState('');
   const [zoom, setZoom] = useState(1);
   const [rotation, setRotation] = useState(0);
+  const [warehouseTab, setWarehouseTab] = useState<'dermaga' | 'mitra'>('dermaga');
   const [rehearsal, setRehearsal] = useState<CharacterActivity | 'otomatis'>('otomatis');
   const [newStaffName, setNewStaffName] = useState('');
   const [newStaffRole, setNewStaffRole] = useState('');
@@ -222,8 +223,8 @@ export function CooperativeWorld({
         ? vehicle.name
         : selected === 'lingkungan'
           ? 'Suasana & karakter'
-          : selected === 'logistik'
-            ? 'Area logistik'
+          : selected === 'logistik' || selected === 'gudang'
+            ? 'Gudang Logistik'
             : selected === 'karakter'
               ? 'Tim & Staf Koperasi'
               : plot
@@ -624,11 +625,13 @@ export function CooperativeWorld({
                     ? 'PROFIL MANAJER'
                     : vehicle
                       ? 'ARMADA • SIMULASI'
-                      : selected === 'karakter'
-                        ? 'SUMBER DAYA MANUSIA'
-                        : location === 'luar'
-                          ? 'DUNIA KOPERASI'
-                          : 'KANTOR • INTERIOR'}
+                      : selected === 'gudang' || selected === 'logistik'
+                        ? 'PUSAT DISTRIBUSI & LOGISTIK'
+                        : selected === 'karakter'
+                          ? 'SUMBER DAYA MANUSIA'
+                          : location === 'luar'
+                            ? 'DUNIA KOPERASI'
+                            : 'KANTOR • INTERIOR'}
                 </span>
                 <h1>{title}</h1>
                 <p>
@@ -636,15 +639,17 @@ export function CooperativeWorld({
                     ? 'Penanggung jawab ruang kerja dan kawasan'
                     : vehicle
                       ? 'Kendaraan suasana kawasan'
-                      : plot
-                        ? plot.unit
-                          ? 'Terhubung ke catatan gerai'
-                          : 'Bidang tersedia untuk gerai baru'
-                        : selected === 'karakter'
-                          ? 'Petugas dan anggota tim ruang kerja'
-                          : location === 'luar'
-                            ? 'Lingkungan dan ruang kerja'
-                            : 'Pilih area untuk membuka catatan'}
+                      : selected === 'gudang' || selected === 'logistik'
+                        ? 'Pusat penerimaan pasokan dan bongkar muat mitra'
+                        : plot
+                          ? plot.unit
+                            ? 'Terhubung ke catatan gerai'
+                            : 'Bidang tersedia untuk gerai baru'
+                          : selected === 'karakter'
+                            ? 'Petugas dan anggota tim ruang kerja'
+                            : location === 'luar'
+                              ? 'Lingkungan dan ruang kerja'
+                              : 'Pilih area untuk membuka catatan'}
                 </p>
               </div>
               <Button
@@ -855,18 +860,79 @@ export function CooperativeWorld({
                     </label>
                   </div>
                 </>
-              ) : selected === 'logistik' ? (
+              ) : selected === 'logistik' || selected === 'gudang' ? (
                 <>
                   <div className="cw-planning-icon">
                     <Truck size={44} />
                   </div>
-                  <span className="cw-status cw-status-muted">Rencana pengembangan</span>
+                  <span className="cw-status">Beroperasi · simulasi</span>
                   <p className="cw-panel-note">
-                    Area bongkar muat telah disiapkan di tepi jalan. Tahap berikutnya: data suplier,
-                    jadwal pengiriman, mobil ekspedisi, dan status kedatangan.
+                    Pusat distribusi dan penerimaan pasokan barang dari suplier. 3 dermaga aktif melayani armada internal dan truk ekspedisi mitra.
                   </p>
-                  <Link className="cw-primary-link" href="/mitra">
-                    Lihat mitra & kontak <ArrowRight size={15} />
+
+                  {/* Tab Dermaga | Mitra Ekspedisi */}
+                  <div className="cw-warehouse-card-tabs" style={{ marginTop: '12px' }}>
+                    <div style={{ display: 'flex', background: '#f1f5f9', padding: '3px', borderRadius: '8px', gap: '4px', marginBottom: '10px' }}>
+                      <button
+                        type="button"
+                        className={`ui-btn cw-seg-btn ${warehouseTab === 'dermaga' ? 'is-active' : ''}`}
+                        onClick={() => setWarehouseTab('dermaga')}
+                      >
+                        Dermaga (3 Slot)
+                      </button>
+                      <button
+                        type="button"
+                        className={`ui-btn cw-seg-btn ${warehouseTab === 'mitra' ? 'is-active' : ''}`}
+                        onClick={() => setWarehouseTab('mitra')}
+                      >
+                        Mitra Ekspedisi
+                      </button>
+                    </div>
+
+                    {warehouseTab === 'dermaga' ? (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        <div style={{ padding: '8px 10px', background: '#fff', border: '1px solid var(--cw-line)', borderRadius: '6px' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <strong style={{ fontSize: '12px', color: 'var(--cw-ink)' }}>Dermaga 1</strong>
+                            <span style={{ fontSize: '10px', padding: '2px 6px', background: '#f1f5f9', color: '#64748b', borderRadius: '4px', fontWeight: 600 }}>Tertutup</span>
+                          </div>
+                          <small style={{ fontSize: '11px', color: 'var(--cw-muted)', display: 'block', marginTop: '2px' }}>Gudang transit stok & penyimpanan tertutup</small>
+                        </div>
+                        <div style={{ padding: '8px 10px', background: '#fff', border: '1px solid var(--cw-line)', borderRadius: '6px' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <strong style={{ fontSize: '12px', color: 'var(--cw-ink)' }}>Dermaga 2</strong>
+                            <span style={{ fontSize: '10px', padding: '2px 6px', background: '#dbeafe', color: '#1d4ed8', borderRadius: '4px', fontWeight: 600 }}>Aktif Muat</span>
+                          </div>
+                          <small style={{ fontSize: '11px', color: 'var(--cw-muted)', display: 'block', marginTop: '2px' }}>Pintu terbuka · Patroli forklift & tumpukan palet</small>
+                        </div>
+                        <div style={{ padding: '8px 10px', background: '#fff', border: '1px solid var(--cw-line)', borderRadius: '6px' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <strong style={{ fontSize: '12px', color: 'var(--cw-ink)' }}>Dermaga 3</strong>
+                            <span style={{ fontSize: '10px', padding: '2px 6px', background: '#ccfbf1', color: '#0f766e', borderRadius: '4px', fontWeight: 600 }}>Truk Bersandar</span>
+                          </div>
+                          <small style={{ fontSize: '11px', color: 'var(--cw-muted)', display: 'block', marginTop: '2px' }}>Truk Ekspedisi Mitra bersandar di bawah kanopi</small>
+                        </div>
+                      </div>
+                    ) : (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        {model.stakeholders && model.stakeholders.length > 0 ? (
+                          model.stakeholders.map((s) => (
+                            <div key={s.id} style={{ padding: '8px 10px', background: '#fff', border: '1px solid var(--cw-line)', borderRadius: '6px' }}>
+                              <strong style={{ fontSize: '12px', color: 'var(--cw-ink)', display: 'block' }}>{String(s.data.title)}</strong>
+                              <small style={{ fontSize: '11px', color: 'var(--cw-muted)', display: 'block' }}>{String(s.data.category || 'Mitra')} · Terhubung</small>
+                            </div>
+                          ))
+                        ) : (
+                          <div style={{ padding: '10px', background: '#f8fafc', border: '1px solid var(--cw-line)', borderRadius: '6px' }}>
+                            <small style={{ fontSize: '11px', color: 'var(--cw-muted)' }}>Belum ada data mitra khusus. Ekspedisi umum melayani operasional kawasan secara simulasi.</small>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  <Link className="cw-primary-link" href="/mitra" style={{ marginTop: '12px' }}>
+                    Kelola mitra & suplier <ArrowRight size={15} />
                   </Link>
                 </>
               ) : plot ? (

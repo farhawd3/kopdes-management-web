@@ -1,5 +1,16 @@
 # Changelog
 
+## Paket 6 Dunia Koperasi: Interaksi Klik, Kamera Fokus Halus & Kartu Detail Gudang Logistik — 5 Oktober 2026
+
+- Bangun 4 siku braket sudut seleksi biru 3D (`createSelectionBrackets`) dengan aksen warna `#3866f6` yang melayang mengitari objek aktif (gudang, armada kendaraan, lahan gerai, kantor koperasi) saat dipilih oleh pengguna, mengadopsi pola seleksi canggih video referensi f08.
+- Terapkan pergerakan kamera fokus halus (smooth camera target lerp ~600ms) di `WorldScene.tsx` yang menggeser pandangan secara mulus dan nyaman ke arah objek terpilih tanpa sentakan kaku.
+- Sediakan pintasan keyboard `Escape` untuk secara instan memulihkan fokus kamera kembali membidik pusat kawasan (`kawasan` overview) dan menyembunyikan braket seleksi.
+- Kembangkan kartu detail interaktif Gudang Logistik (`Pusat Distribusi & Logistik`) dengan arsitektur bertingkat:
+  - Tab **Dermaga (3 Slot)**: status visual dan fungsional Dermaga 1 (Gudang transit stok tertutup), Dermaga 2 (Bongkar muat forklift & tumpukan palet kayu), dan Dermaga 3 (Truk ekspedisi mitra bersandar di bawah kanopi).
+  - Tab **Mitra Ekspedisi**: menampilkan daftar mitra suplier/distributor dari data workspace `stakeholders` nyata disertai aksi navigasi langsung ke pengelolaan mitra & suplier, mematuhi prinsip integritas data tanpa data fiktif.
+- Kembangkan kartu detail Truk Ekspedisi Mitra yang menampilkan profil suplier, status peragaan visual dermaga, dan penegasan status muatan non-fiktif.
+- 275 tes unit lulus 100%, typecheck 0 error, lint 0 error, build Next.js Turbopack sukses; verifikasi visual browser merekam kehalusan perpindahan kamera, tampilan siku braket seleksi biru, interaktivitas tab Dermaga & Mitra Ekspedisi pada kartu gudang, serta pemulihan kamera saat tombol `Escape` ditekan.
+
 ## Paket 5 Dunia Koperasi: Cahaya Dinamis Kontinu, Lampu Malam & Pusat Kontrol Suasana — 5 Oktober 2026
 
 - Kembangkan modul pencahayaan dinamis murni `world-lighting.ts`: implementasi kurva kontinu matahari/bulan 24 jam dengan interpolasi smoothstep, batas elevasi directional light >= 30 derajat anti shadow acne, modulasi ambient & directional light, adaptasi cuaca cerah/berawan/hujan, serta kontinuitas 00:00 = 24:00.

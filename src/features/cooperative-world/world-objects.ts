@@ -233,6 +233,29 @@ export function createForklift(
   return g;
 }
 
+export function createSelectionBrackets(parent: THREE.Object3D): THREE.Group {
+  const g = new THREE.Group();
+  g.visible = false;
+  parent.add(g);
+  const color = '#3866f6';
+  const size = 0.55;
+  const thick = 0.045;
+  const corners = [
+    [-1, -1],
+    [1, -1],
+    [-1, 1],
+    [1, 1],
+  ];
+  for (const [cx, cz] of corners) {
+    const cg = new THREE.Group();
+    cg.position.set(cx * 1.5, 0.05, cz * 1.5);
+    box(cg, [size, thick, thick], [-cx * (size / 2), 0, 0], color, 0, false);
+    box(cg, [thick, thick, size], [0, 0, -cz * (size / 2)], color, 0, false);
+    g.add(cg);
+  }
+  return g;
+}
+
 export function createWarehouse(parent: THREE.Object3D, x: number, z: number) {
   const g = new THREE.Group();
   g.position.set(x, 0, z);

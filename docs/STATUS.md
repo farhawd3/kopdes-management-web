@@ -45,6 +45,14 @@ Versi sekarang belum diterima: kawasan kecil/sepi, mobil belum ada, tampilan aga
   - Mode malam atmosferik: lampu jalan menyala kuning hangat (`#fef08a`), pendar tanah (*ground glow*) lembut di bawah tiang lampu, jendela kantor dan gudang bercahaya hangat, serta lampu plafon gantung dan layar monitor di interior memancarkan pendar terang yang nyaman.
   - Pusat kendali Popover Suasana terpadu: menghapus bilah horizontal cepat atas yang menabrak kartu KPI/rapat, menyatukan 3 titik masuk (pil jam header, kartu cuaca kiri-bawah, dan tab Suasana di dock bawah) ke satu Popover Suasana kaca elegan (slider jam, tombol preset Pagi/Siang/Senja/Malam, kontrol cuaca, putar otomatis waktu, dan sakelar jeda animasi).
   - Indikator status simulasi waktu di header: pil jam menampilkan titik oranye berkedip dan label `Simulasi {jam}` saat mode simulasi aktif, dan kembali ke waktu asli saat mode Live WIB.
+- **Paket 6 Selesai:**
+  - Pembuatan siku braket seleksi biru 3D (`createSelectionBrackets`) dengan material `#3866f6` yang melayang mengitari objek aktif (gudang, armada, kendaraan, gerai, dll) untuk memberikan umpan balik visual seleksi yang jelas dan modern seperti pada video referensi f08.
+  - Pergerakan kamera fokus halus (smooth camera lerp target ~600ms) di `WorldScene.tsx` yang secara elegan mengarahkan pandangan ke koordinat objek yang diklik atau dipilih dari daftar.
+  - Dukungan tombol keyboard `Escape` yang secara instan memulihkan fokus kamera kembali ke pusat kawasan (`kawasan` overview) dan menyembunyikan braket seleksi.
+  - Kartu detail interaktif Gudang Logistik (`Pusat Distribusi & Logistik`) lengkap dengan tab bertingkat:
+    - Tab **Dermaga (3 Slot)**: status Dermaga 1 (Gudang transit stok tertutup), Dermaga 2 (Bongkar muat forklift & tumpukan palet kayu), dan Dermaga 3 (Truk ekspedisi mitra bersandar di bawah kanopi).
+    - Tab **Mitra Ekspedisi**: menampilkan daftar mitra suplier/distributor dari data workspace `stakeholders` nyata dengan tautan langsung ke pengelolaan mitra, mematuhi prinsip integritas data tanpa fiksi.
+  - Kartu Truk Ekspedisi Mitra dengan rincian suplier, status peragaan visual, dan informasi ketiadaan muatan fiktif.
 - Exterior luas (58 × 38 unit): kantor koperasi, jalan dua arah, plaza air mancur dan 4 bangku taman ber-anchor, area parkir mobil manajer, gudang logistik, dan tujuh lahan gerai yang terhubung catatan `units`.
 - Style dunia terisolasi di `world.css` dan palet Three.js di `world-objects.ts`.
 
@@ -54,7 +62,7 @@ Versi sekarang belum diterima: kawasan kecil/sepi, mobil belum ada, tampilan aga
 - `npm run typecheck`: **lulus** (0 error TypeScript).
 - `npm run lint`: **lulus** (0 error, 0 warning ESLint).
 - `npm run build`: **lulus** (Turbopack production build sukses).
-- QA browser Paket 5: verifikasi visual browser membuktikan hilangnya bilah atas pengganggu, berfungsinya Popover Suasana terpadu dari 3 titik pemicu, visual malam yang memukau (lampu jalan menyala hangat, pendar tanah, jendela gedung bercahaya, interior malam terang nyaman), indikator jam simulasi oranye di header, dan adaptasi layout responsif mobile 375x812px. Bukti screenshot: `suasana_popover_open_1791149718956.png`, `night_exterior_1440x900_1791149941673.png`, `night_interior_1440x900_1791149993531.png`, `night_mobile_375x812_1791150060286.png`.
+- QA browser Paket 6: verifikasi visual browser membuktikan kehalusan lerp kamera saat memilih Gudang Logistik dan Truk Mitra, munculnya 4 siku braket sudut biru `#3866f6`, interaktivitas tab Dermaga & Mitra Ekspedisi pada kartu Gudang Logistik, serta pemulihan fokus kamera secara mulus saat tombol `Escape` ditekan. Bukti screenshot: `01_initial_overview_1791151679595.png`, `02_warehouse_dermaga_1791151869146.png`, `03_mitra_ekspedisi_1791151915149.png`, `04_truck_focused_1791152205914.png`, `05_restored_overview_1791152252198.png`.
 
 ## Halaman operasional yang tersedia
 

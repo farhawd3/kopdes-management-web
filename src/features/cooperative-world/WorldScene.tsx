@@ -9,6 +9,7 @@ import {
   createCharacter,
   createExterior,
   createInterior,
+  createSelectionBrackets,
   palette,
 } from './world-objects';
 import {
@@ -68,6 +69,7 @@ export function WorldScene({
   );
   const motion = useRef({ activity, weather, hour, minuteOfDay, isPaused });
   const selectAction = useRef(onSelect);
+  const selectedRef = useRef(selected);
   const [failed, setFailed] = useState(false);
   const [screenBubbles, setScreenBubbles] = useState<({ x: number; y: number } & DialogueBubble)[]>([]);
   useEffect(() => {
@@ -76,6 +78,9 @@ export function WorldScene({
   useEffect(() => {
     selectAction.current = onSelect;
   }, [onSelect]);
+  useEffect(() => {
+    selectedRef.current = selected;
+  }, [selected]);
   useEffect(() => {
     if (!runtime.current) return;
     runtime.current.camera.zoom = zoom;
@@ -163,6 +168,7 @@ export function WorldScene({
     scene.add(floor);
     const world = new THREE.Group();
     scene.add(world);
+    const selectionBrackets = createSelectionBrackets(world);
     let exteriorResult: ReturnType<typeof createExterior> | undefined;
     if (location === 'luar') {
       exteriorResult = createExterior(world, model);
@@ -218,6 +224,12 @@ export function WorldScene({
     };
     renderer.domElement.addEventListener('pointerdown', startPointer);
     renderer.domElement.addEventListener('pointerup', pickObject);
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        selectAction.current('kawasan');
+      }
+    };
+    window.addEventListener('keydown', onKey);
     const rainCount = 450,
       rainPositions = new Float32Array(rainCount * 6);
     for (let i = 0; i < rainCount; i++) {
@@ -347,6 +359,24 @@ export function WorldScene({
     const dialogueManager = new DialogueManager();
     let lastBubbleSync = 0;
 
+    const targetLookAt = new THREE.Vector3(0, 0, 0);
+    const getTargetCoords = (sel: string): [number, number, number] | null => {
+      if (sel === 'manajer') return location === 'luar' ? [-5, 0.4, 3.5] : [-7.5, 0.4, -3.0];
+      if (sel === 'karakter') return location === 'luar' ? [4, 0.4, 2.6] : [1.8, 0.4, -2.0];
+      if (sel === 'gudang' || sel === 'logistik') return [18, 1.2, 3.8];
+      if (sel === 'kendaraan-manajer') return [-18.2, 0.5, 6.5];
+      if (sel === 'kendaraan-van') return [15.2, 0.5, 7.0];
+      if (sel === 'kendaraan-truk-mitra') return [20.8, 0.6, 6.8];
+      if (sel === 'koperasi') return [-5, 1.2, 0];
+      if (sel === 'rapat') return [-7.5, 0.8, -4.5];
+      if (sel === 'tugas') return [0, 0.8, -4.5];
+      if (sel === 'kegiatan') return [7.8, 0.8, 4.6];
+      if (sel === 'dokumen') return [-7.6, 0.8, 5.6];
+      const p = model.plots.find((item) => item.id === sel);
+      if (p) return [p.position[0], 0.8, p.position[1]];
+      return null;
+    };
+
     const draw = (stamp: number) => {
       if (disposed) return;
       frame = requestAnimationFrame(draw);
@@ -357,6 +387,19 @@ export function WorldScene({
         elapsed += dt;
       }
       previous = stamp;
+
+      // Smooth camera focus lerp
+      const currentSelected = selectedRef.current;
+      const coords = getTargetCoords(currentSelected);
+      if (coords && currentSelected !== 'kawasan' && currentSelected !== 'lingkungan') {
+        targetLookAt.set(coords[0], coords[1], coords[2]);
+        selectionBrackets.position.set(coords[0], coords[1] + 0.05, coords[2]);
+        selectionBrackets.visible = true;
+      } else {
+        targetLookAt.set(0, 0, 0);
+        selectionBrackets.visible = false;
+      }
+      controls.target.lerp(targetLookAt, 0.06);
       controls.update();
 
       const currentMinute =
@@ -691,6 +734,7 @@ export function WorldScene({
         }
       });
       renderer.domElement.removeEventListener('webglcontextlost', lost);
+      window.removeEventListener('keydown', onKey);
       renderer.dispose();
       renderer.domElement.remove();
     };
