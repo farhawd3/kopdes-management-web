@@ -1,4 +1,5 @@
 'use client';
+import { Input } from '@/components/ui/Input';
 import { useState } from 'react';
 import { api, resetAuthNavigation } from '@/lib/client';
 import { Button } from '@/components/ui/Button';
@@ -37,7 +38,7 @@ export default function PinPage() {
         >
           <label>
             PIN {setup ? 'baru' : ''}
-            <input
+            <Input
               name="pin"
               type="password"
               inputMode="numeric"
@@ -51,7 +52,7 @@ export default function PinPage() {
           {setup && (
             <label>
               Token pengaturan awal
-              <input name="token" type="password" minLength={32} required autoComplete="off" />
+              <Input name="token" type="password" minLength={32} required autoComplete="off" />
               <small>Dari HUB_SETUP_TOKEN pada server.</small>
             </label>
           )}
@@ -60,14 +61,14 @@ export default function PinPage() {
           </Button>
           {error && <p role="alert">{error}</p>}
         </form>
-        <button
+        <Button
           onClick={() => {
             setSetup(!setup);
             setError('');
           }}
         >
           {setup ? 'Kembali ke masuk' : 'Pengaturan PIN pertama kali'}
-        </button>
+        </Button>
         <small>PIN minimal 6 digit. Sesi berlaku 12 jam.</small>
       </div>
     </main>

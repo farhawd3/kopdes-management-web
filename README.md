@@ -18,7 +18,7 @@ Salin `.env.example` menjadi `.env.local`, lalu ikuti [panduan Supabase dan PIN]
 npm run dev
 ```
 
-Buka `http://localhost:3000/pin`. Jika belum diinisialisasi, buat PIN pertama dengan token pengaturan server. Masuk, lengkapi profil, lalu buat proyek sendiri dengan tujuan dan jadwal pilihan Anda.
+Buka `http://127.0.0.1:3000/pin`, sesuai hostname server dan `HUB_APP_ORIGIN` pada contoh konfigurasi. Host, protokol, dan port harus sama; `localhost` dan `127.0.0.1` merupakan origin berbeda. Setelah mengubah konfigurasi, jalankan ulang server. Jika belum diinisialisasi, buat PIN pertama dengan token pengaturan server. Masuk, lengkapi profil, lalu buat proyek sendiri dengan tujuan dan jadwal pilihan Anda.
 
 ## Pemeriksaan
 
@@ -36,11 +36,11 @@ Tes database memakai PostgreSQL lokal PGlite dan tidak mengubah Supabase cloud. 
 | Lokasi | Tanggung jawab |
 |---|---|
 | `src/app` | Rute Next.js, API, dan layout |
-| `src/features` | Skema domain, layanan data, form, dan halaman kerja |
+| `src/features/<domain>` | Modul tugas, proyek, dashboard, pencatatan, laporan, dan ruang kerja; kontrak/form bersama tetap di akar features |
 | `src/components` | Navigasi, tombol, dan grafik bersama |
 | `src/lib` | Tanggal, progres, timeline, tema, dan keamanan |
-| `supabase/migrations` | Satu migrasi awal khusus proyek baru |
-| `tests` | Validasi domain, keamanan API, transaksi PostgreSQL |
+| `supabase/migrations` | Migrasi skema dan kompatibilitas secara berurutan; penerapan cloud mengikuti persetujuan |
+| `tests/{unit,ui,database,security}` | Validasi domain, keamanan API, transaksi PostgreSQL |
 | `docs` | Kebutuhan, keputusan, arsitektur, panduan, status |
 
 Next.js 16, React 19, TypeScript strict, Tailwind 3, Zod, Supabase. Font Inter dan Plus Jakarta Sans dibundel lokal. Layout dirancang untuk ponsel 360 px, tablet, dan desktop; status pengujian ada di dokumentasi.
@@ -57,7 +57,7 @@ Repository: [halimxn/kopdes-management-web](https://github.com/halimxn/kopdes-ma
 
 Buka **Proyek** untuk membuat ruang kerja berisi tujuan, PIC, catatan, milestone dan tugas. Data proyek memakai domain `workstreams` yang kompatibel dengan data lama. Halaman **Tugas** menyediakan daftar, papan, kalender dan Gantt, pencarian, filter status/proyek/prioritas, serta pengurutan. Klik judul tugas untuk membuka detail.
 
-Desain memakai latar hangat dan aksen rose, navigasi yang dikelompokkan, tema terang/gelap, serta navigasi bawah di ponsel. Catatan mendukung format sederhana. Editor blok drag-and-drop dan kolaborasi real-time belum tersedia.
+Desain memakai permukaan netral, teks arang dan aksen hijau lembut/lavender, navigasi yang dikelompokkan, tema terang/gelap, serta navigasi bawah di ponsel. Catatan mendukung format sederhana. Editor blok drag-and-drop dan kolaborasi real-time belum tersedia.
 
 ## Pencatatan operasional
 

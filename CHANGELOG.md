@@ -1,5 +1,337 @@
 # Changelog
 
+## PLAN-ASTRA — keadaan kosong pencatatan — 4 Oktober 2026
+
+- Satukan keadaan kosong empat buku dengan EmptyState. Opname tanpa barang menyediakan tautan Daftarkan barang sesuai prasyarat tombol Tambah.
+- Tambahkan regresi petunjuk Opname. Enam halaman pencatatan/gerai tanpa luapan pada 360 px setelah isi tampil; Opname juga 768/1024/1440.
+- 196 tes, typecheck, lint/lint:ui, build, check:ui dan audit sumber 91/91 lulus.
+
+## PLAN-ASTRA — keadaan kosong dan kartu Hari Ini — 4 Oktober 2026
+
+- EmptyState netral menyatukan Beranda/Hari Ini; daftar proyek seluruhnya diarsipkan tidak lagi kosong tanpa penjelasan.
+- Judul tugas membungkus pada ponsel, geometri centang memakai primitive, input cepat memiliki label dan Enter pada aksi anak tidak membuka detail.
+- 195 tes/31 berkas, typecheck, lint/lint:ui, build dan audit sumber 91/91 lulus. Hari Ini lima lebar tanpa overflow; target sel kalender sempit masih terbuka.
+
+## PLAN-ASTRA — selector tanpa pemanggil dan label form — 4 Oktober 2026
+
+- Pangkas CSS tanpa pemanggil berdasarkan string AST, dengan pengecualian kelas dinamis dan selector kompleks. Field umum Editor memiliki label/id bersama.
+- Warna proyek bawaan kembali memakai hex valid dari skema; tes regresi mencegah variabel CSS masuk input color.
+- 191 tes, typecheck, lint/lint:ui, build, check:ui, audit sumber 91/91 lulus. Galeri delapan lebar tanpa overflow; QA halaman berdata terhenti karena sesi kedaluwarsa.
+
+## PLAN-ASTRA — kontrol tampilan dan legenda — 4 Oktober 2026
+
+- Satukan pilihan tampilan, legenda donut/radar dan indikator kesiapan. Tombol EmptyState memakai Button. Galeri memeriksa warna aktif tanpa menyimpan preferensi.
+- 190 tes, typecheck, lint, penjaga UI, audit sumber 91/91 dan build lulus. Kontras primer lima tema melampaui 4,5 pada terang/gelap.
+
+## PLAN-ASTRA — geometri legacy dan Gantt sempit — 4 Oktober 2026
+
+- Normalisasi font/radius numerik dan alias ke token bersama. Perbaiki filter rentang tugas, status aktif, dan susunan tanggal Gantt pada layar sempit.
+- 187 tes, typecheck/lint dan build lulus; tugas 320/768 diperiksa tanpa scrollbar horizontal halaman.
+
+## PLAN-ASTRA — pembersihan CSS awal — 4 Oktober 2026
+
+- Hapus deklarasi identik dan selector statistik lama; pertahankan konteks media dan aturan gabungan.
+- Persempit pengecualian stylelint important hanya pada blok aksesibilitas. Semua pemeriksaan dan 187 tes lulus.
+
+## PLAN-ASTRA — animasi saat terlihat — 4 Oktober 2026
+
+- Observer grafik, count-up statistik, animasi kartu/tombol dan reduced-motion terpusat. Hapus duplikat permukaan dialog di CSS baru.
+- Perbaiki N menggunakan event pembuat tugas yang sudah tersedia.
+
+## PLAN-ASTRA — interaksi tugas — 4 Oktober 2026
+
+- Pintasan keyboard, preferensi panel, swipe tugas dan Batalkan setelah penyimpanan status/tanggal.
+- 185 tes/28 berkas, typecheck, lint, penjaga UI dan build lulus; pengujian sentuh fisik tetap terbuka.
+
+## Standarisasi konsistensi geometris tombol dan dropdown ("Kotak dengan Sedikit Rounded") — 4 Oktober 2026
+
+- Standarisasikan geometri seluruh tombol dan pemicu dropdown menjadi **"kotak dengan sedikit rounded"** (`border-radius: 10px` standar, `8px` ringkas/tabel), menghilangkan inkonsistensi bentuk oval kapsul (`9999px`), lingkaran/telur terdistorsi (`50%`), dan tombol yang saling bertabrakan gaya.
+- Perbaiki tombol tutup formulir modal dan drawer (`.editor-close-btn`, `.close-btn`, `.close-drawer-btn`, `.action-modal-close`):
+  - Kunci dimensi simetris 36 × 36 px dengan `aspect-ratio: 1 / 1 !important`, padding 0, dan `border-radius: 10px !important;`.
+  - Kecualikan pemilih tombol tutup pada `globals.css` dari aturan universal `min-height: 44px` agar tombol `[ ✕ ]` tidak lagi tertarik vertikal menjadi bentuk telur/oval gepeng seperti yang dilaporkan pengguna.
+- Selaraskan seluruh pemicu dropdown (`.custom-select-trigger`, elemen `select` asli, `.task-status-custom-select .custom-select-trigger`, `.drawer-status-select-wrap .custom-select-trigger`):
+  - Ganti nilai `var(--radius-pill)` dan `9999px` menjadi `border-radius: 10px !important` untuk formulir dan filter, serta `8px !important` untuk baris tabel dan properti drawer ringkas.
+  - Hilangkan perbedaan antara dropdown berbentuk kapsul lonjong dengan dropdown kotak.
+- Selaraskan seluruh tombol aksi (`.primary`, `.button`, `.btn-mark-complete`, `.btn-editor-cancel`, `.btn-editor-submit`, `.btn-drawer-action`, `.btn-add-submission-quick`, `.btn-clear-range`, `.btn-apply-range`, `.btn-submit-comment`):
+  - Seragamkan radius sudut menjadi `10px !important`, dengan tombol mini (`.btn-add-subtask`, `.btn-tiny-save`, `.btn-tiny-cancel`, `.btn-quick-add-day`) memakai `8px !important`.
+  - Harmonisasikan token `--radius-pill` dan `--btn-radius-pill` di `:root` dari 9999 px menjadi 10 px.
+- Selaraskan badge, chip, dan tag metadata (`.prop-user-chip`, `.prop-text-badge`, `.project-badge`, `.priority-badge`, `.card-priority-pill`, `.submission-status-pill`):
+  - Terapkan geometri rounded-rectangle modern (8 px / 6 px) yang selaras dengan bahasa desain Notion/Linear.
+- Verifikasi lengkap: 171 tes dalam 23 berkas lulus (`npm test`), 0 kesalahan TypeScript (`npm run typecheck`), dan Next.js production build berhasil (`npm run build`).
+
+## Standarisasi jarak komponen dan tombol di seluruh halaman — 4 Oktober 2026
+
+- Perlebar jarak tombol aksi inline (`.inline-actions`, `.title-edit-form`, `.desc-edit-form`):
+  - Berikan celah 14 px antar tombol `Batal` dan `Simpan`, tinggi sentuh nyaman 38–42 px, radius membulat 12 px, margin atas 14 px dari input, dan margin bawah 26–28 px sebelum kartu berikutnya sehingga tombol tidak lagi menempel rapat atau menimpa kartu di bawahnya.
+- Berikan jarak napas lega antar kelompok tombol di bilah atas drawer (`.drawer-top-bar`):
+  - Celah 10–12 px antar kelompok kontrol kiri (`Tandai Selesai`, `Jadwal`, `Formulir`) dan kanan (`[ < | > ]`, `Hapus`, `Tutup`), serta garis pembatas berjarak 18–20 px di bawahnya.
+- Harmonisasikan margin bawah dan celah antar komponen di seluruh halaman:
+  - **Beranda/Dashboard**: tajuk halaman 24–28 px, kartu ringkasan 24–28 px dengan celah 16–18 px, kartu Agenda Rapat 26–28 px, dan bilah filter fokus tugas 20 px dengan celah 8 px.
+  - **Panel Detail Tugas**: properties grid 22–26 px, kotak deskripsi 24–26 px, tautan bukti hasil 24–26 px, subtugas 26–30 px dengan celah pohon 8–10 px, dan riwayat aktivitas 24–26 px.
+  - **Halaman Proyek & Form**: cover hero 28 px, kartu kpi 24–28 px, navigasi tab 24–28 px, dan tombol aksi form (`.form-actions`, `.editor-form-actions`) dengan padding atas 18–20 px dan celah 12–14 px.
+- Verifikasi lengkap: 171 tes dalam 23 berkas lulus (`npm test`), 0 kesalahan TypeScript (`npm run typecheck`), dan Next.js production build berhasil (`npm run build`).
+
+## Overhaul panel detail tugas (Hierarki Judul, Properties Grid Notion-Style, dan Top Bar) — 4 Oktober 2026
+
+- Perbaiki hierarki visual TaskDetailDrawer: pindahkan judul tugas (`.task-detail-title`) ke posisi teratas tepat di bawah badge kode tugas (`TGS-F2A4`) dan link proyek. Menghilangkan masalah dropdown status/prioritas raksasa 100% yang sebelumnya mendominasi dan mendorong judul ke bawah secara canggung.
+- Rombak properti tugas menjadi **Unified Properties Grid** ala Notion/Linear (`.drawer-properties-grid`):
+  - **Status & Prioritas**: Ditampilkan sebagai interactive pill badges ringkas dengan warna pastel semantik (rencana, proses, selesai, dibatalkan; rendah, normal, tinggi, mendesak) tanpa melebarkan kontainer menjadi kotak input teks kaku.
+  - **Ikon Bendera**: Perbaiki tata letak ikon bendera prioritas (`.priority-flag-icon`) dari posisi absolute yang menimpa teks menjadi flex item statis dengan jarak aman 6 px (`🚩 Tinggi`).
+  - **Tenggat**: Integrasi langsung sebagai baris properti kalender ringkas berlatar pill (`.date-prop-editable`).
+  - **Penanggung Jawab & Dibuat Oleh**: Ganti kartu raksasa yang boros ruang dan avatar lingkaran warna-warni mencolok dengan chip pengguna minimalis bernuansa profesional (`.prop-user-chip`).
+  - **Metadata Sekunder**: Baris rapi untuk perulangan jadwal, mitra/kontak, dokumen terlampir, dan tautan rapat daring.
+- Rapikan bilah kontrol atas (`.drawer-top-bar`):
+  - Satukan tombol navigasi tugas sebelumnya dan berikutnya ke dalam grup conjoined segmented pill (`.drawer-nav-group`).
+  - Selaraskan tombol `Tandai Selesai`, tombol aksi `Jadwal` dan `Formulir`, serta tombol bahaya `Hapus` dan tombol tutup `[✕]`.
+- Posisikan kotak catatan deskripsi (`.drawer-description-box`) tepat di bawah daftar properti sebagai kanvas catatan yang bersih dan proporsional.
+- Verifikasi lengkap: 171 tes dalam 23 berkas lulus (`npm test`), 0 kesalahan TypeScript (`npm run typecheck`), dan Next.js production build berhasil (`npm run build`).
+
+## Overhaul estetika kartu dashboard (Stat Cards, Agenda Rapat, dan Filter Pills) — 4 Oktober 2026
+
+- Transformasi 4 kartu ringkasan dashboard (`.dash-stat-card`): ganti tampilan putih polos dan flat membosankan dengan sistem tema 4 pilar pastel yang kaya dan hidup:
+  - **Progres tugas (`variant="emerald"`)**: gradien hijau sage/emerald lembut, ring progres melingkar SVG terintegrasi, dan aksen batas hijau halus.
+  - **Tugas aktif (`variant="blue"`)**: gradien biru pastel elegan (`#f0f9ff` ke `#e0f2fe`), ikon checklist berwadah rounded-square bercahaya, dan tipografi angka tebal.
+  - **Tugas terlambat (`variant="rose"`)**: gradien merah muda/rose pastel yang hangat dan tegas (`#fff1f2` ke `#ffe4e6`), ikon peringatan rose, dan teks penjelas kontras tinggi.
+  - **Rapat hari ini (`variant="purple"`)**: gradien lavender/ungu pastel anggun (`#faf5ff` ke `#f3e8ff`), ikon kalender berwadah ungu, dan status netral.
+- Sentuhan visual modern premium: border melengkung halus 20 px (`border-radius: 20px`), highlight kaca atas (`box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7)`), micro-animation hover melayang (`transform: translateY(-3px)`), dan adaptasi penuh dark mode.
+- Rombak total kartu Agenda Rapat (`.next-meeting`): ganti kartu putih polos yang kosong dengan executive agenda card berikon kalender 46 px frosted (`.meeting-icon-box`), badge pill status pertemuan, format jam berlatar pill, dan tombol navigasi panah interaktif dengan efek hover meluncur.
+- Desain ulang bilah filter fokus tugas (`.focus-filters`): terapkan gaya segmented pill bar modern ala iOS/Linear dengan tab aktif berlatar putih melayang (`box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08)`), badge penghitung pill (`.focus-filter-count`), dan transisi mulus.
+- Verifikasi lengkap: 171 tes dalam 23 berkas lulus (`npm test`), 0 kesalahan TypeScript (`npm run typecheck`), dan Next.js production build berhasil (`npm run build`).
+
+## Koreksi jarak atas mobile, overlap tombol, dan penataan dock navigasi — 4 Oktober 2026
+
+- Perbaiki jarak mepet bagian atas ponsel: perbesar padding atas `.manager-main` dari 8 px menjadi 22 px pada viewport mobile (`@media (max-width: 767px)`), dan normalkan margin tajuk halaman (`.page-heading`) agar tidak menempel rapat pada garis batas header sticky.
+- Cegah overlap dock navigasi melayang terhadap kartu bawah: perbesar padding bawah `.manager-main` menjadi `calc(135px + env(safe-area-inset-bottom, 0px))` sehingga kartu statistik, ringkasan, dan konten bagian bawah dapat digulir bebas tanpa terpotong atau tertutup di balik `.manager-dock`.
+- Tata ulang header Beranda (`.home-heading`): pindahkan chip tanggal (`.home-date-chip`) dari kontainer grid tombol aksi (`.home-heading-actions`) ke baris judul (`.home-eyebrow-row`). Tombol `+ Buat tugas` dan `Catat kegiatan` kini menjadi grid 2-kolom seimbang (`1fr 1fr`) 44 px tanpa elemen tanggal yang anjlok atau tampak seperti tombol pecah di bawahnya.
+- Rombak tata letak kartu peringatan `.follow-up-compact-bar` pada layar ponsel: gunakan layout 2-baris yang rapi (baris atas: ikon peringatan dan lencana jumlah; baris bawah: tombol pill `Rincian (X)` di kiri dan tautan `Semua ↗` di kanan dengan pemisah garis halus), menghilangkan tabrakan teks dan pembungkusan canggung.
+- Bersihkan bilah navigasi atas ponsel (`.manager-topbar`): sembunyikan label teks redundant "Menu" pada tombol burger agar menjadi tombol ikon 36 px bersih, sembunyikan garis miring pemisah yatim (`.topbar-crumb-sep`), hapus kapsul kosong tanpa teks, dan tampilkan nama halaman aktif (`.manager-location`) secara proporsional.
+- Nonaktifkan indikator dev floating Next.js (`devIndicators: false` pada `next.config.ts`) agar lencana lingkaran hitam 'N' tidak menimpa tombol dock navigasi Beranda di pojok kiri bawah layar ponsel.
+- Verifikasi lengkap: 171 tes dalam 23 berkas lulus (`npm test`), 0 kesalahan TypeScript (`npm run typecheck`), dan Next.js production build berhasil (`npm run build`).
+
+## Overhaul tampilan detail proyek (Hero, Properties Grid, Tab Bar, Next Actions) — 4 Oktober 2026
+
+- Rombak total header detail proyek (`.project-cover`): ganti kartu putih polos yang kosong dengan hero card bernuansa gradien lembut, aksen border brand atas 4 px, bayangan melayang elegan, dan tata letak berdampingan untuk simbol proyek, kode tag (`OPS`), status pill semantik, judul h1, serta tombol `Ubah proyek` berikon `<Edit2 />`.
+- Ganti baris properti teks padat yang mepet (`Status`, `Prioritas`, `PIC`, `Target`, `Tugas`) menjadi grid kartu atribut modern 4-kolom (`.project-properties-grid`): setiap kartu memiliki ikon, label caption uppercase, dan value pill semantik (prioritas berwarna semantik, penanggung jawab dengan ikon user, target tanggal, total tugas).
+- Desain ulang progress meter proyek: bukan lagi garis tipis terisolasi dengan teks 0% melayang di ujung kanan, melainkan kartu progres terintegrasi dengan judul, fraksi selesai (`X / Y tugas selesai`), lencana persentase emerald, dan bar progres hijau emerald bercahaya halus.
+- Perbarui navigasi bagian proyek (`.project-section-nav`): ubah deretan link teks polos menjadi tab segmented modern berikon (Tugas, Catatan, Milestone, Dokumen, Keputusan, Kendala) dengan lencana penghitung pill yang rapi.
+- Perbaiki tombol kembali `Semua proyek`: ubah tombol teks polos menjadi breadcrumb nav berikon `<ArrowLeft />` dengan transisi hover halus.
+- Perbaiki kartu `Langkah berikutnya`: ganti tampilan default `<details>` kaku dengan kartu interaktif berikon `<Sparkles />`, lencana tugas aktif, chevron animasi rotasi, dan daftar tugas berstatus dengan tautan rapi.
+- Verifikasi lengkap: 171 tes dalam 23 berkas lulus (`npm test`), 0 kesalahan TypeScript (`npm run typecheck`), dan Next.js production build sukses (`npm run build`).
+
+## Overhaul dropdown, progress bar subtugas, inline-actions, dan dashboard mobile — 4 Oktober 2026
+
+- Perbaiki `.subtasks-progress-bar .bar-fill` dan `.subtask-mini-fill`: ganti garis diagonal hitam kaku dengan gradien hijau emerald modern (`linear-gradient(90deg, #10b981 0%, #059669 100%)`), pendaran bayangan lembut, animasi transisi lebar halus, serta lencana persentase pill pastel emerald.
+- Beri jarak aman pada `.inline-actions`, `.title-edit-form`, `.desc-edit-form`, dan `.drawer-description-box`: tambah margin bawah 18–20 px dan jarak atas 8–12 px sehingga tombol aksi tidak mepet atau bertabrakan dengan kartu dan konten di bawahnya.
+- Rombak total menu dropdown (`.custom-select-menu` dan `.custom-select-option`): hilangkan border kotak dan margin bawaan tombol opsi, terapkan reset penuh (`all: unset`), sudut membulat 8 px saat hover, latar hijau lembut aktif, tanda centang emerald, dan bayangan popover mengambang yang bersih (`box-shadow: 0 16px 36px -4px rgba(0,0,0,0.14)`).
+- Ganti select bawaan OS pada status/prioritas TaskDetailDrawer dan tabel Records dengan komponen custom `Select`: status dan prioritas kini tampil sebagai pil anggun dengan warna semantik (rencana, dikerjakan, selesai, dibatalkan; rendah, normal, tinggi, mendesak) tanpa melebarkan kontainer menjadi tumpukan kotak kaku.
+- Rombak kedalaman mobile dashboard: ganti kartu statistik flat dengan gradien pastel bernuansa (biru lembut, emerald, amber, dan sage), bayangan halus, cincin fokus aktif, tipografi angka yang tegas, serta tata letak bar Perlu Perhatian yang terstruktur.
+- Proteksi proporsi kontrol kecil ponsel: cegah checkbox subtugas bundar (`.subtask-round-check`) dan tombol ikon/tutup (`.btn-icon`, `.close-drawer-btn`) terdistorsi atau memanjang oleh aturan target sentuh 44 px.
+- Verifikasi lengkap: 171 tes dalam 23 berkas lulus (`npm test`), 0 kesalahan TypeScript (`npm run typecheck`), dan Next.js production build berhasil (`npm run build`).
+
+## Koreksi kepadatan dan font mobile — 3 Oktober 2026
+
+- Satukan skala judul/control mobile lewat token global; hapus prioritas tipografi dan aturan mobile yang bertentangan. Input/dropdown 14 px, judul halaman/bagian/kartu 20/17/15 px; target sentuh tetap 44 px.
+- Perbaiki basis flex paragraf intro tugas yang menjadi tinggi 200 px pada layout kolom; ringkas tombol detail. Rapikan gutter/kartu dashboard, ringkasan Hari Ini dua kolom dan label proyek panjang.
+- Toolbar linimasa menjadi grid ringkas dengan tanggal lengkap; kalender membuka ke bawah sesuai koreksi pemilik. Indikator simpan subtugas menggunakan hijau tema, termasuk dark mode.
+- Verifikasi 171 tes/23 berkas, typecheck, lint, build dan audit 74 sumber. Fixture 22 halaman dan 21 form pada 360 px dalam dua tema; semua input form terlihat 14 px. Lima halaman inti diperiksa pada 360/393/768/1024/1440 px; linimasa juga 338 px. Tidak memeriksa perangkat fisik, mengubah data cloud atau deployment; perubahan awal next-env.d.ts dipertahankan.
+
+## Rapikan mobile, kontrol dan tema — 3 Oktober 2026
+
+- Satukan keluarga font, ukuran input/dropdown dan teks tombol ke token global; bersihkan aturan kontrol lama yang bertentangan. Pilihan dropdown lebih tenang dan membungkus label panjang; warna tombol mengikuti tema.
+- Semua input tanggal memakai kalender bersama yang mengutamakan atas, menjaga batas tanggal serta nama/value form, dan mengikuti batas panel bergulir. Perbaiki luapan skeleton, matriks risiko, tabel tugas dan aksi buku pada layar sempit.
+- Rapikan kartu/meta proyek dan ringkasan dua kolom ponsel, jarak inline-actions, panduan Onboarding Manajer empat langkah, serta checklist subtugas dengan indikator simpan kecil dan penguncian selama mutasi.
+- Verifikasi: 171 tes/23 berkas, typecheck, lint, build, audit sumber 74/74 dan diff-check. Fixture 22 halaman/21 form pada 360 px dalam dua tema; Proyek/Panduan/Risiko/Tugas pada 360/768/1024/1440 px. Kalender detail 360 px tidak terpotong/meluap. Belum merupakan UAT semua data/interaksi atau perangkat fisik; tidak mengubah database/hosting. Perubahan awal next-env.d.ts dipertahankan.
+
+## Samakan origin pengembangan lokal — 3 Oktober 2026
+
+- Perbaiki konfigurasi lokal yang masih memakai localhost ketika browser/server memakai 127.0.0.1:3000. Selaraskan .env.example, README dan panduan Supabase; host, protokol dan port wajib sama.
+- Probe endpoint PIN dengan JSON tidak sah: origin 127.0.0.1 diterima sampai validasi JSON (400), localhost dan origin asing ditolak (403). Tidak memakai PIN, mencatat percobaan login, mengubah database, konfigurasi hosting atau aturan keamanan server.
+- Verifikasi: 167 tes/22 berkas, typecheck, lint, build dan diff-check lulus. Perubahan awal next-env.d.ts dipertahankan; .env.local tetap tidak masuk Git. Login memakai PIN pengguna belum diuji.
+
+## Audit panduan Markdown — 3 Oktober 2026
+
+- Gabungkan rancangan dashboard ke DESAIN-ANTARMUKA dan peta rute/API ke ARSITEKTUR; hapus dua dokumen duplikat serta dua rencana program lama yang sudah digantikan. Riwayat tetap tersedia di Git; fixture dan cadangan pribadi dipertahankan.
+- Ringkas STATUS, serah terima dan checklist agar membedakan keadaan aktif, bukti lokal, konfirmasi cloud dan pekerjaan terbuka. Lengkapi indeks seluruh panduan, perbaiki lokasi tes, CSS aktif, domain data, tema dan langkah instalasi/reset.
+- Verifikasi: 21 panduan terindeks, tautan lokal dan rujukan kode literal valid; 167 tes/22 berkas, typecheck, lint, build, audit sumber dan diff-check lulus. Build diulang setelah kendala akses next-env.d.ts di sandbox; perubahan awal file itu dipertahankan.
+- Paket ini hanya mengubah dokumentasi; tidak mengubah UI, data cloud atau menjalankan deployment.
+
+
+## Perapian struktur folder — 3 Oktober 2026
+
+- Pindahkan 31 modul fitur ke 10 folder domain dan 22 berkas tes ke unit/UI/database/keamanan. Enam kontrak/form lintas-domain tetap di akar features. Komponen bersama, lib/server, fixture, skrip, SQL, CSS, dan rute tetap pada tempatnya.
+- Sesuaikan 131 rujukan modul (impor, impor dinamis, mock tes dan fixture) tanpa barrel/shim kompatibilitas. Tidak ada perubahan isi bisnis, tampilan, atau kontrak API.
+- Perbarui peta arsitektur, README, pemetaan file, dan skill clean-code agar merujuk lokasi sebenarnya. Verifikasi: 167 tes/22 berkas, typecheck, lint, build produksi, audit sumber (71/71), dan diff-check lulus. Pemeriksaan isi 53 berkas yang dipindahkan tidak menemukan perubahan selain rujukan modul. Tidak ada perubahan UI/CSS, SQL cloud, atau deployment; tidak ada audit visual baru pada paket pemindahan ini.
+
+
+## Pembersihan lokal dan tweak Perlu Perhatian — 3 Oktober 2026
+
+- Hapus 14 screenshot lama dalam artifacts (tidak dirujuk runtime/dokumen), folder kosong src/app/__preview, dan cache TypeScript yang dapat dibuat ulang. Audit sumber 71/71 terjangkau; sumber aktif, cadangan, arsip, konfigurasi, dependensi, dan SQL dipertahankan.
+- Pemilik memilih dashboard aplikasi saat ini dan meminta tweak pada Perlu Perhatian di atas. Rancangan HTML baru dibatalkan/dihapus; arahan terbatas tercatat di RANCANGAN-DASHBOARD.md.
+- Banner memakai permukaan/border netral; gradien merah/hijau dan margin tambahan keadaan kosong dihapus. Ringkasan mempertahankan jumlah/mendesak. Jenis/alasan tampil pada Rincian; ponsel menyembunyikan cuplikan judul panjang agar bar lebih pendek. Tautan sumber tetap tersedia dalam rincian.
+- 167 tes/22 berkas lulus dengan satu worker; typecheck, lint, build produksi (tanpa route pratinjau), audit sumber, dan diff-check lulus. Fixture terang pengingat diperiksa pada 360/768/1024/1440 px tanpa overflow horizontal. Rincian dan keadaan kosong diperiksa pada ponsel; UAT data nyata dan tema gelap belum diperiksa pada paket ini. Tidak ada cloud SQL atau deployment.
+
+
+## Pembersihan sumber dan perbaikan state — 3 Oktober 2026
+
+- Hapus tiga komponen tidak digunakan runtime (Burnup, InfluenceMap, DateRangePicker) dan ekspor ProgressRing mati; tes widget DateRangePicker dilepas. Audit sumber: 71/71 berkas terjangkau, tanpa kandidat tersisa. Arsip, cadangan, SQL, dan dependensi aktif dipertahankan.
+- Pagination menyimpan halaman/cursor tambahan dalam cache, deduplikasi ID memakai Set, menolak permintaan ganda, dan mengabaikan galat scope lama. Cache dibatasi 24 lingkup; kunjungan ulang tetap melakukan refresh server.
+- Proyek, laporan, pengaturan, dan Gantt memakai pemuatan modul terpisah dengan skeleton. Tidak ada klaim angka peningkatan kecepatan karena benchmark belum dilakukan.
+- Rumus subtugas disatukan di lib/progress.ts; progres harian/periode mengecualikan pembatalan. Tugas tanpa tenggat tidak dinilai terlambat. Nama koperasi pada shell berasal dari profil, dengan fallback netral. Kop/tanda tangan laporan memakai identitas snapshot; alamat/lokasi hardcoded dihapus.
+- Toolbar harian tidak melebar keluar layar 360 px, kontrol mode/tambah/arah hari minimal 44 px. Tema/style acuan tetap dipakai. Pemeriksaan fixture terang kartu periode dan tugas harian pada 360/768/1024/1440 px; tidak ada overflow horizontal halaman. Route fixture dihapus. Ini bukan UAT data nyata atau audit seluruh modul/tema.
+- Verifikasi: 166 tes/22 berkas lulus dengan satu worker; percobaan dua worker bersamaan verifikasi lain timeout pada dua tes UI. Asersi/batas waktu tidak diubah. Typecheck, lint, build produksi, audit sumber, dan diff-check lulus. Tidak ada SQL cloud atau deployment.
+
+
+### Tweak dashboard, mempertahankan style acuan (3 Oktober 2026)
+
+- Typecheck, lint tanpa galat/peringatan, build produksi, serta pemeriksaan whitespace lulus; route pratinjau tidak masuk produksi.
+
+- Ikuti koreksi pemilik: pertahankan style/navigasi cabang `codex/workspace-redesign`, batalkan penggantian CSS total, dan hapus folder eksperimen/pratinjau sementara.
+- Ringkas daftar tugas/kegiatan menjadi tiga catatan awal; grafik/rutinitas ditutup secara bawaan. Hilangkan duplikasi peringatan stok dan perbaiki pengingat pada ponsel.
+- Tambah pengingat rapat tujuh hari, sematan catatan opsional di Perlu Perhatian, serta langkah berikutnya opsional pada detail proyek. Jumlah/ringkasan tetap mengikuti data yang dimuat.
+- 164 tes/22 berkas lulus dengan dua worker. Pemeriksaan visual dashboard memakai fixture, bukan data nyata, pada 360/768/1024/1440 px. Audit lengkap semua modul/tema dan UAT masih terbuka.
+
+### Lanjutan redesain: navigasi, dialog, dan state (3 Oktober 2026)
+
+- Perbaiki galat lint dan hapus `any`/impor mati; scope tugas mengikuti URL, query tampilan mempertahankan filter lokal, field detail mengikuti tugas terpilih, dan cache scope lama tidak tampil saat berpindah scope.
+- Satukan tablet 768–1023 px/rel 76 px dan desktop mulai 1024 px. Hapus aturan tablet ganda; beri nama aksesibel pada navigasi ciut dan inert pada menu ponsel tertutup.
+- Ganti modal target periode menjadi dialog native; cegah penutupan selama penyimpanan, rapikan form ponsel, dan pertahankan galat. Navigasi detail tugas dikunci selama menyimpan.
+- Validasi preferensi rutinitas, pertahankan konfigurasi kosong, abaikan centang rutinitas yang dihapus, dan simpan pilihan selama sesi jika storage browser menolak penulisan.
+- Delapan tes regresi baru ditambahkan: 159 tes/21 berkas lulus dengan dua worker; typecheck, lint penuh (0 galat/0 peringatan), dan build lulus. Percobaan worker bawaan mengalami timeout pada tes UI berbeda; batas waktu tes tidak dilonggarkan. Audit visual empat ukuran masih tertahan oleh timeout browser; tidak ada klaim UAT/perangkat baru atau deployment produksi.
+
+### Redesain ruang kerja dan konteks proyek (3 Oktober 2026)
+
+- Pertahankan konsolidasi stylesheet yang sudah ada; perbarui palet netral/hijau lembut, sidebar arang, radius, kontrol, kartu, tab, topbar, dan hierarki judul Beranda.
+- Rapikan pencarian dengan penyaring jenis, pencocokan nama proyek, konteks hasil, dan keterangan cakupan data yang dimuat.
+- Tambah pintasan bagian detail proyek; perbaiki relasi dokumen, keputusan rapat, dan kendala melalui referensi tugas serta tautan ke sumber.
+- Verifikasi: 151 tes, typecheck, build, dan lint khusus berkas fitur baru lulus. Lint seluruh repo masih gagal pada 9 galat lama. Audit browser empat ukuran belum berhasil karena koneksi alat browser mengalami timeout; desain rinci seluruh modul dan UAT masih terbuka.
+
+### Perbaikan Layout Semua Device & Sentuh Target (3 Oktober 2026)
+
+- Hilangkan dua blok `!important` duplikat `.manager-main`/` .manager-sidebar` (Section 6.1 & 6.5) yang saling menimpa aturan rail tablet dan memicu overflow horizontal di 768px.
+- Tambah `max-width: 100%; min-width: 0; box-sizing: border-box` pada `.skeleton-work-col` dan turunannya serta `.mobile-nav-cards-grid`/`.mobile-nav-card` agar tidak melebar melebihi viewport ponsel/tablet.
+- Naikkan `min-height` `.home-action-btn` (Buat tugas/Catat kegiatan) menjadi 44px untuk orientasi mobile.
+- Verifikasi: 0 horizontal overflow dokumen pada 11 halaman di 360/768/1024/1440px di browser nyata, 147 tes, `tsc --noEmit`, dan `next build` lulus.
+
+### Pembersihan Aturan Layout Navigasi (3 Oktober 2026)
+
+- Hapus blok media `@media (min-width: 768px) and (max-width: 1100px)` duplikat di `src/app/personal.css` yang menetapkan sidebar `width: 205px` dan `margin-left: 205px`. Blok tersebut tertimpa penuh oleh blok tablet-rail belakangan, sehingga jadi aturan mati.
+- Pindahkan aturan `.home-grid` satu kolom di tablet ke blok tablet-rail yang menang agar beranda tidak sempit setelah rail 76px.
+- Kini satu breakpoint = satu aturan untuk topbar, konten utama, dan sidebar; tidak ada dua blok media berrentang sama yang saling menimpa.
+- Verifikasi: 147 tes (19 berkas), `tsc --noEmit`, dan `next build` lulus.
+
+### Perbaikan Polished UI Layer (3 Oktober 2026)
+- Tambah aturan padding-safe-area untuk bottom bar mobile biarkan labels tidak *clip*; safe-area-inset-bottom.
+- Sempurna follow-up compact bar: wrap tepat, badge overflow-wrap break-word, actions fleksibel tanpa truncasi.
+- Sempurna stat KPI: padding & gap card mobile lebih nyaman; ring tetap, card height stabil.
+- Focus-visible ring bersih: `2px solid var(--brand)` pada semua elemen interaktif.
+
+### Rombak Total Tampilan Agenda Kalender: Eliminasi Header Ganda & Kartu Tugas Modern Elegan (3 Oktober 2026)
+
+- **Eliminasi Redundansi Header Box-in-a-Box (`TaskCalendar.tsx` & `personal.css`)**:
+  - Mengatasi masalah duplikasi header pada tampilan tanggal terpilih (*selected date view*), di mana tanggal dan jumlah catatan sebelumnya ditampilkan dua kali secara bertumpuk (pada bilah header atas dan pada kartu pembungkus `.calendar-agenda-day-head`).
+  - Menghilangkan bingkai kotak bersarang (*nested box*) dengan menerapkan mode `.is-selected-view` yang bersih, flat, dan menyatu langsung dengan aliran kartu tugas.
+  - Memperbarui bilah header agenda dengan kotak ikon kalender modern (`.calendar-agenda-header-icon`), tipografi judul tebal 17px yang jelas, pill hitungan catatan beraksen pastel, dan tombol aksi terpadu (`+ Tambah tugas` & `Semua tanggal`).
+- **Desain Ulang Kartu Tugas Agenda Kalender (`Records.tsx` & `personal.css`)**:
+  - Menggantikan tampilan kartu lama yang kaku, kosong, dan tidak beraturan dengan kartu tugas terpadu (`.calendar-task-card`):
+    - **Header Metadata**: Checkbox lingkaran cepat (`.task-round-check` 22px), kode monospace tugas (`TGS-F2A4`), pill proyek terhubung dengan titik warna indikator, lencana tingkat prioritas berikon (`Flame` / `AlertCircle`), serta status pill dinamis.
+    - **Judul & Cuplikan Deskripsi**: Judul tugas tebal 15.5px interaktif (membuka laci detail tugas `TaskDetailDrawer` saat diklik), efek coret saat selesai, dan cuplikan deskripsi jika ada.
+    - **Daftar Subtugas**: Mini progress bar horizontal persentase penyelesaian, ringkasan `done/total`, dan checkbox bulat subtugas (`.subtask-round-check` 18px) interaktif dengan efek coret teks tanpa muat ulang halaman.
+    - **Footer Aksi Terpadu**: Avatar inisial penanggung jawab (`Manajer`), pill tanggal tenggat berikon, tombol penundaan cepat `+1 hari`, tombol buka rincian `Buka catatan` (`<ExternalLink size={13} />`), tombol status utama `✓ Selesai` / `↺ Buka lagi`, serta menu dropdown melayang titik tiga (`<MoreHorizontal />`) untuk opsi `+1 minggu` dan `Hapus tugas`.
+- **Dukungan Dark Mode Penuh**:
+  - Seluruh komponen kartu agenda kalender memiliki penataan warna dan kontras tinggi di mode gelap (`.dark` dan `[data-theme='dark']`).
+- **Verifikasi Kualitas**:
+  - Menambahkan pengujian khusus `Records mode kalender menampilkan agenda terpilih dan calendar-task-card modern` di `tests/redesign.test.tsx`.
+  - Seluruh 147 unit test (19 berkas) lulus 100%.
+  - Pemeriksaan tipe TypeScript (`tsc --noEmit`) 0 error.
+  - Kompilasi produksi Next.js (`npm run build`) sukses tanpa kendala.
+
+
+- **Sinkronisasi Selector Atribut Ganda (`ThemeContext.tsx` & `AppShell.tsx`)**:
+  - Memperbaiki `ThemeProvider` agar menyetel atribut `data-theme="dark"` pada `document.documentElement` secara simultan dengan class `.dark`. Sebelumnya, ketiadaan atribut `data-theme` menyebabkan puluhan selektor bertarget `[data-theme='dark']` gagal diaplikasikan.
+  - Memperbaiki script inisialisasi awal di `layout.tsx` (`<head>`) untuk membaca `localStorage` dan preferensi sistem sebelum hidrasi, sehingga transisi tema bebas kedip (*flash-free*).
+  - Menyinkronkan tombol pengubah tema bilah atas dan bilah bawah mobile dengan status tema aktif riil (`theme` vs `preference`), menampilkan ikon Matahari (<Sun />) saat mode gelap dan Bulan (<Moon />) saat mode terang.
+- **Perbaikan Kontras Ekstrem & Teks Tak Terbaca (`personal.css` & `polish.css`)**:
+  - Mengeliminasi penggunaan warna teks gelap statis (`var(--brand-text)` / `#111215`) di atas kontainer gelap dalam mode malam:
+    - `.routine-time`, `.journal-join-link`, `.journal-join-chip`, `.j-meeting`, `.journal-view-all` kini menggunakan warna terang kontras tinggi (`var(--brand)`).
+    - `.quick-add-icon`, `.member-pill`, `.item-pill`, `.round-arrow`, `.range-days-pill`, `.action-modal-badge` disesuaikan kontrasnya agar tajam dan terbaca sempurna.
+  - Memperbaiki lencana status tabel dan pencatatan (`.badge-active`, `.badge-income`, `.badge-expense`, `.badge-diff-zero`, `.badge-diff-minus`, `.badge-diff-plus`, `.badge-late`, `.table-amount`, `.table-num`, `.table-btn-done`) dengan warna latar lembut gelap dan teks berpendar kontras.
+  - Memperbaiki dropdown `CustomSelect` (`.custom-select-menu`, `.custom-select-option:hover`, `.is-selected`, `.custom-select-check`) agar menggunakan palet permukaan gelap `#181922` dan bingkai `#2e3242`.
+  - Mengimplementasikan penataan lengkap komponen `.csv-dropzone` untuk mode terang dan gelap dengan garis putus-putus beraksen, teks bantuan abu-abu seimbang, dan badge konfirmasi hijau emerald kontras.
+  - Menyesuaikan indikator pemilih waktu `input[type="time"]::-webkit-calendar-picker-indicator` dengan filter invert pada dark mode.
+- **Verifikasi Kualitas**:
+  - Seluruh 146 unit pengujian vitest (19 berkas) lulus 100%.
+  - Pemeriksaan tipe TypeScript (`tsc --noEmit`) 0 error.
+  - Kompilasi produksi Next.js (`npm run build`) sukses tanpa kendala.
+
+
+- **Perbaikan Bentuk Sel Tanggal Mobile Sempurna Simetris (`polish.css` & `personal.css`)**:
+  - Mengatasi masalah kapsul hitam dan kapsul lime lonjong 28px x 44px yang sebelumnya menempel canggung di sisi kiri setiap sel tanggal akibat konflik aturan CSS (`max-width: 28px` vs `height: 44px` dan `background: var(--canvas)`).
+  - Menstandarkan sel tanggal mobile berdimensi `height: 52px` dengan tata letak flex terpusat simetris dan lingkaran angka tanggal bundar sempurna `26px x 26px`.
+  - Memberikan indikator hari ini (*Today*) berupa lingkaran pastel aksen bertema emerald lembut, dan indikator tanggal terpilih (*Selected*) berupa lingkaran solid dengan kontras tinggi serta kartu aktif bercahaya halus.
+  - Memperbaiki jarak antar-sel grid dari `1px` menjadi `4px` sehingga setiap kotak tanggal memiliki batas kartu yang bersih, terpisah, dan tidak berhimpitan.
+- **Penyajian Info Tugas Langsung pada Kalender Mobile (`TaskCalendar.tsx`, `polish.css`, & `personal.css`)**:
+  - Menghilangkan masalah kalender mobile yang sebelumnya tidak menampilkan informasi tugas apapun akibat disembunyikan total (`display: none`).
+  - Menambahkan indikator titik tugas mobile (`.calendar-mobile-dots`) tepat di bawah angka tanggal untuk setiap hari yang memiliki aktivitas:
+    - Titik **Merah** (`.dot-urgent`): Tugas mendesak / tenggat terlewat.
+    - Titik **Amber** (`.dot-high`): Tugas prioritas tinggi.
+    - Titik **Emerald** (`.dot-normal`): Tugas reguler aktif / dalam proses.
+    - Titik **Biru** (`.dot-done`): Tugas selesai.
+    - Lencana angka `+N` jika terdapat lebih dari 3 tugas dalam satu tanggal.
+- **Penyempurnaan Header & Kontrol Agenda Tanggal Terpilih (`TaskCalendar.tsx` & `personal.css`)**:
+  - Menyediakan ringkasan jumlah tugas pada tanggal terpilih (`N catatan`) dan tombol pintasan `Semua tanggal` untuk kembali ke ikhtisar penuh bulan ini.
+- **Verifikasi Kualitas**:
+  - Menambahkan pengujian `menampilkan indikator titik tugas mobile dan ringkasan info agenda` di `tests/calendar.test.tsx`.
+  - Seluruh 146 unit tes lulus 100% (19 berkas), 0 kesalahan TypeScript, dan kompilasi produksi Next.js sukses tanpa error.
+
+### Penataan Ulang Kartu Tugas Papan (Scrum/Kanban) Lebih Efisien, Rapi & Elegan (3 Oktober 2026)
+
+- **Restrukturisasi Layout Kartu 3 Bagian Terpadu (`ScrumBoardView.tsx` & `personal.css`)**:
+  - Mengeliminasi penumpukan baris ganda yang memboroskan ruang vertikal (~50% pemangkasan tinggi kartu yang berlebihan, dari ~190px–210px menjadi ~95px–105px).
+  - **Bilah Header Metadata Terpadu**: Menggabungkan kode tugas (`TGS-F2A4` dalam monospace badge ringkas) dan lencana proyek di sebelah kiri, berdampingan dengan pill tingkat prioritas berikon (`Tinggi` / `Mendesak`) serta tenggat tanggal berikon kalender di sebelah kanan.
+  - **Badan Kartu Fokus**: Judul tugas tampil menonjol, tegas, dan mudah dibaca tanpa garis pemisah (*divider*) yang kaku, disertai cuplikan deskripsi jika tersedia.
+  - **Bilah Footer Tunggal & Seimbang**: Menggabungkan avatar inisial manajer (`M`) dan nama penanggung jawab, indikator progres subtugas ringkas (`☑ 0/1` dengan mini progress bar 28px), serta tombol aksi cepat status (`Mulai Kerja →` / `← Rencana` & `✓ Selesai` / `↺ Buka Lagi`) dalam satu baris horizontal tanpa kekosongan ruang.
+- **Penyelarasan Desain & Konsistensi Multiplatform (`personal.css` & `polish.css`)**:
+  - Standarisasi lencana kode `.card-task-code` berdimensi `padding: 1.5px 6px` dan radius `5px`.
+  - Tombol aksi cepat `.card-quick-move-btn` berdimensi kompak `height: 25px` dengan aksen warna tema emerald/biru yang halus.
+  - Penyesuaian responsif `flex-wrap: wrap` sehingga kartu tetap rapi pada layar ponsel maupun tablet/desktop.
+- **Verifikasi Kualitas**:
+  - Menambahkan pengujian `ScrumBoardView menampilkan kartu tugas dengan indikator subtugas dan tombol status yang tepat` di `tests/redesign.test.tsx`.
+  - Seluruh 144 unit tes lulus 100% (19 berkas), 0 kesalahan TypeScript, dan kompilasi Next.js sukses.
+
+### Penyempurnaan Detail Tugas: Dropdown Prioritas Rapi, Kartu Bukti Pengumpulan Bersih & Konsistensi Kotak Centang (3 Oktober 2026)
+
+- **Perapihan Dropdown Prioritas & Status (`TaskDetailDrawer.tsx` & `personal.css`)**:
+  - Mengatasi teks bertumpuk, ikon bendera mepet, dan garis dobel pada dropdown prioritas dengan menerapkan kontrol pill terpadu berdimensi `height: 32px`, `padding: 0 28px 0 28px` (jarak aman untuk ikon bendera di kiri dan panah dropdown di kanan).
+  - Menyelaraskan warna ikon bendera dinamis sesuai tingkat urgensi (Rendah: slate `#64748b`, Normal: biru `#0284c7`, Tinggi: amber `#b45309`, Mendesak: merah `#dc2626`).
+  - Menstandarkan dropdown status dan prioritas dengan bingkai halus tunggal dan latar warna pastel yang serasi dengan tema.
+- **Rombak Total Bagian Link Pengumpulan / Bukti Hasil (`TaskDetailDrawer.tsx` & `personal.css`)**:
+  - Mengeliminasi tombol ganda yang sebelumnya muncul bertumpuk (*+ Pasang link pengumpulan* dan *+ Tambah Link Bukti / Hasil* pada saat bersamaan).
+  - Mengubah bagian link pengumpulan menjadi kartu metadata mandiri berbingkai rapi (`.task-submission-card`) lengkap dengan lencana status ("Terpasang" / "Belum Ada Tautan").
+  - Menghadirkan kotak kosong (*empty state box*) dengan deskripsi informatif dan satu tombol utama yang elegan: `+ Pasang Link Pengumpulan`.
+  - Menyediakan tombol aksi terpadu saat link terpasang: Buka Hasil ↗, Salin Tautan (dengan toast konfirmasi), Ubah Link, dan Hapus Link.
+- **Perapihan Bilah Tanggal Tenggat & Kotak Centang Subtugas (`TaskDetailDrawer.tsx` & `personal.css`)**:
+  - Mengubah bilah tenggat dari pil hitam raksasa menjadi kartu metadata rapi berlatar `var(--surface)` dengan input tanggal berbingkai rapi.
+  - Mengunci kotak centang subtugas (`.subtask-check-circle`) menjadi lingkaran presisi `18px x 18px` dan menonaktifkan pseudo-element `::after` yang sebelumnya menyebabkan bentuk lonjong.
+- **Verifikasi Kualitas**:
+  - Seluruh 144 unit tes lulus 100% (19 berkas), 0 error TypeScript, dan kompilasi Next.js sukses.
+
+### Rombak Desain Tugas Harian Tanpa Dropdown & Koreksi Checkbox Bulat Sempurna (3 Oktober 2026)
+
+- **Desain Tugas Harian Tanpa Dropdown / Accordion (`DailyTasksView.tsx` & `personal.css`)**:
+  - Mengganti sistem pelipatan accordion dropdown kebawah dengan perencana harian terbuka (*Open Day-Planner*): seluruh tugas hari terpilih langsung tersaji terbuka, jelas, dan modern tanpa perlu mengklik panah ekspansi.
+  - Menghilangkan seluruh tombol chevron lipat-buka (`<ChevronDown>`, `<ChevronRight>`, `.toggle-collapse-btn`) pada hari kerja, tugas terlewat, dan tugas mendatang.
+  - Menambahkan kontrol lompat hari cepat (`← Hari Sebelumnya`, tombol `Hari Ini`, dan `→ Hari Berikutnya`) serta bilah tab 7-hari interaktif yang otomatis tersinkronisasi dengan pekan aktif.
+  - Menghadirkan dua mode tampilan: **Fokus Hari** (tampilan utama kartu hari aktif lengkap dengan judul tanggal bahasa Indonesia `Sabtu, 3 Oktober 2026`, lencana status, indikator progress bar penyelesaian, dan tombol `+ Tambah Tugas`), serta **Semua Pekan** (seluruh 7 hari ditampilkan mengalir terbuka tanpa dropdown).
+  - Menyajikan bagian tugas terlewat (*overdue*) dan tugas mendatang (*upcoming*) dalam kartu peringatan terbuka yang selalu terlihat dan tidak berisiko terlewatkan.
+- **Koreksi Bentuk Checkbox Bulat Sempurna (`personal.css`)**:
+  - Mengatasi bentuk lonjong / oval pada checkbox tugas utama yang sebelumnya terjadi karena elemen `<button>` mewarisi `min-height: 44px` dari aturan global.
+  - Menerapkan kuncian dimensi lingkaran presisi `22px x 22px` (`aspect-ratio: 1 / 1 !important`, `min-width: 22px !important`, `min-height: 22px !important`, `border-radius: 50% !important`, `padding: 0 !important`).
+  - Menghapus pseudo-element `::after` yang bertabrakan dengan ikon SVG `<Check />` dari Lucide, sehingga ikon centang tampil bersih dan pas di tengah.
+  - Menyelaraskan checkbox subtugas (`.subtask-round-check`) menjadi lingkaran presisi `18px x 18px` dengan konektor pohon subtugas yang lembut dan terpadu.
+- **Verifikasi Kualitas & Unit Test (`tests/redesign.test.tsx`)**:
+  - Menambahkan pengujian khusus `DailyTasksView menggunakan desain terbuka tanpa dropdown accordion`.
+  - 144/144 unit tes lulus 100% (19 berkas), 0 kesalahan TypeScript (`tsc --noEmit`), dan kompilasi produksi Next.js berjalan sukses tanpa kendala.
+
 ### Paket Perombakan UI & Interaksi: Pintasan Terhubung, Navigasi Multiplatform, Perampingan Tugas, dan Desain Dashboard Pastel (3 Oktober 2026)
 
 - **Pintasan Cepat Buat Baru pada Formulir Terhubung (`Editor.tsx`)**:
@@ -530,3 +862,23 @@ Implementasi awal belum berarti seluruh target PRD atau UAT selesai. Batas dan h
 - Sempurnakan grid 7-kolom dan kontras tanggal pada pemilih rentang tanggal (`DateRangePicker`) dan pemilih tanggal inline (`DateField`).
 - Rancang ulang halaman `/hari-ini` dengan komponen `TodayView` terdedikasi: agenda tugas hari ini, seksi tugas terlambat dengan 1-klik reschedule, agenda rapat hari ini, dan tugas 7 hari ke depan.
 - Rombak total pop-up tambah tugas/editor (`Editor.tsx`): modal melayang di tengah dengan backdrop blur, animasi halus, ikon kategori, tombol tutup X bulat, struktur label-input yang lapang, dan tombol aksi tegas.
+# 4 Oktober 2026 — PLAN-ASTRA fase 1
+
+Audit UI yang dapat dibuat ulang mencatat seluruh kontrol JSX beserta baris, rute/overlay dan metrik CSS. Baseline dan batas pemeriksaan ada di docs/LAPORAN-ASTRA.md. Seluruh 171 tes, typecheck, lint, build dan audit sumber lulus.
+
+# 4 Oktober 2026 — PLAN-ASTRA fondasi token
+
+Token geometri, motion dan warna semantik memakai sumber tema aktif. Penjaga stylelint berlaku untuk CSS baru; legacy masih dilaporkan terpisah. 171 tes, typecheck, lint, lint:ui dan build lulus.
+
+# 4 Oktober 2026 — PLAN-ASTRA kontrol bersama
+
+Migrasikan kontrol form/tombol ke pustaka UI, satukan pemicu tanggal dan navigasi tanggal, ekstrak dock lima item, serta gunakan permukaan dialog bersama. Hapus gaya tanggal/dock yang tidak dipakai; cegah gaya elemen legacy menimpa primitive baru. 175 tes dan pemeriksaan statis/build lulus; galeri mobile terang/gelap serta Beranda 360/768 diperiksa.
+
+# 4 Oktober 2026 — PLAN-ASTRA kartu dashboard
+
+Empat statistik memakai permukaan netral dan ikon tint, baris terlambat memakai badge, serta layout dashboard menyesuaikan lebar. Dropdown gelap mengikuti token aktif. 175 tes dan pemeriksaan statis/build lulus; Beranda empat lebar terang serta gelap 1440 diperiksa.
+
+# 4 Oktober 2026 — PLAN-ASTRA drag sentuh
+
+Ganti HTML5 drag papan tugas/kegiatan dengan handle Pointer Events, long-press, overlay, auto-scroll dan pembatalan. Tambahkan alternatif dropdown pemindahan dan galat kegiatan yang terlihat. 181 tes dan pemeriksaan statis/build lulus; drag mouse fixture browser terverifikasi. Perangkat sentuh fisik belum diuji.
+

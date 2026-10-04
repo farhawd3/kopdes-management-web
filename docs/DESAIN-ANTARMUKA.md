@@ -4,6 +4,8 @@ Dokumen ini merangkum bentuk produk yang disetujui pemilik; **kode dan hasil ren
 
 ## Karakter visual
 
+Arahan pemilik 3 Oktober 2026: gunakan tampilan cabang `codex/workspace-redesign` pada commit `e8fc8b4` sebagai acuan; pemilik lebih menyukai tampilan ini daripada eksperimen penggantian CSS total. Lakukan tweak kecil dan kurangi keramaian dashboard. Pertahankan tema, kartu, navigasi, serta token yang sudah ada. Grafik dan rutinitas ditutup secara bawaan; tugas/kegiatan awal dibatasi tiga catatan. Fitur tambahan berada di halaman terkait, bukan semuanya ditambahkan ke Beranda.
+
 Ruang kerja pribadi manajer koperasi, terinspirasi aplikasi tugas profesional: bersih, mudah dipindai, sedikit ekspresif, tidak seperti template dashboard generik. Dasar terang berupa kanvas abu sangat muda, kartu putih, teks arang, aksen hijau lembut dan lavender; mode gelap tersedia. Kartu membulat, bayangan tipis, border halus, jarak konsisten. Aksen hanya menandai tindakan utama atau status, bukan menghias semua elemen. Hindari glow merah, angka ilustrasi, avatar tim palsu, slogan, dan ornamen tanpa fungsi.
 
 Token dasar ada di `src/app/personal.css`: `--canvas`, `--surface`, `--brand`, `--ink`, `--line`, skala radius, ukuran kontrol, dan tombol. Pilihan tema memakai `data-theme-color` (lime, peach, lavender, sage, sky; tambahan tema dapat ada di bawah file). **Jangan menyalin kode hex dari ringkasan ini**; CSS aktif mungkin menimpa token awal. `src/app/layout.tsx` menentukan urutan impor CSS. Saat ada gaya bertabrakan, rapikan sumbernya, jangan terus menambah lapisan `!important`.
@@ -20,6 +22,8 @@ Topbar menunjukkan lokasi halaman dan aksi yang benar-benar dipakai. Judul halam
 
 ## Bentuk komponen
 
+- **Sumber style bersama**: font, ukuran kontrol/judul dan token `--mobile-*` dimiliki `src/app/globals.css`. Mobile memakai input/dropdown 14 px, aksi/isi 13 px, label 12 px, judul halaman/bagian/kartu 20/17/15 px. Aturan aktif kontrol dan kepadatan mobile berada di akhir `src/app/personal.css`; jangan mengembalikan paksaan input 16 px atau font `!important` per komponen. Target sentuh tetap 44 px. `DateInput` melayani tanggal form; `DateField` menyediakan label untuk pemanggil lama.
+- **Kalender/dropdown**: arahan terbaru pemilik: kalender membuka ke bawah. Lebar/tinggi mengikuti batas panel dengan scroll di menu; dropdown tetap mengikuti ruang tersedia. Pada toolbar linimasa ponsel tanggal ditampilkan lengkap melalui tombol kalender ringkas, tanpa memotong segmen input native. Dropdown memakai radius menu 10 px dan pilihan 5 px, label panjang membungkus, serta warna permukaan/teks dari token tema.
 - **Kartu**: permukaan jelas, judul dan meta terpisah, tindakan mudah ditemukan, hover halus. Jangan memberi setiap kartu gradien/warna kuat. Kartu berisi data nyata dan satu tujuan.
 - **Tombol**: primer untuk tindakan utama, sekunder untuk navigasi/opsi, destruktif hanya untuk hapus. Ikon selalu terlihat dan memiliki label aksesibel. Area sentuh minimum 44 px pada ponsel. Keadaan disabled jelas beserta sebab jika perlu.
 - **Form**: label di atas kontrol, bantuan dekat input, dependensi dikunci sampai prasyarat dipilih. Pada ponsel satu kolom. Kesalahan ditampilkan dekat kolom atau pada ringkasan yang terlihat.
@@ -42,3 +46,13 @@ Uji 360, 768, 1024, 1440 px pada tema terang dan gelap untuk Beranda, Tugas, det
 Perbaikan yang masih terbuka ada di `LANJUTAN-AI.md`: navigasi ponsel, sidebar ciut, modal sempit, konsistensi status/aksi tugas, serta sumber glow merah. Jangan mengubah acuan ini menjadi klaim bahwa masalah tersebut telah selesai.
 
 Masukan visual terbaru pemilik juga tercatat di bagian **Detail visual tugas dan kalender** pada `LANJUTAN-AI.md`: judul lebih utama dari kode, checklist simetris, pill proyek tenang, tombol navigasi jelas, tautan rapat dari kegiatan, dan animasi dialog dengan arah yang dapat dipahami.
+
+## Perlu Perhatian — arahan 3 Oktober 2026
+
+Pertahankan dashboard aplikasi saat ini. Perapian pengingat di atas terbatas pada:
+
+- Pengingat memakai permukaan dan border netral; warna status hanya pada ikon, tanpa gradien merah/hijau yang mendominasi.
+- Ringkasan menyebut jumlah pengingat dan jumlah mendesak. Judul catatan pertama tetap terlihat pada layar lebar; pada ponsel judul lengkap berada di Rincian agar banner pendek.
+- Jenis catatan dan alasan panjang tampil ketika membuka **Rincian**, bersama tautan sumber. Tanda mendesak tetap berupa teks.
+- Hapus margin tambahan keadaan tanpa pengingat yang menggandakan jarak sebelum filter proyek.
+- Pertahankan tata letak adaptif: ringkasan dan aksi membungkus di ponsel, target kontrol 44 px, label serta fokus keyboard tetap tersedia.

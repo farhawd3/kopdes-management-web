@@ -4,7 +4,7 @@ import { schemas, type Entity, type Item } from './schemas';
 import { references } from './catalog';
 import { today, nextOccurrence, addDays } from '@/lib/date';
 import type { ListQuery } from './query';
-import { makeTaskCode, makeActivityCode } from './task-code';
+import { makeTaskCode, makeActivityCode } from './tasks/task-code';
 
 export async function listPage(entity: Entity, input: ListQuery) {
   let query = db().from('hub_records').select('*').eq('entity', entity);

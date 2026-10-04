@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { type ReactNode } from 'react';
 import { Inbox } from 'lucide-react';
+import { Button } from './Button';
 
 export function EmptyState({
   icon,
@@ -36,45 +37,44 @@ export function EmptyState({
   const effectiveTone = tone || pastelVariant;
   return (
     <div
-      className={`clean-empty-state pastel-${effectiveTone} ${compact ? 'clean-empty-state-compact' : ''} ${className}`}
+      className={`ui-empty ${compact ? 'ui-empty-compact' : ''} ${className}`}
+      data-empty-tone={effectiveTone}
       role="status"
     >
-      <div className="clean-empty-icon-wrap" aria-hidden="true">
-        {icon || <Inbox size={22} strokeWidth={2} />}
+      <div className="ui-empty-icon" aria-hidden="true">
+        {icon || <Inbox strokeWidth={1.75} />}
       </div>
-      <h3 className="clean-empty-title">{title}</h3>
-      {description && <p className="clean-empty-desc">{description}</p>}
+      <h3 className="ui-empty-title">{title}</h3>
+      {description && <p className="ui-empty-description">{description}</p>}
       {(action || secondaryAction) && (
-        <div className="clean-empty-actions">
+        <div className="ui-empty-actions">
           {action &&
             (action.href ? (
-              <Link href={action.href} className="clean-empty-btn-primary">
+              <Link href={action.href} className="ui-btn" data-variant="primary">
                 {action.icon}
                 <span>{action.label}</span>
               </Link>
             ) : (
-              <button
+              <Button variant="primary"
                 type="button"
-                className="clean-empty-btn-primary"
                 onClick={action.onClick}
               >
                 {action.icon}
                 <span>{action.label}</span>
-              </button>
+              </Button>
             ))}
           {secondaryAction &&
             (secondaryAction.href ? (
-              <Link href={secondaryAction.href} className="clean-empty-btn-secondary">
+              <Link href={secondaryAction.href} className="ui-btn" data-variant="ghost">
                 {secondaryAction.label}
               </Link>
             ) : (
-              <button
+              <Button variant="ghost"
                 type="button"
-                className="clean-empty-btn-secondary"
                 onClick={secondaryAction.onClick}
               >
                 {secondaryAction.label}
-              </button>
+              </Button>
             ))}
         </div>
       )}

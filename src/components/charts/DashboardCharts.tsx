@@ -1,5 +1,8 @@
 'use client';
+import { Button } from '@/components/ui/Button';
+import { useMotionEntry } from '@/components/ui/useMotionEntry';
 import { useEffect, useState } from 'react';
+import { Legend } from '@/components/ui/Legend';
 import Link from 'next/link';
 
 /* ─── WeekBarChart ─────────────────────────────────────────── */
@@ -24,16 +27,12 @@ export function WeekBarChart({
   const total = data.reduce((sum, day) => sum + day.value, 0);
   const avgPerDay = (total / 7).toFixed(1);
   const peakDay = [...data].sort((a, b) => b.value - a.value)[0];
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    const t = setTimeout(() => setMounted(true), 60);
-    return () => clearTimeout(t);
-  }, []);
+  const { ref: motionRef, entered: mounted } = useMotionEntry<HTMLElement>();
 
   const activeDay = data.find((d) => d.date === selectedDate);
 
   return (
-    <div className="dash-chart-wrap week-barchart-modern">
+    <div ref={motionRef} className="dash-chart-wrap week-barchart-modern">
       <div className="week-barchart-header">
         <div className="week-barchart-metric">
           <div className="week-metric-main">
@@ -55,7 +54,7 @@ export function WeekBarChart({
           </div>
         </div>
         {selectedDate && (
-          <button
+          <Button
             type="button"
             className="week-filter-reset-chip"
             onClick={() => onSelect?.('')}
@@ -63,7 +62,7 @@ export function WeekBarChart({
           >
             <span>{activeDay?.dateLabel || selectedDate}</span>
             <span className="reset-x">✕</span>
-          </button>
+          </Button>
         )}
       </div>
 
@@ -78,7 +77,7 @@ export function WeekBarChart({
           const dayNum = d.date ? Number(d.date.slice(-2)) : '';
 
           return (
-            <button
+            <Button
               type="button"
               aria-pressed={isSelected}
               aria-label={(d.dateLabel || d.label) + ': ' + d.value + ' selesai'}
@@ -98,7 +97,7 @@ export function WeekBarChart({
                 <div
                   className="dash-bar-fill"
                   style={{
-                    height: mounted ? `${Math.max(pct, d.value > 0 ? 14 : 4)}%` : '4%',
+                    height: mounted ? `${Math.max(pct, 0)}%` : '0%',
                     transitionDelay: `${i * 35}ms`,
                   }}
                 />
@@ -108,7 +107,7 @@ export function WeekBarChart({
                 {dayNum && <span className="dash-bar-daynum">{dayNum}</span>}
               </div>
               {d.isToday && <span className="today-badge-dot" title="Hari ini" />}
-            </button>
+            </Button>
           );
         })}
       </div>
@@ -144,11 +143,7 @@ export function TaskDonutChart({
   selected?: string;
   onSelect?: (status: string) => void;
 }) {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    const t = setTimeout(() => setMounted(true), 80);
-    return () => clearTimeout(t);
-  }, []);
+  const { ref: motionRef, entered: mounted } = useMotionEntry<HTMLElement>();
 
   const R = 44;
   const C = 2 * Math.PI * R;
@@ -165,7 +160,7 @@ export function TaskDonutChart({
   });
 
   return (
-    <div className="dash-donut-wrap">
+    <div ref={motionRef} className="dash-donut-wrap">
       <div className="dash-donut-svg-wrap">
         <svg viewBox="0 0 120 120" className="dash-donut-svg" aria-hidden="true">
           <circle cx="60" cy="60" r={R} fill="none" stroke="var(--line)" strokeWidth="14" />
@@ -191,39 +186,10 @@ export function TaskDonutChart({
           <span>tugas</span>
         </div>
       </div>
-      <div className="dash-donut-legend">
-        {slices.map((s) => (
-          <button
-            type="button"
-            key={s.label}
-            className="donut-legend-row"
-            aria-pressed={
-              selected ===
-              {
-                Selesai: 'selesai',
-                Dikerjakan: 'proses',
-                Rencana: 'rencana',
-                Dibatalkan: 'dibatalkan',
-              }[s.label]
-            }
-            onClick={() =>
-              onSelect?.(
-                {
-                  Selesai: 'selesai',
-                  Dikerjakan: 'proses',
-                  Rencana: 'rencana',
-                  Dibatalkan: 'dibatalkan',
-                }[s.label] || 'aktif',
-              )
-            }
-          >
-            <span className="donut-dot" style={{ background: s.color }} />
-            <span className="donut-legend-label">{s.label}</span>
-            <strong className="donut-legend-val">{s.value}</strong>
-          </button>
-        ))}
-      </div>
-    </div>
+      <Legend label="Status tugas" selected={selected} onSelect={onSelect} items={slices.map((slice) => ({
+        key: ({ Selesai: 'selesai', Dikerjakan: 'proses', Rencana: 'rencana', Dibatalkan: 'dibatalkan' }[slice.label] || 'aktif'),
+        label: slice.label, value: slice.value, color: slice.color,
+      }))} /> </div>
   );
 }
 
@@ -237,22 +203,32 @@ export function AnimatedCounter({
   prefix?: string;
   suffix?: string;
 }) {
+  const { ref, entered } = useMotionEntry<HTMLSpanElement>();
+  const [display, setDisplay] = useState(0);
+  useEffect(() => {
+    if (!entered) return;
+    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    let frame = 0;
+    let start: number | undefined;
+    const advance = (time: number) => {
+      start ??= time;
+      const fraction = reduced ? 1 : Math.min((time - start) / 400, 1);
+      setDisplay(Math.round(value * (1 - (1 - fraction) ** 3)));
+      if (fraction < 1) frame = requestAnimationFrame(advance);
+    };
+    frame = requestAnimationFrame(advance);
+    return () => cancelAnimationFrame(frame);
+  }, [entered, value]);
   return (
-    <>
-      {prefix}
-      {value.toLocaleString('id-ID')}
-      {suffix}
-    </>
+    <span ref={ref} aria-label={`${prefix}${value.toLocaleString('id-ID')}${suffix}`}>
+      <span aria-hidden="true">{prefix}{display.toLocaleString('id-ID')}{suffix}</span>
+    </span>
   );
 }
 
 /* ─── SparkLine ───────────────────────────────────────────── */
 export function SparkLine({ data, color = 'var(--brand)' }: { data: number[]; color?: string }) {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    const t = setTimeout(() => setMounted(true), 120);
-    return () => clearTimeout(t);
-  }, []);
+  const { ref: motionRef, entered: mounted } = useMotionEntry<SVGSVGElement>();
   if (data.length < 2) return null;
   const W = 120,
     H = 36;
@@ -266,7 +242,7 @@ export function SparkLine({ data, color = 'var(--brand)' }: { data: number[]; co
   const flatline = pts.map((p) => `${p.x},${H}`).join(' ');
 
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="dash-sparkline" aria-hidden="true">
+    <svg ref={motionRef} viewBox={`0 0 ${W} ${H}`} className="dash-sparkline" aria-hidden="true">
       <polyline
         points={mounted ? polyline : flatline}
         fill="none"
@@ -274,17 +250,19 @@ export function SparkLine({ data, color = 'var(--brand)' }: { data: number[]; co
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        style={{ transition: 'points 0.65s cubic-bezier(0.34,1.56,0.64,1)' }}
+        pathLength="1"
+        strokeDasharray="1"
+        strokeDashoffset={mounted ? 0 : 1}
       />
       {pts.map((p, i) =>
         p.v > 0 ? (
           <circle
             key={i}
             cx={p.x}
-            cy={mounted ? p.y : H}
+            cy={p.y}
             r="2.5"
             fill={color}
-            style={{ transition: `cy 0.65s cubic-bezier(0.34,1.56,0.64,1) ${i * 40}ms` }}
+            style={{ opacity: mounted ? 1 : 0, transitionDelay: `${i * 40}ms` }}
           />
         ) : null,
       )}
@@ -304,11 +282,7 @@ export function RadialProgressRing({
   strokeWidth?: number;
   color?: string;
 }) {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    const t = setTimeout(() => setMounted(true), 80);
-    return () => clearTimeout(t);
-  }, []);
+  const { ref: motionRef, entered: mounted } = useMotionEntry<HTMLElement>();
 
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -316,7 +290,7 @@ export function RadialProgressRing({
   const offset = circumference - ((mounted ? safePct : 0) / 100) * circumference;
 
   return (
-    <div className="stat-radial-wrap" style={{ width: size, height: size }}>
+    <div ref={motionRef} className="stat-radial-wrap" style={{ width: size, height: size }}>
       <svg width={size} height={size} className="stat-radial-svg" aria-hidden="true">
         <circle
           cx={size / 2}
@@ -338,7 +312,7 @@ export function RadialProgressRing({
           strokeLinecap="round"
           transform={`rotate(-90 ${size / 2} ${size / 2})`}
           className="stat-radial-circle"
-          style={{ transition: 'stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1)' }}
+          
         />
       </svg>
       <span className="stat-radial-val">{percentage}%</span>
@@ -352,6 +326,7 @@ export function StatCard({
   value,
   sub,
   accent = false,
+  variant,
   percentage,
   icon,
   sparkData,
@@ -361,6 +336,7 @@ export function StatCard({
   value: number | string;
   sub?: string;
   accent?: boolean;
+  variant?: 'emerald' | 'blue' | 'rose' | 'purple';
   percentage?: number;
   icon?: React.ReactNode;
   sparkData?: number[];
@@ -370,29 +346,45 @@ export function StatCard({
   const pctVal =
     percentage ?? (typeof value === 'string' && value.endsWith('%') ? parseInt(value, 10) || 0 : 0);
 
+  const variantClass = variant
+    ? `ui-stat-tone-${variant}`
+    : accent
+    ? 'dash-stat-accent ui-stat-tone-emerald'
+    : '';
+
   const Inner = (
-    <div className={`dash-stat-card${accent ? ' dash-stat-accent' : ''}`}>
-      <div className="dash-stat-top">
-        <span className="dash-stat-label">{label}</span>
+    <div className={`ui-stat-card ${variantClass}`}>
+      <div className="ui-stat-top">
+        <span className="ui-stat-label">{label}</span>
         {isPercent ? (
           <RadialProgressRing
             percentage={pctVal}
-            color={accent ? 'var(--brand-text)' : 'var(--brand)'}
+            color={
+              variant === 'emerald' || accent
+                ? 'var(--tone-success-text)'
+                : variant === 'blue'
+                ? 'var(--tone-info-text)'
+                : variant === 'rose'
+                ? 'var(--tone-danger-text)'
+                : variant === 'purple'
+                ? 'var(--pastel-purple-text)'
+                : 'var(--brand)'
+            }
           />
         ) : icon ? (
-          <div className="dash-stat-icon-wrap">{icon}</div>
+          <div className="ui-stat-icon-wrap">{icon}</div>
         ) : sparkData && Math.max(0, ...sparkData) > 0 ? (
           <SparkLine data={sparkData} color={accent ? 'var(--brand-text)' : 'var(--brand)'} />
         ) : null}
       </div>
-      <strong className="dash-stat-value">
+      <strong className="ui-stat-value">
         {typeof value === 'number' ? <AnimatedCounter value={value} /> : value}
       </strong>
-      {sub && <span className="dash-stat-sub">{sub}</span>}
+      {sub && <span className="ui-stat-sub">{sub}</span>}
     </div>
   );
   return href ? (
-    <Link href={href} className="dash-stat-link">
+    <Link href={href} className="ui-stat-link">
       {Inner}
     </Link>
   ) : (
@@ -412,14 +404,10 @@ export function ProjectProgressBar({
   href: string;
   index?: number;
 }) {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    const t = setTimeout(() => setMounted(true), 120 + index * 90);
-    return () => clearTimeout(t);
-  }, [index]);
+  const { ref: motionRef, entered: mounted } = useMotionEntry<HTMLElement>();
 
   return (
-    <Link className="dash-proj-bar-row" href={href}>
+    <Link ref={motionRef} className="dash-proj-bar-row" href={href}>
       <div className="dash-proj-bar-meta">
         <span className="dash-proj-bar-label">{label}</span>
         <span className="dash-proj-bar-pct">{pct}%</span>

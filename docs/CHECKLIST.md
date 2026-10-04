@@ -1,105 +1,71 @@
 # Checklist produk aktif
 
-## Perapian 2 Oktober
-- [x] Desain ulang tabel tugas (task-table-wrap): padding flush, quick check circle, pill status dengan dot warna, avatar PIC, footer status bar.
-- [x] Eliminasi menu redundant: pelabelan unik dan pembedaan peran Hari Ini (kokpit harian), Daftar Tugas (backlog master), Perlu Perhatian (audit anomali), Linimasa Gantt, dan Ringkasan Buku.
-- [x] Migrasi SQL 7: validasi ketat referensi dokumen (document_id) pada tabel tugas (hub_check_relations) dan indeks pencarian dokumen.
-- [x] Detail tugas tidak kembali terbuka setelah ditutup dan tampilan horizontal diganti.
-- [x] Anotasi tugas: riwayat, kode otomatis, dokumen/kontrak, label daftar, status, dan tombol tutup dirapikan.
-- [x] Anotasi Beranda/Hari Ini: tindak lanjut, grafik kosong, warna prioritas, input cepat, dan ikon selesai dirapikan.
-- [x] Login PIN lokal kembali berhasil setelah server dapat menjangkau Supabase; pesan galat koneksi dibedakan dari migrasi hilang.
-- [x] Tombol Tugas baru tidak menimpa pilihan rentang pada ponsel; tabel tugas bergulir di dalam kontainernya.
-- [x] Form tugas mengunci milestone sebelum proyek dipilih dan membatasi pilihan ke proyek itu.
-- [x] Tugas dapat menautkan Mitra atau kontak, Rapat, dan Kendala tanpa kode tugas wajib.
-- [x] Input jam/batas pengulangan terkunci saat tidak berulang; pembuatan tugas berikutnya menghormati batas tanggal.
-- [x] Form opname meminta barang terlebih dulu; stok buku menjadi salinan terkunci dan hasil hitung baru aktif setelah barang dipilih.
-- [x] Kalender ponsel diringkas dan Gantt ponsel menyediakan daftar tanggal serta bagan pilihan.
-- [ ] Pemeriksaan visual dan interaksi nyata di ponsel/tablet setelah masuk dengan PIN.
-- [x] Panduan onboarding berbasis rundown, termasuk proyek, milestone, tugas, rapat, dan kontak.
-- [x] Label Mitra & kontak serta pilihan Agrinas tanpa identitas palsu.
-- [x] Daftar tugas dan catatan per 50 baris, riwayat selesai, cache bacaan, dan penanda ringkasan parsial.
-- [ ] Migrasi indeks paginasi `20261002000006_paged_records.sql` dijalankan di proyek Supabase saat ini.
-- [ ] Pemeriksaan visual setelah login pada 360, 768, 1024, dan 1440 px di perangkat/browse nyata.
+- [x] Keadaan kosong buku pencatatan memakai EmptyState; Opname tanpa barang mengarahkan pendaftaran barang, dengan regresi.
+- [x] Enam halaman pencatatan/gerai pada 360 px setelah isi tampil tidak meluap; Opname juga 768/1024/1440. Data terisi/tema lain tetap terbuka.
 
-## Reset database kosong
-- [x] Berkas reset migrasi 1–5 dan panduan manual tersedia.
-- [x] Reset diuji lokal; menolak penghapusan jika catatan atau laporan sudah ada.
-- [x] SQL dijalankan pemilik di proyek `mqycnhebhzqaziouipet` (konfirmasi pemilik).
-- [ ] PIN dibuat ulang dan penyimpanan catatan diverifikasi setelah reset cloud.
+- [x] EmptyState bersama pada Beranda/Hari Ini; proyek seluruhnya diarsipkan menampilkan keadaan kosong, dengan tes regresi.
+- [x] Judul tugas Hari Ini membungkus pada ponsel; Enter pada aksi anak tidak membuka detail kartu; lima lebar diukur tanpa overflow.
+- [ ] Sel tanggal kalender panel sempit mencapai target sentuh 44 px.
 
-## Tersedia
-- [x] Proyek fleksibel tanpa patokan durasi program.
-- [x] Status, prioritas, pencarian, filter dan properti proyek.
-- [x] Catatan proyek terformat: judul, daftar, checklist, kutipan, pratinjau, simpan.
-- [x] Tugas daftar/papan/kalender/Gantt, PIC, subtugas, prasyarat, pengulangan.
-- [x] Gantt dengan rentang/skala/proyek, geser jadwal, resize tenggat, tinjau/simpan, navigasi periode.
-- [x] Alternatif pengaturan tanggal dengan keyboard dan formulir ponsel.
-- [x] Peringatan konflik prasyarat, milestone, hari ini, potongan rentang yang benar.
-- [x] Beranda berdasarkan tugas/proyek aktual dan riwayat penyelesaian delapan minggu bergulir.
-- [x] Modul koordinasi manajer, snapshot laporan, backup/restore, keamanan PIN dan database.
-- [x] Penyegaran tema, lapisan kartu, form, tabel, papan, dan navigasi.
-- [x] Alur laporan eksekutif lengkap: simpan sebagai draf, terbitkan resmi, filter arsip, dan tombol hapus draf.
-- [x] Pusat Aksi Cepat Manajer (Superapp Action Center) dengan pintasan keyboard 1-9 untuk seluruh operasional dan perencanaan.
-- [x] Dasbor beranda multifungsi: pintasan aksi cepat harian, peringatan otomatis stok persediaan kritis, dan rekapitulasi data riil.
-- [x] Ruang kerja editorial: 5 palet tema seimbang (Lime & Ink, Sage, Lavender, Peach, Sky) dan pratinjau komponen langsung di Pengaturan.
-- [x] Navigasi sidebar terstruktur: favorit sematan dan grup menu kolapsibel; menu Terakhir dihapus agar pilihan tidak berulang.
-- [x] Karakter visual tiap modul: proyek terhubung, dokumen dengan masa berlaku berkode warna, risiko 3-level, dan alur terstruktur rapat.
+- [x] CSS tanpa pemanggil statis dipangkas dengan pengecualian kelas dinamis/selector kompleks; Field umum Editor terhubung dengan id.
+- [x] Galeri komponen tanpa overflow pada 320/360/390/768/1024/1280/1440/1920; bukan bukti seluruh halaman/perangkat.
 
-## Penerimaan berikutnya
-- [ ] UAT dengan data nyata selama beberapa hari.
-- [ ] Pengujian perangkat fisik Android/iOS/Safari dan audit aksesibilitas lengkap.
-- [ ] Pemulihan cadangan nyata di lingkungan uji.
-- [ ] Deployment produksi Vercel berhasil dan smoke test online.
+- [x] SegmentedControl, Legend dan Progress digunakan pada tugas/kegiatan serta grafik; kontras primer lima tema terang/gelap diperiksa.
+
+- [x] Font/radius legacy memakai token; filter rentang dan tanggal Gantt terbaca pada 320/768 px.
+
+- [x] Pembersihan awal deklarasi CSS identik dan statistik legacy; ukuran total sudah turun dibanding audit awal.
+
+- [x] PLAN-ASTRA 6: observer grafik, count-up, animasi kartu/tombol dan reduced-motion terpusat; pemeriksaan perangkat/performa lengkap masih terbuka.
+
+- [x] PLAN-ASTRA 5B: pintasan N/T/?, panel tersimpan, swipe Hari Ini dan undo status/tanggal; tes regresi otomatis tersedia.
+
+Implementasi dan penerimaan dipisahkan. Bukti terakhir ada di [STATUS](STATUS.md), riwayat paket di [CHANGELOG](../CHANGELOG.md).
+
+## Implementasi tersedia
+
+- [x] PLAN-ASTRA fase 1: audit AST seluruh kontrol HTML, inventaris rute/overlay, CSS dan selector berulang yang dapat dibuat ulang.
+- [x] Fondasi token semantik dan stylelint CSS baru tanpa hex/important; migrasi legacy belum selesai.
+- [x] Primitive tombol/input, nol kontrol mentah luar UI; tanggal tunggal, DateNav, BottomNav, dialog bersama dan galeri development. Batas QA tercatat di LAPORAN-ASTRA.
+- [x] Kartu statistik dashboard netral, baris terlambat dan tata letak adaptif; pemeriksaan Beranda empat lebar terang dan gelap 1440.
+- [x] Drag Pointer Events pada handle papan tugas/kegiatan dan alternatif dropdown; 181 tes lulus serta drag mouse fixture browser berhasil.
+
+- [x] Contoh konfigurasi/panduan lokal memakai host yang sama dengan server; penolakan origin lokal diperbaiki dan diprobe tanpa mutasi database.
+
+- [x] Proyek fleksibel, properti, catatan terformat, milestone dan tugas terhubung.
+- [x] Daftar/papan/harian/kalender/Gantt, filter, subtugas, prasyarat, pengulangan dan riwayat tugas.
+- [x] Gantt dengan rentang/skala, geser/resize, tinjau/simpan dan alternatif keyboard/form.
+- [x] Beranda/Hari Ini berdasarkan catatan aktual; rincian tambahan opsional dan banner perhatian ringkas.
+- [x] Koordinasi, rapat/ICS, dokumen, risiko, kegiatan, laporan snapshot, profil dan cadangan JSON.
+- [x] Anggota, kas, barang dan opname dengan gerbang aktivasi, filter dan ekspor CSV.
+- [x] Impor CSV terbatas pada daftar Records, validasi per baris; bukan impor buku atau transaksi atomik seluruh berkas.
+- [x] PIN/sesi, RLS, pemeriksaan asal mutasi dan validasi server.
+- [x] Pencarian berkonteks proyek dan isolasi relasi melalui tugas.
+- [x] Pagination/cache, pemuatan modul terpisah, progres bersama dan pembersihan sumber mati.
+- [x] Struktur modul/tes; 167 tes, typecheck, lint, build dan audit sumber lulus pada paket struktur.
+- [x] Fixture banner terang 360/768/1024/1440 px, rincian/keadaan kosong 360 px.
+- [x] Panduan Markdown diindeks; duplikasi digabung dan rujukan usang diperbaiki.
+- [x] Font/token kontrol bersama, dropdown lebih tenang, kalender adaptif, aksi/subtugas dan panduan onboarding dirapikan.
+- [x] Sweep fixture 22 halaman/21 form mobile dalam dua tema; Proyek/Panduan/Risiko/Tugas pada empat lebar. Bukti dan batas pemeriksaan ada di STATUS.
+- [x] Koreksi ukuran font mobile, intro tugas berlebihan, toolbar/tanggal linimasa, kepadatan dashboard/Hari Ini, kalender ke bawah dan warna pending subtugas; bukti render ada di STATUS.
+
+## Cloud dan penerimaan
+
+- [x] Migrasi pencatatan kedua dikonfirmasi pemilik; kemampuan pernah diperiksa lewat aplikasi lokal.
+- [x] Reset kosong pernah dikonfirmasi berhasil oleh pemilik.
+- [ ] Konfirmasi PIN dan uji simpan setelah reset cloud.
+- [ ] Verifikasi keadaan migrasi cloud, khususnya indeks paginasi 6 dan relasi dokumen 7.
+- [ ] UAT data nyata beberapa hari, termasuk konsistensi lintas tampilan.
+- [ ] Audit semua modul/tema pada 360/768/1024/1440 px, fokus, Escape, modal dan reduced-motion.
+- [ ] Perangkat fisik Android/iOS/Safari dan audit aksesibilitas/Lighthouse.
+- [ ] Cadangan/pemulihan nyata di lingkungan uji.
+- [ ] Benchmark performa/bundle dan data besar.
+- [ ] Smoke test login/simpan produksi setelah deployment yang diizinkan pemilik.
 
 ## Pengembangan terpisah
+
 - [ ] Baseline/jalur kritis dan penjadwalan otomatis dependensi.
 - [ ] Editor blok drag-and-drop dan kolaborasi real-time.
-- [ ] PWA/offline, CSV, unggah berkas, tautan laporan publik.
+- [ ] PWA/offline, impor CSV buku pencatatan, unggah berkas dan tautan laporan publik.
 
-Hasil tes dan pemeriksaan viewport di [STATUS](STATUS.md). Rencana historis berada di `arsip/`, tidak dipakai sebagai template runtime.
-
-## Paket studio dan pencatatan
-- [x] Navigasi kelompok, area Kerja/Catat, pencarian halaman, desain studio terang/gelap.
-- [x] Kalender tugas dan pemilih tanggal, dropdown mengikuti tema, teks UI ringkas.
-- [x] Implementasi anggota, buku kas, barang, opname, filter dan CSV dengan gerbang aktivasi database.
-- [x] Rapat online/hybrid, tautan bergabung, durasi dan ekspor agenda ICS.
-- [x] Validasi dan migrasi domain pencatatan disiapkan.
-- [x] Pemilik mengonfirmasi pemasangan migrasi kedua; aktivasi terverifikasi melalui aplikasi lokal.
-- [ ] Uji simpan data pencatatan nyata setelah aktivasi.
-
-## Referensi HP pribadi
-- [x] Shell seluruh rute, navigasi mengambang HP dan menu semua halaman.
-- [x] Beranda pribadi dengan angka aktual, filter tugas, rapat berikutnya, dan akses buku koperasi.
-- [x] Kalender lingkaran HP serta agenda bulan/minggu/hari.
-- [x] Papan status sah, progres dari subtugas, dan detail tanpa pengikut tiruan.
-
-## Penyempurnaan Tampilan & Pembersihan Desain
-- [x] Mengganti tampilan flat dengan estetika clean design dan soft elevation shadows.
-- [x] Palet warna pastel terkurasi (Lime awal, Peach terakota, Lavender, Sage, Sky) dengan pemilih gaya interaktif di Pengaturan.
-- [x] Kalender interaktif berdimensi: sel terpilih memiliki latar pastel, border aksen, dan soft glow saat diklik.
-- [x] Icon tombol "+" kalender dibuat simetris presisi sejajar dengan nomor tanggal (28px x 28px lingkaran).
-- [x] Tombol tambah tugas pada agenda kalender diselaraskan dengan ikon Plus dan typography rapi.
-- [x] Seluruh modal pop-up dan drawer menutup saat mengklik area backdrop transparan atau menekan tombol Escape.
-- [x] Penataan jarak (spacing), border, dan komposisi warna kontras tinggi pada papan scrum, kartu tugas, dan kartu sprint.
-- [x] Mengganti pengulangan teks "+ Tugas" pada kalender dengan alternatif mini-plus elegan dan tombol agenda.
-- [x] Menyatukan pemilih tanggal kalender tanpa dobel klik / duplikasi indikator browser di DateField.
-- [x] Merapikan skeleton loading menjadi wireframe shimmer yang selaras dengan halaman kerja.
-- [x] Mendesain ulang menu samping (sidebar) dengan ikon representatif per modul, emblem brand, dan profil manajer.
-- [x] Membersihkan kalimat AI slop, istilah asing janggal, dan slogan motivasi fiktif.
-- [x] Perbaikan persentase ProgressRing di Beranda tepat di tengah dan persentase proyek rapi dalam pill badge.
-- [x] Perapian tampilan Tugas Harian (DailyTasksView) dengan kartu harian collapsible dan konektor pohon subtugas.
-- [x] Keterbacaan nomor tanggal "Hari ini" pada kalender tugas dengan kontras tajam.
-- [x] Penutupan otomatis menu pop-up/dropdown (Lainnya, Opsi) saat mengklik luar area transparan atau menekan Escape.
-- [x] Penyelarasan grid dan interaksi Pemilih Rentang Tanggal (DateRangePicker) & Kalender Popover (DateField).
-- [x] Pembuatan komponen TodayView untuk merapikan halaman /hari-ini (fokus tugas hari ini, rapat, terlambat, dan menyusul 7 hari).
-- [x] Desain ulang pop-up tambah tugas/editor modal dengan header berikon, tombol tutup X, dan input teratur berjarak rapi.
-- [x] Perapihan papan scrum (ScrumBoardView): pembersihan latar lavender kolom kedua, dot warna status, placeholder kolom kosong, dan lencana prioritas/tenggat.
-- [x] Perapihan tugas harian (DailyTasksView): penanganan tugas terlewat/sebelum pekan ini dan navigasi keyboard.
-- [x] Perbaikan aksesibilitas kartu TodayView dan SprintCard (menghilangkan tombol bersarang dan menambah kontrol keyboard).
-
-
-- [x] Audit kode: pengurutan tugas, pembaruan detail Hari Ini, galat aksi harian, dan perhitungan grafik.
-- [x] Verifikasi audit terbaru: 108 tes, lint, typecheck, dan build produksi.
-- [ ] Periksa ulang UI terbaru pada 360/768/1024/1440 px setelah login browser.
-- [x] Grafik dashboard dan daftar tugas terhubung melalui proyek, status, serta tanggal penyelesaian.
-- [x] Perbaiki kartu ringkasan HP dan kartu pencatatan/diagram tablet; periksa dashboard pada empat ukuran target.
+Rencana program lama bukan instruksi aktif. Riwayatnya tersedia melalui Git; fixture kompatibilitas SQL tetap di tests/fixtures/.

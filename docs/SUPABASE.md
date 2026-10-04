@@ -3,7 +3,9 @@
 Proyek tujuan: **kopdes-management-web**, ID **mqycnhebhzqaziouipet**, Free, Singapore.
 Proyek lama tidak digunakan atau diubah oleh aplikasi baru.
 
-## 1. Konfirmasi migrasi
+## 1. Tentukan keadaan skema
+
+Panduan berikut menjelaskan fondasi awal. Pada proyek kosong gunakan SQL instalasi gabungan; pada proyek yang sudah dipakai jalankan hanya migrasi tambahan yang belum terpasang. Ikuti [MIGRASI-SQL](MIGRASI-SQL.md), bukan mengulang migrasi awal atau reset.
 
 Berkas: `supabase/migrations/20260930000001_manager_hub.sql`.
 
@@ -11,7 +13,7 @@ Migrasi membuat enam tabel:
 
 | Tabel | Isi |
 |---|---|
-| hub_records | 16 jenis catatan kerja, setiap jenis divalidasi Zod |
+| hub_records | 16 domain awal; migrasi berikutnya memperluas menjadi 21, divalidasi Zod |
 | manager_security | Hash PIN dan batas percobaan persisten |
 | manager_sessions | Hash token sesi dengan kedaluwarsa |
 | manager_reports | Snapshot laporan yang tidak berubah ketika pekerjaan diedit |
@@ -28,7 +30,7 @@ Fungsi pemulihan baru menghapus dan mengganti data ketika **fitur Pulihkan** dig
 
 1. Buka proyek `kopdes-management-web` pada Supabase, pastikan ID `mqycnhebhzqaziouipet`.
 2. Buka SQL Editor → New query.
-3. Salin seluruh isi berkas migrasi di atas, lalu Run setelah Anda menyetujuinya.
+3. Salin SQL instalasi atau migrasi tambahan yang telah dipilih sesuai MIGRASI-SQL, lalu Run setelah dampak dan targetnya disetujui.
 4. Pastikan hasil sukses. Jangan menjalankannya pada proyek lama atau mengulang migrasi yang sudah berhasil.
 5. Beri tahu AI bahwa migrasi selesai, atau salin pesan error tanpa kunci rahasia.
 
@@ -41,13 +43,13 @@ Buka `.env.local`:
 - `HUB_SUPABASE_URL`: URL proyek baru, sudah disiapkan.
 - `HUB_SUPABASE_SERVICE_KEY`: isi kunci server/secret key proyek baru dari Settings → API Keys. Jangan gunakan publishable/anon key.
 - `HUB_SETUP_TOKEN`: token acak untuk pengaturan PIN pertama, sudah dibuat secara lokal. Jangan kirim di chat.
-- `HUB_APP_ORIGIN`: `http://localhost:3000` saat pengembangan; domain HTTPS tepat saat hosting.
+- `HUB_APP_ORIGIN`: `http://127.0.0.1:3000` saat memakai `npm run dev`; domain HTTPS tepat saat hosting. Alamat pada browser harus memakai host, protokol dan port yang sama. Jika sengaja memakai `localhost`, ubah origin menjadi `http://localhost:3000` dan jalankan ulang server.
 
 Simpan berkas dan jalankan ulang server setelah mengubah env. Nama variabel HUB sengaja berbeda agar kredensial lama tidak terpakai tanpa sengaja. `.env.local` dan arsipnya diabaikan Git.
 
 ## 4. PIN dan data awal
 
-1. Jalankan `npm run dev`, buka `http://localhost:3000/pin`.
+1. Jalankan `npm run dev`, buka `http://127.0.0.1:3000/pin`.
 2. Klik Pengaturan PIN pertama kali.
 3. Masukkan PIN baru 6–12 digit dan token dari `HUB_SETUP_TOKEN`.
 4. Simpan lalu masuk dengan PIN. Hapus `HUB_SETUP_TOKEN` dari konfigurasi hosting setelah inisialisasi sukses.

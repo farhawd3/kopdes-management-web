@@ -1,35 +1,11 @@
 import { AlertTriangle, ShieldAlert, ShieldCheck } from 'lucide-react';
 import type { Item } from '@/features/schemas';
-
-export function ProgressRing({ value, label }: { value: number; label: string }) {
-  return (
-    <div className="progress-ring" role="img" aria-label={`${label}: ${value}%`}>
-      <svg viewBox="0 0 120 120">
-        <circle cx="60" cy="60" r="48" fill="none" stroke="var(--line)" strokeWidth="10" />
-        <circle
-          cx="60"
-          cy="60"
-          r="48"
-          fill="none"
-          stroke="var(--brand)"
-          strokeWidth="10"
-          strokeDasharray={`${value * 3.016} 301.6`}
-          strokeLinecap="round"
-          transform="rotate(-90 60 60)"
-        />
-      </svg>
-      <strong>{value}%</strong>
-      <span>{label}</span>
-    </div>
-  );
-}
+import { Progress } from '@/components/ui/Progress';
 
 export function Meter({ value }: { value: number | null }) {
   return (
     <div className="meter-row">
-      <div className="meter">
-        <span style={{ width: `${value || 0}%` }} />
-      </div>
+      <Progress value={value} label="Kesiapan" />
       <strong>{value === null ? 'Belum dinilai' : `${value}%`}</strong>
     </div>
   );
@@ -50,15 +26,35 @@ export function RiskMatrix({ items }: { items: Item[] }) {
   );
 
   const probabilityLevels = [
-    { key: 'high', label: 'Sering', desc: 'Kemungkinan besar terjadi', test: (p: number) => p >= 4 },
-    { key: 'mid', label: 'Kadang', desc: 'Pernah / sesekali terjadi', test: (p: number) => p === 3 },
+    {
+      key: 'high',
+      label: 'Sering',
+      desc: 'Kemungkinan besar terjadi',
+      test: (p: number) => p >= 4,
+    },
+    {
+      key: 'mid',
+      label: 'Kadang',
+      desc: 'Pernah / sesekali terjadi',
+      test: (p: number) => p === 3,
+    },
     { key: 'low', label: 'Jarang', desc: 'Kecil kemungkinan muncul', test: (p: number) => p <= 2 },
   ];
 
   const impactLevels = [
     { key: 'low', label: 'Dampak Ringan', desc: 'Gangguan kecil', test: (i: number) => i <= 2 },
-    { key: 'mid', label: 'Dampak Sedang', desc: 'Menghambat operasional', test: (i: number) => i === 3 },
-    { key: 'high', label: 'Dampak Fatal', desc: 'Kerugian besar / izin terancam', test: (i: number) => i >= 4 },
+    {
+      key: 'mid',
+      label: 'Dampak Sedang',
+      desc: 'Menghambat operasional',
+      test: (i: number) => i === 3,
+    },
+    {
+      key: 'high',
+      label: 'Dampak Fatal',
+      desc: 'Kerugian besar / izin terancam',
+      test: (i: number) => i >= 4,
+    },
   ];
 
   return (
@@ -67,7 +63,8 @@ export function RiskMatrix({ items }: { items: Item[] }) {
         <div>
           <h2>Pemantauan & Analisis Risiko Operasional</h2>
           <p className="risk-subtitle">
-            Dikelompokkan secara sederhana agar manajer dapat segera mencegah potensi kerugian sebelum terjadi.
+            Dikelompokkan secara sederhana agar manajer dapat segera mencegah potensi kerugian
+            sebelum terjadi.
           </p>
         </div>
         <span className="badge">{activeRisks.length} risiko dipantau</span>
@@ -84,7 +81,8 @@ export function RiskMatrix({ items }: { items: Item[] }) {
             </div>
           </div>
           <p className="tier-desc">
-            Risiko dengan ancaman fatal terhadap kelancaran usaha, perizinan, atau kerugian keuangan besar.
+            Risiko dengan ancaman fatal terhadap kelancaran usaha, perizinan, atau kerugian keuangan
+            besar.
           </p>
         </div>
 
@@ -124,62 +122,64 @@ export function RiskMatrix({ items }: { items: Item[] }) {
           </small>
         </div>
 
-        <div className="risk-matrix-clean">
-          <div className="matrix-header-corner" />
-          {impactLevels.map((imp) => (
-            <div key={imp.key} className="matrix-col-header">
-              <strong>{imp.label}</strong>
-              <small>{imp.desc}</small>
-            </div>
-          ))}
-
-          {probabilityLevels.map((prob) => {
-            return (
-              <div key={`row-${prob.key}`} className="matrix-row-container">
-                <div className="matrix-row-header">
-                  <strong>{prob.label}</strong>
-                  <small>{prob.desc}</small>
-                </div>
-                {impactLevels.map((imp) => {
-                  const cellItems = activeRisks.filter(
-                    (r) =>
-                      prob.test(Number(r.data.probability || 3)) &&
-                      imp.test(Number(r.data.impact || 3)),
-                  );
-                  const isHigh =
-                    (prob.key === 'high' && (imp.key === 'high' || imp.key === 'mid')) ||
-                    (prob.key === 'mid' && imp.key === 'high');
-                  const isMed =
-                    (prob.key === 'high' && imp.key === 'low') ||
-                    (prob.key === 'mid' && imp.key === 'mid') ||
-                    (prob.key === 'low' && imp.key === 'high');
-                  const cellTier = isHigh ? 'cell-high' : isMed ? 'cell-medium' : 'cell-low';
-
-                  return (
-                    <div key={`${prob.key}-${imp.key}`} className={`matrix-cell ${cellTier}`}>
-                      <div className="matrix-cell-content">
-                        <span className="cell-count-badge">
-                          {cellItems.length ? `${cellItems.length} risiko` : '—'}
-                        </span>
-                        {cellItems.slice(0, 2).map((item) => (
-                          <div
-                            key={item.id}
-                            className="matrix-risk-title"
-                            title={String(item.data.title)}
-                          >
-                            • {String(item.data.title)}
-                          </div>
-                        ))}
-                        {cellItems.length > 2 && (
-                          <span className="matrix-more">+{cellItems.length - 2} lainnya</span>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
+        <div className="risk-matrix-scroll" role="region" aria-label="Matriks risiko" tabIndex={0}>
+          <div className="risk-matrix-clean">
+            <div className="matrix-header-corner" />
+            {impactLevels.map((imp) => (
+              <div key={imp.key} className="matrix-col-header">
+                <strong>{imp.label}</strong>
+                <small>{imp.desc}</small>
               </div>
-            );
-          })}
+            ))}
+
+            {probabilityLevels.map((prob) => {
+              return (
+                <div key={`row-${prob.key}`} className="matrix-row-container">
+                  <div className="matrix-row-header">
+                    <strong>{prob.label}</strong>
+                    <small>{prob.desc}</small>
+                  </div>
+                  {impactLevels.map((imp) => {
+                    const cellItems = activeRisks.filter(
+                      (r) =>
+                        prob.test(Number(r.data.probability || 3)) &&
+                        imp.test(Number(r.data.impact || 3)),
+                    );
+                    const isHigh =
+                      (prob.key === 'high' && (imp.key === 'high' || imp.key === 'mid')) ||
+                      (prob.key === 'mid' && imp.key === 'high');
+                    const isMed =
+                      (prob.key === 'high' && imp.key === 'low') ||
+                      (prob.key === 'mid' && imp.key === 'mid') ||
+                      (prob.key === 'low' && imp.key === 'high');
+                    const cellTier = isHigh ? 'cell-high' : isMed ? 'cell-medium' : 'cell-low';
+
+                    return (
+                      <div key={`${prob.key}-${imp.key}`} className={`matrix-cell ${cellTier}`}>
+                        <div className="matrix-cell-content">
+                          <span className="cell-count-badge">
+                            {cellItems.length ? `${cellItems.length} risiko` : '—'}
+                          </span>
+                          {cellItems.slice(0, 2).map((item) => (
+                            <div
+                              key={item.id}
+                              className="matrix-risk-title"
+                              title={String(item.data.title)}
+                            >
+                              • {String(item.data.title)}
+                            </div>
+                          ))}
+                          {cellItems.length > 2 && (
+                            <span className="matrix-more">+{cellItems.length - 2} lainnya</span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
 
@@ -189,7 +189,9 @@ export function RiskMatrix({ items }: { items: Item[] }) {
           <div className="section-head">
             <div>
               <h3>Rencana Tindakan & Mitigasi Risiko</h3>
-              <p className="risk-subtitle">Langkah nyata pencegahan yang sedang dijalankan penanggung jawab.</p>
+              <p className="risk-subtitle">
+                Langkah nyata pencegahan yang sedang dijalankan penanggung jawab.
+              </p>
             </div>
           </div>
           <div className="risk-action-cards">
@@ -231,4 +233,3 @@ export function RiskMatrix({ items }: { items: Item[] }) {
     </section>
   );
 }
-

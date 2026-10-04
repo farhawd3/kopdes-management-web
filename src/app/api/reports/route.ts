@@ -5,7 +5,7 @@ import { sameOrigin, failure, readJson } from '@/lib/server/http';
 import { db } from '@/lib/server/db';
 import { date } from '@/features/schemas';
 import { list } from '@/features/service';
-import { reportSnapshot } from '@/features/report-snapshot';
+import { reportSnapshot } from '@/features/reports/report-snapshot';
 
 export async function GET() {
   try {
