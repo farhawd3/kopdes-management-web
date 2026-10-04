@@ -5,20 +5,20 @@ import type { Workspace } from '../workspace/useWorkspace';
 export const worldPreferencesSchema = z.object({
   version: z.literal(1).default(1),
   weather: z.enum(['cerah', 'berawan', 'hujan']).default('cerah'),
-  time: z.enum(['otomatis', 'pagi', 'siang', 'senja', 'malam']).default('otomatis'),
+  time: z.enum(['otomatis', 'pagi', 'siang', 'senja', 'malam']).default('siang'),
   outfit: z.enum(['biru', 'lavender', 'hijau']).default('biru'),
 });
 export type WorldPreferences = z.infer<typeof worldPreferencesSchema>;
 export type WorldLocation = 'luar' | 'dalam';
 export type CharacterActivity = 'idle' | 'work' | 'meeting' | 'gym';
 export const landPositions: readonly [number, number][] = [
-  [-9, -6],
-  [-3, -6],
-  [3, -6],
-  [9, -6],
-  [-9, 3],
-  [3, 3],
-  [9, 3],
+  [-18, -10],
+  [-9, -10],
+  [0, -10],
+  [9, -10],
+  [18, -10],
+  [-18, 0],
+  [18, 0],
 ];
 export const worldStations = [
   {
@@ -39,7 +39,7 @@ export const worldStations = [
     id: 'kegiatan',
     title: 'Area kegiatan',
     href: '/jurnal',
-    description: 'Karakter berolahraga sebagai visualisasi kegiatan hari ini.',
+    description: 'Zona gym & olahraga sebagai visualisasi kegiatan hari ini.',
     position: [4, 0, 3],
   },
   {
@@ -48,6 +48,27 @@ export const worldStations = [
     href: '/dokumen',
     description: 'Dokumen koperasi dan pintasan pencatatan.',
     position: [-4, 0, 3],
+  },
+] as const;
+
+export const worldVehicles = [
+  {
+    id: 'kendaraan-manajer',
+    name: 'Mobil Manajer',
+    kind: 'Kendaraan dinas',
+    description: 'Mobil operasional manajer untuk peninjauan gerai dan mitra.',
+  },
+  {
+    id: 'kendaraan-van',
+    name: 'Van Distribusi',
+    kind: 'Armada logistik',
+    description: 'Van pengiriman pasokan reguler ke unit-unit gerai koperasi.',
+  },
+  {
+    id: 'kendaraan-truk',
+    name: 'Truk Muatan Logistik',
+    kind: 'Angkutan barang',
+    description: 'Truk pengangkut pasokan muatan besar menuju area bongkar muat.',
   },
 ] as const;
 

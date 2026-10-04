@@ -85,7 +85,7 @@ export function WorldScene({
     }
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.type = THREE.PCFShadowMap;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.22;
@@ -98,66 +98,70 @@ export function WorldScene({
     node.prepend(renderer.domElement);
     const scene = new THREE.Scene();
     scene.background = new THREE.Color('#e7edf9');
-    const camera = new THREE.OrthographicCamera(-20, 20, 14, -14, 0.1, 150);
-    camera.position.set(26, 23, 26);
+    const camera = new THREE.OrthographicCamera(-26, 26, 18, -18, 0.1, 200);
+    camera.position.set(34, 30, 34);
     camera.lookAt(0, 0, 0);
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.09;
-    controls.minZoom = 0.65;
-    controls.maxZoom = 2.8;
+    controls.minZoom = 0.6;
+    controls.maxZoom = 3.0;
     controls.minPolarAngle = 0.45;
     controls.maxPolarAngle = 1.18;
     controls.enablePan = true;
-    controls.maxTargetRadius = 12;
+    controls.maxTargetRadius = 26;
     runtime.current = { camera, controls };
-    const ambient = new THREE.HemisphereLight('#f3f8ff', '#a1acc4', 2.5);
+    const ambient = new THREE.HemisphereLight('#f4f8ff', '#9fb0cc', 2.8);
     scene.add(ambient);
-    const sun = new THREE.DirectionalLight('#fff5e3', 3.5);
-    sun.position.set(-10, 20, 10);
+    const sun = new THREE.DirectionalLight('#fff8ec', 3.8);
+    sun.position.set(-16, 28, 16);
     sun.castShadow = true;
     sun.shadow.mapSize.set(2048, 2048);
     Object.assign(sun.shadow.camera, {
-      left: -22,
-      right: 22,
-      top: 22,
-      bottom: -22,
+      left: -35,
+      right: 35,
+      top: 35,
+      bottom: -35,
       near: 0.5,
-      far: 65,
+      far: 110,
     });
     sun.shadow.bias = -0.0005;
     sun.shadow.normalBias = 0.04;
     scene.add(sun);
     const floor = new THREE.Mesh(
-      new THREE.PlaneGeometry(300, 300),
+      new THREE.PlaneGeometry(500, 500),
       new THREE.MeshStandardMaterial({ color: '#e5ebf8', roughness: 1 }),
     );
     floor.rotation.x = -Math.PI / 2;
-    floor.position.y = -0.4;
+    floor.position.y = -0.45;
     floor.receiveShadow = true;
     scene.add(floor);
     const world = new THREE.Group();
     scene.add(world);
-    if (location === 'luar') createExterior(world, model);
-    else createInterior(world);
+    let exteriorResult: ReturnType<typeof createExterior> | undefined;
+    if (location === 'luar') {
+      exteriorResult = createExterior(world, model);
+    } else {
+      createInterior(world);
+    }
     const color = { biru: palette.blue, lavender: '#a18ae0', hijau: '#51aa8a' }[outfit];
     const characters = [
-      createCharacter(world, location === 'luar' ? [-1.3, 0.1, 5] : [-4, 0.1, -0.95], color),
+      createCharacter(world, location === 'luar' ? [-5, 0.1, 3.5] : [-4, 0.42, -1.2], color),
       createCharacter(
         world,
-        location === 'luar' ? [5.4, 0.1, -0.7] : [2, 0.1, -0.15],
+        location === 'luar' ? [4, 0.1, 2.5] : [4.6, 0.42, -1.5],
         '#a18ae0',
         1,
       ),
-      createCharacter(world, location === 'luar' ? [-7, 0.1, -1] : [5.3, 0.3, 3.5], '#50ab90', 2),
+      createCharacter(world, location === 'luar' ? [-12, 0.1, 7.5] : [2.4, 0.35, 3.5], '#50ab90', 2),
     ];
     characters.forEach((character) => {
       character.group.userData.selection = 'karakter';
     });
     if (location === 'dalam') {
       characters[0].group.rotation.y = Math.PI;
-      characters[1].group.rotation.y = Math.PI;
-      characters[2].group.rotation.y = Math.PI;
+      characters[1].group.rotation.y = 0;
+      characters[2].group.rotation.y = 0;
     }
     const raycaster = new THREE.Raycaster();
     const pointer = new THREE.Vector2();
@@ -185,13 +189,13 @@ export function WorldScene({
     };
     renderer.domElement.addEventListener('pointerdown', startPointer);
     renderer.domElement.addEventListener('pointerup', pickObject);
-    const rainCount = 350,
+    const rainCount = 450,
       rainPositions = new Float32Array(rainCount * 6);
     for (let i = 0; i < rainCount; i++) {
-      const x = ((i * 17.37) % 34) - 17,
-        y = (i * 7.19) % 16,
-        z = ((i * 11.63) % 26) - 13;
-      rainPositions.set([x, y, z, x - 0.12, y + 0.5, z], i * 6);
+      const x = ((i * 17.37) % 60) - 30,
+        y = (i * 7.19) % 20,
+        z = ((i * 11.63) % 40) - 20;
+      rainPositions.set([x, y, z, x - 0.12, y + 0.6, z], i * 6);
     }
     const rainGeometry = new THREE.BufferGeometry();
     rainGeometry.setAttribute('position', new THREE.BufferAttribute(rainPositions, 3));
@@ -211,7 +215,7 @@ export function WorldScene({
       if (!width || !height) return;
       renderer.setSize(width, height);
       const aspect = width / height;
-      const span = location === 'luar' ? (aspect < 1 ? 20 : 13.2) : aspect < 1 ? 11.5 : 8.5;
+      const span = location === 'luar' ? (aspect < 1 ? 26 : 18.5) : aspect < 1 ? 12 : 9;
       camera.left = -span * aspect;
       camera.right = span * aspect;
       camera.top = span;
@@ -223,17 +227,25 @@ export function WorldScene({
     resize();
     const positions = new Map<string, THREE.Vector3>();
     if (location === 'luar') {
-      positions.set('koperasi', new THREE.Vector3(-3, 4.1, 2.7));
+      positions.set('koperasi', new THREE.Vector3(-5, 4.3, 0));
       model.plots.forEach((plot) =>
         positions.set(
           plot.id,
-          new THREE.Vector3(plot.position[0], plot.unit ? 3.1 : 0.6, plot.position[1]),
+          new THREE.Vector3(plot.position[0], plot.unit ? 3.2 : 0.6, plot.position[1]),
         ),
       );
-    } else
+    } else {
       worldStations.forEach((station) =>
         positions.set(station.id, new THREE.Vector3(station.position[0], 2.2, station.position[2])),
       );
+    }
+
+    // Waypoints for manager exterior patrol
+    const pOffice = new THREE.Vector3(-5, 0.1, 3.5);
+    const pPlaza = new THREE.Vector3(3.5, 0.1, 3.5);
+    const pWalkway = new THREE.Vector3(3.5, 0.1, -4.5);
+    const pPlots = new THREE.Vector3(-9, 0.1, -4.5);
+
     const draw = (stamp: number) => {
       if (disposed) return;
       frame = requestAnimationFrame(draw);
@@ -241,29 +253,106 @@ export function WorldScene({
       elapsed += Math.min((stamp - previous) / 1000, 0.06);
       previous = stamp;
       controls.update();
+
       const state = motion.current,
         night = state.hour < 6 || state.hour >= 19,
         dusk = state.hour >= 16 && state.hour < 19;
       const sky = night
-        ? '#23304e'
+        ? '#1e293b'
         : dusk
-          ? '#e5d8ed'
+          ? '#f3e8f4'
           : state.weather === 'cerah'
             ? '#e7edf9'
             : '#cbd7e9';
       scene.background = new THREE.Color(sky);
       (floor.material as THREE.MeshStandardMaterial).color.set(sky);
-      ambient.intensity = night ? 1.2 : 2.5;
-      sun.intensity = night ? 0.6 : state.weather === 'cerah' ? 3.5 : 1.5;
-      sun.color.set(dusk ? '#ffd0a6' : night ? '#9cb8ff' : '#fff5e3');
+      ambient.intensity = night ? 1.5 : dusk ? 2.2 : 2.8;
+      sun.intensity = night ? 0.9 : state.weather === 'cerah' ? 3.8 : 1.8;
+      sun.color.set(dusk ? '#ffd4b2' : night ? '#a3bffa' : '#fff8ec');
+
+      // Animate ambient moving truck along road
+      if (exteriorResult?.movingTruck && location === 'luar') {
+        if (!reduced.matches) {
+          const tx = ((elapsed * 2.6 + 32) % 68) - 34;
+          exteriorResult.movingTruck.position.x = tx;
+          exteriorResult.movingTruck.position.z = 10.8;
+          exteriorResult.movingTruck.rotation.y = 0;
+        } else {
+          exteriorResult.movingTruck.position.set(13.5, 0, 10.8);
+        }
+      }
+
+      // Exterior Manager Patrol
+      let isManagerWalking = false;
+      if (location === 'luar') {
+        if (!reduced.matches) {
+          const loop = 80;
+          const phase = elapsed % loop;
+          if (phase < 35) {
+            // Standing at Office front: looking around & idle
+            characters[0].group.position.copy(pOffice);
+            characters[0].group.rotation.y = Math.PI * 0.12;
+            characters[0].base.copy(pOffice);
+          } else if (phase < 45) {
+            // Walking from Office to Plaza
+            isManagerWalking = true;
+            const r = (phase - 35) / 10;
+            characters[0].group.position.lerpVectors(pOffice, pPlaza, r);
+            characters[0].group.rotation.y = Math.PI * 0.5;
+            characters[0].base.copy(characters[0].group.position);
+          } else if (phase < 55) {
+            // Inspecting Plaza fountain
+            characters[0].group.position.copy(pPlaza);
+            characters[0].group.rotation.y = -Math.PI * 0.2;
+            characters[0].base.copy(pPlaza);
+          } else if (phase < 65) {
+            // Walking to Plots walkway
+            isManagerWalking = true;
+            const r = (phase - 55) / 10;
+            characters[0].group.position.lerpVectors(pPlaza, pWalkway, r);
+            characters[0].group.rotation.y = Math.PI;
+            characters[0].base.copy(characters[0].group.position);
+          } else if (phase < 72) {
+            // Walking along Plots sidewalk
+            isManagerWalking = true;
+            const r = (phase - 65) / 7;
+            characters[0].group.position.lerpVectors(pWalkway, pPlots, r);
+            characters[0].group.rotation.y = -Math.PI * 0.5;
+            characters[0].base.copy(characters[0].group.position);
+          } else {
+            // Returning to Office
+            isManagerWalking = true;
+            const r = (phase - 72) / 8;
+            characters[0].group.position.lerpVectors(pPlots, pOffice, r);
+            characters[0].group.rotation.y = Math.PI * 0.35;
+            characters[0].base.copy(characters[0].group.position);
+          }
+        } else {
+          characters[0].base.copy(pOffice);
+        }
+      } else {
+        // Interior Placement for Manager
+        if (state.activity === 'meeting') {
+          characters[0].base.set(-4, 0.42, -1.2);
+          characters[0].group.rotation.y = Math.PI;
+        } else if (state.activity === 'gym') {
+          characters[0].base.set(2.4, 0.35, 3.5);
+          characters[0].group.rotation.y = 0;
+        } else if (state.activity === 'work') {
+          characters[0].base.set(2.2, 0.42, -1.5);
+          characters[0].group.rotation.y = 0;
+        } else {
+          characters[0].base.set(-1.0, 0.1, 1.5);
+          characters[0].group.rotation.y = 0;
+        }
+      }
+
       characters.forEach((character, index) => {
         const mode =
           location === 'luar'
             ? 'idle'
             : index === 0
-              ? state.activity === 'meeting'
-                ? 'meeting'
-                : 'idle'
+              ? state.activity
               : index === 1
                 ? state.activity === 'work'
                   ? 'work'
@@ -271,12 +360,15 @@ export function WorldScene({
                 : state.activity === 'gym'
                   ? 'gym'
                   : 'idle';
-        animateCharacter(character, elapsed + index * 2, mode, reduced.matches);
+        const walking = index === 0 && isManagerWalking;
+        animateCharacter(character, elapsed + index * 2, mode, reduced.matches, walking);
       });
+
       positions.set(
         'karakter',
         characters[0].group.position.clone().add(new THREE.Vector3(0, 2.4, 0)),
       );
+
       for (const [id, position] of positions) {
         const marker = markerRefs.current.get(id);
         if (!marker) continue;
@@ -286,13 +378,14 @@ export function WorldScene({
         marker.style.visibility =
           Math.abs(projected.x) > 1.05 || Math.abs(projected.y) > 1.05 ? 'hidden' : 'visible';
       }
+
       rain.visible = state.weather === 'hujan' && location === 'luar';
       if (rain.visible && !reduced.matches) {
         const a = rainGeometry.attributes.position;
         for (let i = 0; i < rainCount; i++) {
-          const y = (16 + ((i * 7.19) % 16) - ((elapsed * 7) % 16)) % 16;
+          const y = (20 + ((i * 7.19) % 20) - ((elapsed * 9) % 20)) % 20;
           a.setY(i * 2, y);
-          a.setY(i * 2 + 1, y + 0.5);
+          a.setY(i * 2 + 1, y + 0.6);
         }
         a.needsUpdate = true;
       }

@@ -35,3 +35,20 @@ it('preferensi korup tidak mencegah halaman tampil', () => {
   expect(screen.getByRole('heading', { name: 'Suasana & karakter' })).toBeTruthy();
   expect(screen.getByText(/Cuaca adalah simulasi/)).toBeTruthy();
 });
+it('kontrol waktu dan cuaca langsung terlihat serta mengubah suasana', () => {
+  render(<CooperativeWorld data={{}} />);
+  const malamBtn = screen.getByRole('button', { name: 'Waktu malam' });
+  expect(malamBtn).toBeTruthy();
+  fireEvent.click(malamBtn);
+  expect(malamBtn.getAttribute('aria-pressed')).toBe('true');
+  const hujanBtn = screen.getByRole('button', { name: 'Cuaca hujan' });
+  fireEvent.click(hujanBtn);
+  expect(hujanBtn.getAttribute('aria-pressed')).toBe('true');
+});
+it('kendaraan suasana menampilkan kartu dengan status simulasi', () => {
+  render(<CooperativeWorld data={{}} />);
+  fireEvent.click(screen.getByRole('button', { name: /Mobil Manajer/ }));
+  expect(screen.getByRole('heading', { name: 'Mobil Manajer' })).toBeTruthy();
+  expect(screen.getByText('Simulasi lingkungan')).toBeTruthy();
+  expect(screen.getByText(/Kendaraan adalah visualisasi suasana/)).toBeTruthy();
+});

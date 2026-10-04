@@ -56,6 +56,18 @@ describe('pemetaan dunia koperasi', () => {
     expect(getWorldHour('otomatis', new Date('2026-10-04T17:00:00Z'))).toBe(0);
     expect(getWorldHour('senja', new Date())).toBe(17);
     expect(worldPreferencesSchema.safeParse({ weather: 'salju' }).success).toBe(false);
-    expect(worldPreferencesSchema.parse({}).time).toBe('otomatis');
+    expect(worldPreferencesSchema.parse({}).time).toBe('siang');
+  });
+  it('menyediakan tiga kendaraan suasana modular dengan identitas simulasi', async () => {
+    const { worldVehicles, landPositions } = await import('@/features/cooperative-world/world-model');
+    expect(worldVehicles).toHaveLength(3);
+    expect(worldVehicles.map((v) => v.id)).toEqual([
+      'kendaraan-manajer',
+      'kendaraan-van',
+      'kendaraan-truk',
+    ]);
+    expect(landPositions).toHaveLength(7);
+    // Verifikasi koordinat map luas mencakup area di luar pusat
+    expect(landPositions.some(([x]) => Math.abs(x) >= 18)).toBe(true);
   });
 });

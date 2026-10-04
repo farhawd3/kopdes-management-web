@@ -41,6 +41,7 @@ import {
   getWorldModel,
   worldPreferencesSchema,
   worldStations,
+  worldVehicles,
   type CharacterActivity,
   type WorldLocation,
   type WorldPreferences,
@@ -102,6 +103,7 @@ export function CooperativeWorld({
   const activity = rehearsal === 'otomatis' ? model.activity : rehearsal;
   const plot = model.plots.find((item) => item.id === selected);
   const station = worldStations.find((item) => item.id === selected);
+  const vehicle = worldVehicles.find((item) => item.id === selected);
   const clock = new Intl.DateTimeFormat('id-ID', {
     timeZone: 'Asia/Jakarta',
     hour: '2-digit',
@@ -127,10 +129,12 @@ export function CooperativeWorld({
     rehearsal !== 'otomatis'
       ? `Pratinjau animasi: ${activityNames[activity].toLowerCase()}.`
       : model.currentMeeting
-        ? `Ada rapat: ${String(model.currentMeeting.data.title)}.`
-        : model.tasks.length
-          ? `${model.tasks.length} tugas masih terbuka. Mari lihat meja tugas!`
-          : 'Klik gedung koperasi untuk masuk. Kita bisa melihat ruang rapat dan meja tugas!';
+        ? `Ada rapat: "${String(model.currentMeeting.data.title)}"!`
+        : model.activities.length
+          ? 'Ada kegiatan hari ini di jurnal. Semangat beraktivitas!'
+          : model.tasks.length
+            ? `Ada tugas yang perlu ditinjau hari ini? (${model.tasks.length} tugas)`
+            : 'Kawasan tertata rapi. Klik kantor koperasi untuk melihat interior!';
   function enter(next: WorldLocation) {
     setLocation(next);
     setSelected(next === 'luar' ? 'kawasan' : 'rapat');
@@ -150,19 +154,21 @@ export function CooperativeWorld({
   }
   const count = (value: number) => (loading || error ? '—' : value);
   const title =
-    selected === 'lingkungan'
-      ? 'Suasana & karakter'
-      : selected === 'logistik'
-        ? 'Area pengembangan'
-        : selected === 'karakter'
-          ? 'Maskot koperasi'
-          : plot
-            ? plot.unit
-              ? String(plot.unit.data.title)
-              : `Lahan ${selected.split('-')[1]}`
-            : station
-              ? station.title
-              : 'Kawasan koperasi';
+    vehicle
+      ? vehicle.name
+      : selected === 'lingkungan'
+        ? 'Suasana & karakter'
+        : selected === 'logistik'
+          ? 'Area pengembangan'
+          : selected === 'karakter'
+            ? 'Maskot koperasi'
+            : plot
+              ? plot.unit
+                ? String(plot.unit.data.title)
+                : `Lahan ${selected.split('-')[1]}`
+              : station
+                ? station.title
+                : 'Kawasan koperasi';
   return (
     <main className={`cooperative-world ${hour >= 19 || hour < 6 ? 'cw-night' : ''}`}>
       <header className="cw-topbar">
@@ -200,7 +206,7 @@ export function CooperativeWorld({
             </small>
           </span>
         </div>
-        <span className="cw-live">
+        <span className="cw-live" suppressHydrationWarning>
           <i />
           {clock} WIB
         </span>
@@ -234,6 +240,38 @@ export function CooperativeWorld({
           bubble={bubble}
           onSelect={select}
         />
+        <div className="cw-quick-controls cw-glass" aria-label="Kontrol Waktu dan Cuaca">
+          <div className="cw-quick-group">
+            <span className="cw-quick-label">WAKTU</span>
+            {(['siang', 'pagi', 'senja', 'malam', 'otomatis'] as const).map((t) => (
+              <Button
+                key={t}
+                className={`cw-quick-btn ${preferences.time === t ? 'is-active' : ''}`}
+                onClick={() => preference('time', t)}
+                aria-pressed={preferences.time === t}
+                aria-label={`Waktu ${t === 'otomatis' ? 'WIB Otomatis' : t}`}
+              >
+                {t === 'otomatis' ? 'WIB' : t.charAt(0).toUpperCase() + t.slice(1)}
+              </Button>
+            ))}
+          </div>
+          <i className="cw-quick-sep" />
+          <div className="cw-quick-group">
+            <span className="cw-quick-label">CUACA</span>
+            {(['cerah', 'berawan', 'hujan'] as const).map((w) => (
+              <Button
+                key={w}
+                className={`cw-quick-btn ${preferences.weather === w ? 'is-active' : ''}`}
+                onClick={() => preference('weather', w)}
+                aria-pressed={preferences.weather === w}
+                aria-label={`Cuaca ${w}`}
+              >
+                {w === 'cerah' ? <Sun size={13} /> : w === 'berawan' ? <Cloud size={13} /> : <CloudRain size={13} />}
+                <span>{w.charAt(0).toUpperCase() + w.slice(1)}</span>
+              </Button>
+            ))}
+          </div>
+        </div>
         <div className="cw-stat-row">
           <Link href="/gerai" className="cw-glass cw-stat">
             <span className="cw-stat-icon">
@@ -340,7 +378,9 @@ export function CooperativeWorld({
           <aside className="cw-detail cw-glass" aria-label="Detail lokasi">
             <div className="cw-detail-heading">
               <span className="cw-detail-icon">
-                {plot ? (
+                {vehicle ? (
+                  <Truck size={24} />
+                ) : plot ? (
                   <Store size={24} />
                 ) : selected === 'lingkungan' ? (
                   weatherIcon
@@ -352,17 +392,23 @@ export function CooperativeWorld({
               </span>
               <div>
                 <span className="cw-eyebrow">
-                  {location === 'luar' ? 'DUNIA KOPERASI' : 'KANTOR • INTERIOR'}
+                  {vehicle
+                    ? 'ARMADA • SIMULASI'
+                    : location === 'luar'
+                      ? 'DUNIA KOPERASI'
+                      : 'KANTOR • INTERIOR'}
                 </span>
                 <h1>{title}</h1>
                 <p>
-                  {plot
-                    ? plot.unit
-                      ? 'Terhubung ke catatan gerai'
-                      : 'Bidang tersedia untuk gerai baru'
-                    : location === 'luar'
-                      ? 'Lingkungan dan ruang kerja'
-                      : 'Pilih area untuk membuka catatan'}
+                  {vehicle
+                    ? 'Kendaraan suasana kawasan'
+                    : plot
+                      ? plot.unit
+                        ? 'Terhubung ke catatan gerai'
+                        : 'Bidang tersedia untuk gerai baru'
+                      : location === 'luar'
+                        ? 'Lingkungan dan ruang kerja'
+                        : 'Pilih area untuk membuka catatan'}
                 </p>
               </div>
               <Button
@@ -374,7 +420,30 @@ export function CooperativeWorld({
               </Button>
             </div>
             <div className="cw-detail-body">
-              {selected === 'lingkungan' ? (
+              {vehicle ? (
+                <>
+                  <div className="cw-planning-icon">
+                    <Truck size={44} />
+                  </div>
+                  <span className="cw-status cw-status-muted">Simulasi lingkungan</span>
+                  <p className="cw-panel-note">{vehicle.description}</p>
+                  <div className="cw-vehicle-badge-row">
+                    <span className="cw-badge-pill">{vehicle.kind}</span>
+                    <span className="cw-badge-pill cw-badge-ambient">Suasana kawasan</span>
+                  </div>
+                  <p className="cw-panel-note">
+                    Kendaraan adalah visualisasi suasana kawasan, bukan data transaksi atau pengiriman nyata.
+                  </p>
+                  <Button
+                    className="cw-secondary-link"
+                    onClick={() => {
+                      setSelected('kawasan');
+                    }}
+                  >
+                    Kembali ke kawasan <ArrowRight size={14} />
+                  </Button>
+                </>
+              ) : selected === 'lingkungan' ? (
                 <>
                   <p className="cw-panel-note">
                     Atur suasana visual. Cuaca adalah simulasi, bukan prakiraan cuaca setempat.
@@ -613,10 +682,28 @@ export function CooperativeWorld({
                           .toLowerCase()
                           .includes(query.toLowerCase()),
                       ) &&
-                      !'kantor koperasi'.includes(query.toLowerCase()) && (
+                      !'kantor koperasi'.includes(query.toLowerCase()) &&
+                      !worldVehicles.some((v) => v.name.toLowerCase().includes(query.toLowerCase())) && (
                         <p className="cw-panel-note">Lokasi tidak ditemukan.</p>
                       )}
                   </div>
+                  {(!query || 'armada kendaraan mobil van truk'.includes(query.toLowerCase())) && (
+                    <div className="cw-vehicle-nav-group">
+                      <span className="cw-section-title">Armada & Kendaraan</span>
+                      {worldVehicles.map((v) => (
+                        <Button key={v.id} onClick={() => select(v.id)}>
+                          <span className="cw-list-icon">
+                            <Truck size={17} />
+                          </span>
+                          <span>
+                            <strong>{v.name}</strong>
+                            <small>{v.kind} · simulasi</small>
+                          </span>
+                          <ChevronRight size={14} />
+                        </Button>
+                      ))}
+                    </div>
+                  )}
                   {model.overflow > 0 && (
                     <p className="cw-panel-note">
                       {model.overflow} gerai lainnya tersedia di daftar Gerai; kawasan ini memiliki

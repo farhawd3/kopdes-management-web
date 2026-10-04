@@ -1,5 +1,14 @@
 # Changelog
 
+## Perluasan kawasan Dunia Koperasi, kontrol waktu/cuaca cepat, armada, patroli dan gym — 5 Oktober 2026
+
+- Perbesar map luar menjadi 58 × 38 unit: jalan aspal dua arah dengan marka tengah & zebra cross, plaza sentral air mancur & bangku, area parkir, loading dock logistik berkanopi, dan tujuh lahan gerai.
+- Tetapkan default siang cerah dan hadirkan kontrol cepat Waktu (Siang, Pagi, Senja, Malam, WIB) serta Cuaca (Cerah, Berawan, Hujan) langsung pada layar desktop dan ponsel (touch target >= 44 px).
+- Tambahkan tiga kendaraan suasana modular (Mobil Manajer, Van Distribusi, Truk Muatan Logistik) dengan kartu status simulasi lingkungan dan pergerakan truk di jalan raya.
+- Terapkan alur patroli berkala manajer memeriksa kawasan dengan langkah berjalan dan arah hadap dinamis; bubble dialog kontekstual ("Ada tugas yang perlu ditinjau?", "Ada kegiatan hari ini di jurnal!", dll.) muncul jarang dan menjeda patroli saat interaksi.
+- Hadirkan zona Gym modern di kantor: dual treadmill berpanel LED, bangku latihan, rak dumbbell beban bertingkat, dispenser air minum, dan penanda Gym & Kegiatan. Karakter aktif olahraga di treadmill saat ada kegiatan jurnal, duduk saat rapat, dan bekerja di meja tugas.
+- 269 tes / 44 berkas lulus 100%, typecheck, lint, dan build production lolos; QA browser multiplatform 360/768/1024/1440 px terverifikasi.
+
 ## Sederhanakan aturan AI dan lingkup panduan — 5 Oktober 2026
 
 - Ringkas KEPUTUSAN, skill clean-code dan indeks dokumen; satu jalur acuan AGENTS → DUNIA-KOPERASI → STATUS.

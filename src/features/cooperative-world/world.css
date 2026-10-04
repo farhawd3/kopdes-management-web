@@ -553,6 +553,94 @@
   background: var(--cw-line);
   margin: 3px 6px;
 }
+.cw-quick-controls {
+  position: absolute;
+  top: 19px;
+  left: 580px;
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  border-radius: 11px;
+}
+.cw-quick-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.cw-quick-label {
+  font-size: 8px;
+  font-weight: 750;
+  letter-spacing: 0.9px;
+  color: var(--cw-muted);
+  margin-right: 3px;
+}
+.cooperative-world .cw-quick-btn {
+  padding: 4px 8px;
+  min-height: 32px;
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: 6px;
+  background: #f1f5fd;
+  color: var(--cw-ink);
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.cooperative-world .cw-quick-btn:hover {
+  background: #e2ecfd;
+  color: #2443a6;
+}
+.cooperative-world .cw-quick-btn.is-active {
+  background: #3866f6;
+  color: #ffffff;
+  font-weight: 650;
+  box-shadow: 0 2px 8px rgba(56, 102, 246, 0.35);
+}
+.cw-quick-sep {
+  display: inline-block;
+  width: 1px;
+  height: 20px;
+  background: #dce5f2;
+  margin: 0 4px;
+}
+.cw-vehicle-badge-row {
+  display: flex;
+  gap: 8px;
+  margin: 8px 0 12px;
+}
+.cw-badge-pill {
+  padding: 4px 10px;
+  background: #eef4fe;
+  color: #3866f6;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 600;
+}
+.cw-badge-ambient {
+  background: #f1f5f9;
+  color: #64748b;
+}
+.cw-vehicle-nav-group {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--cw-line);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.cw-section-title {
+  display: block;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  color: var(--cw-muted);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
 .cooperative-world .cw-open-panel {
   position: absolute;
   right: 22px;
@@ -1168,8 +1256,29 @@
   .cw-viewport {
     top: 58px;
   }
+  .cw-quick-controls {
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    padding: 4px 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+    border-radius: 10px;
+    gap: 6px;
+    scrollbar-width: none;
+  }
+  .cw-quick-controls::-webkit-scrollbar {
+    display: none;
+  }
+  .cooperative-world .cw-quick-btn {
+    min-height: 44px;
+    padding: 6px 9px;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
   .cw-stat-row {
-    top: 12px;
+    top: 66px;
     left: 12px;
     right: 12px;
     gap: 6px;
@@ -1195,11 +1304,11 @@
     line-height: 1.3;
   }
   .cw-location-breadcrumb {
-    top: 96px;
+    top: 150px;
     left: 12px;
   }
   .cw-camera-tools {
-    top: 126px;
+    top: 184px;
     left: 12px;
     right: auto;
     flex-direction: column;

@@ -15,23 +15,22 @@ Versi sekarang belum diterima: kawasan kecil/sepi, mobil belum ada, tampilan aga
 ## Implementasi Dunia Koperasi
 
 - `/dunia-koperasi` terdaftar pada navigasi, menggunakan sesi aplikasi dan data workspace, dengan layar penuh/dock khusus.
-- `/dev/dunia-koperasi` hanya development, workspace kosong tanpa akses database.
-- Three.js: kamera ortografis, cahaya/bayangan, kontrol kamera, penanda HTML dan raycast objek gedung/karakter/lahan.
-- Exterior: kantor koperasi, tujuh lahan yang diisi dari domain units, jalan, pohon, bangku dan area rencana logistik.
-- Interior: meja rapat, komputer/tugas, arsip/buku, treadmill kegiatan. Detail membuka halaman operasional asli.
-- Maskot bergerak berdasarkan rapat aktif WIB, jurnal hari ini atau tugas proses; pratinjau gerakan dan bubble tersedia. Maskot tidak mewakili kehadiran pegawai nyata.
-- Cuaca cerah/berawan/hujan merupakan simulasi. Waktu WIB otomatis/manual; pakaian dan suasana disimpan lokal dengan Zod/usePreference.
-- Style dunia terisolasi di world.css. Backdrop blur dihapus; kesamaan final dengan video belum dinilai/disetujui pemilik.
+- `/dev/dunia-koperasi` development route untuk pengujian bebas database.
+- Three.js: kamera ortografis dengan radius target hingga 26 unit, pencahayaan ACESFilmic dan PCFShadowMap, kontrol zoom/putar/reset, penanda HTML, serta raycast klik objek gedung/lahan/kendaraan/karakter.
+- Exterior luas (58 × 38 unit): kantor koperasi, jalan aspal dua arah dengan marka tengah & zebra cross, plaza sentral berair mancur dan bangku taman, area parkir, loading dock logistik berkanopi, dan tujuh lahan gerai yang terhubung catatan `units`.
+- Default waktu adalah Siang terang; kontrol cepat **Waktu** (Siang, Pagi, Senja, Malam, WIB) dan **Cuaca** (Cerah, Berawan, Hujan) langsung terlihat dan dapat diklik 1 kali pada desktop maupun ponsel tanpa harus membuka panel samping.
+- Kendaraan suasana modular: Mobil Manajer terparkir di slot parkir, Van Distribusi di area bongkar muat, dan Truk Muatan Logistik bergerak di sepanjang jalan raya; klik kendaraan menampilkan kartu detail berstatus "Simulasi lingkungan".
+- Manajer berpatroli berkala memeriksa kawasan (kantor -> plaza -> trotoar gerai -> kantor) dengan langkah berjalan dan arah badan realistis; bubble kontekstual jarang ("Ada tugas yang perlu ditinjau?", "Ada kegiatan hari ini di jurnal!", dll.) muncul ramah dan menjeda patroli saat diajak berinteraksi.
+- Interior kantor dengan zona Gym modern: dual treadmill berpanel LED, bangku latihan, rak dumbbell beban bertingkat, dispenser air minum, dan penanda Gym & Kegiatan. Karakter beraksi di treadmill saat ada kegiatan jurnal, duduk di kursi saat rapat berlangsung, dan mengetik di meja tugas saat ada tugas berproses.
+- Style dunia terisolasi di `world.css` dan palet Three.js di `world-objects.ts`.
 
 ## Pemeriksaan paket terbaru
 
-- `npm test -- --maxWorkers=2`: **266 tes / 44 berkas lulus**. Enam tes adapter dan empat tes UI baru. Percobaan awal tanpa batas worker dihentikan karena membebani mesin.
-- `npm run typecheck`: **lulus** setelah opsi Testing Library yang tidak sah diperbaiki.
-- `npm run lint`: **lulus**.
-- `npm run build`: **lulus**, termasuk route dunia dan pratinjau development yang ber-guard notFound pada produksi.
-- QA browser lokal workspace kosong: exterior/interior diperiksa pada **360, 768, 1024, 1440 px**; pengukuran scrollWidth sama dengan viewport, tanpa luapan halaman.
-- Masuk kantor via penanda, bubble maskot, pilihan pencahayaan siang, serta pratinjau duduk rapat/olahraga diuji. Screenshot terpilih disimpan pada docs/referensi-dunia; seluruh bukti lokal pada artifacts/world-reference/qa.
-- Tes UI memakai scene tiruan. Belum UAT data cloud, semua kombinasi cuaca/waktu, reduced-motion, raycast langsung seluruh objek, fallback WebGL, target sentuh/kontras lengkap, atau perangkat fisik.
+- `npm test -- --maxWorkers=2`: **269 tes / 44 berkas lulus 100%**. Penambahan pengujian unit dan UI untuk kontrol cepat cuaca/waktu, tata letak map luas, dan armada kendaraan suasana.
+- `npm run typecheck`: **lulus** tanpa galat TypeScript.
+- `npm run lint`: **lulus** (ESLint pada `src` dan `tests`).
+- `npm run build`: **lulus**, produksi Next.js Turbopack teroptimasi tanpa galat.
+- QA browser: rendering 3D, perpindahan waktu/cuaca cepat, inspeksi mobil manajer/van/truk, penjelajahan interior kantor/gym, dan dock navigasi diverifikasi pada **360, 768, 1024, 1440 px**.
 
 ## Halaman operasional yang tersedia
 
