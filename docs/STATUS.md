@@ -1,6 +1,10 @@
 # Status produk — 4 Oktober 2026
 
 Penyempurnaan visual, konsistensi tipografi, perbaikan tampilan kegiatan, dan tampilan pencatatan modern:
+- **Penanda Menu & Tampilan Aktif (`SegmentedControl`, `.database-views`, `.project-status-tabs`)**:
+  - **Penanda Visual Tegas (Active Indicator)**: Menambahkan kapsul aktif terangkat (`background: var(--surface)`, `border: 1px solid var(--line)`, `box-shadow: 0 1px 3px rgba(0,0,0,0.08)`), warna teks tegas (`var(--ink-heading)` bobot 700), dan ikon berwarna brand.
+  - **Indikator Titik Aksen Menyala (`.ui-segmented-active-dot`)**: Menyematkan titik aksen hijau/brand (`•`) di samping label teks menu yang sedang aktif untuk memberikan konfirmasi visual instan kepada manajer tanpa keraguan.
+  - **Perbaikan Selektor CSS Legacy**: Menghapus blokade selektor `button:not(.ui-btn)[aria-pressed='true']` yang sebelumnya mengabaikan tombol `.ui-btn` di dalam `SegmentedControl`, sehingga menu tampilan (Daftar, Papan, Kalender, Linimasa) dan filter status proyek (Semua, Aktif, Rencana, Ditunda, Selesai, Arsip) kini memiliki umpan balik visual aktif yang konsisten dan kontras di semua tema (termasuk mode gelap).
 - **Penyempurnaan Visual & Fungsional Halaman Kegiatan (`/jurnal`)**:
   - **Penghapusan Tombol Mengambang Liar Desktop**: Mengganti `<Button>` pemicu filter mobile menjadi elemen native berpagar spesifisitas CSS tinggi (`display: none !important` di desktop), melenyapkan tombol `[ Cari & filter ]` yang sebelumnya melayang canggung di bawah tab view pada layar desktop/tablet.
   - **Perbaikan Label Relasi Tugas Ganda**: Memperbaiki teks tindak lanjut dari `+ + Tindak Lanjut` (ikon plus bertumpuk teks plus) menjadi `<Plus size={12} /> Tindak Lanjut` yang proporsional.

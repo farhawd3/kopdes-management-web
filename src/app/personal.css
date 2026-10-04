@@ -1979,13 +1979,13 @@ body {
   padding: 4px;
   background: var(--canvas);
   border: 1px solid var(--line);
-  border-radius: var(--r-md);
+  border-radius: var(--r-xl, 14px);
   width: fit-content;
   max-width: 100%;
 }
 .database-views::-webkit-scrollbar { display: none; }
 
-.database-views button:not(.ui-btn) {
+.database-views :is(button, .ui-btn) {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -1993,25 +1993,80 @@ body {
   padding: 6px 14px;
   background: transparent;
   color: var(--ink-muted);
-  border: 0;
+  border: 1px solid transparent;
   font-size: var(--fs-caption);
   font-weight: 550;
-  min-height: 32px;
+  min-height: 34px;
   white-space: nowrap;
   flex-shrink: 0;
   cursor: pointer;
-  transition: background 0.12s ease, color 0.12s ease;
+  transition: all 0.15s ease;
   box-shadow: none;
 }
-.database-views button:not(.ui-btn):hover {
-  background: var(--surface);
+.database-views :is(button, .ui-btn):hover:not([aria-pressed='true']):not(.is-active) {
+  background: color-mix(in srgb, var(--surface) 60%, transparent);
   color: var(--ink);
 }
-.database-views button:not(.ui-btn)[aria-pressed='true'] {
-  background: var(--surface);
-  color: var(--ink-heading);
-  font-weight: 650;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+.database-views :is(button, .ui-btn)[aria-pressed='true'],
+.database-views :is(button, .ui-btn).is-active {
+  background: var(--surface) !important;
+  color: var(--ink-heading) !important;
+  font-weight: 700 !important;
+  border: 1px solid var(--line) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+.database-views :is(button, .ui-btn)[aria-pressed='true'] svg,
+.database-views :is(button, .ui-btn).is-active svg {
+  color: var(--brand) !important;
+  stroke: var(--brand) !important;
+}
+
+.project-status-tabs :is(button, .ui-btn) {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: var(--r-md);
+  padding: 6px 14px;
+  background: transparent;
+  color: var(--ink-muted);
+  border: 1px solid transparent;
+  font-size: var(--fs-caption);
+  font-weight: 550;
+  min-height: 34px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.project-status-tabs :is(button, .ui-btn):hover:not([aria-pressed='true']):not(.is-active) {
+  background: color-mix(in srgb, var(--surface) 60%, transparent);
+  color: var(--ink);
+}
+.project-status-tabs :is(button, .ui-btn)[aria-pressed='true'],
+.project-status-tabs :is(button, .ui-btn).is-active {
+  background: var(--surface) !important;
+  color: var(--ink-heading) !important;
+  font-weight: 700 !important;
+  border: 1px solid var(--line) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+.project-status-tabs :is(button, .ui-btn)[aria-pressed='true'] small,
+.project-status-tabs :is(button, .ui-btn).is-active small {
+  background: var(--brand-soft);
+  color: var(--brand);
+  font-weight: 700;
+}
+
+:root[data-theme='dark'] .database-views :is(button, .ui-btn)[aria-pressed='true'],
+.dark .database-views :is(button, .ui-btn)[aria-pressed='true'],
+:root[data-theme='dark'] .database-views :is(button, .ui-btn).is-active,
+.dark .database-views :is(button, .ui-btn).is-active,
+:root[data-theme='dark'] .project-status-tabs :is(button, .ui-btn)[aria-pressed='true'],
+.dark .project-status-tabs :is(button, .ui-btn)[aria-pressed='true'],
+:root[data-theme='dark'] .project-status-tabs :is(button, .ui-btn).is-active,
+.dark .project-status-tabs :is(button, .ui-btn).is-active {
+  background: var(--surface) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
 }
 
 /* Task Cards & Form Controls */

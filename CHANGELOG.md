@@ -2,6 +2,10 @@
 
 ## Penyempurnaan Visual & Fungsional Halaman Kegiatan (Kegiatan Lapangan & Koordinasi) — 4 Oktober 2026
 
+- **Penanda Menu & Tampilan Aktif (`SegmentedControl`, `.database-views`, `.project-status-tabs`)**:
+  - Menyematkan titik aksen hijau/brand (`•`) di samping label opsi yang sedang aktif melalui `.ui-segmented-active-dot`.
+  - Memberikan elevasi kapsul surface (`background: var(--surface)`, `border: 1px solid var(--line)`, `box-shadow`), teks tebal berbobot 700, serta ikon dengan aksen warna brand pada tab aktif.
+  - Memperbaiki selektor CSS legacy yang sebelumnya memblokir tombol `.ui-btn` di dalam bilah tampilan dan status proyek, memastikan kontras optimal di tema terang maupun gelap.
 - **Eliminasi Tombol `[ Cari & filter ]` Mengambang di Desktop**: Mengganti komponen `<Button>` menjadi elemen native berpagar spesifisitas tinggi (`display: none !important`), memastikan tombol filter mobile tidak pernah muncul liar di resolusi desktop/tablet.
 - **Koreksi Teks Dobel `+ + Tindak Lanjut`**: Menghilangkan karakter plus ganda sehingga render bersih menjadi `<Plus size={12} /> Tindak Lanjut`.
 - **Judul Kegiatan Interaktif Bebas Bingkai Kotak**: Menghapus styling tombol form sekunder yang tebal dari judul kegiatan di baris tabel. Diganti dengan tautan interaktif elegan yang memadukan tag kode ringkas monospace (`KGT-XXXX`), teks judul tebal responsif hover brand, serta baris pratinjau catatan lapangan yang proporsional.

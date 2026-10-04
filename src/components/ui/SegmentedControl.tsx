@@ -20,18 +20,23 @@ export function SegmentedControl({
 }) {
   return (
     <div role="group" aria-label={label} className={cn('ui-segmented', className)}>
-      {options.map((option) => (
-        <Button
-          key={option.value}
-          type="button"
-          variant="ghost"
-          disabled={option.disabled}
-          aria-pressed={value === option.value}
-          onClick={() => onChange(option.value)}
-        >
-          {option.label}
-        </Button>
-      ))}
+      {options.map((option) => {
+        const active = value === option.value;
+        return (
+          <Button
+            key={option.value}
+            type="button"
+            variant="ghost"
+            disabled={option.disabled}
+            aria-pressed={active}
+            className={cn('ui-segmented-item', active && 'is-active')}
+            onClick={() => onChange(option.value)}
+          >
+            {option.label}
+            {active && <span className="ui-segmented-active-dot" aria-hidden="true" />}
+          </Button>
+        );
+      })}
       {children}
     </div>
   );

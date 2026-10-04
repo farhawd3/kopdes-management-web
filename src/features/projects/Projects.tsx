@@ -480,6 +480,7 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder="Cari nama atau tujuan proyek..."
                 aria-label="Cari proyek"
+                className="project-search-input"
               />
               {Boolean(search) && (
                 <Button
@@ -501,22 +502,28 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
                 ['ditunda', 'Ditunda'],
                 ['selesai', 'Selesai'],
                 ['diarsipkan', 'Arsip'],
-              ].map(([value, label]) => (
-                <Button
-                  key={value}
-                  type="button"
-                  aria-pressed={status === value}
-                  onClick={() => setStatus(value)}
-                >
-                  {label}
-                  <small>
-                    {
-                      projects.filter((row) => !value || (row.data.status || 'rencana') === value)
-                        .length
-                    }
-                  </small>
-                </Button>
-              ))}
+              ].map(([value, label]) => {
+                const active = status === value;
+                return (
+                  <Button
+                    key={value}
+                    type="button"
+                    variant="ghost"
+                    aria-pressed={active}
+                    className={active ? 'is-active' : ''}
+                    onClick={() => setStatus(value)}
+                  >
+                    <span>{label}</span>
+                    <small>
+                      {
+                        projects.filter((row) => !value || (row.data.status || 'rencana') === value)
+                          .length
+                      }
+                    </small>
+                    {active && <span className="ui-segmented-active-dot" aria-hidden="true" />}
+                  </Button>
+                );
+              })}
             </div>
           </div>
 
