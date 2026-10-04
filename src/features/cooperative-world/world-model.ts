@@ -71,6 +71,12 @@ export const worldVehicles = [
     description: 'Mobil operasional manajer untuk peninjauan gerai dan mitra.',
   },
   {
+    id: 'kendaraan-motor',
+    name: 'Sepeda Motor Dinas',
+    kind: 'Kurir & staf lapangan',
+    description: 'Operasional gesit staf koperasi untuk mobilitas antar-gerai.',
+  },
+  {
     id: 'kendaraan-van',
     name: 'Van Distribusi',
     kind: 'Armada logistik',
@@ -81,6 +87,12 @@ export const worldVehicles = [
     name: 'Truk Muatan Logistik',
     kind: 'Angkutan barang',
     description: 'Truk pengangkut pasokan muatan besar menuju area bongkar muat.',
+  },
+  {
+    id: 'kendaraan-truk-mitra',
+    name: 'Truk Ekspedisi Mitra',
+    kind: 'Mitra logistik',
+    description: 'Armada pengiriman pasokan bahan baku dari jaringan suplier koperasi.',
   },
 ] as const;
 
@@ -122,6 +134,8 @@ export function getWorldModel(data: Workspace, now: Date) {
     overflow: Math.max(0, units.length - landPositions.length),
     title: String(data.organization?.[0]?.data.title || 'Koperasi'),
     manager: String(data.organization?.[0]?.data.manager || 'Manajer'),
+    stakeholders: data.stakeholders || [],
+    staff: data.staff || [],
   };
 }
 export type WorldModel = ReturnType<typeof getWorldModel>;

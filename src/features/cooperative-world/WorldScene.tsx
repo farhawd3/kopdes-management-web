@@ -18,6 +18,12 @@ import {
   type WorldModel,
   type WorldPreferences,
 } from './world-model';
+import {
+  createTrafficShuffleBag,
+  stepTrafficSimulation,
+  type TrafficVehicleState,
+  type VehicleType,
+} from './world-traffic';
 
 type Props = {
   model: WorldModel;
@@ -252,11 +258,78 @@ export function WorldScene({
     const pWalkway = new THREE.Vector3(3.5, 0.1, -4.5);
     const pPlots = new THREE.Vector3(-9, 0.1, -4.5);
 
+    // Traffic Simulation State (Paket 3 PRD v2)
+    const trafficBag = createTrafficShuffleBag(99);
+    let nextVehicleSpawn = 1.0;
+    const trafficVehicles: Record<VehicleType, TrafficVehicleState> = {
+      motor: {
+        id: 'pool-motor',
+        type: 'motor',
+        color: '#79c8a0',
+        direction: 1,
+        x: -35,
+        z: 10.8,
+        speed: 2.8,
+        targetSpeed: 2.8,
+        opacity: 0,
+        scale: 0.94,
+        castShadow: false,
+        state: 'despawned',
+        lane: 'east',
+      },
+      mobil: {
+        id: 'pool-mobil',
+        type: 'mobil',
+        color: palette.blue,
+        direction: -1,
+        x: 35,
+        z: 13.2,
+        speed: 3.2,
+        targetSpeed: 3.2,
+        opacity: 0,
+        scale: 0.94,
+        castShadow: false,
+        state: 'despawned',
+        lane: 'west',
+      },
+      van: {
+        id: 'pool-van',
+        type: 'van',
+        color: '#fafcff',
+        direction: 1,
+        x: -35,
+        z: 10.8,
+        speed: 2.6,
+        targetSpeed: 2.6,
+        opacity: 0,
+        scale: 0.94,
+        castShadow: false,
+        state: 'despawned',
+        lane: 'east',
+      },
+      truk: {
+        id: 'pool-truk',
+        type: 'truk',
+        color: palette.navy,
+        direction: 1,
+        x: -35,
+        z: 10.8,
+        speed: 2.2,
+        targetSpeed: 2.2,
+        opacity: 0,
+        scale: 0.94,
+        castShadow: false,
+        state: 'despawned',
+        lane: 'east',
+      },
+    };
+
     const draw = (stamp: number) => {
       if (disposed) return;
       frame = requestAnimationFrame(draw);
       if (document.hidden || stamp - previous < 32) return;
-      elapsed += Math.min((stamp - previous) / 1000, 0.06);
+      const dt = Math.min((stamp - previous) / 1000, 0.06);
+      elapsed += dt;
       previous = stamp;
       controls.update();
 
@@ -276,23 +349,12 @@ export function WorldScene({
       sun.intensity = night ? 0.9 : state.weather === 'cerah' ? 3.8 : 1.8;
       sun.color.set(dusk ? '#ffd4b2' : night ? '#a3bffa' : '#fff8ec');
 
-      // Animate ambient moving truck along road
-      if (exteriorResult?.movingTruck && location === 'luar') {
-        if (!reduced.matches) {
-          const tx = ((elapsed * 2.6 + 32) % 68) - 34;
-          exteriorResult.movingTruck.position.x = tx;
-          exteriorResult.movingTruck.position.z = 10.8;
-          exteriorResult.movingTruck.rotation.y = 0;
-        } else {
-          exteriorResult.movingTruck.position.set(13.5, 0, 10.8);
-        }
-      }
-
       // Animate 2-phase Traffic Light
+      let isMainGreen = true;
       if (exteriorResult?.trafficLights && location === 'luar') {
         const cycle = 31; // 14s green, 3s yellow, 14s red
         const tPhase = elapsed % cycle;
-        const isMainGreen = tPhase < 14;
+        isMainGreen = tPhase < 14;
         const isMainYellow = tPhase >= 14 && tPhase < 17;
         const isMainRed = tPhase >= 17;
 
@@ -304,6 +366,65 @@ export function WorldScene({
           redMat.emissiveIntensity = isMainRed ? 0.95 : 0.05;
           yellowMat.emissiveIntensity = isMainYellow ? 0.95 : 0.05;
           greenMat.emissiveIntensity = isMainGreen ? 0.95 : 0.05;
+        }
+      }
+
+      // Animate Traffic Fleet (Motor, Mobil, Van, Truk) with Shuffle-Bag Spawner & Fade
+      if (exteriorResult?.trafficPool && location === 'luar') {
+        if (!reduced.matches) {
+          // Calm budget: max active vehicles (desktop 3, mobile 2)
+          const maxActive = window.innerWidth <= 768 ? 2 : 3;
+          const activeCount = Object.values(trafficVehicles).filter((v) => v.state !== 'despawned').length;
+
+          // Spawner: spawn vehicle if budget allows and timer reached
+          if (elapsed >= nextVehicleSpawn && activeCount < maxActive) {
+            const nextType = trafficBag.draw();
+            const candidate = trafficVehicles[nextType];
+            if (candidate && candidate.state === 'despawned') {
+              const dir: 1 | -1 = trafficBag.nextRandom() > 0.45 ? 1 : -1;
+              candidate.direction = dir;
+              candidate.x = dir === 1 ? -31 : 31;
+              candidate.z = dir === 1 ? 10.8 : 13.2;
+              candidate.speed = candidate.targetSpeed;
+              candidate.state = 'driving';
+              candidate.opacity = 0;
+              candidate.scale = 0.94;
+              candidate.castShadow = false;
+              nextVehicleSpawn = elapsed + 5 + trafficBag.nextRandom() * 7; // jeda acak 5-12 dtk
+            }
+          }
+
+          // Step simulation
+          stepTrafficSimulation(Object.values(trafficVehicles), dt, isMainGreen);
+
+          // Update Three.js meshes
+          for (const key of ['motor', 'mobil', 'van', 'truk'] as VehicleType[]) {
+            const v = trafficVehicles[key];
+            const meshGroup = exteriorResult.trafficPool[key];
+            if (!meshGroup) continue;
+
+            if (v.state === 'despawned' || v.opacity <= 0.01) {
+              meshGroup.visible = false;
+            } else {
+              meshGroup.visible = true;
+              meshGroup.position.x = v.x;
+              meshGroup.position.z = v.z;
+              meshGroup.rotation.y = v.direction === 1 ? 0 : Math.PI;
+              meshGroup.scale.setScalar(v.scale);
+
+              meshGroup.traverse((child) => {
+                if (child instanceof THREE.Mesh && child.material) {
+                  child.material.opacity = v.opacity;
+                  child.castShadow = v.castShadow;
+                }
+              });
+            }
+          }
+        } else {
+          for (const key of ['motor', 'mobil', 'van', 'truk'] as VehicleType[]) {
+            const meshGroup = exteriorResult.trafficPool[key];
+            if (meshGroup) meshGroup.visible = false;
+          }
         }
       }
 

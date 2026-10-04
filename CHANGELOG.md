@@ -1,5 +1,15 @@
 # Changelog
 
+## Paket 3 Dunia Koperasi: Armada Kendaraan, Lalu Lintas & Fade Mulus — 5 Oktober 2026
+
+- Bangun model Sepeda Motor Dinas (`createMotorcycle`) berbalut warna pastel, lampu bulat, setang baja, dan figur pengendara berhelm bulat sesuai gaya karakter proyek.
+- Kembangkan modul simulasi lalu lintas murni `world-traffic.ts`: sistem spawner shuffle-bag berbobot (motor 40%, mobil 25%, van 15%, truk 20%) tanpa ada 3 kemunculan berurutan jenis yang sama, dengan jeda acak 5-12 detik dan pembagian lajur timur & barat.
+- Terapkan mekanisme fade in/out mulus di batas platform (modulasi opasitas dan skala 0.94 -> 1.0) dengan aturan bayangan selektif (`castShadow` hanya aktif saat opasitas >= 0.85) untuk melenyapkan artefak pop bayangan.
+- Terapkan perilaku kepatuhan simpang lampu merah: kendaraan melambat dan berhenti rapi di belakang garis henti zebra cross saat lampu merah/kuning, mengantre dengan jarak aman, dan melaju saat fase hijau.
+- Tempatkan Truk Ekspedisi Mitra (`kendaraan-truk-mitra`) di dermaga gudang logistik dengan livery khusus dan informasi mitra terhubung data `stakeholders`.
+- Rapikan tata letak baris "Armada & Kendaraan" pada panel detail sisi kanan: judul armada dan subjudul jenis tersusun secara vertikal dengan hierarki tipografi dan jarak yang rapi tanpa menempel.
+- 273 tes lulus 100%, typecheck 0 error, lint 0 error, build Next.js Turbopack sukses; QA browser merekam pergerakan lalu lintas dinamis di viewport 1440, 1024, dan 360 px.
+
 ## Paket 2 Dunia Koperasi: Interior 22×15 Lapang 6 Zona dan Bentuk Berbobot — 5 Oktober 2026
 
 - Perlebar denah interior kantor dari 15×12 menjadi 22×15 unit dengan 6 zona lapang: Zona A (Rapat 6×6 dengan meja kayu madu 5.2×2.2, 6 kursi eksekutif berjarak lega, laptop, cangkir kopi, dan partisi kaca tempered berbingkai), Zona B (Workstation 5×6 dengan 4 meja komputer PC All-in-One berlayar pendar), Zona C (Arsip & Buku 6×6 dengan 3 lemari bertingkat, buku pastel, tanaman keramik), Zona D (Gym 6×6 dengan matras slate gelap 5.6×4.8, dual treadmill LED hijau dengan animasi latihan berolahraga, dumbbell rack, dispenser air), Zona E (Pojok Santai 6×6 dengan sofa empuk, meja kopi, dan tanaman sudut), Zona F (Lobi & Pintu Masuk, bangku tunggu, tanaman penyambut).

@@ -371,6 +371,75 @@ export function createCar(
   return g;
 }
 
+export function createMotorcycle(
+  parent: THREE.Object3D,
+  position: [number, number, number],
+  color = '#79c8a0',
+  rotation = 0,
+  selection = 'kendaraan-motor',
+  riderJacket = '#334155',
+  helmetColor = '#ef4444',
+) {
+  const g = new THREE.Group();
+  g.position.set(...position);
+  g.rotation.y = rotation;
+  g.userData.selection = selection;
+  parent.add(g);
+
+  // 2 Wheels (Front & Rear)
+  for (const wx of [-0.68, 0.72]) {
+    const wheel = cylinder(g, 0.26, 0.12, [wx, 0.26, 0], '#1e2430');
+    wheel.rotation.x = Math.PI / 2;
+    cylinder(wheel, 0.12, 0.13, [0, 0, 0], '#cbd5e1');
+  }
+
+  // Chassis / footboard
+  box(g, [1.3, 0.14, 0.44], [0.02, 0.22, 0], '#334155', 0.03);
+
+  // Front shield & fork
+  box(g, [0.32, 0.48, 0.42], [0.55, 0.52, 0], color, 0.06);
+
+  // Round Headlight
+  const light = cylinder(g, 0.1, 0.08, [0.72, 0.62, 0], '#fffbeb');
+  light.rotation.z = Math.PI / 2;
+
+  // Handlebars
+  const bar = cylinder(g, 0.03, 0.6, [0.46, 0.8, 0], '#475569');
+  bar.rotation.x = Math.PI / 2;
+
+  // Seat / saddle
+  box(g, [0.7, 0.14, 0.36], [-0.15, 0.48, 0], '#1e2430', 0.04);
+
+  // Rear body & fender
+  box(g, [0.6, 0.32, 0.38], [-0.38, 0.42, 0], color, 0.05);
+  box(g, [0.06, 0.1, 0.2], [-0.7, 0.44, 0], '#ef4444', 0.02);
+
+  // Rider - Project Character Style with Round Helmet
+  box(g, [0.36, 0.5, 0.34], [-0.12, 0.84, 0], riderJacket, 0.06);
+
+  // Legs in riding stance
+  for (const lz of [-0.18, 0.18]) {
+    box(g, [0.18, 0.36, 0.14], [0.04, 0.42, lz], '#24324a', 0.04);
+  }
+
+  // Arms reaching handlebars
+  for (const az of [-0.18, 0.18]) {
+    const arm = cylinder(g, 0.055, 0.38, [0.18, 0.72, az], riderJacket);
+    arm.rotation.z = -Math.PI * 0.25;
+  }
+
+  // Head with Round Helmet (Kamus Bentuk: Kepala bulat berhelm)
+  const headMesh = new THREE.Mesh(new THREE.SphereGeometry(0.22, 14, 12), material(helmetColor));
+  headMesh.position.set(-0.12, 1.3, 0);
+  headMesh.castShadow = true;
+  g.add(headMesh);
+
+  // Dark Visor
+  box(g, [0.1, 0.1, 0.24], [0.04, 1.3, 0], '#1e293b', 0.03);
+
+  return g;
+}
+
 export function createVan(
   parent: THREE.Object3D,
   position: [number, number, number],
@@ -553,9 +622,37 @@ export function createExterior(parent: THREE.Group, model: WorldModel) {
   createWarehouse(parent, 18, 3.8);
   // Van Distribusi di slot parkir dermaga
   createVan(parent, [15.2, 0, 7.0], '#fafcff', 0, 'kendaraan-van');
+  // Truk Ekspedisi Mitra di dermaga bongkar muat gudang
+  const mitraTruck = createTruck(parent, [20.8, 0, 6.8], '#0f766e', Math.PI, 'kendaraan-truk-mitra');
 
-  // Truk Muatan Bergerak di Jalan Raya
-  const movingTruck = createTruck(parent, [-24, 0, 10.8], palette.navy, 0, 'kendaraan-truk');
+  // Pool Armada Lalu Lintas Bergerak di Jalan Raya
+  const trafficMotor = createMotorcycle(parent, [-40, 0, 10.8], '#79c8a0', 0, 'kendaraan-motor', '#334155', '#ef4444');
+  const trafficCar = createCar(parent, [-40, 0, 10.8], palette.blue, 0, 'kendaraan-manajer');
+  const trafficVan = createVan(parent, [-40, 0, 10.8], '#fafcff', 0, 'kendaraan-van');
+  const trafficTruck = createTruck(parent, [-40, 0, 10.8], palette.navy, 0, 'kendaraan-truk');
+
+  // Clone material untuk transparansi fade halus tanpa mempengaruhi objek lain
+  const makeFadeable = (g: THREE.Group) => {
+    g.traverse((c) => {
+      if (c instanceof THREE.Mesh && c.material) {
+        c.material = (c.material as THREE.Material).clone();
+        c.material.transparent = true;
+      }
+    });
+    g.visible = false;
+  };
+  makeFadeable(trafficMotor);
+  makeFadeable(trafficCar);
+  makeFadeable(trafficVan);
+  makeFadeable(trafficTruck);
+
+  const trafficPool = {
+    motor: trafficMotor,
+    mobil: trafficCar,
+    van: trafficVan,
+    truk: trafficTruck,
+  };
+  const movingTruck = trafficTruck;
 
   // Plaza Air Mancur di X = 4, Z = 0
   fountain(parent, 4, 0);
@@ -610,7 +707,7 @@ export function createExterior(parent: THREE.Group, model: WorldModel) {
   tree(parent, -0.8, 2.6, 0.85);
   tree(parent, 8.8, 2.6, 0.85);
 
-  return { movingTruck, trafficLights, seatAnchors };
+  return { movingTruck, trafficPool, mitraTruck, trafficLights, seatAnchors };
 }
 
 function chair(parent: THREE.Object3D, x: number, z: number, rotation = 0) {

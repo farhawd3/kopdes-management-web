@@ -28,18 +28,24 @@ Versi sekarang belum diterima: kawasan kecil/sepi, mobil belum ada, tampilan aga
   - Koridor sirkulasi utama dan persimpangan selebar 2.5–3.0 unit dengan rasio jejak perabot ≤ 30% luas lantai, melenyapkan kesan sesak dan perabot menempel dinding/partisi.
   - Kamera interior ortografis diperluas (span 11.5–16 unit) membingkai ruang 22×15 secara utuh dan proporsional.
   - Pembedaan lingkup stasiun (`scope: 'kantor' | 'luar'`) sehingga stasiun interior dan landmark luar terpisah rapi.
+- **Paket 3 Selesai:**
+  - Pembuatan objek sepeda motor / skuter (`createMotorcycle`) bodi pastel, lampu bulat, setang baja, dan pengendara berhelm bulat khas gaya karakter proyek.
+  - Modul simulasi lalu lintas murni `world-traffic.ts`: spawner shuffle-bag berbobot (motor 40%, mobil 25%, van 15%, truk 20%) tanpa 3 kemunculan berurutan sama, jeda acak 5–12 dtk, dan dua jalur lalu lintas timur & barat.
+  - Transisi fade masuk/keluar mulus di batas tepi platform (skala 0.94 -> 1.0 dan modulasi opasitas) dengan aktivasi bayangan `castShadow` hanya saat opasitas >= 0.85 untuk mencegah pop visual.
+  - Kepatuhan lampu lalu lintas: kendaraan secara cerdas memperlambat dan berhenti di garis henti simpang saat lampu merah/kuning, mengantre berjarak aman, dan melaju saat hijau.
+  - Integrasi truk ekspedisi mitra suplier (`kendaraan-truk-mitra`) di dermaga gudang logistik dengan livery khusus dan informasi mitra dari data `stakeholders`.
+  - Perbaikan layout baris daftar "Armada & Kendaraan" di panel detail: nama armada dan subjudul jenis tersusun vertikal rapi dengan spasi jelas tanpa menempel.
 - Exterior luas (58 × 38 unit): kantor koperasi, jalan dua arah, plaza air mancur dan 4 bangku taman ber-anchor, area parkir mobil manajer, gudang logistik, dan tujuh lahan gerai yang terhubung catatan `units`.
 - Default waktu adalah Siang terang; kontrol cepat **Waktu** dan **Cuaca** aktif.
-- Kendaraan suasana: Mobil Manajer di parkir, Van Distribusi di dermaga gudang, dan Truk Muatan Logistik bergerak di jalan raya.
 - Style dunia terisolasi di `world.css` dan palet Three.js di `world-objects.ts`.
 
 ## Pemeriksaan paket terbaru
 
-- `npm test -- --maxWorkers=2`: **270 tes / 44 berkas lulus 100%**.
+- `npm test -- --maxWorkers=2`: **273 tes / 44 berkas lulus 100%**.
 - `npm run typecheck`: **lulus** (0 error TypeScript).
 - `npm run lint`: **lulus** (0 error ESLint).
 - `npm run build`: **lulus** (Turbopack production build sukses).
-- QA browser Paket 2: verifikasi 4 viewport (1440, 1024, 768, 360 px) membuktikan 6 zona interior ter-render lapang, sirkulasi koridor 2.5–3.0 unit terjaga, perabot solid dan berjarak lega, animasi latihan gym aktif. Bukti screenshot: `kantor_interior_1440px_1791146612300.png`, `kantor_interior_1024px_1791146625534.png`, `kantor_interior_768px_1791146643220.png`, `kantor_interior_360px_1791146664641.png`.
+- QA browser Paket 3: verifikasi visual browser multiplatform membuktikan armada lalu lintas (motor berhelm, sedan, van, truk) melaju dan patuh lampu simpang dengan fade mulus, truk mitra bersandar di dermaga gudang, serta daftar Armada & Kendaraan berformat rapi di 1440, 1024, dan 360 px. Bukti screenshot: `exterior_1440px_1791147370408.png`, `armada_list_1440px_1791147409037.png`, `kawasan_1024px_1791147430454.png`, `kawasan_360px_1791147442721.png`.
 
 ## Halaman operasional yang tersedia
 

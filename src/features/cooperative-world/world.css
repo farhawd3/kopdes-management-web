@@ -632,6 +632,34 @@
   flex-direction: column;
   gap: 4px;
 }
+.cw-vehicle-nav-group button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 12px;
+  text-align: left;
+}
+.cw-vehicle-nav-group button .cw-item-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+.cw-vehicle-nav-group button .cw-item-text strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cw-ink);
+  line-height: 1.25;
+}
+.cw-vehicle-nav-group button .cw-item-text small {
+  display: block;
+  font-size: 11px;
+  color: var(--cw-muted);
+  line-height: 1.25;
+}
 .cw-section-title {
   display: block;
   font-size: 9px;

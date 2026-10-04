@@ -431,6 +431,20 @@ export function CooperativeWorld({
                     <span className="cw-badge-pill">{vehicle.kind}</span>
                     <span className="cw-badge-pill cw-badge-ambient">Suasana kawasan</span>
                   </div>
+                  {vehicle.id === 'kendaraan-truk-mitra' && (
+                    <div className="cw-partner-info-box" style={{ background: '#f8fafc', padding: '12px', borderRadius: '8px', border: '1px solid var(--cw-line)', marginTop: '10px' }}>
+                      <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--cw-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Mitra Ekspedisi</span>
+                      <strong style={{ display: 'block', fontSize: '14px', color: 'var(--cw-ink)', marginTop: '2px' }}>
+                        {String(model.stakeholders?.find((s) => String(s.data.category || '').toLowerCase().includes('suplier') || String(s.data.category || '').toLowerCase().includes('distributor'))?.data.title || 'PT Distribusi Puntukrejo Sejahtera (Simulasi)')}
+                      </strong>
+                      <span style={{ display: 'block', fontSize: '12px', color: 'var(--cw-muted)', marginTop: '2px' }}>
+                        Dermaga 3 · Status: Bongkar muat pasokan (peragaan visual)
+                      </span>
+                      <small style={{ display: 'block', fontSize: '11px', color: '#64748b', marginTop: '6px' }}>
+                        Muatan: Belum ada data muatan langsung
+                      </small>
+                    </div>
+                  )}
                   <p className="cw-panel-note">
                     Kendaraan adalah visualisasi suasana kawasan, bukan data transaksi atau pengiriman nyata.
                   </p>
@@ -697,7 +711,7 @@ export function CooperativeWorld({
                           <span className="cw-list-icon">
                             <Truck size={17} />
                           </span>
-                          <span>
+                          <span className="cw-item-text">
                             <strong>{v.name}</strong>
                             <small>{v.kind} · simulasi</small>
                           </span>

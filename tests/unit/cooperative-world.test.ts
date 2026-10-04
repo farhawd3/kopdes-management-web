@@ -58,13 +58,15 @@ describe('pemetaan dunia koperasi', () => {
     expect(worldPreferencesSchema.safeParse({ weather: 'salju' }).success).toBe(false);
     expect(worldPreferencesSchema.parse({}).time).toBe('siang');
   });
-  it('menyediakan tiga kendaraan suasana modular dengan identitas simulasi', async () => {
+  it('menyediakan armada kendaraan modular termasuk motor dan truk mitra', async () => {
     const { worldVehicles, landPositions } = await import('@/features/cooperative-world/world-model');
-    expect(worldVehicles).toHaveLength(3);
+    expect(worldVehicles).toHaveLength(5);
     expect(worldVehicles.map((v) => v.id)).toEqual([
       'kendaraan-manajer',
+      'kendaraan-motor',
       'kendaraan-van',
       'kendaraan-truk',
+      'kendaraan-truk-mitra',
     ]);
     expect(landPositions).toHaveLength(7);
     // Verifikasi koordinat map luas mencakup area di luar pusat
@@ -76,5 +78,69 @@ describe('pemetaan dunia koperasi', () => {
     const luarStations = worldStations.filter((s) => s.scope === 'luar');
     expect(kantorStations.map((s) => s.id)).toEqual(['rapat', 'tugas', 'kegiatan', 'dokumen']);
     expect(luarStations.map((s) => s.id)).toEqual(['gudang']);
+  });
+  it('simulasi lalu lintas: shuffle-bag tidak memunculkan 3 jenis berurutan sama', async () => {
+    const { createTrafficShuffleBag } = await import('@/features/cooperative-world/world-traffic');
+    const bag = createTrafficShuffleBag(42);
+    const drawn = Array.from({ length: 50 }, () => bag.draw());
+
+    for (let i = 2; i < drawn.length; i++) {
+      const threeInRow = drawn[i] === drawn[i - 1] && drawn[i] === drawn[i - 2];
+      expect(threeInRow).toBe(false);
+    }
+  });
+  it('simulasi fade: opasitas mulus dan castShadow aktif hanya saat opasitas >= 0.85', async () => {
+    const { calculateFade } = await import('@/features/cooperative-world/world-traffic');
+    // Di luar batas platform
+    const outside = calculateFade(-35, 1);
+    expect(outside.opacity).toBe(0);
+    expect(outside.castShadow).toBe(false);
+
+    // Di tengah jalan
+    const center = calculateFade(0, 1);
+    expect(center.opacity).toBe(1);
+    expect(center.scale).toBe(1);
+    expect(center.castShadow).toBe(true);
+
+    // Di zona transisi masuk (-28)
+    const entering = calculateFade(-28, 1);
+    expect(entering.opacity).toBeGreaterThan(0);
+    expect(entering.opacity).toBeLessThan(1);
+  });
+  it('kepatuhan lampu lalu lintas: kendaraan berhenti di stop line saat merah', async () => {
+    const { stepTrafficSimulation } = await import('@/features/cooperative-world/world-traffic');
+    const vehicle = {
+      id: 'test-car',
+      type: 'mobil' as const,
+      color: '#3866f6',
+      direction: 1 as const,
+      x: -6.0,
+      z: 10.8,
+      speed: 3.0,
+      targetSpeed: 3.0,
+      opacity: 1,
+      scale: 1,
+      castShadow: true,
+      state: 'driving' as const,
+      lane: 'east' as const,
+    };
+
+    // Saat lampu merah
+    stepTrafficSimulation([vehicle], 0.5, false, -4.5, 4.5);
+    expect(vehicle.x).toBeLessThanOrEqual(-4.5);
+
+    // Step berkali-kali sampai diam di garis henti
+    for (let i = 0; i < 20; i++) {
+      stepTrafficSimulation([vehicle], 0.1, false, -4.5, 4.5);
+    }
+    expect(vehicle.state).toBe('waiting');
+    expect(vehicle.speed).toBe(0);
+    expect(vehicle.x).toBeLessThanOrEqual(-4.5);
+    expect(vehicle.x).toBeGreaterThan(-4.7);
+
+    // Saat lampu hijau
+    stepTrafficSimulation([vehicle], 0.5, true, -4.5, 4.5);
+    expect(vehicle.state).toBe('driving');
+    expect(vehicle.speed).toBeGreaterThan(0);
   });
 });
