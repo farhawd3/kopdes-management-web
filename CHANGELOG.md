@@ -1,5 +1,13 @@
 # Changelog
 
+## Sederhanakan aturan AI dan lingkup panduan — 5 Oktober 2026
+
+- Ringkas KEPUTUSAN, skill clean-code dan indeks dokumen; satu jalur acuan AGENTS → DUNIA-KOPERASI → STATUS.
+- Tandai laporan/audit QA lama sebagai sejarah operasional; cabut penerapan aturan Astra lama pada dunia dan perjelas lingkup tema di PRD.
+- Dokumentasikan koneksi workspace/domain/editor/refresh dunia tanpa database paralel. Dokumen penting bentuk web, data dan keamanan tetap dipertahankan.
+- Dokumentasi saja; periksa diff/tautan, tidak mengulang tes aplikasi.
+
+
 ## Kontrak style tunggal dan rencana revisi dunia — 5 Oktober 2026
 
 - Jadikan DUNIA-KOPERASI satu acuan style/rencana, hapus salinan spesifikasi dunia dari DESAIN-ANTARMUKA, dan arahkan AGENTS/indeks/serah terima ke acuan yang sama.

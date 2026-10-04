@@ -1,5 +1,8 @@
 # Audit UI — kode aktual
 
+> Catatan historis halaman operasional; bukan aturan aktif Dunia Koperasi. Kontrak dunia: [DUNIA-KOPERASI](docs/DUNIA-KOPERASI.md). Temuan/angka lama harus diverifikasi ulang sebelum dikerjakan.
+
+
 Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at-rule yang sama; bukan bukti aman untuk menghapus CSS. Angka mencakup seluruh src, termasuk pustaka UI.
 
 ## Metrik

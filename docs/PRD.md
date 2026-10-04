@@ -38,7 +38,7 @@ Beranda dan Hari Ini merangkum pekerjaan aktual. Kesiapan/gerai, pemangku/intera
 ## Desain dan akses
 
 - Halaman operasional memakai sidebar berkelompok, rel tablet dan navigasi bawah ponsel. Dunia Koperasi memakai layar penuh/dock sendiri dengan panel detail kanan atau bawah. Area sentuh minimal 44 px.
-- Latar lembut, teks arang dan aksen hijau lembut/lavender, kartu berlapis dan bayangan ringan, teks utama jelas, status berlabel.
+- Halaman operasional: latar lembut, teks arang, aksen hijau lembut/lavender dan kartu berlapis. Style dunia hanya mengikuti DUNIA-KOPERASI; jangan menerapkan palet operasional ke scene.
 - Tema terang/gelap dan kepadatan. Tabel/Gantt menggulir dalam kontainer.
 - Dialog fokus, label input, error yang jelas, reduced-motion, data kosong tanpa angka buatan.
 
@@ -54,4 +54,4 @@ Belum ada editor blok drag-and-drop, multiuser/kolaborasi real-time, PWA/offline
 
 Arahan 1 Oktober menambahkan area Pencatatan terpisah: anggota, buku kas, barang dan stok opname. Tambah/ubah catatan, pencarian, filter, ringkasan, serta ekspor CSV tersedia. Stok opname memotret stok pembanding, tidak mengubah stok buku otomatis. Buku kas bukan akuntansi lengkap. Aktivasi cloud memerlukan migrasi kedua dan persetujuan pemilik; lihat [PENCATATAN](PENCATATAN.md) dan bukti cloud di [STATUS](STATUS.md).
 
-Desain studio menggantikan tema rose/lavender sebagai tampilan aktif: sidebar arang, permukaan netral, aksen hijau. Pencarian halaman Ctrl/⌘ K, navigasi kelompok, akses Catat di ponsel, pemilih tanggal, serta checklist subtugas mempercepat penggunaan. Rapat mendukung jenis online/hybrid, tautan bergabung, durasi, lokasi dan ekspor ICS.
+Pada halaman operasional, desain studio menjadi tampilan aktif: sidebar arang, permukaan netral, aksen hijau. Pencarian halaman Ctrl/⌘ K, navigasi kelompok, akses Catat di ponsel, pemilih tanggal, serta checklist subtugas mempercepat penggunaan. Rapat mendukung jenis online/hybrid, tautan bergabung, durasi, lokasi dan ekspor ICS.

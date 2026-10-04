@@ -99,6 +99,14 @@ Integrasi melalui WorkspacePage/useWorkspace, workspace-scope, catalog dan AppSh
 
 Backend tetap API domain dengan sesi, Zod, Origin dan RLS. Dunia membaca data serta membuka editor asli; tidak menulis diam-diam. Tidak ada tabel baru, supplier domain, migrasi 8 atau reset dalam paket ini. Jangan mengambil paket commit 4a0c01d secara massal: implementasi terdahulu itu dibatalkan oleh 751c4c2.
 
+## Koneksi dunia dengan web
+
+Fokus visual dan koneksi dikembangkan pada aplikasi ini, bukan proyek demo terpisah. Workspace/API yang sudah ada tetap satu sumber catatan. Gerai muncul dari units; tugas dari work-items; rapat dari meetings; kegiatan dari journal; identitas dari organization/profil. Catatan proyek/workstreams mempertahankan relasi yang sudah ada.
+
+Klik objek membuka detail atau editor modul asli melalui recordHref. Setelah penyimpanan berhasil, invalidasi/refresh workspace memperbarui dunia; jangan menambah salinan database gerai/tugas. Periksa koneksi tambah/ubah gerai, perubahan status tugas, jadwal rapat dan kegiatan menggunakan data uji yang terkendali. Mode dev kosong hanya bukti render, bukan bukti sinkronisasi data nyata.
+
+Paket berikut dimulai dari terang/kontrol waktu/perluasan map sesuai rencana di bawah; integrasi adapter dipertahankan sepanjang paket. SQL cloud/pengiriman nyata hanya bila kebutuhan data tidak dapat ditangani domain yang ada, dengan proses MIGRASI-SQL. Jangan mengarang domain pengiriman untuk kendaraan suasana.
+
 ## Cara AI berikutnya meningkatkan lingkungan
 
 1. Periksa Git, dokumen ini, screenshot terbaru dan kode; pertahankan perubahan pemilik.

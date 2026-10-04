@@ -1,13 +1,12 @@
 # Panduan AI — Kopdes Management Web
 
-## Urutan membaca
-0. Jika melanjutkan perbaikan UI/status terbaru, baca `docs/LANJUTAN-AI.md` sebagai serah terima; verifikasi ulang keadaan Git karena dapat berubah.
-   Untuk pekerjaan visual, baca juga `docs/DESAIN-ANTARMUKA.md` sebelum mengubah CSS atau layout.
-   Untuk Dunia Koperasi, `docs/DUNIA-KOPERASI.md` adalah satu acuan gaya dan rencana. Jangan membuat salinan kontrak di MD baru; STATUS mencatat bukti, bukan menentukan gaya. Arahan pemilik terbaru mengatasi konflik historis.
-   Untuk alur kegiatan/tugas dan SQL, baca `docs/KEGIATAN-DAN-TUGAS.md` serta `docs/MIGRASI-SQL.md`.
-1. `docs/STATUS.md`: keadaan nyata dan pekerjaan berikutnya.
-2. `docs/KEPUTUSAN.md` dan `docs/PRD.md`: keputusan pemilik dan kebutuhan.
-3. `docs/CHECKLIST.md` dan kode terkait: kriteria pekerjaan.
+## Acuan aktif dan urutan membaca
+1. Periksa Git dan `docs/LANJUTAN-AI.md` untuk melanjutkan sesi.
+2. Fokus saat ini **pembuatan Dunia Koperasi dan koneksinya dengan web**. Baca `docs/DUNIA-KOPERASI.md` (satu kontrak gaya/rencana), lalu `docs/STATUS.md` (keadaan dan bukti).
+3. Baca dokumen lain hanya sesuai pekerjaan: `docs/DESAIN-ANTARMUKA.md` untuk halaman operasional; `docs/KEGIATAN-DAN-TUGAS.md` untuk pemetaan kegiatan; `docs/ARSITEKTUR.md` untuk koneksi data; `docs/MIGRASI-SQL.md` sebelum perubahan SQL.
+4. PRD/KEPUTUSAN menyimpan batas produk, CHECKLIST menyimpan penerimaan. Tidak perlu membaca seluruh MD untuk setiap perubahan.
+
+Arahan langsung pemilik terbaru mengatasi konflik. Jangan membuat kontrak style dunia lain. PLAN-ASTRA-Kopdes, LAPORAN-ASTRA, AUDIT dan QA-* adalah rencana/bukti historis operasional, bukan aturan aktif untuk dunia. Batas dependensi/perubahan kode pada rencana Astra lama tidak mengatur pekerjaan dunia. Jangan menghapus catatan pengguna atau fitur operasional untuk merapikan dokumen.
 
 ## Produk
 - Ruang kerja pribadi manajer KDMP Puntukrejo: proyek fleksibel tanpa durasi wajib, tugas, milestone, kesiapan gerai, koordinasi, dokumen, risiko, laporan kerja.
@@ -35,7 +34,7 @@
 - PIN minimal 6 digit, hash yang sesuai, batas percobaan persisten, sesi kedaluwarsa, cookie HttpOnly/Secure/SameSite, pemeriksaan asal mutasi.
 
 ## Multiplatform
-- Periksa 360, 768, 1024, 1440 px; navigasi bawah ponsel, rel tablet, sidebar desktop.
+- Periksa 360, 768, 1024, 1440 px. Halaman operasional memakai navigasi bawah/rel/sidebar; Dunia Koperasi memakai dock dan panel sendiri.
 - Area sentuh minimal 44 px, fokus keyboard, label form, status memakai teks selain warna.
 - Tabel/Gantt bergulir dalam kontainer; hormati reduced-motion dan safe area.
 - Halaman operasional memakai arang, hijau lembut, lavender, kartu membulat, navigasi HP dan sidebar/rel tablet/desktop; tema gelap tersedia. Style operasional: globals.css/personal.css/tokens.css/ui.css.
@@ -44,7 +43,7 @@
 ## Proses
 1. Periksa Git dan pertahankan perubahan pengguna.
 2. Implementasikan paket kerja konkret dan dapat diverifikasi.
-3. Jalankan `npm test`, `npm run typecheck`, `npm run build`; lint setelah tersedia.
+3. Untuk perubahan kode jalankan `npm test`, `npm run typecheck`, `npm run lint`, `npm run build`. Untuk dokumentasi saja, periksa diff dan tautan tanpa mengklaim tes aplikasi baru.
    Gunakan `npm test -- --maxWorkers=2` bila worker bawaan membebani mesin; cakupan tetap seluruh suite.
 4. Periksa singkat UI yang berubah pada ukuran relevan.
 5. Perbarui STATUS, checklist yang benar-benar selesai, dan CHANGELOG.

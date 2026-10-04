@@ -1,5 +1,8 @@
 # Pemeriksaan 15 anotasi — 4 Oktober 2026
 
+> Catatan historis halaman operasional; bukan aturan aktif Dunia Koperasi. Kontrak dunia: [DUNIA-KOPERASI](DUNIA-KOPERASI.md). Temuan/angka lama harus diverifikasi ulang sebelum dikerjakan.
+
+
 ## Empat anotasi lanjutan
 
 | No. | Perbaikan |

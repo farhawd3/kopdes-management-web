@@ -1,5 +1,8 @@
 # Pemeriksaan tata letak — 4 Oktober 2026
 
+> Catatan historis halaman operasional; bukan aturan aktif Dunia Koperasi. Kontrak dunia: [DUNIA-KOPERASI](DUNIA-KOPERASI.md). Temuan/angka lama harus diverifikasi ulang sebelum dikerjakan.
+
+
 Paket memperbaiki overflow formulir rapat, pencatatan, kartu Gerai/Rapat, panduan dan pengaturan tema. Perubahan pencatatan dan tema yang sudah ada di checkout dipertahankan dan disempurnakan. Perubahan pemilik di komponen tanggal, dashboard, modal tugas, linimasa dan konteks tema tetap terpisah.
 
 ## Hasil

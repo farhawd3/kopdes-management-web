@@ -1,5 +1,8 @@
 # Pemeriksaan popup — 4 Oktober 2026
 
+> Catatan historis halaman operasional; bukan aturan aktif Dunia Koperasi. Kontrak dunia: [DUNIA-KOPERASI](DUNIA-KOPERASI.md). Temuan/angka lama harus diverifikasi ulang sebelum dikerjakan.
+
+
 ## Koreksi berdasarkan lima screenshot pemilik
 
 - Pencarian: input di dalam bingkai pencarian tidak lagi mendapat border/focus ring kedua. Pengukuran fokus memastikan input border 0 dan shadow none; fokus tetap terlihat pada pembungkus.
