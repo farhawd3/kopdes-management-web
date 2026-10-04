@@ -11,6 +11,7 @@ type WorkspaceCacheEntry = {
   data: Workspace;
   more: Partial<Record<Entity, number>>;
   operations: boolean;
+  supplier?: boolean;
 };
 
 const workspaceCache = new Map<string, WorkspaceCacheEntry>();
@@ -49,6 +50,7 @@ export function useWorkspace(
     [loading, setLoading] = useState(() => !initialCache),
     [error, setError] = useState('');
   const [operations, setOperations] = useState(() => initialCache?.operations || false);
+  const [supplier, setSupplier] = useState(() => initialCache?.supplier || false);
   const [more, setMore] = useState<Partial<Record<Entity, number>>>(() => initialCache?.more || {});
   const [fetching, setFetching] = useState<Entity | null>(null);
   const [renderedCacheKey, setRenderedCacheKey] = useState(cacheKey);
@@ -58,6 +60,7 @@ export function useWorkspace(
     setData(initialCache?.data || {});
     setMore(initialCache?.more || {});
     setOperations(initialCache?.operations || false);
+    setSupplier(initialCache?.supplier || false);
     setLoading(!initialCache);
     setError('');
     setFetching(null);
@@ -89,10 +92,11 @@ export function useWorkspace(
     const current = ++generation.current;
     setFetching(null);
     try {
-      const capabilities = await api<{ operations: boolean }>('capabilities');
+      const capabilities = await api<{ operations: boolean; supplier?: boolean }>('capabilities');
       const entries = await Promise.all(
         pageEntities(slug)
           .filter((entity) => capabilities.operations || !operationEntities.includes(entity))
+          .filter((entity) => entity !== 'supplier' || capabilities.supplier)
           .map(async (entity) => [entity, await api<Page>(pathFor(entity))] as const),
       );
       if (current !== generation.current) return;
@@ -118,9 +122,11 @@ export function useWorkspace(
         data: next,
         more: nextMore,
         operations: capabilities.operations,
+        supplier: capabilities.supplier,
       });
       window.dispatchEvent(new CustomEvent('hub-workspace', { detail: next }));
       setOperations(capabilities.operations);
+      setSupplier(capabilities.supplier === true);
       setError('');
     } catch (e) {
       if (current === generation.current) {
@@ -159,7 +165,7 @@ export function useWorkspace(
       else delete nextMore[entity];
       setData(next);
       setMore(nextMore);
-      cacheWorkspace(cacheKey, { data: next, more: nextMore, operations });
+      cacheWorkspace(cacheKey, { data: next, more: nextMore, operations, supplier });
       window.dispatchEvent(new CustomEvent('hub-workspace', { detail: next }));
     } catch (e) {
       if (current === generation.current) setError((e as Error).message);
@@ -188,5 +194,5 @@ export function useWorkspace(
       requestRef.current++;
     };
   }, [refresh, cacheKey]);
-  return { data, loading, error, refresh, operations, more, loadMore, fetching };
+  return { data, loading, error, refresh, operations, supplier, more, loadMore, fetching };
 }

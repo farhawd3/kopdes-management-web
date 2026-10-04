@@ -33,6 +33,11 @@ export const statuses = ['rencana', 'proses', 'selesai', 'dibatalkan'] as const;
 const status = z.enum(statuses).default('rencana');
 const poac = z.enum(['planning', 'organizing', 'actuating', 'controlling']).default('planning');
 export const schemas = {
+  supplier: z.object({
+    title, contact: text, category: text,
+    status: z.enum(['aktif', 'nonaktif']).default('aktif'),
+    item_id: ref, stakeholder_id: ref, document_id: ref, work_item_id: ref, journal_id: ref, notes: text,
+  }).strict(),
   organization: z
     .object({
       title,

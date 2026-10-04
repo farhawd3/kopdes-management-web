@@ -1,0 +1,22 @@
+:root{
+  --bg1:#EEF2FF;
+  --bg2:#DDE6FB;
+  --ground:#E7ECFA;
+  --road:#CBD5EE;
+  --white:#FFFFFF;
+  --wall:#F5F7FF;
+  --blue:#2F5BEA;
+  --blue2:#5B84F5;
+  --blueD:#1F3FB5;
+  --lav:#B9C4F2;
+  --mint:#BFE8D2;
+  --peach:#FBD9C3;
+  --butter:#FCEBB5;
+  --pink:#F8CFE0;
+  --wood:#E9C9A0;
+  --ink:#1E2A4A;
+  --green:#8FD3A8;
+  --lock:#D9DEF0;
+  --r-card:16px;--r-panel:24px;--shadow:0 8px 24px rgba(59,91,219,.16);
+  --font:Inter,"Segoe UI",sans-serif;
+}

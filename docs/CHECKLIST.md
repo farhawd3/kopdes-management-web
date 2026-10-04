@@ -1,5 +1,15 @@
 # Checklist produk aktif
 
+## Dunia Koperasi — 4 Oktober 2026
+
+- [x] Menu khusus, scene luar/kantor, tujuh slot Gerai, gudang dan meja dari catatan dimuat; mode daftar dan keyboard.
+- [x] Cuaca manual/waktu Jakarta, kualitas rendah, tema gelap dan preferensi karakter di Pengaturan.
+- [x] Suplier tervalidasi, relasi catatan dan capability; migrasi/SQL gabungan diuji lokal. Cloud belum diterapkan sesuai arahan pemilik.
+- [x] Keadaan kosong luar/kantor pada 360/768/1024/1440 tanpa luapan; tes model dan navigasi UI tersedia.
+- [x] Panduan repo publik baru dan skrip salinan riwayat bersih disiapkan; repositori lama dipertahankan.
+- [ ] UAT cloud/data terisi, PIN/cadangan nyata dan perangkat fisik; rincian di DUNIA-KOPERASI.md.
+- [ ] Penyempurnaan kamera/lintasan kendaraan/karakter, efek cuaca lanjutan dan audit performa; paket tidak diklaim identik render 3D video.
+
 - [x] Empat anotasi lanjutan: footer opsi simetris, kartu Jurnal mobile, metadata kegiatan Beranda dan grafik status responsif. QA terang lima lebar; batas di QA-ANOTASI.md.
 
 - [x] Tindak lanjuti 15 anotasi: + Kas, bantuan ringkas, catatan, kartu/tabel/aksi, tema dan profil. Cakupan/batas di QA-ANOTASI.md.

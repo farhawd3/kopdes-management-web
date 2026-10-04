@@ -1,0 +1,180 @@
+{
+  "fase_waktu": [
+    {
+      "nama": "Dini hari",
+      "jam": "00:00-04:30",
+      "langit": [
+        "#0F1535",
+        "#26306B"
+      ],
+      "tint": "#4A5A9C",
+      "tint_alpha": 0.55,
+      "lampu": 1.0,
+      "bintang": 1.0,
+      "bayangan": 0
+    },
+    {
+      "nama": "Subuh",
+      "jam": "05:00-06:20",
+      "langit": [
+        "#2A3470",
+        "#8E7FB8"
+      ],
+      "tint": "#7A7DB5",
+      "tint_alpha": 0.38,
+      "lampu": 0.85,
+      "bintang": 0.6,
+      "bayangan": 0
+    },
+    {
+      "nama": "Matahari terbit",
+      "jam": "06:20",
+      "langit": [
+        "#7FA6E8",
+        "#FFD2B0"
+      ],
+      "tint": "#FFD9BC",
+      "tint_alpha": 0.22,
+      "lampu": 0.3,
+      "bintang": 0,
+      "bayangan": "panjang, ke kiri"
+    },
+    {
+      "nama": "Pagi",
+      "jam": "09:00",
+      "langit": [
+        "#A9C8FF",
+        "#E8F0FF"
+      ],
+      "tint": "#FFF3E0",
+      "tint_alpha": 0.05,
+      "lampu": 0,
+      "bintang": 0,
+      "bayangan": "sedang"
+    },
+    {
+      "nama": "Siang",
+      "jam": "12:00",
+      "langit": [
+        "#BBD5FF",
+        "#F2F6FF"
+      ],
+      "tint": "#FFFFFF",
+      "tint_alpha": 0,
+      "lampu": 0,
+      "bintang": 0,
+      "bayangan": "pendek"
+    },
+    {
+      "nama": "Sore",
+      "jam": "15:30",
+      "langit": [
+        "#B4CDF7",
+        "#FFF0DC"
+      ],
+      "tint": "#FFF0D8",
+      "tint_alpha": 0.08,
+      "lampu": 0,
+      "bintang": 0,
+      "bayangan": "sedang, ke kanan"
+    },
+    {
+      "nama": "Sore emas",
+      "jam": "17:30",
+      "langit": [
+        "#8FA8E8",
+        "#FFC9A0"
+      ],
+      "tint": "#FFC89A",
+      "tint_alpha": 0.28,
+      "lampu": 0.25,
+      "bintang": 0,
+      "bayangan": "panjang, ke kanan"
+    },
+    {
+      "nama": "Senja",
+      "jam": "18:40",
+      "langit": [
+        "#4A4F9A",
+        "#F2A0A0"
+      ],
+      "tint": "#C58AB0",
+      "tint_alpha": 0.35,
+      "lampu": 0.7,
+      "bintang": 0.1,
+      "bayangan": 0
+    },
+    {
+      "nama": "Malam",
+      "jam": "20:10-24:00",
+      "langit": [
+        "#1B2250",
+        "#3A4590"
+      ],
+      "tint": "#5062A8",
+      "tint_alpha": 0.5,
+      "lampu": 1.0,
+      "bintang": 0.8,
+      "bayangan": 0
+    }
+  ],
+  "cuaca": {
+    "cerah": {
+      "awan": 0.15,
+      "hujan": 0,
+      "kabut": 0,
+      "abu": 0,
+      "angin": 0,
+      "petir": 0
+    },
+    "berawan": {
+      "awan": 0.85,
+      "hujan": 0,
+      "kabut": 0,
+      "abu": 0.12,
+      "angin": 0,
+      "petir": 0
+    },
+    "hujan_ringan": {
+      "awan": 0.95,
+      "hujan": 150,
+      "kabut": 0.08,
+      "abu": 0.24,
+      "angin": 2,
+      "petir": 0
+    },
+    "hujan_lebat": {
+      "awan": 1,
+      "hujan": 430,
+      "kabut": 0.15,
+      "abu": 0.38,
+      "angin": 7,
+      "petir": 0
+    },
+    "badai_petir": {
+      "awan": 1,
+      "hujan": 540,
+      "kabut": 0.12,
+      "abu": 0.5,
+      "angin": 11,
+      "petir": 1
+    },
+    "kabut": {
+      "awan": 0.4,
+      "hujan": 0,
+      "kabut": 0.7,
+      "abu": 0.14,
+      "angin": 0,
+      "petir": 0
+    }
+  },
+  "interpolasi": "smoothstep antar fase; cuaca berpindah halus (lerp ~1.6/detik)",
+  "kode_WMO_ke_cuaca": {
+    "0,1": "cerah",
+    "2,3": "berawan",
+    "45,48": "kabut",
+    "51-57,61,80": "hujan_ringan",
+    "63,65,66,67,81,82": "hujan_lebat",
+    "95,96,99": "badai_petir"
+  }
+}
