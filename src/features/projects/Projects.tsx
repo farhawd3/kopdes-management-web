@@ -76,13 +76,14 @@ export function Projects({ data, refresh, history = false, draftScope }: { data:
 
   return (
     <>
+      <nav className="project-scope-tabs" aria-label="Rentang proyek"><Link href="/proyek" aria-current={!history ? 'page' : undefined}>Proyek berjalan</Link><Link href="/proyek?tab=riwayat" aria-current={history ? 'page' : undefined}>Riwayat selesai & arsip</Link></nav>
       {selected ? (
         <>
           <div className="project-detail-header-nav">
             <Button
               type="button"
               className="btn-back-project"
-              onClick={() => router.push(history ? '/riwayat-proyek' : '/proyek')}
+              onClick={() => router.push(history ? '/proyek?tab=riwayat' : '/proyek')}
             >
               <ArrowLeft size={15} />
               <span>Semua proyek</span>
@@ -427,7 +428,6 @@ export function Projects({ data, refresh, history = false, draftScope }: { data:
               <h2>{history ? 'Riwayat proyek' : 'Proyek Anda'}</h2>
               <p>{history ? 'Proyek selesai dan arsip beserta tugas, milestone, dan catatannya.' : 'Buat proyek, susun tugas, catat hasil, lalu tinjau sebelum menyelesaikan proyek.'}</p>
             </div>
-            <Link className="ui-btn ui-btn-secondary" href={history ? '/proyek' : '/riwayat-proyek'}>{history ? 'Proyek berjalan' : 'Riwayat proyek'}</Link>
             {!history && <Button className="primary" onClick={() => setEdit(null)}>
               <Plus size={18} /> Proyek baru
             </Button>}
@@ -570,7 +570,7 @@ export function Projects({ data, refresh, history = false, draftScope }: { data:
                 return (
                   <Link
                     className={`project-card project-card-compact ${pastelTone}`}
-                    href={`/${history ? 'riwayat-proyek' : 'proyek'}?id=${row.id}`}
+                    href={`/${history ? 'proyek?tab=riwayat&' : 'proyek?'}id=${row.id}`}
                     key={row.id}
                   >
                     <div className="project-card-header">

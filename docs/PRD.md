@@ -6,7 +6,7 @@ Aplikasi pribadi manajer koperasi untuk mengelola banyak proyek, tugas, catatan,
 
 ## Ruang proyek
 
-- Galeri proyek berjalan dengan pencarian/filter rencana/aktif/ditunda; halaman Riwayat Proyek untuk selesai/arsip. Detail mempertahankan tugas seluruh status; penutupan proyek tidak menyelesaikan tugas otomatis.
+- Galeri proyek berjalan dengan pencarian/filter rencana/aktif/ditunda; tab Riwayat Proyek untuk selesai/arsip. Detail mempertahankan tugas seluruh status; penutupan proyek tidak menyelesaikan tugas otomatis.
 - Properti: nama, kode, tujuan, PIC, prioritas, tanggal mulai/target, warna, dan catatan.
 - Tugas, milestone, dan progres terhubung melalui ID proyek (`workstream_id`).
 - Catatan mendukung judul, paragraf, daftar, checklist, kutipan, dan pratinjau. Penyimpanan eksplisit; HTML tidak dieksekusi.

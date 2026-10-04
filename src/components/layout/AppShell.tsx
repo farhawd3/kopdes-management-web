@@ -53,7 +53,6 @@ const navIcons: Record<string, React.ComponentType<{ size?: number; className?: 
   '/tugas': CheckCheck,
   '/tindak-lanjut': AlertCircle,
   '/proyek': FolderKanban,
-  '/riwayat-proyek': FolderKanban,
   '/roadmap': Milestone,
   '/jurnal': BookOpen,
   '/pencatatan': Landmark,
@@ -76,7 +75,7 @@ const navIcons: Record<string, React.ComponentType<{ size?: number; className?: 
 const sections = [
   [
     'Pekerjaan & Proyek',
-    ['/beranda', '/hari-ini', '/tugas', '/proyek', '/riwayat-proyek', '/roadmap', '/tindak-lanjut'],
+    ['/beranda', '/hari-ini', '/tugas', '/proyek', '/roadmap', '/tindak-lanjut'],
     'blue',
   ],
   ['Kegiatan Lapangan', ['/jurnal'], 'amber'],
@@ -544,7 +543,6 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
             {workspace && !workspace.workstreams?.some((p) => !isProjectHistory(p)) && (
               <small className="sidebar-empty-note">Tidak ada proyek berjalan.</small>
             )}
-            <Link href="/riwayat-proyek" className="manager-project-link" onClick={() => setMenu(false)}>Riwayat proyek</Link>
           </section>
         </div>
 

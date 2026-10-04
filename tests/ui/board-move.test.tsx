@@ -20,15 +20,15 @@ it('alternatif tanpa drag menyelesaikan tugas dengan tanggal selesai domain', as
     open = vi.fn();
   render(
     <ScrumBoardView
-      tasks={[task]}
+      tasks={[{ ...task, data: { ...task.data, status: 'proses' } }]}
       workspace={{}}
       onOpenTask={open}
       onCreateTask={vi.fn()}
       onRefresh={refresh}
     />,
   );
-  fireEvent.click(screen.getByRole('button', { name: /Pindahkan Periksa rak ke/ }));
-  fireEvent.click(screen.getByRole('option', { name: 'Selesai' }));
+  expect(screen.queryByRole('listbox')).toBeNull();
+  fireEvent.click(screen.getByRole('button', { name: 'Tandai tugas selesai' }));
   await waitFor(() => expect(refresh).toHaveBeenCalledOnce());
   expect(api).toHaveBeenCalledWith('work-items', {
     id: 'task',
@@ -48,8 +48,7 @@ it('gagal memindahkan tetap menampilkan kartu dan pesan galat', async () => {
       onRefresh={refresh}
     />,
   );
-  fireEvent.click(screen.getByRole('button', { name: /Pindahkan Periksa rak ke/ }));
-  fireEvent.click(screen.getByRole('option', { name: 'Dikerjakan' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Mulai kerjakan tugas ini' }));
   await waitFor(() => expect(screen.getByRole('alert').textContent).toContain('Koneksi terputus'));
   expect(screen.getByText('Periksa rak')).toBeTruthy();
   expect(refresh).not.toHaveBeenCalled();

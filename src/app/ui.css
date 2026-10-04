@@ -343,7 +343,7 @@ dialog:has(.sprint-modal-card) {
 .entry-guide p { margin: 8px 0 0; color: var(--ink-muted); line-height: 1.6; }
 .entry-related-fields { min-width: 0; padding: 12px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--canvas); }
 .entry-related-fields summary { min-height: 44px; cursor: pointer; display: flex; align-items: center; font-weight: 600; }
-.project-card.project-card-compact { --project-accent: var(--pastel-blue-text); background: var(--surface); border-top: 3px solid var(--project-accent); box-shadow: var(--shadow-sm); gap: 16px; }
+.project-card.project-card-compact { --project-accent: var(--pastel-blue-text); background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-sm); gap: 16px; }
 .project-card.project-card-compact.pastel-purple { --project-accent: var(--pastel-purple-text); }
 .project-card.project-card-compact.pastel-amber { --project-accent: var(--pastel-amber-text); }
 .project-card.project-card-compact.pastel-emerald { --project-accent: var(--pastel-emerald-text); }
@@ -361,3 +361,16 @@ dialog:has(.sprint-modal-card) {
 .fullscreen-close-btn.ui-btn { width: 44px; min-width: 44px; min-height: 44px; padding: 0; }
 .fullscreen-close-btn.ui-btn svg { flex-shrink: 0; }
 .stock-gantt-overlay .ui-btn { min-height: 44px; }
+
+.project-scope-tabs { display: flex; gap: 6px; padding: 4px; margin-bottom: 20px; width: fit-content; max-width: 100%; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--canvas); }
+.project-scope-tabs a { min-height: 44px; display: flex; align-items: center; padding: 8px 16px; border-radius: var(--r-md); text-decoration: none; color: var(--ink-muted); font-weight: 600; }
+.project-scope-tabs a[aria-current='page'] { background: var(--surface); color: var(--ink-heading); box-shadow: var(--shadow-sm); }
+.drawer-prop-control.date-prop-editable { min-width: 0; }
+.drawer-prop-control.date-prop-editable .drawer-date-inline-input { width: 100%; min-height: 44px; height: auto; padding: 10px 12px; display: flex; justify-content: space-between; gap: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: var(--r-md); }
+.note-page .note-content { padding: 20px 0 12px; line-height: 1.7; }
+.note-page textarea.ui-input, .task-detail-drawer textarea.ui-input { padding: 16px; line-height: 1.7; }
+.note-page .note-toolbar { margin: 16px 0; }
+.project-card-compact .project-compact-bar-fill { background: var(--project-accent); }
+
+.task-detail-drawer .drawer-prop-control.date-prop-editable { padding: 0; border: 0; background: transparent; min-height: 44px; align-items: center; }
+.drawer-prop-control.date-prop-editable .ui-date-control { width: 100%; }

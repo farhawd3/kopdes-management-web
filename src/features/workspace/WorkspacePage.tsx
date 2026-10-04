@@ -122,7 +122,7 @@ export function WorkspacePage({ slug }: { slug: string }) {
       )}
       {slug === 'tindak-lanjut' && <FollowUps data={data} />}
       {slug === 'beranda' && <Dashboard data={data} />}
-      {['proyek', 'riwayat-proyek'].includes(slug) && <Projects data={data} refresh={refresh} history={slug === 'riwayat-proyek'} />}
+      {['proyek', 'riwayat-proyek'].includes(slug) && <Projects key={query.get('tab') || slug} data={data} refresh={refresh} history={slug === 'riwayat-proyek' || query.get('tab') === 'riwayat'} />}
       {recordingPaths.includes(slug) && (
         <Operations
           key={slug + query.toString()}

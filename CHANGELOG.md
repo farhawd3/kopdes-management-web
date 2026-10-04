@@ -1,5 +1,12 @@
 # Changelog
 
+## Koreksi tab proyek dan detail visual — 4 Oktober 2026
+
+- Pindahkan riwayat ke tab horizontal Proyek; hapus menu sidebar, redirect URL lama.
+- Hilangkan lapisan border tanggal drawer, gradien pelangi/border ganda kartu proyek dan dropdown pindah status kartu papan.
+- Tambah ruang atas/isi catatan; aksi papan tetap lewat drag dan tombol footer.
+- 253 tes/41 berkas, tipe, ESLint dan build lulus; QA kartu/tab terang/gelap empat lebar serta drawer dan catatan.
+
 ## Riwayat proyek dan alur pengisian — 4 Oktober 2026
 
 - Proyek selesai/arsip keluar dari sidebar berjalan dan tersedia di Riwayat Proyek. Detail memuat semua status tugas dengan paginasi; tugas lama tetap tersimpan.

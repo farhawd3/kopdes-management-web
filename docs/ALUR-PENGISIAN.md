@@ -7,7 +7,7 @@
 3. Isi pekerjaan dan tenggat, lalu status, prioritas dan penanggung jawab. Milestone, mitra, dokumen, rapat, subtugas dan pengulangan ada di **Detail lainnya**; gunakan hanya jika diperlukan.
 4. Perbarui status tugas dan catat hasil kegiatan/bukti. Progres proyek dihitung dari tugas; 100% progres tidak otomatis mengubah status proyek.
 5. Tinjau tugas aktif dan hasilnya, buka **Ubah proyek**, lalu pilih **Selesai**. Tugas tidak diselesaikan otomatis. Pekerjaan aktif yang tersisa tetap terlihat di Daftar Tugas agar tidak terlupakan.
-6. Proyek selesai/arsip keluar dari daftar proyek berjalan dan pintasan sidebar. Buka **Riwayat Proyek** (`/riwayat-proyek`) untuk seluruh tugas, milestone, dokumen dan catatan terkait. Detail proyek memuat seluruh status tugas, termasuk selesai lebih dari 30 hari lalu, dan riwayat membuka daftar secara bawaan.
+6. Proyek selesai/arsip keluar dari daftar proyek berjalan dan pintasan sidebar. Buka **Riwayat Proyek** (`/proyek?tab=riwayat`) untuk seluruh tugas, milestone, dokumen dan catatan terkait. Detail proyek memuat seluruh status tugas, termasuk selesai lebih dari 30 hari lalu, dan riwayat membuka daftar secara bawaan.
 7. Untuk tugas baru, buka kembali status proyek ke aktif. Server menolak tugas baru pada proyek selesai/arsip. Pembaruan tugas historis tetap diizinkan; tugas berulang pada proyek tertutup tidak menghasilkan salinan periode berikutnya.
 
 ## Hubungan data

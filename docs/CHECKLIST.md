@@ -1,5 +1,7 @@
 # Checklist produk aktif
 
+- [x] Riwayat proyek berupa tab horizontal, bukan menu sidebar; tanggal drawer, warna kartu, dropdown kartu papan dan padding catatan dirapikan sesuai koreksi pemilik.
+
 - [x] Riwayat proyek selesai/arsip, sidebar berjalan konsisten, tugas selesai lama tetap tersedia pada detail; server menolak tugas baru di proyek tertutup.
 - [x] Alur tugas/proyek dan empat buku disusun dengan hubungan opsional, panduan kontekstual, kartu proyek dan bubble timeline; Gantt desktop/potret diperiksa ulang. Batas di ALUR-PENGISIAN.md.
 
