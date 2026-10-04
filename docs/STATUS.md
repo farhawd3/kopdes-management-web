@@ -1,5 +1,38 @@
 # Status produk — 4 Oktober 2026
 
+Penyempurnaan visual, konsistensi tipografi, perbaikan tampilan kegiatan, dan tampilan pencatatan modern:
+- **Penyempurnaan Visual & Fungsional Halaman Kegiatan (`/jurnal`)**:
+  - **Penghapusan Tombol Mengambang Liar Desktop**: Mengganti `<Button>` pemicu filter mobile menjadi elemen native berpagar spesifisitas CSS tinggi (`display: none !important` di desktop), melenyapkan tombol `[ Cari & filter ]` yang sebelumnya melayang canggung di bawah tab view pada layar desktop/tablet.
+  - **Perbaikan Label Relasi Tugas Ganda**: Memperbaiki teks tindak lanjut dari `+ + Tindak Lanjut` (ikon plus bertumpuk teks plus) menjadi `<Plus size={12} /> Tindak Lanjut` yang proporsional.
+  - **Normalisasi Judul Kegiatan Interaktif**: Menghilangkan bingkai kotak tombol sekunder (`.ui-btn`) pada judul tabel kegiatan. Judul kini berupa link interaktif bersih dengan tag kode ringkas monospace (`KGT-XXXX`), teks judul tebal elegan dengan efek hover brand, serta baris cuplikan catatan lapangan (*notes preview*) yang rapi di bawahnya.
+  - **Kartu Metrik KPI Kegiatan (`.journal-metrics`)**: Menghadirkan 4 kartu metrik data riil di bagian atas halaman Kegiatan:
+    - *Total Kegiatan*: Seluruh catatan lapangan terdokumentasi.
+    - *Bulan Ini*: Kegiatan aktif di bulan kalender berjalan (mis. Oktober 2026).
+    - *Tindak Lanjut Tugas*: Jumlah kegiatan yang langsung menghasilkan tugas kerja.
+    - *Koordinasi Rapat*: Jumlah kegiatan yang terhubung ke sesi rapat daring/tatap muka.
+  - **Harmonisasi Chip Terkait & Koordinasi**: Relasi gerai (indigo), mitra kerja (amber), tugas lanjutan (emerald dengan badge status), dan tautan video conference rapat daring (`Gabung rapat ↗`) kini memiliki tinggi, radius kapsul, palet warna semantik, dan dukungan tema gelap yang serasi.
+  - **Tombol Hapus Filter Instan (`.btn-filter-reset`)**: Menyediakan tombol pembersih filter cepat bersatu di baris filter ketika pencarian atau filter gerai/mitra/rapat sedang aktif.
+  - **Penyelarasan Tampilan Papan & Linimasa**: Mengadopsi chip semantik yang sama pada kartu papan alur kegiatan dan judul linimasa kronologis.
+- Perombakan visual dan fitur halaman Pencatatan (`Anggota`, `Buku Kas`, `Barang`, `Stok Opname`):
+  - **Navigasi Tab Pencatatan (`.recording-tabs`)**: Diubah menjadi bilah navigasi kapsul modern dengan ikon (`Sparkles`, `Users`, `Wallet`, `Package`, `ClipboardCheck`), indikator halaman aktif yang kontras, dan badge hitungan data per buku.
+  - **Kartu Metrik KPI (`.recording-metrics`)**: Diperkaya dengan wadah ikon sirkular tematik (`icon-total`, `icon-active`, `icon-income`, `icon-expense`, `icon-warning`, `icon-net`), tipografi angka tabular besar tebal, serta sub-keterangan mikro yang memberikan konteks jelas pada setiap angka (misalnya rasio keaktifan anggota, total uang masuk/keluar terfilter, peringatan stok menipis/habis, serta akurasi audit fisik).
+  - **Filter Cepat Sekali Sentuh (`.quick-chips-row`)**: Ditambahkan chip filter instan di bawah kolom pencarian untuk setiap buku (Semua / Aktif / Nonaktif pada Anggota; Semua / + Masuk / - Keluar pada Buku Kas; Semua / Aman / Menipis / Habis pada Barang; Semua / Sesuai / Ada Selisih pada Stok Opname).
+  - **Pengalih Tampilan Ganda (`[ ☰ Tabel | ⊞ Kartu ]`)**: Manajer dapat beralih antara tampilan tabel terperinci atau tampilan kartu interaktif visual modern (`.operations-card-grid`).
+  - **Penyempurnaan Tampilan Tabel**: Menghilangkan border button kotak pada judul catatan; menambahkan monogram avatar inisial nama anggota, ikon arah kas masuk/keluar, ikon barang, dan kode chip bersih pada nomor anggota / SKU.
+  - **Tampilan Kartu Interaktif**:
+    - Kartu Anggota: Menampilkan inisial avatar berwarna, nomor anggota, tanggal bergabung, nomor kontak (telepon), total simpanan/kas tercatat, dan tombol pintasan `+ Kas`.
+    - Kartu Buku Kas: Menampilkan badge arah transaksi, nominal rupiah besar, tanggal, akun/kas gerai, dan relasi entitas anggota/barang.
+    - Kartu Barang: Dilengkapi pengukur visual stok buku (*stock meter bar gauge*) terhadap batas minimum, estimasi nilai total, serta aksi cepat `+ Beli` dan `Opname`.
+    - Kartu Stok Opname: Dilengkapi perbandingan berdampingan *Stok Buku vs Hitung Fisik*, badge selisih warna, nama pemeriksa, dan catatan temuan.
+- Normalisasi hierarki tipografi input vs judul: ukuran teks input, trigger tanggal, select dropdown, search input, dan formulir sprint dinormalisasi ke 13 px (`height: 38px`, `line-height: 1.4`, bobot sedang), label kolom ke 12 px semibold, dan judul kartu/seksi ke 15.5–16 px bold. Ini meniadakan inkonsistensi di mana teks isian input sempat terlihat lebih besar daripada judul kartu di atasnya.
+- Perapian tombol pada linimasa (`TaskTimeline`):
+  - Toolbar linimasa dirapikan dengan tinggi konsisten 38 px untuk tombol rentang (`.timeline-fit-button`), tombol `+ Tugas` (`.timeline-add-task-btn`), dan tombol modal jadwal lengkap dengan ikon `<Maximize2 size={13} />`.
+  - Bilah aksi linimasa mobile disatukan menjadi segmented switch bersih `[ 📋 Daftar | 📊 Linimasa ]` bersanding proporsional dengan tombol `[ ⤢ Layar Penuh ]`. Seluruh terminologi "saham" dihapus tuntas dari antarmuka.
+  - Modal Linimasa Layar Penuh dirombak teratur:
+    - Baris 1: Header atas berisi judul `Linimasa Layar Penuh`, chip jumlah tugas, tombol `[ ↻ Putar ]`, dan tombol tutup `[ ✕ ]` yang tersemat rapi di pojok kanan atas tanpa wrapping bertingkat.
+    - Baris 2: Toolbar kontrol waktu satu baris berisi pilihan interval `[ 1H | 1M | 1B ]`, navigasi `[ < | Hari Ini | > ]`, dan tombol `[ ⤢ Sesuaikan ]` tanpa wrapping bertingkat.
+    - Kolom nama pekerjaan diperlebar menjadi 160 px dengan teks tugas dan bayangan sticky yang rapi, serta batang tugas diberi batas lebar minimum 52 px agar tidak tertekan menjadi potongan teks rusak.
+
 Audit popup memakai fixture 21 domain dalam halaman development /dev/popup dengan API diblokir dan lingkup draft/preferensi QA terpisah. Temuan form panjang, tombol kecil, input rutinitas sempit, Escape modal bertingkat, label tanggal dan filter pencarian diperbaiki. Impor CSV/rutinitas/konfirmasi laporan memakai modal native bersama. Menu ponsel kini memindahkan, membatasi, dan mengembalikan fokus keyboard; bantuan mendapat padding.
 
 Cakupan rinci dan batasan ada di [QA-POPUP](QA-POPUP.md). Pemeriksaan akhir lulus: 242 tes/35 berkas, typecheck, lint, lint:ui, build, check:ui dan audit sumber 94/94. Matriks form terisi 360/768/1024/1440 tidak meluap. Ini bukan bukti seluruh kombinasi kondisi, aksen warna, keyboard virtual atau perangkat fisik telah diuji.

@@ -1,5 +1,52 @@
 # Changelog
 
+## Penyempurnaan Visual & Fungsional Halaman Kegiatan (Kegiatan Lapangan & Koordinasi) — 4 Oktober 2026
+
+- **Eliminasi Tombol `[ Cari & filter ]` Mengambang di Desktop**: Mengganti komponen `<Button>` menjadi elemen native berpagar spesifisitas tinggi (`display: none !important`), memastikan tombol filter mobile tidak pernah muncul liar di resolusi desktop/tablet.
+- **Koreksi Teks Dobel `+ + Tindak Lanjut`**: Menghilangkan karakter plus ganda sehingga render bersih menjadi `<Plus size={12} /> Tindak Lanjut`.
+- **Judul Kegiatan Interaktif Bebas Bingkai Kotak**: Menghapus styling tombol form sekunder yang tebal dari judul kegiatan di baris tabel. Diganti dengan tautan interaktif elegan yang memadukan tag kode ringkas monospace (`KGT-XXXX`), teks judul tebal responsif hover brand, serta baris pratinjau catatan lapangan yang proporsional.
+- **Ringkasan Metrik KPI Real-Time (`.journal-metrics`)**: Ditambahkan 4 kartu metrik informatif berbasis data aktual di atas tampilan tabel Kegiatan:
+  - *Total Kegiatan*: Akumulasi seluruh catatan kunjungan & koordinasi lapangan.
+  - *Bulan Ini*: Volume kegiatan pada bulan berjalan (mis. Oktober 2026).
+  - *Tindak Lanjut Tugas*: Jumlah kegiatan yang berhasil menghasilkan tugas eksekusi.
+  - *Koordinasi Rapat*: Jumlah kegiatan yang terhubung langsung ke agenda pertemuan daring atau fisik.
+- **Standarisasi Chip Relasi Semantik (`.relation-chip`)**: Memberikan tinggi dan radius kapsul terpadu dengan palet warna khusus untuk Gerai (indigo), Mitra (amber), Tugas Terkait (emerald dengan pill status mini), Tombol Tindak Lanjut (garis putus-putus interaktif), dan Tautan Google Meet/Zoom (`Gabung rapat ↗`).
+- **Aksi Cepat "Buka" & "Hapus Filter"**: Tombol Buka di baris tabel diperhalus dengan ikon panah keluar modern, serta ditambahkan tombol instan `Hapus filter` di baris pencarian ketika filter sedang aktif.
+
+## Perombakan visual dan fitur halaman Pencatatan (Anggota, Kas, Barang, Opname) — 4 Oktober 2026
+
+- **Navigasi Tab Kapsul Modern (`.recording-tabs`)**: Diperbarui dengan ikon untuk setiap domain, badge hitungan data dinamis per buku, serta active indicator berbasis warna aksen brand yang tegas dan elegan.
+- **Kartu Metrik KPI Informatif (`.recording-metrics`)**: Dilengkapi wadah ikon sirkular tematik, tipografi angka tabular besar tebal, serta sub-keterangan mikro yang memberikan konteks jelas pada setiap angka (misalnya rasio keaktifan anggota, total uang masuk/keluar terfilter, peringatan stok menipis/habis, serta akurasi audit fisik).
+- **Filter Cepat Sekali Sentuh (`.quick-chips-row`)**: Ditambahkan chip filter instan di bawah kolom pencarian untuk setiap buku (Semua / Aktif / Nonaktif pada Anggota; Semua / + Masuk / - Keluar pada Buku Kas; Semua / Aman / Menipis / Habis pada Barang; Semua / Sesuai / Ada Selisih pada Stok Opname).
+- **Pengalih Tampilan Ganda (`[ ☰ Tabel | ⊞ Kartu ]`)**: Manajer dapat beralih antara tampilan tabel terperinci atau tampilan kartu interaktif visual modern (`.operations-card-grid`).
+- **Penyempurnaan Tampilan Tabel**: Menghilangkan border button kotak pada judul catatan; menambahkan monogram avatar inisial nama anggota, ikon arah kas masuk/keluar, ikon barang, dan kode chip bersih pada nomor anggota / SKU.
+- **Tampilan Kartu Interaktif**:
+  - Kartu Anggota: Menampilkan inisial avatar berwarna, nomor anggota, tanggal bergabung, nomor kontak (telepon), total simpanan/kas tercatat, dan tombol pintasan `+ Kas`.
+  - Kartu Buku Kas: Menampilkan badge arah transaksi, nominal rupiah besar, tanggal, akun/kas gerai, dan relasi entitas anggota/barang.
+  - Kartu Barang: Dilengkapi pengukur visual stok buku (*stock meter bar gauge*) terhadap batas minimum, estimasi nilai total, serta aksi cepat `+ Beli` dan `Opname`.
+  - Kartu Stok Opname: Dilengkapi perbandingan berdampingan *Stok Buku vs Hitung Fisik*, badge selisih warna, nama pemeriksa, dan catatan temuan.
+
+## Penyempurnaan tipografi input, perapian tombol linimasa, dan tampilan pencatatan modern — 4 Oktober 2026
+
+- Normalisasi ketat hierarki tipografi input vs judul: teks nilai input, select dropdown, search input, dan formulir sprint dinormalisasi ke 13 px (`height: 38px`, `line-height: 1.4`), label kolom ke 12 px semibold, dan judul kartu/seksi ke 15.5–16 px bold. Ini meniadakan kesan teks input lebih besar atau tidak seimbang dibandingkan judul kartu di atasnya.
+- Perapian tombol toolbar dan aksi linimasa (`TaskTimeline`):
+  - Toolbar linimasa distandarisasi ke tinggi 38 px untuk tombol rentang (`.timeline-fit-button`), tombol `+ Tugas` (`.timeline-add-task-btn`), dan tombol modal jadwal lengkap dengan ikon `<Maximize2 size={13} />`.
+  - Tombol aksi linimasa mobile disatukan ke grid 2-kolom seimbang (tinggi 40 px, radius 10 px) yang menyandingkan tombol "Layar Penuh Saham" dan tombol pergantian "Daftar Ringkas" / "Bagan Linimasa" secara rapi tanpa tumpukan tombol besar.
+- Peningkatan daya tarik estetika tampilan Pencatatan (`Operations`):
+  - Tab navigasi buku memakai gaya pill segmented melayang (`.recording-tabs`) dengan active indicator yang lembut.
+  - Kartu buku pencatatan (`.notebook-index`) ditata dalam grid 2-kolom modern dengan spine warna pastel harmonis untuk 4 buku (Anggota, Kas, Barang, Opname), badge data, dan tombol aksi terintegrasi (Tambah & Buka Buku).
+  - Kartu ringkasan metrik FinTech (`.recording-metrics`) dipercantik dengan border atas berwarna semantik (emerald untuk kas masuk/simpanan, rose untuk pengeluaran, blue untuk kas bersih/total, amber untuk stok menipis/selisih opname) serta gradien lembut di belakangnya.
+- Perbaikan tumpang-tindih ikon kaca pembesar dan placeholder pencarian proyek (`Projects`): input pencarian proyek (`.project-search-box`) diberikan `padding-left: 38px !important;` dan ikon kaca pembesar diposisikan terpusat secara vertikal (`top: 50%; transform: translateY(-50%); z-index: 2`), menghilangkan tumpukan teks placeholder ("Cari nama atau tujuan proyek...") di belakang ikon.
+- Eliminasi galat hidrasi HTML anchor bersarang (`<a>` di dalam `<a>`): kartu agenda rapat (`Dashboard`) diubah dari pembungkus `<Link>` yang menampung tombol langsung tautan rapat daring (`<a className="btn-join-meeting-direct">`) menjadi kontainer `<div className="next-meeting">` yang menampung tautan utama `<Link href="/rapat" className="next-meeting-link">` dan tautan tombol gabung rapat sebagai elemen sejajar (siblings), menghilangkan peringatan konsol hidrasi Next.js/React secara tuntas.
+- Hilangkan bayangan ganda (ghost frame) modal dialog: `<dialog>` pembungkus kartu modal dibuat transparan dan tanpa border ganda pada `dialog.ui-modal.sprint-modal-dialog` dan `dialog:has(.sprint-modal-card)`.
+- Rapikan formulir rutinitas harian (`Dashboard`): input jam, judul, dan tombol Tambah disusun dalam satu baris fleksibel tanpa celah kosong; placeholder disempurnakan.
+- Ganti tombol hapus rutinitas dan tombol tutup modal menjadi varian `ghost` yang minimalis dengan hover responsif; scrollbar daftar rutinitas diganti dengan scrollbar ramping tematik 5 px.
+- Hapus `outline-offset` mengambang pada input dan textarea terfokus; ganti dengan ring fokus halus terpadu berbasis `box-shadow` dan `border-color`.
+- Bersihkan border berulang pada bilah pencarian (`.workspace-search-field`) dan input formulir proyek cepat (`.inline-creator-field`).
+- Hapus ikon kalender duplikat pada baris Tenggat drawer tugas (`TaskDetailDrawer`), isolasi penuh input tanggal native di `DateField`.
+- Perbaiki pemotongan kata status tabel ("Rencan / a") dengan `white-space: nowrap !important;` serta sinkronisasi selektor pemicu dropdown.
+- Tambahkan Mode Linimasa Horizontal ala Grafik Saham (`TaskTimeline`) untuk perangkat mobile: kanvas layar penuh dengan navigasi interval 1H/1M/1B, tombol Hari Ini, tombol sesuaikan rentang, tombol putar lanskap 90°, dan kolom nama tugas sticky.
+
 ## Audit popup berdata — 4 Oktober 2026
 
 - Fixture development 21 domain membuka form tambah/ubah, detail tugas, sprint, jadwal, CSV, rutinitas dan konfirmasi laporan tanpa panggilan database. Draft/preferensi QA terpisah.
