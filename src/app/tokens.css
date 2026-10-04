@@ -80,8 +80,10 @@
 @media (prefers-reduced-motion: reduce) {
   :root { --dur-fast: 0ms; --dur-base: 0ms; --dur-slow: 0ms; }
   *, *::before, *::after {
+    /* stylelint-disable declaration-no-important -- Menghentikan animasi legacy sesuai preferensi aksesibilitas. */
     animation: none !important;
     transition: none !important;
     scroll-behavior: auto !important;
+    /* stylelint-enable declaration-no-important */
   }
 }

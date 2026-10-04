@@ -1,5 +1,10 @@
 # Changelog
 
+## PLAN-ASTRA — pembersihan CSS awal — 4 Oktober 2026
+
+- Hapus deklarasi identik dan selector statistik lama; pertahankan konteks media dan aturan gabungan.
+- Persempit pengecualian stylelint important hanya pada blok aksesibilitas. Semua pemeriksaan dan 187 tes lulus.
+
 ## PLAN-ASTRA — animasi saat terlihat — 4 Oktober 2026
 
 - Observer grafik, count-up statistik, animasi kartu/tombol dan reduced-motion terpusat. Hapus duplikat permukaan dialog di CSS baru.

@@ -74,3 +74,11 @@ Migrasi visual penuh, interaktivitas, animasi dan QA menyeluruh masih berjalan. 
 - Verifikasi: 187 tes/29 berkas, typecheck, lint, lint:ui, check:ui, build dan audit sumber 88/88 lulus. Beranda gelap 360 diperiksa visual; N membuka formulir dan ditutup tanpa menyimpan.
 - [x] Observer, count-up, motion bertoken dan reduced-motion terpusat.
 - [ ] Animasi semua modul, pengukuran 60fps dan perangkat reduced-motion fisik.
+
+## Fase 7A — pembersihan CSS yang dapat dibuktikan
+
+- Skrip clean-css menghapus deklarasi identik yang ditimpa deklarasi selector/konteks sama, mempertahankan important dan fallback nilai berbeda. Selector statistik lama tanpa pemanggil dihapus; selector gabungan :is/:not dipertahankan.
+- Ukuran keseluruhan 603.721 → sekitar 575.961 byte; important 2.353 → 2.058; duplikat 522 → 457; radius/font legacy 59/60 masih bervariasi.
+- Verifikasi: 187 tes/29 berkas, typecheck, lint, lint:ui, check:ui, build dan audit sumber 88/88 lulus. Beranda gelap 360 diperiksa tanpa luapan.
+- [x] Pembersihan deklarasi identik dan statistik yang sudah termigrasi.
+- [ ] personal.css dihapus, important <20, nol duplikat dan normalisasi seluruh geometri legacy.

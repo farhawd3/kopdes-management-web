@@ -1,5 +1,7 @@
 # Status produk — 4 Oktober 2026
 
+Pembersihan CSS tahap awal menghapus 671 deklarasi identik yang ditimpa selector sama dan gaya statistik lama tanpa pemanggil. CSS kini sekitar 576 KB (awal 604 KB), important 2.058 (awal 2.353), duplikat 457 (awal 522). Target akhir penghapusan personal.css dan important <20 belum tercapai.
+
 Animasi grafik dimulai ketika elemen terlihat; angka statistik mengikuti count-up 400 ms dengan nilai asli untuk pembaca layar. Reduced-motion dipusatkan di tokens.css; sembilan blok legacy dihapus. 187 tes/29 berkas dan pemeriksaan statis/build lulus. Pintasan N diverifikasi membuka formulir tanpa menyimpan.
 
 Interaksi Hari Ini: geser kanan menyelesaikan, geser kiri membuka penyunting; perubahan status/tanggal menyediakan Batalkan selama 5 detik. Pintasan N/T/? tersedia dan menghindari form/modal. Panel dashboard mengingat buka/tutup. 185 tes/28 berkas, typecheck, lint dan build lulus; perangkat sentuh fisik belum diuji.

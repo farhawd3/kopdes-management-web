@@ -7,5 +7,5 @@ export default {
       'font-size': ['/^(var\\(--fs-(title|h2|body|label|caption|overline)\\)|inherit)$/'],
     },
   },
-  overrides: [{ files: ['src/app/tokens.css'], rules: { 'declaration-property-value-allowed-list': null, 'declaration-no-important': null } }],
+  overrides: [{ files: ['src/app/tokens.css'], rules: { 'declaration-property-value-allowed-list': null } }],
 };
