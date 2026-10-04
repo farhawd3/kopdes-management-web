@@ -57,6 +57,8 @@ export function Dashboard({ data }: { data: Workspace }) {
   const now = today();
   const [projectId, setProjectId] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
+  const [routineOpen, setRoutineOpen] = usePreference('hub-dashboard-routine-open', 'false');
+  const [chartsOpen, setChartsOpen] = usePreference('hub-dashboard-charts-open', 'false');
   const allTasks = (data['work-items'] || []).map((row) => ({
     ...schemas['work-items'].parse(row.data),
     id: row.id,
@@ -426,7 +428,9 @@ export function Dashboard({ data }: { data: Workspace }) {
 
         {/* ── Right Column: Daily Routine, Journal & Projects ─────────────── */}
         <aside className="home-overview">
-          <details className="dashboard-routines">
+          <details className="dashboard-routines" open={routineOpen === 'true'} onToggle={(event) => {
+            const next = String(event.currentTarget.open); if (next !== routineOpen) setRoutineOpen(next);
+          }}>
             <summary>Rutinitas harian</summary>
             {/* Rutinitas Kerja Manajer (Sisi Kanan) */}
             <div className="home-routine-card">
@@ -588,7 +592,9 @@ export function Dashboard({ data }: { data: Workspace }) {
         </aside>
       </div>
 
-      <details className="dashboard-extra">
+      <details className="dashboard-extra" open={chartsOpen === 'true'} onToggle={(event) => {
+        const next = String(event.currentTarget.open); if (next !== chartsOpen) setChartsOpen(next);
+      }}>
         <summary>Grafik pekerjaan</summary>
         {/* ── Compact Analytics Row (Side by Side) ──────────── */}
         <div className="dash-analytics-row">

@@ -57,3 +57,11 @@ Migrasi visual penuh, interaktivitas, animasi dan QA menyeluruh masih berjalan. 
 - [ ] Placeholder posisi urut di dalam kolom (papan saat ini memindahkan status/tanggal, bukan urutan manual).
 - [ ] Chrome Android, Samsung Internet, WebView dan iOS Safari fisik.
 - [ ] Interaksi tambahan bagian 5B.
+
+## Fase 5B — interaksi tugas
+
+- Pintasan N membuat tugas, T membuka Hari Ini, ? membuka bantuan; form, listbox, modal dan modifier dikecualikan. Panel grafik/rutinitas mengingat buka/tutup.
+- Swipe horizontal mobile kanan menyelesaikan tugas dan kiri membuka penyunting; scroll vertikal/kontrol tetap aman. Setelah perubahan status/tanggal berhasil, toast Batalkan berlaku 5 detik dan memulihkan hanya bidang terkait dari snapshot; data terbaru lainnya dipertahankan.
+- Verifikasi: 185 tes/28 berkas, typecheck, lint, lint:ui, check:ui dan build lulus. Tes baru memeriksa undo, galat API, swipe/scroll dan klik detail.
+- [x] Pintasan, preferensi panel, swipe dan undo.
+- [ ] Pratinjau gestur swipe serta QA sentuh fisik.

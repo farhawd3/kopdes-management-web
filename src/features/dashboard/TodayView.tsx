@@ -2,7 +2,9 @@
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Toast } from '@/components/ui/Toast';
+import { useSwipeAction } from '@/components/ui/useSwipeAction';
 import {
   CalendarDays,
   Check,
@@ -46,6 +48,12 @@ export function TodayView({
   const [quickTitle, setQuickTitle] = useState('');
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState('');
+  const [undo, setUndo] = useState<{ task: Item; fields: 'status' | 'date' } | null>(null);
+  useEffect(() => {
+    if (!undo) return;
+    const timeout = setTimeout(() => setUndo(null), 5000);
+    return () => clearTimeout(timeout);
+  }, [undo]);
 
   // 1. Overdue tasks
   const overdueTasks = tasks.filter(
@@ -76,8 +84,8 @@ export function TodayView({
 
   const projects = workspace.workstreams || [];
 
-  async function toggleComplete(task: Item, e: React.MouseEvent) {
-    e.stopPropagation();
+  async function toggleComplete(task: Item, e?: React.MouseEvent) {
+    e?.stopPropagation();
     if (busyId) return;
     setBusyId(task.id);
     setError('');
@@ -90,6 +98,7 @@ export function TodayView({
           ...change,
         },
       });
+      setUndo({ task, fields: 'status' });
       await refresh();
     } catch (err) {
       setError((err as Error).message || 'Gagal memperbarui status tugas.');
@@ -111,6 +120,7 @@ export function TodayView({
           due_date: now,
         },
       });
+      setUndo({ task, fields: 'date' });
       await refresh();
     } catch (err) {
       setError((err as Error).message || 'Gagal memindahkan tenggat tugas.');
@@ -141,9 +151,34 @@ export function TodayView({
   }
 
   const completedTodayCount = todayTasks.filter((t) => t.data.status === 'selesai').length;
+  async function undoChange() {
+    if (!undo || busyId) return;
+    const previous = undo;
+    const current = (workspace['work-items'] || []).find((task) => task.id === previous.task.id);
+    if (!current) { setUndo(null); setError('Tugas belum dimuat. Muat ulang sebelum membatalkan.'); return; }
+    setBusyId(current.id);
+    setError('');
+    try {
+      const restored = previous.fields === 'status'
+        ? { status: previous.task.data.status, completed_at: previous.task.data.completed_at || '' }
+        : { due_date: previous.task.data.due_date };
+      await api('work-items', { id: current.id, data: { ...current.data, ...restored } });
+      setUndo(null);
+      await refresh();
+    } catch (error) { setError(error instanceof Error ? error.message : 'Gagal membatalkan perubahan.'); }
+    finally { setBusyId(null); }
+  }
+  const swipe = useSwipeAction((id) => {
+    const task = tasks.find((task) => task.id === id);
+    if (task && !['selesai', 'dibatalkan'].includes(String(task.data.status))) void toggleComplete(task);
+  }, (id) => {
+    const task = tasks.find((task) => task.id === id);
+    if (task) setEditTask(task);
+  }, Boolean(busyId));
 
   return (
-    <div className="today-view-wrapper">
+    <div className="today-view-wrapper" {...swipe}>
+      {undo && <Toast message={undo.fields === 'status' ? 'Status tugas tersimpan.' : 'Tenggat dipindahkan ke hari ini.'} action={{ label: 'Batalkan', onClick: () => { void undoChange(); } }} busy={Boolean(busyId)} />}
       {/* Top Hero & Date Header */}
       <header className="today-header-card">
         <div className="today-header-meta">
@@ -247,6 +282,7 @@ export function TodayView({
                     <div
                       key={task.id}
                       className={`ui-task-row ${isBusy ? 'is-busy' : ''}`}
+                      data-swipe-task={task.id}
                       role="button"
                       tabIndex={0}
                       onClick={() => setDetailTask(task)}
@@ -356,6 +392,7 @@ export function TodayView({
                     <div
                       key={task.id}
                       className={`today-task-card priority-${task.data.priority || 'sedang'} ${isDone ? 'is-completed' : ''} ${isBusy ? 'is-busy' : ''}`}
+                      data-swipe-task={task.id}
                       role="button"
                       tabIndex={0}
                       onClick={() => setDetailTask(task)}

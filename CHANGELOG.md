@@ -1,5 +1,10 @@
 # Changelog
 
+## PLAN-ASTRA — interaksi tugas — 4 Oktober 2026
+
+- Pintasan keyboard, preferensi panel, swipe tugas dan Batalkan setelah penyimpanan status/tanggal.
+- 185 tes/28 berkas, typecheck, lint, penjaga UI dan build lulus; pengujian sentuh fisik tetap terbuka.
+
 ## Standarisasi konsistensi geometris tombol dan dropdown ("Kotak dengan Sedikit Rounded") — 4 Oktober 2026
 
 - Standarisasikan geometri seluruh tombol dan pemicu dropdown menjadi **"kotak dengan sedikit rounded"** (`border-radius: 10px` standar, `8px` ringkas/tabel), menghilangkan inkonsistensi bentuk oval kapsul (`9999px`), lingkaran/telur terdistorsi (`50%`), dan tombol yang saling bertabrakan gaya.

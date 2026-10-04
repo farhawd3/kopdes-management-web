@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import { BottomNav } from '@/components/ui/BottomNav';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { ThemeProvider, useTheme } from '@/lib/ThemeContext';
 import { api, resetAuthNavigation } from '@/lib/client';
@@ -44,6 +44,7 @@ import { usePreference } from '@/lib/usePreference';
 import { WorkspaceSearch } from '@/features/workspace/WorkspaceSearch';
 import { Star, ChevronDown, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { ManagerActionModal } from './ManagerActionModal';
+import { Modal } from '@/components/ui/Modal';
 
 const navIcons: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
   '/beranda': House,
@@ -130,6 +131,8 @@ function getCoopShortName(title?: string): string {
 }
 
 function ShellFrame({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  const [shortcutHelp, setShortcutHelp] = useState(false);
   const path = usePathname(),
     query = useSearchParams();
   const [favoriteText, setFavoriteText] = usePreference('hub-favorites', '/hari-ini|/tugas');
@@ -167,6 +170,13 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
         setMenu(false);
         document.querySelectorAll('details[open]').forEach((el) => el.removeAttribute('open'));
       }
+      const target = event.target instanceof Element ? event.target : null;
+      if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey ||
+        target?.closest('input, textarea, select, [contenteditable="true"], [role="listbox"]') ||
+        document.querySelector('dialog[open], [role="dialog"][aria-modal="true"]')) return;
+      if (event.key.toLowerCase() === 'n') { event.preventDefault(); router.push('/tugas?baru=1'); }
+      if (event.key.toLowerCase() === 't') { event.preventDefault(); router.push('/hari-ini'); }
+      if (event.key === '?') { event.preventDefault(); setShortcutHelp(true); }
     };
     const clickOutside = (event: MouseEvent) => {
       document.querySelectorAll('details[open]').forEach((el) => {
@@ -183,7 +193,7 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
       window.removeEventListener('keydown', key);
       document.removeEventListener('click', clickOutside);
     };
-  }, [setDesktopSidebarHidden]);
+  }, [setDesktopSidebarHidden, router]);
   const name = String(workspace?.organization?.[0]?.data.manager || 'Manajer');
   const current = navigation.find(([href]) => href === path)?.[1] || 'Beranda';
   return (
@@ -532,6 +542,12 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
         )}
         {children}
       </main>
+      {shortcutHelp && <Modal onDismiss={() => setShortcutHelp(false)} aria-labelledby="shortcut-title">
+        <h2 id="shortcut-title">Pintasan keyboard</h2>
+        <p><kbd>N</kbd> Buat tugas · <kbd>T</kbd> Hari Ini · <kbd>?</kbd> Bantuan</p>
+        <p><kbd>Ctrl/⌘ K</kbd> Cari · <kbd>Ctrl/⌘ B</kbd> Menu samping · <kbd>Esc</kbd> Tutup</p>
+        <Button type="button" onClick={() => setShortcutHelp(false)}>Tutup bantuan</Button>
+      </Modal>}
       <BottomNav path={path} calendar={query.get('view') === 'kalender'} menu={menu} onAction={() => setActionModalOpen(true)} onMenu={() => setMenu(!menu)} />
 
       {/* Mobile Navigation Sheet Hub (Native Mobile App Experience) */}

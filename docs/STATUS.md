@@ -1,5 +1,7 @@
 # Status produk — 4 Oktober 2026
 
+Interaksi Hari Ini: geser kanan menyelesaikan, geser kiri membuka penyunting; perubahan status/tanggal menyediakan Batalkan selama 5 detik. Pintasan N/T/? tersedia dan menghindari form/modal. Panel dashboard mengingat buka/tutup. 185 tes/28 berkas, typecheck, lint dan build lulus; perangkat sentuh fisik belum diuji.
+
 Pelaksanaan PLAN-ASTRA: audit dan fondasi token tersedia; kontrol mentah luar UI sudah 289 → 0. Tanggal tunggal, DateNav, dock serta permukaan dialog bersama diterapkan. Paket kontrol lulus 175 tes, typecheck, lint, lint:ui, check:ui, build dan audit sumber 83/83. Galeri 360 terang/gelap serta Beranda 360/768 terang diperiksa. Hasil dan kriteria yang masih terbuka ada di [LAPORAN-ASTRA](LAPORAN-ASTRA.md); migrasi visual keseluruhan belum selesai.
 
 Kartu statistik dashboard kini netral dengan ikon tint; perhatian dan tugas terlambat lebih tenang. Empat informasi statistik dan tautannya dipertahankan. Beranda terang pada 360/768/1024/1440 tidak meluap; gelap 1440 dan dropdown gelap diperiksa. Paket lulus 175 tes serta pemeriksaan statis/build. Pemeriksaan seluruh tema/grafik belum lengkap.
