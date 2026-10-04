@@ -1,5 +1,9 @@
 # Status produk — 4 Oktober 2026
 
+Keadaan kosong Beranda/Hari Ini memakai EmptyState netral dan aksi yang jelas. Daftar proyek seluruhnya diarsipkan kini menampilkan keadaan kosong. Kartu Hari Ini membungkus judul panjang pada ponsel, kontrol centang mengikuti ukuran primitive dan Enter pada aksi anak tidak membuka detail kartu. 195 tes/31 berkas, typecheck, lint/lint:ui, build dan audit sumber 91/91 lulus. CSS terakhir 514.373 byte, important 1.970, duplikat 384; kontrol mentah luar UI tetap nol.
+
+Sesi browser aktif kembali. Beranda gelap 360 dan Hari Ini berdata diperiksa; pengukuran Hari Ini 320/360/768/1024/1440 tidak menemukan luapan halaman. Form tanggal menampilkan satu pemicu dan kalender ke bawah, tetapi sel kalender dalam panel sempit belum mencapai target sentuh 44 px. Perangkat fisik, seluruh tema/state dan Lighthouse belum diperiksa.
+
 Audit kelas menghapus selector sederhana tanpa pemanggil AST, sambil mempertahankan prefix/suffix dinamis dan selector kompleks. Metrik terakhir: CSS 517.624 byte, important 1.979, duplikat 384, font 6, radius 9 (termasuk sudut campuran), kontrol mentah luar UI 0. Field umum Editor sekarang memakai label/id bersama; warna proyek bawaan berasal dari skema hex sah. 191 tes/30 berkas dan semua pemeriksaan lulus.
 
 QA galeri 320/360/390/768/1024/1280/1440/1920 tanpa luapan. Sesi browser berakhir saat QA halaman berdata dan diarahkan ke PIN; pemeriksaan tersebut belum selesai. PLAN-ASTRA belum tuntas: migrasi seluruh komponen/halaman, penghapusan personal.css, important <20, nol duplikat/hex TSX, seluruh kontras/perangkat dan Lighthouse tetap terbuka.

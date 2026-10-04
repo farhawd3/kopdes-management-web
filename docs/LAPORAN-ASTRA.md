@@ -115,6 +115,19 @@ Migrasi visual penuh, interaktivitas, animasi dan QA menyeluruh masih berjalan. 
 
 ## Pekerjaan berikutnya
 
+### Paket keadaan kosong dan kartu Hari Ini
+
+- EmptyState netral dengan ikon, judul, deskripsi dan aksi digunakan Beranda/Hari Ini. Proyek seluruhnya diarsipkan kini mendapat keadaan kosong. Judul tugas mobile membungkus; centang mengikuti primitive; Enter pada tombol anak tidak membuka kartu.
+- Berkas: EmptyState, Dashboard, TodayView, ComponentGallery, ui.css, personal.css dan empat tes regresi baru. Geometri legacy hanya dipangkas dari selector kontrol terkait; perubahan pemilik dipertahankan terpisah saat staging.
+- Metrik paket: CSS 517.624 → 514.373 byte; important 1.979 → 1.970; duplikat tetap 384; kontrol mentah luar UI tetap 0. Font/radius tetap 6/9. Hex belum memenuhi target akhir.
+- Verifikasi: 195 tes/31 berkas, typecheck, lint, lint:ui, build dan audit sumber 91/91 lulus. Beranda gelap 360 diperiksa; Hari Ini 320/360/768/1024/1440 diukur tanpa luapan. Screenshot kartu 360 tersimpan di artifacts/astra/hari-ini-kartu-360.jpg.
+- Form tugas diperiksa tanpa menyimpan: satu pemicu tanggal, kalender di bawah dan dalam panel. Sel tanggal pada panel sempit kurang dari 44 px; belum memenuhi kriteria target sentuh. Tidak ada pemeriksaan Android/iOS fisik atau Lighthouse dalam paket ini.
+- [x] EmptyState halaman utama dan regresi proyek diarsipkan/keyboard.
+- [x] Perbaikan kartu Hari Ini sempit dan ukuran centang.
+- [ ] Target sentuh kalender, seluruh halaman/state/tema, perangkat fisik dan performa.
+
+### Urutan lanjutan
+
 1. Setelah pengguna masuk kembali, periksa rute/data aktif pada 320/360/768/1024/1440, terutama Editor, tugas/papan dan semua domain pencatatan.
 2. Lanjutkan migrasi Card/Badge/Field khusus, Tooltip, empty state dan semua legenda; jangan menghitung tes lama sebagai penerimaan fitur baru.
 3. Pecah aturan yang masih aktif menjadi base/components/fitur dan turunkan important melalui perbaikan cascade disertai QA; jangan menghapus/merename personal.css untuk sekadar memenuhi nama target.

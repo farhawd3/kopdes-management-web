@@ -4517,19 +4517,6 @@ dialog.editor .form-grid {
   font-weight: 750;
   color: var(--ink);
 }
-.home-empty {
-  grid-column: 1/-1;
-  padding: 32px;
-  border: 1px dashed var(--line-strong);
-  border-radius: var(--r-lg);
-}
-.home-empty h2 {
-  margin-top: 16px;
-  font-size: var(--fs-h2);
-}
-.home-empty p {
-  font-size: var(--fs-label);
-}
 .home-text-link {
   display: flex;
   justify-content: space-between;
@@ -5066,8 +5053,7 @@ select option {
 }
 .manager-main .section-head > a,
 .home-records .section-head > a,
-.home-text-link,
-.home-empty a {
+.home-text-link {
   color: var(--ink);
 }
 .manager-sidebar {
@@ -8274,19 +8260,6 @@ button:not(.ui-btn).task-round-check::after,
   color: var(--ink-heading);
 }
 
-.today-stat-pill.alert-pill {
-  background: var(--danger-soft);
-  border-color: color-mix(in srgb, var(--danger) 40%, transparent);
-}
-
-.today-stat-pill.alert-pill .stat-label {
-  color: var(--danger);
-}
-
-.today-stat-pill.alert-pill strong {
-  color: var(--danger);
-}
-
 .today-quick-add-card {
   border: 1px solid var(--line);
   padding: 12px 18px;
@@ -8490,9 +8463,6 @@ button:not(.ui-btn).task-round-check::after,
 }
 
 .today-check-circle {
-  width: 22px;
-  height: 22px;
-  border-radius: var(--r-full);
   border: 1.5px solid var(--line-strong);
   background: var(--canvas);
   color: var(--brand-text);
@@ -8500,7 +8470,6 @@ button:not(.ui-btn).task-round-check::after,
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  padding: 0;
   flex-shrink: 0;
   transition: all 0.15s ease;
 }
@@ -8593,8 +8562,6 @@ button:not(.ui-btn).task-round-check::after,
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 5px 10px;
-  border-radius: var(--r-full);
   background: var(--canvas);
   border: 1px solid var(--line);
   color: var(--ink);
@@ -8619,64 +8586,6 @@ button:not(.ui-btn).task-round-check::after,
 
 .today-task-card:hover .chevron-open {
   opacity: 1;
-}
-
-.today-empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 32px 20px;
-  gap: 10px;
-}
-
-.today-empty-state svg {
-  color: var(--ink-subtle);
-}
-
-.today-empty-state h3 {
-  font-size: var(--fs-h2);
-  font-weight: 750;
-  color: var(--ink-heading);
-  margin: 0;
-}
-
-.today-empty-state p {
-  font-size: var(--fs-label);
-  color: var(--ink-muted);
-  margin: 0;
-  max-width: 380px;
-}
-
-.btn-create-today {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 6px;
-  padding: 8px 18px;
-  border-radius: var(--r-full);
-  background: var(--brand);
-  color: var(--brand-contrast);
-  font-size: var(--fs-label);
-  font-weight: 750;
-  border: none;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.btn-create-today:hover {
-  background: var(--brand-hover);
-  transform: translateY(-1px);
-}
-
-.side-empty-note {
-  font-size: var(--fs-caption);
-  color: var(--ink-subtle);
-  padding: 12px 4px;
-}
-
-.side-empty-note p {
-  margin: 0;
 }
 
 .today-meetings-list {
@@ -14686,17 +14595,6 @@ dialog.editor textarea:not(.ui-input):focus,
   margin: 16px 0;
 }
 
-.routine-empty-text {
-  font-size: var(--fs-caption);
-  color: var(--ink-muted);
-  margin: 8px 0;
-  text-align: center;
-  padding: 12px;
-  background: var(--canvas);
-  border-radius: var(--r-md);
-  border: 1px dashed var(--line);
-}
-
 .routine-modal-footer {
   display: flex;
   align-items: center;
@@ -15240,117 +15138,8 @@ button:not(.ui-btn).dash-bar-col.is-selected-bar {
 /* ==========================================================================
    CLEAN STANDARDIZED EMPTY STATE COMPONENT
    ========================================================================== */
-.clean-empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 38px 24px;
-  border-radius: var(--r-lg);
-  background: var(--surface);
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow-sm);
-  margin: 16px 0;
-  gap: 8px;
-}
-.clean-empty-icon-wrap {
-  width: 52px;
-  height: 52px;
-  border-radius: var(--r-lg);
-  display: grid;
-  place-items: center;
-  margin-bottom: 6px;
-  transition: transform 0.2s ease;
-}
-.clean-empty-state:hover .clean-empty-icon-wrap {
-  transform: scale(1.06);
-}
-.clean-empty-title {
-  font-size: var(--fs-h2);
-  font-weight: 700;
-  color: var(--ink-heading);
-  margin: 0;
-}
-.clean-empty-desc {
-  font-size: var(--fs-label);
-  color: var(--ink-muted);
-  max-width: 420px;
-  margin: 0;
-  line-height: 1.5;
-}
-.clean-empty-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 10px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-.clean-empty-btn-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 18px;
-  border-radius: var(--r-md);
-  background: var(--brand);
-  color: var(--brand-contrast);
-  font-size: var(--fs-label);
-  font-weight: 650;
-  border: none;
-  cursor: pointer;
-  text-decoration: none;
-  transition: transform 0.15s ease, filter 0.15s ease;
-}
-.clean-empty-btn-primary:hover {
-  filter: brightness(0.94);
-  transform: translateY(-1px);
-}
-.clean-empty-btn-secondary {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  border-radius: var(--r-md);
-  background: transparent;
-  color: var(--ink);
-  font-size: var(--fs-label);
-  font-weight: 600;
-  border: 1px solid var(--line);
-  cursor: pointer;
-  text-decoration: none;
-  transition: background 0.15s ease;
-}
-.clean-empty-btn-secondary:hover {
-  background: var(--canvas);
-}
 
 /* Pastel Tints for Empty State */
-.clean-empty-state.pastel-emerald .clean-empty-icon-wrap {
-  background: var(--pastel-emerald-bg);
-  border: 1px solid var(--pastel-emerald-border);
-  color: var(--pastel-emerald-accent);
-}
-.clean-empty-state.pastel-blue .clean-empty-icon-wrap {
-  background: var(--pastel-blue-bg);
-  border: 1px solid var(--pastel-blue-border);
-  color: var(--pastel-blue-accent);
-}
-.clean-empty-state.pastel-amber .clean-empty-icon-wrap {
-  background: var(--pastel-amber-bg);
-  border: 1px solid var(--pastel-amber-border);
-  color: var(--pastel-amber-accent);
-}
-.clean-empty-state.pastel-purple .clean-empty-icon-wrap {
-  background: var(--pastel-purple-bg);
-  border: 1px solid var(--pastel-purple-border);
-  color: var(--pastel-purple-accent);
-}
-.clean-empty-state.pastel-rose .clean-empty-icon-wrap {
-  background: var(--pastel-rose-bg);
-  border: 1px solid var(--pastel-rose-border);
-  color: var(--pastel-rose-accent);
-}
 
 /* ==========================================================================
    INLINE QUICK CREATOR IN EDITOR FORM
@@ -15789,8 +15578,6 @@ button:not(.ui-btn).dash-bar-col.is-selected-bar {
   .mobile-nav-card:active,
   .mobile-sheet-footer-btn:active,
   .card-quick-move-btn:active,
-  .clean-empty-btn-primary:active,
-  .clean-empty-btn-secondary:active,
   .quick-action-hub-btn:active {
     transform: scale(0.96) !important;
     transition: transform 0.08s ease !important;
@@ -17362,8 +17149,6 @@ button:not(.ui-btn).dash-bar-col.is-selected-bar {
   box-shadow: var(--shadow-sm) !important;
 }
 .today-check-circle {
-  width: 44px;
-  height: 44px;
   border: 2px solid var(--ink-muted);
   background: var(--surface);
   color: var(--ink);
@@ -19089,19 +18874,10 @@ button:not(.ui-btn).sprint-action-btn:hover,
     box-shadow: none !important;
   }
   .today-check-circle {
-    width: 28px !important;
-    height: 28px !important;
-    min-height: 28px !important;
-    border-radius: var(--r-full) !important;
-    padding: 0 !important;
     box-shadow: none !important;
   }
   .btn-reschedule-today {
-    height: 30px !important;
-    min-height: 30px !important;
-    padding: 4px 10px !important;
     font-size: var(--fs-overline) !important;
-    border-radius: var(--r-md) !important;
     box-shadow: none !important;
   }
   .edit-pencil-btn, .inline-edit-icon {

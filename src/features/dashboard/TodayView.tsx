@@ -2,6 +2,7 @@
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { useEffect, useState } from 'react';
 import { Toast } from '@/components/ui/Toast';
 import { useSwipeAction } from '@/components/ui/useSwipeAction';
@@ -199,7 +200,7 @@ export function TodayView({
             </strong>
           </div>
           {overdueTasks.length > 0 && (
-            <div className="today-stat-pill alert-pill">
+            <div className="today-stat-pill ui-stat-alert">
               <span className="stat-label">Perlu Diperhatikan</span>
               <strong>{overdueTasks.length} terlambat</strong>
             </div>
@@ -221,6 +222,7 @@ export function TodayView({
           <Plus size={18} className="quick-add-icon" />
           <Input
             type="text"
+            aria-label="Judul tugas baru hari ini"
             value={quickTitle}
             onChange={(e) => setQuickTitle(e.target.value)}
             placeholder="Tambah tugas baru untuk hari ini, lalu tekan Enter…"
@@ -287,6 +289,7 @@ export function TodayView({
                       tabIndex={0}
                       onClick={() => setDetailTask(task)}
                       onKeyDown={(e) => {
+                        if (e.target !== e.currentTarget) return;
                         if (e.key === 'Enter' || e.key === ' ') {
                           e.preventDefault();
                           setDetailTask(task);
@@ -294,6 +297,7 @@ export function TodayView({
                       }}
                     >
                       <Button
+                        iconOnly
                         type="button"
                         className="today-check-circle"
                         onClick={(e) => toggleComplete(task, e)}
@@ -363,21 +367,9 @@ export function TodayView({
             </div>
 
             {todayTasks.length === 0 ? (
-              <div className="today-empty-state">
-                <CalendarDays size={32} />
-                <h3>Belum ada tugas untuk hari ini</h3>
-                <p>
-                  Tambahkan tugas langsung lewat kolom di atas atau tentukan prioritas kerja Anda
-                  hari ini.
-                </p>
-                <Button
-                  type="button"
-                  className="btn-create-today"
-                  onClick={() => setShowCreateModal(true)}
-                >
-                  <Plus size={16} /> Tambah tugas baru
-                </Button>
-              </div>
+              <EmptyState icon={<CalendarDays />} title="Belum ada tugas untuk hari ini"
+                description="Tambahkan tugas atau jadwalkan tugas yang sudah ada."
+                action={{ label: 'Tambah tugas baru', onClick: () => setShowCreateModal(true) }} />
             ) : (
               <div className="today-task-cards-list">
                 {todayTasks.map((task) => {
@@ -397,6 +389,7 @@ export function TodayView({
                       tabIndex={0}
                       onClick={() => setDetailTask(task)}
                       onKeyDown={(e) => {
+                        if (e.target !== e.currentTarget) return;
                         if (e.key === 'Enter' || e.key === ' ') {
                           e.preventDefault();
                           setDetailTask(task);
@@ -404,6 +397,7 @@ export function TodayView({
                       }}
                     >
                       <Button
+                        iconOnly
                         type="button"
                         className={`today-check-circle ${isDone ? 'checked' : ''}`}
                         onClick={(e) => toggleComplete(task, e)}
@@ -468,9 +462,8 @@ export function TodayView({
             </div>
 
             {todayMeetings.length === 0 ? (
-              <div className="side-empty-note">
-                <p>Tidak ada jadwal rapat untuk hari ini.</p>
-              </div>
+              <EmptyState compact icon={<Video />} title="Tidak ada jadwal rapat untuk hari ini."
+                action={{ label: 'Lihat rapat', href: '/rapat' }} />
             ) : (
               <div className="today-meetings-list">
                 {todayMeetings.map((meeting) => {
@@ -548,9 +541,8 @@ export function TodayView({
             </div>
 
             {upcomingTasks.length === 0 ? (
-              <div className="side-empty-note">
-                <p>Tidak ada tugas berjadwal dalam 7 hari ke depan.</p>
-              </div>
+              <EmptyState compact icon={<Clock />} title="Tidak ada tugas berjadwal dalam 7 hari ke depan."
+                action={{ label: 'Lihat tugas', href: '/tugas' }} />
             ) : (
               <div className="upcoming-tasks-mini-list">
                 {upcomingTasks.map((task) => {

@@ -1,6 +1,7 @@
 'use client';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { EmptyState } from '@/components/ui/EmptyState';
 import Link from 'next/link';
 import { useState } from 'react';
 import { z } from 'zod';
@@ -78,6 +79,9 @@ export function Dashboard({ data }: { data: Workspace }) {
     .sort((a, b) => a.due_date.localeCompare(b.due_date));
 
   const projects = data.workstreams || [];
+  const visibleProjects = projects.filter(
+    (project) => project.data.status !== 'diarsipkan' && (!projectId || project.id === projectId),
+  );
   const meeting = (data.meetings || [])
     .filter(
       (m) =>
@@ -407,18 +411,10 @@ export function Dashboard({ data }: { data: Workspace }) {
               </Link>
             ))}
             {!visible.length && (
-              <div className="home-empty">
-                <CalendarDays size={26} />
-                <h2>
-                  {filter === 'selesai' ? 'Belum ada tugas selesai' : 'Tidak ada tugas di sini'}
-                </h2>
-                <p>
-                  {filter === 'terlambat'
-                    ? 'Tidak ada tenggat yang terlewat.'
-                    : 'Tambahkan tugas dan pilih tanggal pengerjaannya.'}
-                </p>
-                <Link href="/tugas?baru=1">+ Tambah tugas</Link>
-              </div>
+              <EmptyState compact icon={<CalendarDays />}
+                title={filter === 'selesai' ? 'Belum ada tugas selesai' : 'Tidak ada tugas di sini'}
+                description={filter === 'terlambat' ? 'Tidak ada tenggat yang terlewat.' : 'Tambahkan tugas dan pilih tanggal pengerjaannya.'}
+                action={{ label: 'Tambah tugas', href: '/tugas?baru=1' }} />
             )}
           </div>
           <Link className="home-text-link" href="/tugas">
@@ -474,10 +470,9 @@ export function Dashboard({ data }: { data: Workspace }) {
                   );
                 })}
                 {routines.length === 0 && (
-                  <p className="routine-empty-text">
-                    Belum ada rutinitas. Klik tombol <strong>Atur</strong> untuk menambahkan
-                    rutinitas harian gerai.
-                  </p>
+                  <EmptyState compact icon={<Clock />} title="Belum ada rutinitas"
+                    description="Tambahkan checklist rutinitas harian gerai."
+                    action={{ label: 'Atur rutinitas', onClick: () => setShowRoutineModal(true) }} />
                 )}
               </div>
             </div>
@@ -495,10 +490,9 @@ export function Dashboard({ data }: { data: Workspace }) {
               </Link>
             </div>
             {journalRecent.length === 0 ? (
-              <div className="home-empty">
-                <p>Belum ada kegiatan dicatat. Catat kunjungan, koordinasi, atau hasil lapangan.</p>
-                <Link href="/jurnal?baru=1">+ Catat kegiatan</Link>
-              </div>
+              <EmptyState compact icon={<BookOpen />} title="Belum ada kegiatan dicatat"
+                description="Catat kunjungan, koordinasi, atau hasil lapangan."
+                action={{ label: 'Catat kegiatan', href: '/jurnal?baru=1' }} />
             ) : (
               <ul className="journal-recent-list">
                 {journalRecent.map((row) => {
@@ -568,12 +562,9 @@ export function Dashboard({ data }: { data: Workspace }) {
                 <FolderKanban size={20} />
               </Link>
             </div>
-            {projects.length ? (
+            {visibleProjects.length ? (
               <div className="dash-proj-list">
-                {projects
-                  .filter(
-                    (p) => p.data.status !== 'diarsipkan' && (!projectId || p.id === projectId),
-                  )
+                {visibleProjects
                   .slice(0, 5)
                   .map((p, i) => (
                     <ProjectProgressBar
@@ -586,7 +577,9 @@ export function Dashboard({ data }: { data: Workspace }) {
                   ))}
               </div>
             ) : (
-              <p style={{ fontSize: 13, color: 'var(--ink-muted)' }}>Belum ada proyek</p>
+              <EmptyState compact icon={<FolderKanban />} title="Belum ada proyek"
+                description={projectId ? 'Tidak ada proyek aktif pada pilihan ini.' : 'Buat proyek atau periksa proyek yang diarsipkan.'}
+                action={{ label: 'Kelola proyek', href: '/proyek' }} />
             )}
           </section>
         </aside>

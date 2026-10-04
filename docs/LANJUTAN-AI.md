@@ -2,6 +2,10 @@
 
 ## Lanjutan PLAN-ASTRA — 4 Oktober 2026
 
+- Paket terbaru: EmptyState Beranda/Hari Ini, daftar proyek seluruhnya diarsipkan, kartu tugas mobile dan guard keyboard aksi anak. 195 tes/31 berkas serta typecheck/lint/lint:ui/build dan audit sumber 91/91 lulus.
+- Sesi browser aktif kembali; catatan kedaluwarsa di bawah adalah riwayat. Hari Ini 320/360/768/1024/1440 diukur tanpa luapan; screenshot 360 di artifacts/astra/hari-ini-kartu-360.jpg. Tidak menyimpan perubahan data nyata selama QA.
+- Kalender tetap ke bawah dan di dalam panel, namun sel pada form sempit kurang dari 44 px. Perbaikan berikutnya harus mempertahankan batas panel dan validasi tanggal, bukan membiarkan kalender meluap.
+
 - Rujuk docs/LAPORAN-ASTRA.md dan AUDIT.md untuk paket serta kriteria terbuka. Pemeriksaan terakhir 191 tes/30 berkas, typecheck/lint/build, check:ui dan audit sumber 91/91 lulus.
 - Branch codex/workspace-redesign telah di-push per paket. Periksa ulang Git. Perubahan pemilik pada personal.css, Settings.tsx, ThemeContext.tsx serta PLAN-ASTRA yang belum dilacak tetap dipertahankan terpisah.
 - Sesi QA browser kedaluwarsa; masuk kembali diperlukan untuk QA halaman berdata. Galeri /dev/komponen hanya development, tanpa database.

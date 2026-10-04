@@ -16,6 +16,7 @@ import { GripVertical } from 'lucide-react';
 import { SegmentedControl } from './SegmentedControl';
 import { Legend } from './Legend';
 import { Progress } from './Progress';
+import { EmptyState } from './EmptyState';
 
 function DragExample() {
   const [column, setColumn] = useState('rencana');
@@ -144,6 +145,10 @@ export function ComponentGallery() {
         />
       </Card>
       <p role="status">{notice}</p>
+      <Card>
+        <CardHeader><h2>Keadaan kosong</h2></CardHeader>
+        <EmptyState title="Belum ada contoh" description="Pratinjau komponen kosong tanpa data koperasi." action={{ label: 'Coba aksi', onClick: () => setNotice('Aksi keadaan kosong') }} />
+      </Card>
       <Card>
         <CardHeader><h2>Pilihan dan grafik</h2></CardHeader>
         <SegmentedControl label="Contoh tampilan" value={notice} onChange={setNotice} options={[{ value: 'daftar', label: 'Daftar' }, { value: 'papan', label: 'Papan' }, { value: 'nonaktif', label: 'Nonaktif', disabled: true }]} />

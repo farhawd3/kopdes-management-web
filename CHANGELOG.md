@@ -1,5 +1,11 @@
 # Changelog
 
+## PLAN-ASTRA — keadaan kosong dan kartu Hari Ini — 4 Oktober 2026
+
+- EmptyState netral menyatukan Beranda/Hari Ini; daftar proyek seluruhnya diarsipkan tidak lagi kosong tanpa penjelasan.
+- Judul tugas membungkus pada ponsel, geometri centang memakai primitive, input cepat memiliki label dan Enter pada aksi anak tidak membuka detail.
+- 195 tes/31 berkas, typecheck, lint/lint:ui, build dan audit sumber 91/91 lulus. Hari Ini lima lebar tanpa overflow; target sel kalender sempit masih terbuka.
+
 ## PLAN-ASTRA — selector tanpa pemanggil dan label form — 4 Oktober 2026
 
 - Pangkas CSS tanpa pemanggil berdasarkan string AST, dengan pengecualian kelas dinamis dan selector kompleks. Field umum Editor memiliki label/id bersama.

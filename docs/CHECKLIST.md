@@ -1,5 +1,9 @@
 # Checklist produk aktif
 
+- [x] EmptyState bersama pada Beranda/Hari Ini; proyek seluruhnya diarsipkan menampilkan keadaan kosong, dengan tes regresi.
+- [x] Judul tugas Hari Ini membungkus pada ponsel; Enter pada aksi anak tidak membuka detail kartu; lima lebar diukur tanpa overflow.
+- [ ] Sel tanggal kalender panel sempit mencapai target sentuh 44 px.
+
 - [x] CSS tanpa pemanggil statis dipangkas dengan pengecualian kelas dinamis/selector kompleks; Field umum Editor terhubung dengan id.
 - [x] Galeri komponen tanpa overflow pada 320/360/390/768/1024/1280/1440/1920; bukan bukti seluruh halaman/perangkat.
 
