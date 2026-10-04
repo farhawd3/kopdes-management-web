@@ -16,21 +16,26 @@ Versi sekarang belum diterima: kawasan kecil/sepi, mobil belum ada, tampilan aga
 
 - `/dunia-koperasi` terdaftar pada navigasi, menggunakan sesi aplikasi dan data workspace, dengan layar penuh/dock khusus.
 - `/dev/dunia-koperasi` development route untuk pengujian bebas database.
-- Three.js: kamera ortografis dengan radius target hingga 26 unit, pencahayaan ACESFilmic dan PCFShadowMap, kontrol zoom/putar/reset, penanda HTML, serta raycast klik objek gedung/lahan/kendaraan/karakter.
-- Exterior luas (58 × 38 unit): kantor koperasi, jalan aspal dua arah dengan marka tengah & zebra cross, plaza sentral berair mancur dan bangku taman, area parkir, loading dock logistik berkanopi, dan tujuh lahan gerai yang terhubung catatan `units`.
-- Default waktu adalah Siang terang; kontrol cepat **Waktu** (Siang, Pagi, Senja, Malam, WIB) dan **Cuaca** (Cerah, Berawan, Hujan) langsung terlihat dan dapat diklik 1 kali pada desktop maupun ponsel tanpa harus membuka panel samping.
-- Kendaraan suasana modular: Mobil Manajer terparkir di slot parkir, Van Distribusi di area bongkar muat, dan Truk Muatan Logistik bergerak di sepanjang jalan raya; klik kendaraan menampilkan kartu detail berstatus "Simulasi lingkungan".
-- Manajer berpatroli berkala memeriksa kawasan (kantor -> plaza -> trotoar gerai -> kantor) dengan langkah berjalan dan arah badan realistis; bubble kontekstual jarang ("Ada tugas yang perlu ditinjau?", "Ada kegiatan hari ini di jurnal!", dll.) muncul ramah dan menjeda patroli saat diajak berinteraksi.
-- Interior kantor dengan zona Gym modern: dual treadmill berpanel LED, bangku latihan, rak dumbbell beban bertingkat, dispenser air minum, dan penanda Gym & Kegiatan. Karakter beraksi di treadmill saat ada kegiatan jurnal, duduk di kursi saat rapat berlangsung, dan mengetik di meja tugas saat ada tugas berproses.
+- Three.js: kamera ortografis dengan radius target hingga 26 unit, pencahayaan ACESFilmic dan PCFShadowMap, kontrol zoom/putar/reset, penanda HTML, serta raycast klik objek gedung/lahan/kendaraan/karakter/gudang.
+- **Paket 1 Selesai:**
+  - Tekstur jalan diperbaiki dengan sistem layer top presisi, `sun.shadow.bias = -0.0003`, `normalBias = 0.025`, dan penonaktifan `castShadow` pada objek datar. Garis-garis hitam belang (shadow acne) terbukti lenyap total pada pengujian browser siang dan malam.
+  - Warna jalan dikembalikan ke biru pastel lembut (`#b8c9e5`) yang berbobot dan menyatu dengan tema diorama.
+  - Simpang lampu merah 3D modular dengan tiang baja dan siklus otomatis lampu merah, kuning, dan hijau di persimpangan jalan utama dan akses kantor.
+  - Gedung Gudang Logistik solid 3 dermaga rolling door, kanopi pelindung, apron bertanda marka kuning, forklift, dan palet kayu di sisi timur kawasan.
+  - Sistem `SeatAnchor` pada bangku taman plaza: karakter wanita kini duduk santai di bangku taman plaza menghadap utara dengan pose duduk wajar, menuntaskan masalah karakter berdiri/menginjak bangku.
+- Exterior luas (58 × 38 unit): kantor koperasi, jalan dua arah, plaza air mancur dan 4 bangku taman ber-anchor, area parkir mobil manajer, gudang logistik, dan tujuh lahan gerai yang terhubung catatan `units`.
+- Default waktu adalah Siang terang; kontrol cepat **Waktu** dan **Cuaca** aktif.
+- Kendaraan suasana: Mobil Manajer di parkir, Van Distribusi di dermaga gudang, dan Truk Muatan Logistik bergerak di jalan raya.
+- Interior kantor dengan zona Gym modern: dual treadmill LED, bangku latihan, dumbbell rack, dispenser, meja rapat, dan meja tugas.
 - Style dunia terisolasi di `world.css` dan palet Three.js di `world-objects.ts`.
 
 ## Pemeriksaan paket terbaru
 
-- `npm test -- --maxWorkers=2`: **269 tes / 44 berkas lulus 100%**. Penambahan pengujian unit dan UI untuk kontrol cepat cuaca/waktu, tata letak map luas, dan armada kendaraan suasana.
-- `npm run typecheck`: **lulus** tanpa galat TypeScript.
-- `npm run lint`: **lulus** (ESLint pada `src` dan `tests`).
-- `npm run build`: **lulus**, produksi Next.js Turbopack teroptimasi tanpa galat.
-- QA browser: rendering 3D, perpindahan waktu/cuaca cepat, inspeksi mobil manajer/van/truk, penjelajahan interior kantor/gym, dan dock navigasi diverifikasi pada **360, 768, 1024, 1440 px**.
+- `npm test -- --maxWorkers=2`: **269 tes / 44 berkas lulus 100%**.
+- `npm run typecheck`: **lulus** (0 error TypeScript).
+- `npm run lint`: **lulus** (0 error ESLint).
+- `npm run build`: **lulus** (Turbopack production build sukses).
+- QA browser Paket 1: terbukti bebas shadow acne pada mode siang dan malam (`kawasan_malam_1791145827983.png`), karakter duduk rapi di bangku (`fountain_plaza_closeup_1791145906859.png`), simpang lampu merah dan gudang logistik ter-render solid.
 
 ## Halaman operasional yang tersedia
 

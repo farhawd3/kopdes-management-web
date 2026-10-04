@@ -1,5 +1,14 @@
 # Changelog
 
+## Paket 1 Dunia Koperasi: Geometri Shading Anti-Acne, Simpang Lampu Merah, Gudang Logistik, dan Seat Anchor — 5 Oktober 2026
+
+- Perbaiki tekstur jalan dengan tabel layer permukaan atas (top) presisi dan konfigurasi Three.js `sun.shadow.bias = -0.0003`, `sun.shadow.normalBias = 0.025`, serta penonaktifan `castShadow` pada objek datar: garis hitam shadow acne di jalan raya berhasil dihilangkan total pada mode siang maupun malam.
+- Kembalikan palet warna jalan raya ke biru pastel lembut (`#b8c9e5`) yang berbobot dan menyatu dengan lingkungan diorama.
+- Hadirkan simpang lampu merah (traffic light intersection) 3D modular dengan tiang baja ramping dan 3 lensa (merah, kuning, hijau) yang berganti fase secara dinamis di persimpangan jalan utama dan akses kantor/plaza.
+- Bangun gedung Gudang Logistik (Warehouse) solid 3 dermaga rolling door, kanopi pelindung dermaga muat, apron bertanda marka kuning, forklift, dan palet kayu di sisi timur kawasan.
+- Terapkan sistem `SeatAnchor` pada bangku taman plaza: karakter wanita di taman kini duduk rapi di atas bangku menghadap utara dengan pose duduk wajar, menuntaskan masalah karakter berdiri/menginjak bangku.
+- 269 tes lulus 100%, typecheck 0 error, lint 0 error, build produksi Turbopack lulus; verifikasi visual browser membuktikan lenyapnya pita hitam jalan dan kerapian duduk karakter.
+
 ## Perluasan kawasan Dunia Koperasi, kontrol waktu/cuaca cepat, armada, patroli dan gym — 5 Oktober 2026
 
 - Perbesar map luar menjadi 58 × 38 unit: jalan aspal dua arah dengan marka tengah & zebra cross, plaza sentral air mancur & bangku, area parkir, loading dock logistik berkanopi, dan tujuh lahan gerai.

@@ -11,6 +11,16 @@ export const palette = {
   green: '#79c8a0',
   wood: '#dfc59c',
   ink: '#2d3b56',
+  road: '#b8c9e5',
+  sidewalk: '#f4f7fd',
+  dockStripe: '#f5c542',
+  fountain: '#72a8e8',
+  warehouse: '#e2e8f0',
+  metal: '#475569',
+  nightLamp: '#fef08a',
+  trafficRed: '#ef4444',
+  trafficYellow: '#f59e0b',
+  trafficGreen: '#10b981',
 };
 const material = (color: string) => new THREE.MeshStandardMaterial({ color, roughness: 0.72 });
 export function box(
@@ -19,14 +29,16 @@ export function box(
   position: [number, number, number],
   color: string,
   radius = 0.035,
+  castShadow = true,
+  receiveShadow = true,
 ) {
   const mesh = new THREE.Mesh(
     radius ? new RoundedBoxGeometry(...size, 2, radius) : new THREE.BoxGeometry(...size),
     material(color),
   );
   mesh.position.set(...position);
-  mesh.castShadow = true;
-  mesh.receiveShadow = true;
+  mesh.castShadow = castShadow;
+  mesh.receiveShadow = receiveShadow;
   parent.add(mesh);
   return mesh;
 }
@@ -98,7 +110,12 @@ function tree(parent: THREE.Object3D, x: number, z: number, scale = 1) {
   sphere(group, 0.36, [-0.23, 1.67, 0.15], '#a6dfb5');
   cylinder(group, 0.52, 0.15, [0, 0.08, 0], '#d1dcec');
 }
-function bench(parent: THREE.Object3D, x: number, z: number, rotation = 0) {
+export type SeatAnchor = {
+  position: [number, number, number];
+  rotationY: number;
+};
+
+export function bench(parent: THREE.Object3D, x: number, z: number, rotation = 0): SeatAnchor {
   const g = new THREE.Group();
   g.position.set(x, 0, z);
   g.rotation.y = rotation;
@@ -108,7 +125,170 @@ function bench(parent: THREE.Object3D, x: number, z: number, rotation = 0) {
   for (let i = 0; i < 3; i++)
     box(g, [1.7, 0.08, 0.13], [0, 0.49, (i - 1) * 0.16], palette.wood);
   box(g, [1.7, 0.35, 0.08], [0, 0.8, -0.25], palette.wood);
+  return {
+    position: [x, 0.45, z],
+    rotationY: rotation,
+  };
 }
+
+export type TrafficLightRefs = {
+  red: THREE.Mesh;
+  yellow: THREE.Mesh;
+  green: THREE.Mesh;
+};
+
+export function createTrafficLight(
+  parent: THREE.Object3D,
+  x: number,
+  z: number,
+  rotation = 0,
+): TrafficLightRefs {
+  const g = new THREE.Group();
+  g.position.set(x, 0, z);
+  g.rotation.y = rotation;
+  parent.add(g);
+  // Pole
+  cylinder(g, 0.08, 3.8, [0, 1.9, 0], palette.metal);
+  // Horizontal arm
+  box(g, [1.2, 0.08, 0.08], [0.55, 3.65, 0], palette.metal);
+  // Light housing box
+  box(g, [0.32, 0.95, 0.28], [1.1, 3.5, 0], '#1e293b', 0.04);
+  // Visors
+  for (let i = 0; i < 3; i++) {
+    box(g, [0.1, 0.03, 0.24], [1.28, 3.82 - i * 0.28, 0], '#0f172a');
+  }
+  // 3 lenses: Red, Yellow, Green
+  const redMat = new THREE.MeshStandardMaterial({
+    color: palette.trafficRed,
+    emissive: palette.trafficRed,
+    emissiveIntensity: 0.9,
+    roughness: 0.2,
+  });
+  const yellowMat = new THREE.MeshStandardMaterial({
+    color: palette.trafficYellow,
+    emissive: palette.trafficYellow,
+    emissiveIntensity: 0.05,
+    roughness: 0.2,
+  });
+  const greenMat = new THREE.MeshStandardMaterial({
+    color: palette.trafficGreen,
+    emissive: palette.trafficGreen,
+    emissiveIntensity: 0.05,
+    roughness: 0.2,
+  });
+  const red = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.06, 12), redMat);
+  red.rotation.z = Math.PI / 2;
+  red.position.set(1.24, 3.8, 0);
+  g.add(red);
+
+  const yellow = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.06, 12), yellowMat);
+  yellow.rotation.z = Math.PI / 2;
+  yellow.position.set(1.24, 3.52, 0);
+  g.add(yellow);
+
+  const green = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.06, 12), greenMat);
+  green.rotation.z = Math.PI / 2;
+  green.position.set(1.24, 3.24, 0);
+  g.add(green);
+
+  return { red, yellow, green };
+}
+
+export function createForklift(
+  parent: THREE.Object3D,
+  position: [number, number, number],
+  rotation = 0,
+) {
+  const g = new THREE.Group();
+  g.position.set(...position);
+  g.rotation.y = rotation;
+  parent.add(g);
+  // 4 Wheels
+  for (const [wx, wz] of [
+    [-0.45, -0.35],
+    [0.45, -0.35],
+    [-0.45, 0.35],
+    [0.45, 0.35],
+  ]) {
+    const wheel = cylinder(g, 0.14, 0.12, [wx, 0.14, wz], '#1e2430');
+    wheel.rotation.x = Math.PI / 2;
+  }
+  // Chassis
+  box(g, [1.2, 0.4, 0.7], [0, 0.32, 0], '#f59e0b', 0.04);
+  // Counterweight
+  box(g, [0.4, 0.5, 0.68], [-0.4, 0.45, 0], '#b45309', 0.04);
+  // Overhead guard cage
+  for (const cx of [-0.2, 0.25]) {
+    for (const cz of [-0.3, 0.3]) {
+      cylinder(g, 0.025, 0.85, [cx, 0.85, cz], '#334155');
+    }
+  }
+  box(g, [0.65, 0.04, 0.68], [0.02, 1.28, 0], '#334155', 0.02);
+  // Front mast & forks
+  box(g, [0.08, 1.1, 0.45], [0.65, 0.65, 0], '#475569');
+  box(g, [0.55, 0.04, 0.1], [0.92, 0.12, -0.16], '#334155', 0);
+  box(g, [0.55, 0.04, 0.1], [0.92, 0.12, 0.16], '#334155', 0);
+  // Cargo box on fork
+  box(g, [0.45, 0.35, 0.45], [0.88, 0.32, 0], palette.wood, 0.03);
+  return g;
+}
+
+export function createWarehouse(parent: THREE.Object3D, x: number, z: number) {
+  const g = new THREE.Group();
+  g.position.set(x, 0, z);
+  g.userData.selection = 'gudang';
+  parent.add(g);
+
+  // Warehouse main building: 13.5 x 3.6 x 5.2
+  box(g, [13.5, 3.5, 5.2], [0, 1.85, 0], palette.warehouse, 0.12);
+  // Lis navy & atap gable bergaris
+  box(g, [13.8, 0.35, 5.5], [0, 3.7, 0], palette.navy, 0.08);
+  for (let i = -6; i <= 6; i += 1.5) {
+    box(g, [0.08, 0.06, 5.4], [i, 3.9, 0], '#648cfb', 0);
+  }
+  // Skylight strip di atap
+  box(g, [9.0, 0.06, 1.2], [0, 3.92, 0], palette.glass, 0.02);
+
+  // 3 Rolling door bays on front facade (z = 2.6)
+  const bayX = [-4.0, 0, 4.0];
+  // Bay 1: Closed rolling door with horizontal ridges
+  box(g, [2.8, 2.4, 0.1], [bayX[0], 1.3, 2.62], '#3b82f6', 0.03);
+  for (let y = 0.3; y <= 2.3; y += 0.28) {
+    box(g, [2.76, 0.04, 0.06], [bayX[0], y, 2.67], '#1d4ed8', 0);
+  }
+  box(g, [3.2, 0.3, 0.3], [bayX[0], 2.65, 2.7], palette.navy, 0.04);
+
+  // Bay 2: Open bay showing stacked pallets inside
+  box(g, [2.8, 2.4, 0.12], [bayX[1], 1.3, 2.58], '#1e293b', 0.02);
+  cylinder(g, 0.22, 2.8, [bayX[1], 2.35, 2.55], palette.blue).rotation.z = Math.PI / 2;
+  // Inside pallets
+  box(g, [1.4, 0.14, 1.2], [bayX[1] - 0.4, 0.2, 1.8], palette.wood);
+  box(g, [1.2, 0.6, 1.0], [bayX[1] - 0.4, 0.58, 1.8], '#cbd5e1', 0.04);
+  box(g, [1.4, 0.14, 1.2], [bayX[1] + 0.4, 0.2, 1.6], palette.wood);
+  box(g, [1.1, 0.75, 0.9], [bayX[1] + 0.4, 0.65, 1.6], '#b45309', 0.04);
+
+  // Bay 3: Active Loading Dock with protective canopy
+  box(g, [2.8, 2.4, 0.1], [bayX[2], 1.3, 2.62], '#2563eb', 0.03);
+  box(g, [4.2, 0.15, 2.4], [bayX[2], 2.85, 3.8], palette.navy, 0.06);
+  cylinder(g, 0.07, 2.8, [bayX[2] - 1.8, 1.4, 4.8], palette.metal);
+  cylinder(g, 0.07, 2.8, [bayX[2] + 1.8, 1.4, 4.8], palette.metal);
+  // Dock bumper rubber blocks
+  box(g, [0.25, 0.6, 0.2], [bayX[2] - 1.2, 0.5, 2.72], '#0f172a');
+  box(g, [0.25, 0.6, 0.2], [bayX[2] + 1.2, 0.5, 2.72], '#0f172a');
+
+  // Sign on warehouse
+  sign(g, 'GUDANG LOGISTIK', [0, 3.25, 2.66], 4.8, '#2443a6');
+
+  // Forklift on apron
+  createForklift(g, [-2.2, 0, 4.5], -Math.PI * 0.25);
+
+  // Pallet stack on apron
+  box(g, [1.4, 0.14, 1.2], [2.2, 0.12, 4.8], palette.wood);
+  box(g, [1.2, 0.65, 1.0], [2.2, 0.52, 4.8], '#3b82f6', 0.05);
+
+  return g;
+}
+
 function building(
   parent: THREE.Object3D,
   x: number,
@@ -145,6 +325,7 @@ function building(
     }
   }
 }
+
 export function createCar(
   parent: THREE.Object3D,
   position: [number, number, number],
@@ -285,7 +466,7 @@ function fountain(parent: THREE.Object3D, x: number, z: number) {
   // Outer stone basin ring
   cylinder(g, 1.8, 0.35, [0, 0.18, 0], '#d9e2ef');
   // Water pool
-  cylinder(g, 1.6, 0.32, [0, 0.2, 0], '#72a8e8');
+  cylinder(g, 1.6, 0.32, [0, 0.2, 0], palette.fountain);
   // Center tier
   cylinder(g, 0.7, 0.7, [0, 0.45, 0], '#cbd7e8');
   cylinder(g, 0.25, 0.55, [0, 0.95, 0], '#8cbaf0');
@@ -296,111 +477,119 @@ function streetLamp(parent: THREE.Object3D, x: number, z: number) {
   const g = new THREE.Group();
   g.position.set(x, 0, z);
   parent.add(g);
-  cylinder(g, 0.07, 3.4, [0, 1.7, 0], '#475569');
+  cylinder(g, 0.07, 3.4, [0, 1.7, 0], palette.metal);
   box(g, [0.75, 0.07, 0.15], [0.3, 3.38, 0], '#334155');
-  box(g, [0.35, 0.18, 0.28], [0.55, 3.28, 0], '#fffbeb', 0.04);
+  box(g, [0.35, 0.18, 0.28], [0.55, 3.28, 0], palette.nightLamp, 0.04);
 }
 
 export function createExterior(parent: THREE.Group, model: WorldModel) {
-  // Expanded map: 62 x 42 base platform, 58 x 38 ground
-  box(parent, [62, 0.45, 42], [0, -0.28, 0], '#cfd8e8', 0.2);
-  box(parent, [58, 0.1, 38], [0, -0.05, 0], palette.ground);
+  // Layer 1: Alas Platform (Top <= -0.02, castShadow = false)
+  box(parent, [62, 0.4, 42], [0, -0.25, 0], '#cfd8e8', 0.2, false);
 
-  // Main asphalt road running horizontally at Z = 12
-  box(parent, [58, 0.03, 6.4], [0, -0.015, 12], '#334155', 0);
-  // Dashed white center road markings
+  // Layer 2: Tanah / Rumput (Top = 0.000, castShadow = false)
+  box(parent, [58, 0.08, 38], [0, -0.04, 0], palette.ground, 0.035, false);
+
+  // Layer 3: Apron Gudang & Paving Plaza (Top = 0.030, tebal 0.05, castShadow = false)
+  box(parent, [10, 0.05, 7.6], [4, 0.005, 0], '#f8fafc', 0.035, false);
+  box(parent, [16, 0.05, 7.0], [18, 0.005, 5.8], '#dce5f2', 0.035, false);
+
+  // Layer 4: Badan Jalan Utama (Top = 0.040, tebal 0.06, menembus tanah ke -0.02, castShadow = false)
+  // Jalan utama timur-barat di Z = 12
+  box(parent, [58, 0.06, 6.4], [0, 0.01, 12], palette.road, 0, false);
+  // Cabang jalan simpang ke utara (arah kantor/plaza) di X = 0
+  box(parent, [5.2, 0.06, 5.8], [0, 0.01, 5.9], palette.road, 0, false);
+
+  // Layer 5: Marka Jalan, Zebra Cross & Garis Dermaga (Top = 0.052, tebal 0.012, castShadow = false)
+  // Marka tengah putus-putus
   for (let x = -27; x < 28; x += 3.5) {
-    box(parent, [1.8, 0.02, 0.14], [x, 0.008, 12], '#f8fafc', 0);
-  }
-  // Solid white edge lines
-  box(parent, [58, 0.02, 0.12], [0, 0.008, 9.1], '#f8fafc', 0);
-  box(parent, [58, 0.02, 0.12], [0, 0.008, 14.9], '#f8fafc', 0);
-
-  // Pedestrian zebra crossings
-  for (const cx of [-12, 4]) {
-    for (let i = 0; i < 6; i++) {
-      box(parent, [0.7, 0.025, 0.55], [cx, 0.01, 9.6 + i * 0.95], '#ffffff', 0);
+    if (Math.abs(x) > 3.0) {
+      box(parent, [1.8, 0.012, 0.14], [x, 0.046, 12], '#ffffff', 0, false);
     }
   }
+  // Marka garis tepi jalan
+  box(parent, [58, 0.012, 0.12], [0, 0.046, 9.1], '#ffffff', 0, false);
+  box(parent, [58, 0.012, 0.12], [0, 0.046, 14.9], '#ffffff', 0, false);
+  // Marka kuning dermaga gudang
+  box(parent, [15.6, 0.012, 0.12], [18, 0.046, 9.1], palette.dockStripe, 0, false);
+  for (let i = 0; i < 4; i++) {
+    box(parent, [0.1, 0.012, 3.2], [14 + i * 2.6, 0.046, 5.8], palette.dockStripe, 0, false);
+  }
 
-  // Broad paved sidewalks (Trotoar)
-  box(parent, [58, 0.06, 2.2], [0, 0.02, 7.7], '#edf2f9');
-  box(parent, [58, 0.06, 1.8], [0, 0.02, 16.5], '#edf2f9');
-  // Walkway connecting north row and center
-  box(parent, [58, 0.04, 2.6], [0, 0.01, -4.8], '#edf2f9');
-  // Cross walkways
+  // Zebra Cross Simpang (3 Penyeberangan)
+  for (let i = 0; i < 6; i++) {
+    // Zebra penyeberangan barat (X = -3.8)
+    box(parent, [0.65, 0.012, 0.5], [-3.8, 0.046, 9.5 + i * 0.9], '#ffffff', 0, false);
+    // Zebra penyeberangan timur (X = 3.8)
+    box(parent, [0.65, 0.012, 0.5], [3.8, 0.046, 9.5 + i * 0.9], '#ffffff', 0, false);
+  }
+  // Zebra penyeberangan cabang utara (Z = 8.5)
+  for (let i = 0; i < 5; i++) {
+    box(parent, [0.5, 0.012, 0.65], [-1.8 + i * 0.9, 0.046, 8.5], '#ffffff', 0, false);
+  }
+
+  // Layer 6: Trotoar & Kerb (Top = 0.120, tebal 0.14, castShadow = true)
+  box(parent, [58, 0.14, 2.0], [0, 0.05, 16.2], palette.sidewalk, 0.035, true);
+  box(parent, [25.4, 0.14, 2.2], [-16.3, 0.05, 7.7], palette.sidewalk, 0.035, true);
+  box(parent, [25.4, 0.14, 2.2], [16.3, 0.05, 7.7], palette.sidewalk, 0.035, true);
+  // Trotoar pedestrian penghubung utara-selatan
+  box(parent, [58, 0.06, 2.4], [0, 0.02, -4.8], palette.sidewalk, 0.035, false);
   for (const wx of [-18, -5, 4, 18]) {
-    box(parent, [2.5, 0.04, 10.5], [wx, 0.01, 1.5], '#f1f5fb');
+    box(parent, [2.4, 0.06, 10.2], [wx, 0.02, 1.4], palette.sidewalk, 0.035, false);
   }
 
-  // Parking area at X = -18, Z = 6.5
-  box(parent, [11, 0.035, 5.0], [-17, 0.005, 6.5], '#475569');
-  // Parking stall lines
+  // Simpang Lampu Merah (Traffic Lights) di X = -3.2 dan X = 3.2
+  const tlWest = createTrafficLight(parent, -3.2, 8.6, 0);
+  const tlEast = createTrafficLight(parent, 3.2, 8.6, Math.PI);
+  const trafficLights = [tlWest, tlEast];
+
+  // Area Parkir Mobil Manajer di X = -18, Z = 6.5
+  box(parent, [11, 0.035, 5.0], [-17, 0.005, 6.5], '#475569', 0.035, false);
   for (let px = -21; px <= -13; px += 2.8) {
-    box(parent, [0.1, 0.02, 3.4], [px, 0.025, 6.5], '#f8fafc', 0);
+    box(parent, [0.1, 0.012, 3.4], [px, 0.025, 6.5], '#ffffff', 0, false);
   }
-  // Parked Manager's Car
   createCar(parent, [-18.2, 0, 6.5], palette.blue, 0, 'kendaraan-manajer');
 
-  // Logistics Loading Bay at X = 18, Z = 6.5
-  box(parent, [12, 0.06, 5.2], [18, 0.02, 6.5], '#64748b');
-  // Yellow/black diagonal safety stripe curb
-  for (let sx = 13; sx <= 23; sx += 1.2) {
-    box(parent, [0.55, 0.08, 0.15], [sx, 0.05, 9.0], '#f59e0b', 0);
-    box(parent, [0.55, 0.08, 0.15], [sx + 0.6, 0.05, 9.0], '#1e293b', 0);
-  }
-  // Canopy over loading area
-  for (const lx of [14, 22]) {
-    cylinder(parent, 0.08, 3.0, [lx, 1.5, 4.4], '#94a3b8');
-    cylinder(parent, 0.08, 3.0, [lx, 1.5, 8.4], '#94a3b8');
-  }
-  box(parent, [9.0, 0.15, 4.6], [18, 3.0, 6.4], '#2443a6', 0.08);
-  // Cargo crates & wooden pallets
-  box(parent, [1.4, 0.14, 1.2], [22, 0.12, 5.5], palette.wood);
-  box(parent, [0.8, 0.7, 0.8], [22, 0.55, 5.5], '#cbd5e1', 0.05);
-  box(parent, [1.4, 0.14, 1.2], [20.5, 0.12, 5.2], palette.wood);
-  box(parent, [0.9, 0.8, 0.9], [20.5, 0.6, 5.2], '#b45309', 0.05);
-  // Parked Logistics Van
-  createVan(parent, [16.2, 0, 6.5], '#fafcff', 0, 'kendaraan-van');
+  // Gudang Logistik Solid (3 Dermaga) di X = 18, Z = 3.8
+  createWarehouse(parent, 18, 3.8);
+  // Van Distribusi di slot parkir dermaga
+  createVan(parent, [15.2, 0, 7.0], '#fafcff', 0, 'kendaraan-van');
 
-  // Moving ambient truck along the road
-  const movingTruck = createTruck(parent, [-24, 0, 10.8], '#2443a6', 0, 'kendaraan-truk');
+  // Truk Muatan Bergerak di Jalan Raya
+  const movingTruck = createTruck(parent, [-24, 0, 10.8], palette.navy, 0, 'kendaraan-truk');
 
-  // Plaza with Fountain at X = 4, Z = 0
-  box(parent, [10, 0.05, 7], [4, 0.015, 0], '#f8fafc');
+  // Plaza Air Mancur di X = 4, Z = 0
   fountain(parent, 4, 0);
-  bench(parent, 4, -2.4, 0);
-  bench(parent, 4, 2.4, Math.PI);
-  bench(parent, 0.5, 0, Math.PI / 2);
-  bench(parent, 7.5, 0, -Math.PI / 2);
+  // 4 Bangku di Plaza dengan SeatAnchor
+  const benchSouth = bench(parent, 4, 2.6, Math.PI);
+  const benchNorth = bench(parent, 4, -2.6, 0);
+  const benchWest = bench(parent, 0.6, 0, Math.PI / 2);
+  const benchEast = bench(parent, 7.4, 0, -Math.PI / 2);
+  const seatAnchors = [benchSouth, benchNorth, benchWest, benchEast];
 
-  // Office Building (Kantor Koperasi) at X = -5, Z = 0
+  // Gedung Kantor Koperasi di X = -5, Z = 0
   building(parent, -5, 0, 'Koperasi', true);
 
-  // The 7 Plots
+  // 7 Lahan Gerai
   for (const plot of model.plots) {
     const [x, z] = plot.position;
     if (plot.unit) {
       building(parent, x, z, String(plot.unit.data.title), false, plot.id);
     } else {
-      // Empty plot with crisp diorama turf, borders and plus sign
-      const g = box(parent, [4.8, 0.06, 3.6], [x, 0.02, z], '#d3e6db');
+      const g = box(parent, [4.8, 0.06, 3.6], [x, 0.02, z], '#d3e6db', 0.035, false);
       g.userData.selection = plot.id;
-      // White boundary fence pegs
       for (const side of [-1, 1]) {
-        box(parent, [4.9, 0.03, 0.06], [x, 0.07, z + side * 1.8], '#ffffff', 0);
-        box(parent, [0.06, 0.03, 3.6], [x + side * 2.45, 0.07, z], '#ffffff', 0);
+        box(parent, [4.9, 0.03, 0.06], [x, 0.07, z + side * 1.8], '#ffffff', 0, false);
+        box(parent, [0.06, 0.03, 3.6], [x + side * 2.45, 0.07, z], '#ffffff', 0, false);
         for (let i = 0; i < 5; i++) {
           box(parent, [0.08, 0.38, 0.08], [x - 2.0 + i * 1.0, 0.2, z + side * 1.8], '#a3b9aa');
         }
       }
-      // Plus symbol in center
-      box(parent, [0.8, 0.06, 0.16], [x, 0.08, z], '#79a88c');
-      box(parent, [0.16, 0.06, 0.8], [x, 0.08, z], '#79a88c');
+      box(parent, [0.8, 0.06, 0.16], [x, 0.08, z], '#79a88c', 0, false);
+      box(parent, [0.16, 0.06, 0.8], [x, 0.08, z], '#79a88c', 0, false);
     }
   }
 
-  // Streetlamps along road and plaza
+  // Tiang Lampu Jalan (Streetlamps)
   for (const lx of [-24, -12, 0, 12, 24]) {
     streetLamp(parent, lx, 8.4);
     streetLamp(parent, lx, 15.6);
@@ -408,7 +597,7 @@ export function createExterior(parent: THREE.Group, model: WorldModel) {
   streetLamp(parent, -1, 3.2);
   streetLamp(parent, 9, 3.2);
 
-  // Trees and greenery surrounding the map
+  // Pepohonan Hijau Kawasan
   for (const tx of [-26, -21, -15, -9, 0, 9, 15, 21, 26]) {
     tree(parent, tx, -16, 1.15);
   }
@@ -416,13 +605,12 @@ export function createExterior(parent: THREE.Group, model: WorldModel) {
     tree(parent, -26, tz, 1.0);
     tree(parent, 26, tz, 1.0);
   }
-  // Plaza decorative trees
   tree(parent, -0.8, -2.6, 0.85);
   tree(parent, 8.8, -2.6, 0.85);
   tree(parent, -0.8, 2.6, 0.85);
   tree(parent, 8.8, 2.6, 0.85);
 
-  return { movingTruck };
+  return { movingTruck, trafficLights, seatAnchors };
 }
 
 function chair(parent: THREE.Object3D, x: number, z: number, rotation = 0) {

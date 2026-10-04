@@ -49,6 +49,13 @@ export const worldStations = [
     description: 'Dokumen koperasi dan pintasan pencatatan.',
     position: [-4, 0, 3],
   },
+  {
+    id: 'gudang',
+    title: 'Gudang Logistik',
+    href: '/barang',
+    description: 'Pusat penerimaan pasokan barang, area bongkar muat 3 dermaga, dan armada pengiriman.',
+    position: [18, 0, 4],
+  },
 ] as const;
 
 export const worldVehicles = [

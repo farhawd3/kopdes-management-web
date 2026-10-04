@@ -114,19 +114,19 @@ export function WorldScene({
     const ambient = new THREE.HemisphereLight('#f4f8ff', '#9fb0cc', 2.8);
     scene.add(ambient);
     const sun = new THREE.DirectionalLight('#fff8ec', 3.8);
-    sun.position.set(-16, 28, 16);
+    sun.position.set(-16, 26, 16);
     sun.castShadow = true;
     sun.shadow.mapSize.set(2048, 2048);
     Object.assign(sun.shadow.camera, {
-      left: -35,
-      right: 35,
-      top: 35,
-      bottom: -35,
-      near: 0.5,
-      far: 110,
+      left: -32,
+      right: 32,
+      top: 24,
+      bottom: -24,
+      near: 1.0,
+      far: 90,
     });
-    sun.shadow.bias = -0.0005;
-    sun.shadow.normalBias = 0.04;
+    sun.shadow.bias = -0.0003;
+    sun.shadow.normalBias = 0.025;
     scene.add(sun);
     const floor = new THREE.Mesh(
       new THREE.PlaneGeometry(500, 500),
@@ -149,16 +149,19 @@ export function WorldScene({
       createCharacter(world, location === 'luar' ? [-5, 0.1, 3.5] : [-4, 0.42, -1.2], color),
       createCharacter(
         world,
-        location === 'luar' ? [4, 0.1, 2.5] : [4.6, 0.42, -1.5],
+        location === 'luar' ? [4, 0.42, 2.6] : [4.6, 0.42, -1.5],
         '#a18ae0',
         1,
       ),
-      createCharacter(world, location === 'luar' ? [-12, 0.1, 7.5] : [2.4, 0.35, 3.5], '#50ab90', 2),
+      createCharacter(world, location === 'luar' ? [-2.2, 0.1, 1.2] : [2.4, 0.35, 3.5], '#50ab90', 2),
     ];
     characters.forEach((character) => {
       character.group.userData.selection = 'karakter';
     });
-    if (location === 'dalam') {
+    if (location === 'luar') {
+      // Karakter 1 duduk santai di bangku plaza selatan menghadap utara
+      characters[1].group.rotation.y = Math.PI;
+    } else {
       characters[0].group.rotation.y = Math.PI;
       characters[1].group.rotation.y = 0;
       characters[2].group.rotation.y = 0;
@@ -228,6 +231,7 @@ export function WorldScene({
     const positions = new Map<string, THREE.Vector3>();
     if (location === 'luar') {
       positions.set('koperasi', new THREE.Vector3(-5, 4.3, 0));
+      positions.set('gudang', new THREE.Vector3(18, 3.8, 3.8));
       model.plots.forEach((plot) =>
         positions.set(
           plot.id,
@@ -279,6 +283,25 @@ export function WorldScene({
           exteriorResult.movingTruck.rotation.y = 0;
         } else {
           exteriorResult.movingTruck.position.set(13.5, 0, 10.8);
+        }
+      }
+
+      // Animate 2-phase Traffic Light
+      if (exteriorResult?.trafficLights && location === 'luar') {
+        const cycle = 31; // 14s green, 3s yellow, 14s red
+        const tPhase = elapsed % cycle;
+        const isMainGreen = tPhase < 14;
+        const isMainYellow = tPhase >= 14 && tPhase < 17;
+        const isMainRed = tPhase >= 17;
+
+        for (const tl of exteriorResult.trafficLights) {
+          const redMat = tl.red.material as THREE.MeshStandardMaterial;
+          const yellowMat = tl.yellow.material as THREE.MeshStandardMaterial;
+          const greenMat = tl.green.material as THREE.MeshStandardMaterial;
+
+          redMat.emissiveIntensity = isMainRed ? 0.95 : 0.05;
+          yellowMat.emissiveIntensity = isMainYellow ? 0.95 : 0.05;
+          greenMat.emissiveIntensity = isMainGreen ? 0.95 : 0.05;
         }
       }
 
@@ -350,7 +373,9 @@ export function WorldScene({
       characters.forEach((character, index) => {
         const mode =
           location === 'luar'
-            ? 'idle'
+            ? index === 1
+              ? 'meeting' // Karakter wanita duduk santai di bangku taman plaza
+              : 'idle'
             : index === 0
               ? state.activity
               : index === 1
