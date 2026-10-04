@@ -29,7 +29,7 @@ export function FollowUps({ data, compact = false }: { data: Workspace; compact?
     if (items.length === 0) {
       return (
         <div className="follow-up-compact-container">
-          <div className="follow-up-compact-bar is-clean">
+          <div className="ui-followup-bar is-clean">
             <div className="compact-bar-info">
               <span className="compact-bar-icon success">
                 <ShieldCheck size={16} />
@@ -48,7 +48,7 @@ export function FollowUps({ data, compact = false }: { data: Workspace; compact?
 
     return (
       <div className="follow-up-compact-container">
-        <div className={`follow-up-compact-bar ${urgentCount > 0 ? 'is-urgent' : ''}`}>
+        <div className={`ui-followup-bar ${urgentCount > 0 ? 'is-urgent' : ''}`}>
           <div className="compact-bar-info">
             <span className={`compact-bar-icon ${urgentCount > 0 ? 'urgent' : 'warning'}`}>
               <AlertTriangle size={16} />
@@ -198,3 +198,4 @@ export function FollowUps({ data, compact = false }: { data: Workspace; compact?
     </div>
   );
 }
+

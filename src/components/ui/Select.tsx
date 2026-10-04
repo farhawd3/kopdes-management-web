@@ -3,6 +3,7 @@
 import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { ChevronDown, Check } from 'lucide-react';
 import { usePopoverPlacement } from './usePopoverPlacement';
+import { Button } from './Button';
 
 export interface SelectOption {
   value: string;
@@ -207,11 +208,11 @@ export function Select({
         ))}
       </select>
 
-      <button
+      <Button
         ref={triggerRef}
         type="button"
         id={`${selectId}-trigger`}
-        className="custom-select-trigger"
+        className="ui-select-trigger"
         aria-haspopup="listbox"
         aria-label={ariaLabel ? `${ariaLabel}: ${displayLabel}` : displayLabel}
         aria-controls={`${selectId}-menu`}
@@ -236,7 +237,7 @@ export function Select({
           <span className="custom-select-label">{displayLabel}</span>
         </span>
         <ChevronDown size={15} className="custom-select-chevron" aria-hidden="true" />
-      </button>
+      </Button>
 
       {isOpen && (
         <div

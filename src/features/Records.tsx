@@ -297,7 +297,7 @@ function JournalBoardView({
       id: 'hari-ini',
       title: 'Hari Ini',
       subtitle: 'Aktivitas lapangan hari ini',
-      color: '#10b981',
+      color: 'var(--tone-success-accent)',
       filter: (a: Item) => String(a.data.date || '') === todayStr,
       defaultDate: todayStr,
     },

@@ -1403,7 +1403,7 @@ export function Editor({
                           : field === 'recurrence_time'
                             ? '09:00'
                             : field === 'color'
-                              ? '#B3243B'
+                              ? 'var(--tone-danger-text)'
                               : field === 'time'
                                 ? '09:00'
                                 : ''),

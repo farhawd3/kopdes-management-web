@@ -42,14 +42,14 @@ const ARCHIVE_COLUMNS: ScrumColumn[] = [
     key: 'dibatalkan',
     title: 'Dibatalkan',
     subtitle: 'Tidak dilanjutkan',
-    color: 'var(--danger, #ef4444)',
+    color: 'var(--tone-danger-text)',
   },
   {
     id: 'selesai',
     key: 'selesai',
     title: 'Selesai',
     subtitle: 'Tuntas',
-    color: 'var(--success, #10b981)',
+    color: 'var(--tone-success-text)',
   },
 ];
 

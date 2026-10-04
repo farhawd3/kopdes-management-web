@@ -179,7 +179,7 @@ export function Dashboard({ data }: { data: Workspace }) {
     {
       label: 'Rencana',
       value: tasks.filter((t) => t.status === 'rencana').length,
-      color: 'var(--lavender, #a899ea)',
+      color: 'var(--pastel-purple-text)',
       cls: 'dot-plan',
     },
     {
@@ -248,7 +248,7 @@ export function Dashboard({ data }: { data: Workspace }) {
       </div>
 
       {/* ── Stat Cards Row ───────────────────────────────── */}
-      <div className="dash-stats-row">
+      <div className="ui-stats-grid">
         <StatCard
           label="Tugas yang dimuat"
           value={`${completion}%`}
@@ -284,7 +284,7 @@ export function Dashboard({ data }: { data: Workspace }) {
         />
       </div>
 
-      <div className="home-grid">
+      <div className="ui-home-grid">
         {/* ── Left Column: Task Focus & Daily Routine ───────── */}
         <section className="home-work" aria-label="Tugas pilihan">
           <Link href="/rapat" className="next-meeting">
@@ -364,11 +364,11 @@ export function Dashboard({ data }: { data: Workspace }) {
           )}
 
           <div className="focus-task-list">
-            {visible.slice(0, 3).map((task, i) => (
+            {visible.slice(0, 3).map((task) => (
               <Link
                 href={`/tugas?task=${encodeURIComponent(task.id)}`}
                 key={task.id}
-                className={`focus-task tone-${i % 3}`}
+                className="ui-focus-task"
               >
                 <div className="focus-task-top">
                   <span>

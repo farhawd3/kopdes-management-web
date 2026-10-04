@@ -831,3 +831,7 @@ Token geometri, motion dan warna semantik memakai sumber tema aktif. Penjaga sty
 
 Migrasikan kontrol form/tombol ke pustaka UI, satukan pemicu tanggal dan navigasi tanggal, ekstrak dock lima item, serta gunakan permukaan dialog bersama. Hapus gaya tanggal/dock yang tidak dipakai; cegah gaya elemen legacy menimpa primitive baru. 175 tes dan pemeriksaan statis/build lulus; galeri mobile terang/gelap serta Beranda 360/768 diperiksa.
 
+# 4 Oktober 2026 — PLAN-ASTRA kartu dashboard
+
+Empat statistik memakai permukaan netral dan ikon tint, baris terlambat memakai badge, serta layout dashboard menyesuaikan lebar. Dropdown gelap mengikuti token aktif. 175 tes dan pemeriksaan statis/build lulus; Beranda empat lebar terang serta gelap 1440 diperiksa.
+

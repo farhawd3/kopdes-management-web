@@ -243,8 +243,8 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
             >
               <Star
                 size={14}
-                fill={favorites.includes(path) ? '#f59e0b' : 'none'}
-                color={favorites.includes(path) ? '#f59e0b' : 'var(--ink-muted)'}
+                fill={favorites.includes(path) ? 'var(--tone-warn-text)' : 'none'}
+                color={favorites.includes(path) ? 'var(--tone-warn-text)' : 'var(--ink-muted)'}
               />
             </Button>
           </div>
@@ -415,8 +415,8 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
                       <Star
                         size={11}
                         className="sidebar-item-star-badge"
-                        fill="#f59e0b"
-                        color="#f59e0b"
+                        fill="var(--tone-warn-text)"
+                        color="var(--tone-warn-text)"
                       />
                     </Link>
                   );

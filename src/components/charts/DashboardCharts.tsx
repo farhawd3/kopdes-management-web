@@ -374,44 +374,44 @@ export function StatCard({
     percentage ?? (typeof value === 'string' && value.endsWith('%') ? parseInt(value, 10) || 0 : 0);
 
   const variantClass = variant
-    ? `stat-variant-${variant}`
+    ? `ui-stat-tone-${variant}`
     : accent
-    ? 'dash-stat-accent stat-variant-emerald'
+    ? 'dash-stat-accent ui-stat-tone-emerald'
     : '';
 
   const Inner = (
-    <div className={`dash-stat-card ${variantClass}`}>
-      <div className="dash-stat-top">
-        <span className="dash-stat-label">{label}</span>
+    <div className={`ui-stat-card ${variantClass}`}>
+      <div className="ui-stat-top">
+        <span className="ui-stat-label">{label}</span>
         {isPercent ? (
           <RadialProgressRing
             percentage={pctVal}
             color={
               variant === 'emerald' || accent
-                ? '#059669'
+                ? 'var(--tone-success-text)'
                 : variant === 'blue'
-                ? '#2563eb'
+                ? 'var(--tone-info-text)'
                 : variant === 'rose'
-                ? '#e11d48'
+                ? 'var(--tone-danger-text)'
                 : variant === 'purple'
-                ? '#7c3aed'
+                ? 'var(--pastel-purple-text)'
                 : 'var(--brand)'
             }
           />
         ) : icon ? (
-          <div className="dash-stat-icon-wrap">{icon}</div>
+          <div className="ui-stat-icon-wrap">{icon}</div>
         ) : sparkData && Math.max(0, ...sparkData) > 0 ? (
           <SparkLine data={sparkData} color={accent ? 'var(--brand-text)' : 'var(--brand)'} />
         ) : null}
       </div>
-      <strong className="dash-stat-value">
+      <strong className="ui-stat-value">
         {typeof value === 'number' ? <AnimatedCounter value={value} /> : value}
       </strong>
-      {sub && <span className="dash-stat-sub">{sub}</span>}
+      {sub && <span className="ui-stat-sub">{sub}</span>}
     </div>
   );
   return href ? (
-    <Link href={href} className="dash-stat-link">
+    <Link href={href} className="ui-stat-link">
       {Inner}
     </Link>
   ) : (

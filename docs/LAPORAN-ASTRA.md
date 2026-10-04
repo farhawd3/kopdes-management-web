@@ -37,3 +37,12 @@ Migrasi visual penuh, interaktivitas, animasi dan QA menyeluruh masih berjalan. 
 - [x] DateField, DateNav, BottomNav dan tes regresi.
 - [ ] Migrasi lengkap Card/Badge/Field/Tabs/Toast/Tooltip/Legend ke semua pemanggil.
 - [ ] Semua state/halaman pada 320 px ke atas.
+
+## Fase 4 — kartu dashboard netral
+
+- Empat statistik memakai permukaan netral, angka/judul bertoken dan ikon tint; ring/progres serta tautan daftar tetap tersedia. Kartu perhatian netral; kartu tugas tanpa garis kiri dekoratif. Baris terlambat Hari Ini memakai badge danger dan permukaan netral.
+- Tata letak statistik 2×2 mobile/tablet, empat kolom desktop; isi satu kolom hingga 1280 lalu rasio 2:1. Dropdown bersama diperbaiki agar warna gelap mengikuti token.
+- Berkas utama: Dashboard +5/−5, TodayView +6/−5, DashboardCharts +13/−13, FollowUps +3/−2, ui.css serta Select. Hex presentasi TSX 37 → 24; sisanya konfigurasi palet ThemeContext yang sudah diubah pemilik sebelum sesi.
+- Verifikasi: 175 tes/24 berkas, typecheck, lint, lint:ui, check:ui dan build lulus. Beranda terang 360/768/1024/1440 tanpa luapan; gelap 1440 diperiksa visual. Dropdown gelap terukur memakai latar/teks gelap yang sesuai token.
+- [x] Statistik netral, informasi/tautan dan layout adaptif.
+- [ ] Legenda semua grafik, seluruh empty state dan audit kontras seluruh lima tema.

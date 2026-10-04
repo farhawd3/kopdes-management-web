@@ -6,21 +6,21 @@ Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at
 
 | Metrik | Jumlah |
 |---|---:|
-| button | 12 |
+| button | 11 |
 | input | 3 |
 | select | 1 |
 | textarea | 1 |
 | date | 1 |
 | inline | 86 |
-| hexTsx | 37 |
+| hexTsx | 24 |
 | hexCss | 945 |
 | important | 2278 |
-| bytes | 609077 |
+| bytes | 611793 |
 | Elemen mentah di luar components/ui | 0 |
 | Selector berulang | 519 |
 | Nilai border-radius unik | 59 |
-| Nilai font-size unik | 59 |
-| Nilai height unik | 60 |
+| Nilai font-size unik | 60 |
+| Nilai height unik | 61 |
 
 ## CSS
 
@@ -29,7 +29,7 @@ Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at
 | src/app/globals.css | 27511 | 5 |
 | src/app/personal.css | 571354 | 2273 |
 | src/app/tokens.css | 2753 | 0 |
-| src/app/ui.css | 7459 | 0 |
+| src/app/ui.css | 10175 | 0 |
 
 ## Inventaris halaman dan overlay
 
@@ -63,9 +63,8 @@ Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at
 | button | src/components/ui/EmptyState.tsx:71 | HTML button | Primitive internal | Button / IconButton | Pustaka UI |
 | input | src/components/ui/Input.tsx:6 | HTML input | Primitive internal | Input / DateInput | Pustaka UI |
 | textarea | src/components/ui/Input.tsx:11 | HTML textarea | Primitive internal | Textarea | Pustaka UI |
-| select | src/components/ui/Select.tsx:174 | HTML select | Primitive internal | Select | Pustaka UI |
-| button | src/components/ui/Select.tsx:210 | HTML button | Primitive internal | Button / IconButton | Pustaka UI |
-| button | src/components/ui/Select.tsx:256 | HTML button | Primitive internal | Button / IconButton | Pustaka UI |
+| select | src/components/ui/Select.tsx:175 | HTML select | Primitive internal | Select | Pustaka UI |
+| button | src/components/ui/Select.tsx:257 | HTML button | Primitive internal | Button / IconButton | Pustaka UI |
 
 ## Selector berulang
 
@@ -585,11 +584,11 @@ Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at
 | src/app/personal.css | .project-properties-grid | 23594, 24140 |
 | src/app/personal.css | .project-progress-card | 23681, 24144 |
 | src/app/tokens.css | :root | 2, 49 |
-| src/app/ui.css | .ui-modal | 64, 69 |
-| src/app/ui.css | .ui-modal::backdrop | 65, 70 |
-| src/app/ui.css | .ui-modal > header | 66, 67, 71, 72 |
-| src/app/ui.css | .ui-modal > footer | 66, 68, 71, 73 |
-| src/app/ui.css | @media (max-width: 767px) → .ui-modal | 79, 80 |
+| src/app/ui.css | .ui-modal | 84, 89 |
+| src/app/ui.css | .ui-modal::backdrop | 85, 90 |
+| src/app/ui.css | .ui-modal > header | 86, 87, 91, 92 |
+| src/app/ui.css | .ui-modal > footer | 86, 88, 91, 93 |
+| src/app/ui.css | @media (max-width: 767px) → .ui-modal | 99, 100 |
 
 ## Nilai deklarasi
 
@@ -712,6 +711,7 @@ Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at
 - `var(--fs-h2)`
 - `var(--fs-label)`
 - `var(--fs-overline)`
+- `var(--fs-title)`
 - `var(--page-title-size)`
 - `var(--section-title-size)`
 - `var(--table-td-font-size)`
@@ -776,6 +776,7 @@ Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at
 - `var(--btn-height-md)`
 - `var(--btn-height-sm)`
 - `var(--control-height-md)`
+- `var(--h-md)`
 - `var(--icon-md)`
 - `var(--space-8)`
 - `var(--table-th-height)`

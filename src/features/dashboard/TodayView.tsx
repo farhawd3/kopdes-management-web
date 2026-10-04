@@ -1,6 +1,7 @@
 'use client';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/Badge';
 import { useState } from 'react';
 import {
   CalendarDays,
@@ -223,7 +224,7 @@ export function TodayView({
         <main className="today-main-column">
           {/* Overdue Alert Section (Shown prominently when tasks are late) */}
           {overdueTasks.length > 0 && (
-            <section className="today-card-section overdue-section">
+            <section className="today-card-section">
               <div className="section-title-row">
                 <div className="title-left">
                   <span className="section-alert-icon">
@@ -231,7 +232,7 @@ export function TodayView({
                   </span>
                   <h2>Tugas Terlambat</h2>
                 </div>
-                <span className="overdue-badge-count">{overdueTasks.length} tugas</span>
+                <Badge tone="danger">{overdueTasks.length} tugas</Badge>
               </div>
               <p className="section-subtitle">
                 Tugas dengan tenggat yang sudah terlewat. Jadwalkan ulang ke hari ini atau
@@ -245,7 +246,7 @@ export function TodayView({
                   return (
                     <div
                       key={task.id}
-                      className={`today-task-card overdue-card priority-${task.data.priority || 'mendesak'} ${isBusy ? 'is-busy' : ''}`}
+                      className={`ui-task-row ${isBusy ? 'is-busy' : ''}`}
                       role="button"
                       tabIndex={0}
                       onClick={() => setDetailTask(task)}
@@ -269,9 +270,9 @@ export function TodayView({
                       <div className="task-info-content">
                         <div className="task-title-row">
                           <strong className="task-title-text">{String(task.data.title)}</strong>
-                          <span className="late-date-pill">
+                          <Badge tone="danger">
                             Lewat: {formatDate(String(task.data.due_date))}
-                          </span>
+                          </Badge>
                         </div>
                         <div className="task-tags-row">
                           {project && (

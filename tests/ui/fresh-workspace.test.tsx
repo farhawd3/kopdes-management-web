@@ -67,7 +67,7 @@ it('keeps dashboard details closed and caps the initial task list at three recor
   const view = render(<Dashboard data={data} />);
   expect(view.container.querySelector('.dashboard-extra')?.hasAttribute('open')).toBe(false);
   expect(view.container.querySelector('.dashboard-routines')?.hasAttribute('open')).toBe(false);
-  expect(view.container.querySelectorAll('.focus-task-list .focus-task')).toHaveLength(3);
+  expect(view.container.querySelectorAll('.focus-task-list .ui-focus-task')).toHaveLength(3);
   expect(screen.getByRole('link', { name: /Semua tugas/ }).getAttribute('href')).toBe('/tugas');
   fireEvent.click(screen.getByText('Grafik pekerjaan'));
   expect(view.container.querySelector('.dashboard-extra')?.hasAttribute('open')).toBe(true);
