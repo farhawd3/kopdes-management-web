@@ -10,7 +10,7 @@ export const worldPreferencesSchema = z.object({
 });
 export type WorldPreferences = z.infer<typeof worldPreferencesSchema>;
 export type WorldLocation = 'luar' | 'dalam';
-export type CharacterActivity = 'idle' | 'work' | 'meeting' | 'gym';
+export type CharacterActivity = 'idle' | 'work' | 'meeting' | 'gym' | 'greet' | 'walk' | 'talk';
 export const landPositions: readonly [number, number][] = [
   [-18, -10],
   [-9, -10],

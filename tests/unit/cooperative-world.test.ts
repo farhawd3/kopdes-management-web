@@ -143,4 +143,41 @@ describe('pemetaan dunia koperasi', () => {
     expect(vehicle.state).toBe('driving');
     expect(vehicle.speed).toBeGreaterThan(0);
   });
+  it('dialog kontekstual: sapaan waktu dan integritas data nyata', async () => {
+    const { getTimeGreeting, getContextualDialogue, DialogueManager } = await import(
+      '@/features/cooperative-world/world-dialogue'
+    );
+    expect(getTimeGreeting(8)).toBe('Selamat pagi');
+    expect(getTimeGreeting(13)).toBe('Selamat siang');
+    expect(getTimeGreeting(17)).toBe('Selamat sore');
+    expect(getTimeGreeting(21)).toBe('Selamat malam');
+
+    const ctxWithTasks = {
+      managerName: 'Budi',
+      openTasksCount: 3,
+      hasMeetingSoon: false,
+      recordedUnitsCount: 1,
+      weather: 'cerah' as const,
+      timeHour: 10,
+    };
+    const deskDialog = getContextualDialogue('manager', ctxWithTasks, 'desk_visit');
+    expect(deskDialog.text).toContain('3 tugas aktif');
+
+    const mgr = new DialogueManager();
+    const triggered = mgr.triggerDialogue('p1', 'p2', 'Budi', 'manager', [0, 0, 0], ctxWithTasks, 10.0);
+    expect(triggered).toBe(true);
+    expect(mgr.getBubbles()).toHaveLength(1);
+
+    // Cooldown global mencegah dialog instan dalam < 8 detik
+    const tooSoon = mgr.triggerDialogue('p3', 'p4', 'Andi', 'staff', [1, 0, 1], ctxWithTasks, 12.0);
+    expect(tooSoon).toBe(false);
+
+    // Setelah 9 detik, pasangan baru bisa memicu dialog
+    const afterGlobal = mgr.triggerDialogue('p3', 'p4', 'Andi', 'staff', [1, 0, 1], ctxWithTasks, 19.0);
+    expect(afterGlobal).toBe(true);
+
+    // Pasangan pertama masih dalam cooldown 45s
+    const pairStillCooldown = mgr.triggerDialogue('p1', 'p2', 'Budi', 'manager', [0, 0, 0], ctxWithTasks, 25.0);
+    expect(pairStillCooldown).toBe(false);
+  });
 });

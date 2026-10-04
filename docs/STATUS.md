@@ -35,17 +35,22 @@ Versi sekarang belum diterima: kawasan kecil/sepi, mobil belum ada, tampilan aga
   - Kepatuhan lampu lalu lintas: kendaraan secara cerdas memperlambat dan berhenti di garis henti simpang saat lampu merah/kuning, mengantre berjarak aman, dan melaju saat hijau.
   - Integrasi truk ekspedisi mitra suplier (`kendaraan-truk-mitra`) di dermaga gudang logistik dengan livery khusus dan informasi mitra dari data `stakeholders`.
   - Perbaikan layout baris daftar "Armada & Kendaraan" di panel detail: nama armada dan subjudul jenis tersusun vertikal rapi dengan spasi jelas tanpa menempel.
+- **Paket 4 Selesai:**
+  - Modul dialog murni `world-dialogue.ts`: sistem percakapan kontekstual bersyarat data nyata (`getTimeGreeting`, `getContextualDialogue`, `DialogueManager`), cooldown per pasangan 45 dtk, cooldown global 8 dtk, kapasitas maks 2 balon komik.
+  - Pakaian karakter dinamis: Manajer KDMP Puntukrejo mengenakan jas resmi navy (`palette.navy`), kerah kemeja putih, dan dasi merah; staf mengenakan seragam kerja dan lanyard ID badge. Animasi procedural mendukung pose lambaian tangan (`greet`) dan anggukan berbicara (`talk`).
+  - Balon percakapan komik mengambang (`.cw-dialogue-bubble`): diproyeksikan dari koordinat 3D kepala karakter ke koordinat 2D layar dengan teks dinamis sesuai keadaan data nyata (misal menanyakan tugas terbuka, cuaca, atau sapaan waktu WIB).
+  - Integrasi data Manajer & Tim: chip kiri-bawah diperbarui menjadi "Manajer · {aktivitas}" yang membuka kartu profil Manajer lengkap dengan statistik tugas, rapat, dan gerai; tab Karakter di dock membuka daftar tim staf serta form `+ Tambah Anggota Tim` yang langsung tersinkronisasi ke API staf tanpa tabel tambahan.
 - Exterior luas (58 × 38 unit): kantor koperasi, jalan dua arah, plaza air mancur dan 4 bangku taman ber-anchor, area parkir mobil manajer, gudang logistik, dan tujuh lahan gerai yang terhubung catatan `units`.
 - Default waktu adalah Siang terang; kontrol cepat **Waktu** dan **Cuaca** aktif.
 - Style dunia terisolasi di `world.css` dan palet Three.js di `world-objects.ts`.
 
 ## Pemeriksaan paket terbaru
 
-- `npm test -- --maxWorkers=2`: **273 tes / 44 berkas lulus 100%**.
+- `npm test -- --maxWorkers=2`: **274 tes / 44 berkas lulus 100%**.
 - `npm run typecheck`: **lulus** (0 error TypeScript).
-- `npm run lint`: **lulus** (0 error ESLint).
-- `npm run build`: **lulus** (Turbopack production build sukses).
-- QA browser Paket 3: verifikasi visual browser multiplatform membuktikan armada lalu lintas (motor berhelm, sedan, van, truk) melaju dan patuh lampu simpang dengan fade mulus, truk mitra bersandar di dermaga gudang, serta daftar Armada & Kendaraan berformat rapi di 1440, 1024, dan 360 px. Bukti screenshot: `exterior_1440px_1791147370408.png`, `armada_list_1440px_1791147409037.png`, `kawasan_1024px_1791147430454.png`, `kawasan_360px_1791147442721.png`.
+- `npm run lint`: **lulus** (0 error, 0 warning ESLint).
+- `npm run build`: **lulus** (Turbopack production build sukses dalam 8.4 detik).
+- QA browser Paket 4: verifikasi visual browser membuktikan kartu profil Manajer terbuka dengan data lengkap KDMP Puntukrejo, panel Karakter menampilkan tim dan form tambah anggota, balon dialog komik mengambang di atas karakter dengan ucapan akurat sesuai data tugas ("Ada tugas yang perlu ditinjau hari ini? (1 tugas)"), serta tata letak mobile 360px berfungsi mulus sebagai bottom sheet. Bukti screenshot: `manager_detail_panel_1791148328482.png`, `karakter_panel_1791148359274.png`, `speech_bubble_interaction_1791148395196.png`, `mobile_view_360px_1791148417630.png`.
 
 ## Halaman operasional yang tersedia
 

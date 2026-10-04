@@ -887,12 +887,24 @@ export function createCharacter(
   position: [number, number, number],
   color: string,
   variant = 0,
+  role: 'manager' | 'staff' | 'npc' = 'npc',
 ): WorldCharacter {
   const g = new THREE.Group();
   g.position.set(...position);
+  g.userData.characterRole = role;
   parent.add(g);
   const skin = ['#e8b18b', '#bd825e', '#efc6a0'][variant % 3];
   sphere(g, 0.34, [0, 0.95, 0], color, [1, 1.1, 0.65]);
+
+  // Role accents: Manager has collared shirt & red tie; Staff has ID lanyard
+  if (role === 'manager') {
+    box(g, [0.16, 0.26, 0.04], [0, 1.05, 0.22], '#ffffff', 0.02);
+    box(g, [0.05, 0.18, 0.05], [0, 0.98, 0.23], '#ef4444', 0.02);
+  } else if (role === 'staff') {
+    box(g, [0.12, 0.2, 0.03], [0, 0.96, 0.22], '#3866f6', 0.02);
+    box(g, [0.07, 0.09, 0.04], [0, 0.88, 0.23], '#ffffff', 0.02);
+  }
+
   const head = new THREE.Group();
   head.position.y = 1.58;
   g.add(head);
@@ -947,6 +959,27 @@ export function animateCharacter(
     character.leftArm.rotation.z = 0.05;
     character.rightArm.rotation.z = -0.05;
     character.head.rotation.y = Math.sin(t * 1.5) * 0.08;
+    return;
+  }
+
+  if (activity === 'greet') {
+    character.leftLeg.rotation.x = 0;
+    character.rightLeg.rotation.x = 0;
+    character.leftArm.rotation.x = 0;
+    character.leftArm.rotation.z = 0.05;
+    character.rightArm.rotation.x = -0.2;
+    character.rightArm.rotation.z = reduced ? -1.8 : -2.2 + Math.sin(t * 8) * 0.35;
+    character.head.rotation.y = reduced ? 0 : Math.sin(t * 2) * 0.12;
+    return;
+  }
+
+  if (activity === 'talk') {
+    character.leftLeg.rotation.x = 0;
+    character.rightLeg.rotation.x = 0;
+    character.leftArm.rotation.x = reduced ? 0 : Math.sin(t * 3) * 0.12;
+    character.rightArm.rotation.x = reduced ? 0 : -Math.cos(t * 3) * 0.12;
+    character.head.rotation.y = reduced ? 0 : Math.sin(t * 4) * 0.16;
+    character.head.rotation.x = reduced ? 0 : Math.abs(Math.sin(t * 4)) * 0.08;
     return;
   }
 

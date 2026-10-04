@@ -35,6 +35,7 @@ import { Button } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
 import { Input } from '@/components/ui/Input';
 import { usePreference } from '@/lib/usePreference';
+import { api, invalidateCache } from '@/lib/client';
 import type { Workspace } from '../workspace/useWorkspace';
 import {
   getWorldHour,
@@ -51,11 +52,14 @@ const WorldScene = dynamic(() => import('./WorldScene').then((module) => module.
   ssr: false,
   loading: () => <div className="cw-loading">Menyiapkan lingkungan 3D…</div>,
 });
-const activityNames = {
+const activityNames: Record<string, string> = {
   idle: 'Bersantai',
   meeting: 'Duduk rapat',
   work: 'Mengerjakan tugas',
   gym: 'Berolahraga',
+  greet: 'Menyapa',
+  walk: 'Berkeliling',
+  talk: 'Berkoordinasi',
 };
 type Props = {
   data: Workspace;
@@ -92,6 +96,34 @@ export function CooperativeWorld({
   const [zoom, setZoom] = useState(1);
   const [rotation, setRotation] = useState(0);
   const [rehearsal, setRehearsal] = useState<CharacterActivity | 'otomatis'>('otomatis');
+  const [newStaffName, setNewStaffName] = useState('');
+  const [newStaffRole, setNewStaffRole] = useState('');
+  const [isAddingStaff, setIsAddingStaff] = useState(false);
+  const [staffLoading, setStaffLoading] = useState(false);
+
+  const handleAddStaff = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newStaffName.trim()) return;
+    setStaffLoading(true);
+    try {
+      await api('staff', {
+        data: {
+          title: newStaffName.trim(),
+          role: newStaffRole.trim() || 'Staf Operasional',
+          status: 'aktif',
+        },
+      });
+      invalidateCache('staff');
+      setNewStaffName('');
+      setNewStaffRole('');
+      setIsAddingStaff(false);
+      window.location.reload();
+    } catch {
+      /* Graceful handle */
+    } finally {
+      setStaffLoading(false);
+    }
+  };
   useEffect(() => {
     const tick = window.setInterval(() => setNow(new Date()), 60000);
     return () => clearInterval(tick);
@@ -154,21 +186,23 @@ export function CooperativeWorld({
   }
   const count = (value: number) => (loading || error ? '—' : value);
   const title =
-    vehicle
-      ? vehicle.name
-      : selected === 'lingkungan'
-        ? 'Suasana & karakter'
-        : selected === 'logistik'
-          ? 'Area pengembangan'
-          : selected === 'karakter'
-            ? 'Maskot koperasi'
-            : plot
-              ? plot.unit
-                ? String(plot.unit.data.title)
-                : `Lahan ${selected.split('-')[1]}`
-              : station
-                ? station.title
-                : 'Kawasan koperasi';
+    selected === 'manajer'
+      ? model.manager || 'Manajer Koperasi'
+      : vehicle
+        ? vehicle.name
+        : selected === 'lingkungan'
+          ? 'Suasana & karakter'
+          : selected === 'logistik'
+            ? 'Area logistik'
+            : selected === 'karakter'
+              ? 'Tim & Staf Koperasi'
+              : plot
+                ? plot.unit
+                  ? String(plot.unit.data.title)
+                  : `Lahan ${selected.split('-')[1]}`
+                : station
+                  ? station.title
+                  : 'Kawasan koperasi';
   return (
     <main className={`cooperative-world ${hour >= 19 || hour < 6 ? 'cw-night' : ''}`}>
       <header className="cw-topbar">
@@ -378,37 +412,47 @@ export function CooperativeWorld({
           <aside className="cw-detail cw-glass" aria-label="Detail lokasi">
             <div className="cw-detail-heading">
               <span className="cw-detail-icon">
-                {vehicle ? (
+                {selected === 'manajer' ? (
+                  <Users size={24} />
+                ) : vehicle ? (
                   <Truck size={24} />
                 ) : plot ? (
                   <Store size={24} />
                 ) : selected === 'lingkungan' ? (
                   weatherIcon
                 ) : selected === 'karakter' ? (
-                  <MessageCircle size={22} />
+                  <Users size={22} />
                 ) : (
                   <Building2 size={24} />
                 )}
               </span>
               <div>
                 <span className="cw-eyebrow">
-                  {vehicle
-                    ? 'ARMADA • SIMULASI'
-                    : location === 'luar'
-                      ? 'DUNIA KOPERASI'
-                      : 'KANTOR • INTERIOR'}
+                  {selected === 'manajer'
+                    ? 'PROFIL MANAJER'
+                    : vehicle
+                      ? 'ARMADA • SIMULASI'
+                      : selected === 'karakter'
+                        ? 'SUMBER DAYA MANUSIA'
+                        : location === 'luar'
+                          ? 'DUNIA KOPERASI'
+                          : 'KANTOR • INTERIOR'}
                 </span>
                 <h1>{title}</h1>
                 <p>
-                  {vehicle
-                    ? 'Kendaraan suasana kawasan'
-                    : plot
-                      ? plot.unit
-                        ? 'Terhubung ke catatan gerai'
-                        : 'Bidang tersedia untuk gerai baru'
-                      : location === 'luar'
-                        ? 'Lingkungan dan ruang kerja'
-                        : 'Pilih area untuk membuka catatan'}
+                  {selected === 'manajer'
+                    ? 'Penanggung jawab ruang kerja dan kawasan'
+                    : vehicle
+                      ? 'Kendaraan suasana kawasan'
+                      : plot
+                        ? plot.unit
+                          ? 'Terhubung ke catatan gerai'
+                          : 'Bidang tersedia untuk gerai baru'
+                        : selected === 'karakter'
+                          ? 'Petugas dan anggota tim ruang kerja'
+                          : location === 'luar'
+                            ? 'Lingkungan dan ruang kerja'
+                            : 'Pilih area untuk membuka catatan'}
                 </p>
               </div>
               <Button
@@ -501,7 +545,7 @@ export function CooperativeWorld({
                   </label>
                   <p className="cw-panel-note">Pilihan suasana disimpan di perangkat ini.</p>
                 </>
-              ) : selected === 'karakter' ? (
+              ) : selected === 'manajer' ? (
                 <>
                   <div className="cw-character-portrait">
                     <span className="cw-portrait-head">
@@ -509,36 +553,115 @@ export function CooperativeWorld({
                       <i />
                       <b />
                     </span>
-                    <span className="cw-portrait-shirt" />
+                    <span className="cw-portrait-shirt" style={{ background: '#1e3a8a' }} />
                   </div>
-                  <span className="cw-status">{activityNames[activity]}</span>
+                  <span className="cw-status">Manajer KDMP Puntukrejo</span>
                   <p className="cw-panel-note">
-                    Maskot visual ruang kerja. Animasi mengikuti jadwal rapat, kegiatan hari ini,
-                    lalu tugas dalam proses.
+                    Penanggung jawab operasional harian, koordinasi tim, dan peninjauan berkala unit usaha koperasi.
                   </p>
-                  <label className="cw-field">
-                    Pratinjau gerakan
-                    <Select
-                      ariaLabel="Pratinjau gerakan karakter"
-                      value={rehearsal}
-                      onChange={(value) => {
-                        setRehearsal(value as CharacterActivity | 'otomatis');
-                        if (value !== 'idle' && value !== 'otomatis') setLocation('dalam');
-                      }}
-                      options={[
-                        { value: 'otomatis', label: 'Ikuti data ruang kerja' },
-                        ...Object.entries(activityNames).map(([value, label]) => ({
-                          value,
-                          label,
-                        })),
-                      ]}
-                    />
-                  </label>
-                  {rehearsal !== 'otomatis' && (
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', margin: '12px 0' }}>
+                    <div style={{ background: '#f8fafc', padding: '10px', borderRadius: '8px', border: '1px solid var(--cw-line)' }}>
+                      <small style={{ display: 'block', fontSize: '11px', color: 'var(--cw-muted)' }}>Tugas Terbuka</small>
+                      <strong style={{ fontSize: '16px', color: 'var(--cw-ink)' }}>{model.tasks.length}</strong>
+                    </div>
+                    <div style={{ background: '#f8fafc', padding: '10px', borderRadius: '8px', border: '1px solid var(--cw-line)' }}>
+                      <small style={{ display: 'block', fontSize: '11px', color: 'var(--cw-muted)' }}>Rapat Hari Ini</small>
+                      <strong style={{ fontSize: '16px', color: 'var(--cw-ink)' }}>{model.meetings.length}</strong>
+                    </div>
+                    <div style={{ background: '#f8fafc', padding: '10px', borderRadius: '8px', border: '1px solid var(--cw-line)' }}>
+                      <small style={{ display: 'block', fontSize: '11px', color: 'var(--cw-muted)' }}>Gerai Tercatat</small>
+                      <strong style={{ fontSize: '16px', color: 'var(--cw-ink)' }}>{model.units.length} / 7</strong>
+                    </div>
+                    <div style={{ background: '#f8fafc', padding: '10px', borderRadius: '8px', border: '1px solid var(--cw-line)' }}>
+                      <small style={{ display: 'block', fontSize: '11px', color: 'var(--cw-muted)' }}>Aktivitas Visual</small>
+                      <strong style={{ fontSize: '13px', color: 'var(--cw-ink)' }}>{activityNames[activity]}</strong>
+                    </div>
+                  </div>
+                  <Link className="cw-primary-link" href="/pengaturan">
+                    Buka pengaturan profil <ArrowRight size={15} />
+                  </Link>
+                  <Link className="cw-secondary-link" href="/tugas">
+                    Kelola tugas manajer <ArrowRight size={14} />
+                  </Link>
+                </>
+              ) : selected === 'karakter' ? (
+                <>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <span className="cw-status">Daftar Anggota Tim ({model.staff?.length || 0})</span>
+                    <Button
+                      style={{ fontSize: '11px', padding: '4px 8px', background: 'var(--cw-primary)', color: '#fff', borderRadius: '6px' }}
+                      onClick={() => setIsAddingStaff(!isAddingStaff)}
+                    >
+                      {isAddingStaff ? 'Batal' : '+ Tambah Anggota'}
+                    </Button>
+                  </div>
+                  {isAddingStaff && (
+                    <form onSubmit={handleAddStaff} style={{ background: '#f8fafc', padding: '12px', borderRadius: '8px', border: '1px solid var(--cw-line)', marginBottom: '12px' }}>
+                      <label className="cw-field" style={{ marginBottom: '8px' }}>
+                        Nama Anggota Tim
+                        <Input
+                          value={newStaffName}
+                          onChange={(e) => setNewStaffName(e.target.value)}
+                          placeholder="Nama lengkap..."
+                          required
+                        />
+                      </label>
+                      <label className="cw-field" style={{ marginBottom: '10px' }}>
+                        Peran / Jabatan
+                        <Input
+                          value={newStaffRole}
+                          onChange={(e) => setNewStaffRole(e.target.value)}
+                          placeholder="contoh: Staf Kasir / Operasional"
+                        />
+                      </label>
+                      <Button
+                        type="submit"
+                        disabled={staffLoading || !newStaffName.trim()}
+                        style={{ width: '100%', background: 'var(--cw-primary)', color: '#fff', padding: '8px', borderRadius: '6px' }}
+                      >
+                        {staffLoading ? 'Menyimpan...' : 'Simpan Anggota Tim'}
+                      </Button>
+                    </form>
+                  )}
+                  {model.staff && model.staff.length > 0 ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '180px', overflowY: 'auto' }}>
+                      {model.staff.map((s) => (
+                        <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 10px', background: '#fff', border: '1px solid var(--cw-line)', borderRadius: '6px' }}>
+                          <span style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#dbeafe', color: '#1e40af', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 700 }}>
+                            {String(s.data.title || 'S').slice(0, 1).toUpperCase()}
+                          </span>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <strong style={{ display: 'block', fontSize: '12px', color: 'var(--cw-ink)' }}>{String(s.data.title)}</strong>
+                            <small style={{ display: 'block', fontSize: '11px', color: 'var(--cw-muted)' }}>{String(s.data.role || 'Staf')} · {String(s.data.status || 'aktif')}</small>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
                     <p className="cw-panel-note">
-                      Mode pratinjau; tidak mengubah data rapat atau kegiatan.
+                      Belum ada anggota tim terdaftar. Karakter default mengisi suasana ruang kerja dan plaza.
                     </p>
                   )}
+                  <div style={{ marginTop: '12px' }}>
+                    <label className="cw-field">
+                      Pratinjau gerakan
+                      <Select
+                        ariaLabel="Pratinjau gerakan karakter"
+                        value={rehearsal}
+                        onChange={(value) => {
+                          setRehearsal(value as CharacterActivity | 'otomatis');
+                          if (value !== 'idle' && value !== 'otomatis') setLocation('dalam');
+                        }}
+                        options={[
+                          { value: 'otomatis', label: 'Ikuti data ruang kerja' },
+                          ...Object.entries(activityNames).map(([value, label]) => ({
+                            value,
+                            label,
+                          })),
+                        ]}
+                      />
+                    </label>
+                  </div>
                 </>
               ) : selected === 'logistik' ? (
                 <>
@@ -806,10 +929,11 @@ export function CooperativeWorld({
                   <small>{item.value} catatan</small>
                 </Link>
               ))}
-              <Button className="cw-mascot-action" onClick={() => select('karakter')}>
-                <MessageCircle size={20} />
-                <span>
-                  Maskot<small>{activityNames[activity]}</small>
+              <Button className="cw-mascot-action" onClick={() => select('manajer')}>
+                <Users size={18} />
+                <span className="cw-item-text">
+                  <strong>{model.manager || 'Manajer'}</strong>
+                  <small>{activityNames[activity]}</small>
                 </span>
                 <ChevronRight size={14} />
               </Button>

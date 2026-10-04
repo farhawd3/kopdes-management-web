@@ -24,6 +24,11 @@ import {
   type TrafficVehicleState,
   type VehicleType,
 } from './world-traffic';
+import {
+  DialogueManager,
+  type DialogueBubble,
+  type DialogueContext,
+} from './world-dialogue';
 
 type Props = {
   model: WorldModel;
@@ -59,6 +64,7 @@ export function WorldScene({
   const motion = useRef({ activity, weather, hour });
   const selectAction = useRef(onSelect);
   const [failed, setFailed] = useState(false);
+  const [screenBubbles, setScreenBubbles] = useState<({ x: number; y: number } & DialogueBubble)[]>([]);
   useEffect(() => {
     motion.current = { activity, weather, hour };
   }, [activity, weather, hour]);
@@ -150,20 +156,21 @@ export function WorldScene({
     } else {
       createInterior(world);
     }
-    const color = { biru: palette.blue, lavender: '#a18ae0', hijau: '#51aa8a' }[outfit];
+    const color = { biru: palette.navy, lavender: '#4338ca', hijau: '#1e3a8a' }[outfit];
     const characters = [
-      createCharacter(world, location === 'luar' ? [-5, 0.1, 3.5] : [-7.5, 0.42, -3.0], color),
+      createCharacter(world, location === 'luar' ? [-5, 0.1, 3.5] : [-7.5, 0.42, -3.0], color, 0, 'manager'),
       createCharacter(
         world,
         location === 'luar' ? [4, 0.42, 2.6] : [1.8, 0.42, -2.0],
-        '#a18ae0',
+        '#3b82f6',
         1,
+        'staff',
       ),
-      createCharacter(world, location === 'luar' ? [-2.2, 0.1, 1.2] : [9.2, 0.35, 4.8], '#50ab90', 2),
+      createCharacter(world, location === 'luar' ? [-2.2, 0.1, 1.2] : [9.2, 0.35, 4.8], '#50ab90', 2, location === 'luar' ? 'npc' : 'staff'),
     ];
-    characters.forEach((character) => {
-      character.group.userData.selection = 'karakter';
-    });
+    characters[0].group.userData.selection = 'manajer';
+    characters[1].group.userData.selection = 'karakter';
+    characters[2].group.userData.selection = 'karakter';
     if (location === 'luar') {
       // Karakter 1 duduk santai di bangku plaza selatan menghadap utara
       characters[1].group.rotation.y = Math.PI;
@@ -323,6 +330,9 @@ export function WorldScene({
         lane: 'east',
       },
     };
+
+    const dialogueManager = new DialogueManager();
+    let lastBubbleSync = 0;
 
     const draw = (stamp: number) => {
       if (disposed) return;
@@ -493,8 +503,58 @@ export function WorldScene({
         }
       }
 
+      dialogueManager.update(dt);
+
+      const dialogueCtx: DialogueContext = {
+        managerName: model.manager || 'Manajer',
+        openTasksCount: model.tasks.length,
+        hasMeetingSoon: Boolean(model.currentMeeting),
+        meetingTitle: model.currentMeeting?.data.title ? String(model.currentMeeting.data.title) : undefined,
+        recordedUnitsCount: model.units.length,
+        weather: state.weather,
+        timeHour: state.hour,
+      };
+
+      if (location === 'luar') {
+        const loop = 80;
+        const phase = elapsed % loop;
+        // When manager visits Plaza fountain where citizen sits (phase 46-52)
+        if (phase >= 46 && phase <= 52) {
+          dialogueManager.triggerDialogue(
+            'manajer',
+            'warga-plaza',
+            model.manager || 'Manajer',
+            'manager',
+            [characters[0].group.position.x, 0, characters[0].group.position.z],
+            dialogueCtx,
+            elapsed,
+            'pass_by',
+          );
+        }
+      } else {
+        // In office: manager visiting workstation desk (elapsed % 45 between 10 and 18)
+        const deskPhase = elapsed % 45;
+        if (deskPhase >= 10 && deskPhase <= 18) {
+          dialogueManager.triggerDialogue(
+            'manajer',
+            'staf-meja',
+            model.manager || 'Manajer',
+            'manager',
+            [characters[0].group.position.x, 0, characters[0].group.position.z],
+            dialogueCtx,
+            elapsed,
+            'desk_visit',
+          );
+        }
+      }
+
+      // Check speaking & listening status for pose reaction
+      const activeBubblesList = dialogueManager.getBubbles();
+      const isSpeaking = (id: string) => activeBubblesList.some((b) => b.senderId === id);
+      const isListening = (id: string) => activeBubblesList.some((b) => b.receiverId === id);
+
       characters.forEach((character, index) => {
-        const mode =
+        let mode: CharacterActivity =
           location === 'luar'
             ? index === 1
               ? 'meeting' // Karakter wanita duduk santai di bangku taman plaza
@@ -508,9 +568,36 @@ export function WorldScene({
                 : state.activity === 'gym'
                   ? 'gym'
                   : 'idle';
+
+        const charId = index === 0 ? 'manajer' : index === 1 ? (location === 'luar' ? 'warga-plaza' : 'staf-meja') : 'staf-2';
+        if (isSpeaking(charId)) {
+          mode = 'talk';
+        } else if (isListening(charId) && mode === 'idle') {
+          mode = 'greet';
+        }
+
         const walking = index === 0 && isManagerWalking;
         animateCharacter(character, elapsed + index * 2, mode, reduced.matches, walking);
       });
+
+      // Synchronize floating dialogue bubbles to 2D screen coordinates
+      if (elapsed - lastBubbleSync >= 0.08) {
+        lastBubbleSync = elapsed;
+        if (activeBubblesList.length > 0) {
+          const projectedBubbles = activeBubblesList.map((b) => {
+            const v = new THREE.Vector3(...b.position);
+            v.project(camera);
+            return {
+              ...b,
+              x: (v.x * 0.5 + 0.5) * node.clientWidth,
+              y: (-v.y * 0.5 + 0.5) * node.clientHeight,
+            };
+          });
+          setScreenBubbles(projectedBubbles);
+        } else {
+          setScreenBubbles([]);
+        }
+      }
 
       positions.set(
         'karakter',
@@ -637,6 +724,24 @@ export function WorldScene({
           </Button>
         </div>
       )}
+      {!failed &&
+        screenBubbles.map((b) => (
+          <div
+            key={b.id}
+            className="cw-dialogue-bubble"
+            style={{
+              left: `${b.x}px`,
+              top: `${b.y}px`,
+            }}
+            aria-hidden="true"
+          >
+            <div className="cw-bubble-card">
+              <strong>{b.speakerName}</strong>
+              <p>{b.text}</p>
+            </div>
+            <div className="cw-bubble-tail" />
+          </div>
+        ))}
     </div>
   );
 }

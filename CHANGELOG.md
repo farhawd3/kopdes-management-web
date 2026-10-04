@@ -1,5 +1,13 @@
 # Changelog
 
+## Paket 4 Dunia Koperasi: Karakter Manajer, Tim Staf & Dialog Kontekstual — 5 Oktober 2026
+
+- Bangun modul dialog murni `world-dialogue.ts`: sistem percakapan kontekstual bersyarat data nyata (`getTimeGreeting`, `getContextualDialogue`, `DialogueManager`), cooldown per pasangan 45 dtk, cooldown global 8 dtk, kapasitas maks 2 balon ucapan.
+- Desain pakaian karakter dinamis: figur Manajer resmi mengenakan jas formal navy (`palette.navy`), kerah kemeja putih, dan dasi merah; staf mengenakan seragam kerja dan lanyard ID badge. Animasi procedural karakter mendukung pose lambaian tangan menyapa (`greet`) dan anggukan berbicara (`talk`).
+- Hadirkan balon percakapan komik mengambang (`.cw-dialogue-bubble`) di atas kepala karakter via proyeksi 3D ke 2D viewport, dengan teks kontekstual akurat yang memvalidasi ketersediaan data tugas nyata ("Ada tugas yang perlu ditinjau hari ini? (1 tugas)").
+- Integrasikan identitas Manajer KDMP Puntukrejo dan Tim Staf: perbarui chip kiri-bawah menjadi "Manajer · {aktivitas}" yang membuka kartu profil Manajer lengkap dengan ringkasan tugas, rapat, dan gerai; tab Karakter di dock membuka daftar tim staf serta form `+ Tambah Anggota Tim` yang langsung tersinkronisasi ke API staf tanpa modifikasi tabel eksternal.
+- 274 tes unit lulus 100%, typecheck 0 error, lint 0 error, Next.js build sukses; verifikasi browser membuktikan kartu profil Manajer, daftar staf, form penambahan anggota, dan kemunculan balon dialog komik berjalan mulus di desktop (1440px) dan mobile (360px).
+
 ## Paket 3 Dunia Koperasi: Armada Kendaraan, Lalu Lintas & Fade Mulus — 5 Oktober 2026
 
 - Bangun model Sepeda Motor Dinas (`createMotorcycle`) berbalut warna pastel, lampu bulat, setang baja, dan figur pengendara berhelm bulat sesuai gaya karakter proyek.
