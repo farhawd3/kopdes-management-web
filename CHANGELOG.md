@@ -1,5 +1,11 @@
 # Changelog
 
+## PLAN-ASTRA — selector tanpa pemanggil dan label form — 4 Oktober 2026
+
+- Pangkas CSS tanpa pemanggil berdasarkan string AST, dengan pengecualian kelas dinamis dan selector kompleks. Field umum Editor memiliki label/id bersama.
+- Warna proyek bawaan kembali memakai hex valid dari skema; tes regresi mencegah variabel CSS masuk input color.
+- 191 tes, typecheck, lint/lint:ui, build, check:ui, audit sumber 91/91 lulus. Galeri delapan lebar tanpa overflow; QA halaman berdata terhenti karena sesi kedaluwarsa.
+
 ## PLAN-ASTRA — kontrol tampilan dan legenda — 4 Oktober 2026
 
 - Satukan pilihan tampilan, legenda donut/radar dan indikator kesiapan. Tombol EmptyState memakai Button. Galeri memeriksa warna aktif tanpa menyimpan preferensi.

@@ -1,5 +1,9 @@
 # Status produk — 4 Oktober 2026
 
+Audit kelas menghapus selector sederhana tanpa pemanggil AST, sambil mempertahankan prefix/suffix dinamis dan selector kompleks. Metrik terakhir: CSS 517.624 byte, important 1.979, duplikat 384, font 6, radius 9 (termasuk sudut campuran), kontrol mentah luar UI 0. Field umum Editor sekarang memakai label/id bersama; warna proyek bawaan berasal dari skema hex sah. 191 tes/30 berkas dan semua pemeriksaan lulus.
+
+QA galeri 320/360/390/768/1024/1280/1440/1920 tanpa luapan. Sesi browser berakhir saat QA halaman berdata dan diarahkan ke PIN; pemeriksaan tersebut belum selesai. PLAN-ASTRA belum tuntas: migrasi seluruh komponen/halaman, penghapusan personal.css, important <20, nol duplikat/hex TSX, seluruh kontras/perangkat dan Lighthouse tetap terbuka.
+
 Pilihan tampilan tugas/kegiatan memakai SegmentedControl; donut/radar memakai Legend; Meter memakai Progress yang mempertahankan status belum dinilai. Galeri mengikuti tema root sementara dan memulihkan tema saat keluar. 190 tes/30 berkas serta build/statik lulus; kontras teks primer lima tema terang 4,69–12,36 dan gelap 7,45–13,20.
 
 Tipografi/radius legacy kini memakai token bersama: 852 deklarasi font dan 796 radius dinormalisasi. Ragam font deklarasi turun 60 → 6; radius 59 → 11 termasuk variasi sudut. Filter/Gantt diperbaiki pada 320 px dan tablet 768, tanpa luapan halaman.

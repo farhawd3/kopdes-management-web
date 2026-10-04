@@ -6,7 +6,7 @@ import { Editor } from '@/features/Editor';
 import { Operations } from '@/features/operations/Operations';
 import { Records } from '@/features/Records';
 import { TaskBatchActions } from '@/features/tasks/TaskBatchActions';
-import type { Item } from '@/features/schemas';
+import { schemas, type Item } from '@/features/schemas';
 const mocks = vi.hoisted(() => ({ api: vi.fn(), query: '', replace: vi.fn() }));
 vi.mock('next/navigation', () => ({
   useSearchParams: () => new URLSearchParams(mocks.query),
@@ -34,6 +34,12 @@ beforeEach(() => {
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
+});
+
+it('warna proyek baru memakai nilai hex sah dari skema, bukan variabel presentasi CSS', () => {
+  const { container } = render(<Editor entity="workstreams" workspace={{}} onClose={vi.fn()} onSaved={vi.fn()} />);
+  const color = container.querySelector<HTMLInputElement>('input[type="color"]');
+  expect(color?.value.toLowerCase()).toBe(schemas.workstreams.shape.color.parse(undefined).toLowerCase());
 });
 
 it('pencarian mencocokkan semua kata dan membuka bagian catatan yang tepat', () => {

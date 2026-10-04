@@ -99,3 +99,23 @@ Migrasi visual penuh, interaktivitas, animasi dan QA menyeluruh masih berjalan. 
 - Verifikasi: 190 tes/30 berkas, typecheck, lint, lint:ui, check:ui, build dan audit sumber 91/91 lulus.
 - [x] Pilihan tampilan, legenda donut/radar dan progres bersama.
 - [ ] Seluruh label form/tooltip/card, seluruh tema/state dan kontras teks selain primer.
+
+## Fase 7C dan QA sementara
+
+- Skrip prune-css memakai string AST seluruh sumber dan prefix/suffix dinamis untuk mengenali kelas; selector kompleks :is/:not/:where/:has serta selector escape dipertahankan. Selector sederhana tanpa pemanggil dipangkas (253 kelas personal, 39 globals, sebagian beririsan). Ini bukan penghapusan semua CSS legacy.
+- Field umum input/textarea Editor memakai label/id bersama. Nilai input color bawaan memakai default skema yang sah; token presentasi tidak dipakai sebagai data tersimpan. Tes regresi proyek ditambahkan.
+- Metrik awal → terakhir: CSS 603.721 → 517.624 byte (turun sekitar 14%); important 2.353 → 1.979; selector berulang 522 → 384; font 60 → 6; radius 59 → 9 termasuk variasi sudut; kontrol mentah luar UI 289 → 0. Hex TSX 24 masih berada pada konfigurasi palet pemilik yang dipertahankan.
+- Verifikasi: 191 tes/30 berkas, typecheck, lint, lint:ui, build, check:ui, audit sumber 91/91 lulus.
+- Galeri gelap diperiksa ukuran halaman 320/360/390/768/1024/1280/1440/1920: scrollWidth sama dengan clientWidth. Screenshot galeri terang/gelap 360 tersimpan lokal di artifacts/astra. Kontras primer lima tema diperiksa sebelumnya.
+- QA halaman berdata terhenti pada /pin setelah sesi 12 jam kedaluwarsa. Login pengguna diperlukan untuk melanjutkan pemeriksaan visual tersebut; PIN tidak diminta/disimpan.
+- [x] Pangkas selector sederhana tanpa pemanggil dan perbaiki Field/data warna.
+- [x] QA ukuran galeri dan screenshot 360 terang/gelap.
+- [ ] Seluruh halaman/state/kontras/tema, perangkat fisik, Firefox/Edge dan Lighthouse ≥90.
+- [ ] personal.css dihapus, important <20, nol duplikat serta nol hex TSX.
+
+## Pekerjaan berikutnya
+
+1. Setelah pengguna masuk kembali, periksa rute/data aktif pada 320/360/768/1024/1440, terutama Editor, tugas/papan dan semua domain pencatatan.
+2. Lanjutkan migrasi Card/Badge/Field khusus, Tooltip, empty state dan semua legenda; jangan menghitung tes lama sebagai penerimaan fitur baru.
+3. Pecah aturan yang masih aktif menjadi base/components/fitur dan turunkan important melalui perbaikan cascade disertai QA; jangan menghapus/merename personal.css untuk sekadar memenuhi nama target.
+4. Lengkapi QA fisik/performa dan audit tanpa sisa sebelum menyatakan PLAN-ASTRA selesai.

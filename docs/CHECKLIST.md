@@ -1,5 +1,8 @@
 # Checklist produk aktif
 
+- [x] CSS tanpa pemanggil statis dipangkas dengan pengecualian kelas dinamis/selector kompleks; Field umum Editor terhubung dengan id.
+- [x] Galeri komponen tanpa overflow pada 320/360/390/768/1024/1280/1440/1920; bukan bukti seluruh halaman/perangkat.
+
 - [x] SegmentedControl, Legend dan Progress digunakan pada tugas/kegiatan serta grafik; kontras primer lima tema terang/gelap diperiksa.
 
 - [x] Font/radius legacy memakai token; filter rentang dan tanggal Gantt terbaca pada 320/768 px.

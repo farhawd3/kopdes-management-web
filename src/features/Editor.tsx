@@ -1,6 +1,7 @@
 'use client';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { Field } from '@/components/ui/Field';
 import { Textarea } from '@/components/ui/Input';
 import { DateInput } from '@/components/ui/DateField';
 import { useEffect, useId, useRef, useState } from 'react';
@@ -1271,9 +1272,9 @@ export function Editor({
               ].includes(field)
             )
               return (
-                <label className="wide field-item field-wide" key={field}>
-                  <span className="field-caption">{label}</span>
+                <Field className="wide field-item field-wide" key={field} id={`${headingId}-${field}`} label={label}>
                   <Textarea
+                    id={`${headingId}-${field}`}
                     name={field}
                     rows={field === 'subtasks' ? 4 : 3}
                     className="field-textarea"
@@ -1299,7 +1300,7 @@ export function Editor({
                       Satu subtugas per baris. Awali [x] jika sudah selesai.
                     </small>
                   )}
-                </label>
+                </Field>
               );
             const score = ['probability', 'impact', 'interest', 'influence'].includes(field);
             const quantity = ['book_quantity', 'minimum_quantity', 'counted_quantity'].includes(
@@ -1307,9 +1308,9 @@ export function Editor({
             );
             const numeric = score || quantity || field === 'amount' || field === 'duration';
             return (
-              <label key={field} className="field-item">
-                <span className="field-caption">{label}</span>
+              <Field key={field} className="field-item" id={`${headingId}-${field}`} label={label}>
                 <Input
+                  id={`${headingId}-${field}`}
                   key={
                     field === 'book_quantity'
                       ? stockItem
@@ -1403,7 +1404,7 @@ export function Editor({
                           : field === 'recurrence_time'
                             ? '09:00'
                             : field === 'color'
-                              ? 'var(--tone-danger-text)'
+                              ? schemas.workstreams.shape.color.parse(undefined)
                               : field === 'time'
                                 ? '09:00'
                                 : ''),
@@ -1464,7 +1465,7 @@ export function Editor({
                     barang.
                   </small>
                 )}
-              </label>
+              </Field>
             );
           })}
           </div>
