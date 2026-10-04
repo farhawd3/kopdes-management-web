@@ -1,5 +1,7 @@
 # Serah terima AI
 
+Paket terbaru tata letak: baca QA-TATA-LETAK.md dan IKON.md. Form rapat inline memakai container query, buku default kartu pada ponsel, filter tidak disembunyikan, judul kartu membungkus; Gerai/Rapat berikon dan opsi panel tanpa tindak lanjut/notulen ganda. Panduan kartu tautan, palet kisi dan pratinjau lipat. 247 tes/39 berkas dan statik/build lulus; 18 kontrol mentah serta 111 temuan CSS legacy tetap terbuka. Fixture QA tanpa mutasi database. Perubahan Operations/Settings yang sudah ada dipertahankan dalam paket penyempurnaan halaman; perubahan pemilik lainnya tetap di working tree. Verifikasi Git sebelum melanjutkan.
+
 Koreksi screenshot 4 Oktober: baca bagian terbaru QA-POPUP.md. Fixture daftar memakai draftScope, bukan scopeId yang menyembunyikan data; preferensi view QA terpisah. Lebar dropdown mengikuti batas panel dengan minimum yang diinginkan 220 px; opsi tidak flex-shrink. Form mobile satu kolom, tab dua kolom. Hari ini kini mengatur start=today() (varian layar penuh masih dalam perubahan kerja TaskTimeline milik pemilik). Kartu Gerai tanpa radar kosong, contoh 40/100% berasal dari checklist fixture. 245 tes/37 berkas, tipe/ESLint/build lulus; lint:ui dan check:ui tetap gagal pada utang checkout, bukan seluruh audit selesai.
 
 ## Lanjutan PLAN-ASTRA — 4 Oktober 2026

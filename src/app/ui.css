@@ -65,6 +65,79 @@
 .form-grid > * { min-width: 0; }
 .editor-form-scroll .custom-select-wrap { min-width: 0; max-width: 100%; }
 .editor-form-scroll .ui-select-trigger .custom-select-label { white-space: normal; overflow-wrap: anywhere; text-overflow: clip; }
+.ui-select-trigger.ui-select-trigger { height: auto; }
+.app-icon { flex-shrink: 0; vertical-align: middle; }
+.inline-quick-creator-card { container-type: inline-size; min-width: 0; }
+.inline-creator-grid, .inline-creator-field { min-width: 0; }
+.inline-creator-row { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+.inline-creator-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.inline-creator-actions > .ui-btn { white-space: normal; flex: 1; }
+.inline-creator-field .ui-date, .inline-creator-field .ui-date-control { min-width: 0; width: 100%; }
+@container (max-width: 460px) { .inline-creator-row { grid-template-columns: minmax(0, 1fr); } }
+.record-domain-icon { display: inline-flex; width: 36px; height: 36px; align-items: center; justify-content: center; border-radius: var(--r-md); background: var(--brand-soft); color: var(--ink); margin-right: var(--space-2); vertical-align: middle; }
+.unit-record.unit-record, .meeting-record.meeting-record { border-top: 3px solid var(--brand); background: var(--surface); }
+.unit-record > .section-head h3, .meeting-record > .section-head h3 { display: flex; align-items: center; gap: var(--space-2); }
+.record-title-text { min-width: 0; }
+.unit-record .record-domain-icon, .meeting-record .record-domain-icon { flex-shrink: 0; margin-right: 0; }
+.unit-record .record-meta, .meeting-record .record-meta { padding-block: var(--space-2); border-bottom: 1px solid var(--line); }
+.record.card > .actions > .record-options { width: auto; flex: 0 1 auto; margin-left: auto; }
+.record.card > .actions > .record-options > summary { justify-content: center; gap: var(--space-2); padding: var(--space-2) var(--space-3); border: 1px solid var(--line); border-radius: var(--r-md); color: var(--ink); }
+.record.card > .actions > .record-options[open] { flex-basis: 100%; margin-left: 0; }
+.record-options[open] > .actions { background: var(--canvas); border: 1px solid var(--line); border-radius: var(--r-md); padding: var(--space-3); display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.record-options[open] > summary svg:last-child { transform: rotate(180deg); }
+.meeting-action-row { display: flex; flex-wrap: wrap; align-items: stretch; gap: var(--space-2); }
+.meeting-action-row > :is(a, .ui-btn) { min-height: var(--touch-target); display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); white-space: normal; }
+.settings-content-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: start; gap: var(--space-5); }
+.settings-content-grid > .color-style-card { grid-row: span 2; }
+.settings-content-grid > .theme-live-preview-card { grid-column: 2; grid-row: 2; }
+.color-swatches-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-2); }
+.color-swatches-grid .ui-btn.color-swatch-item { min-width: 0; height: auto; display: flex; flex-direction: column; align-items: stretch; gap: var(--space-2); padding: var(--space-3); white-space: normal; }
+.swatch-header-row { display: flex; flex-wrap: wrap; gap: var(--space-1); align-items: center; justify-content: space-between; }
+.settings-tabs-row > .ui-btn { flex-shrink: 0; }
+.theme-live-preview-card > summary { display: flex; align-items: center; gap: var(--space-2); min-height: var(--touch-target); cursor: pointer; font-size: var(--fs-button); font-weight: 600; }
+.theme-live-preview-card[open] > summary { margin-bottom: var(--space-3); }
+.theme-live-preview-card .preview-task-header { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: start; }
+.preview-task-header .preview-tag-high { grid-column: 2; justify-self: start; }
+.manager-guide { display: grid; gap: var(--space-5); }
+.guide-steps.guide-steps, .guide-books { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); padding: 0; list-style: none; margin: 0; }
+.guide-step { min-width: 0; }
+.guide-card-link { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--space-3); align-items: start; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); padding: var(--space-5); color: var(--ink); text-decoration: none; min-height: var(--touch-target); }
+.guide-card-link:hover, .guide-card-link:focus-visible { border-color: var(--brand); background: var(--canvas); }
+.guide-card-link h3 { font-size: var(--fs-body); margin: 0 0 var(--space-2); }
+.guide-card-link p { font-size: var(--fs-label); margin: 0; color: var(--ink-muted); line-height: 1.6; }
+.guide-icon { color: var(--ink); background: var(--brand-soft); padding: var(--space-2); border-radius: var(--r-md); display: inline-flex; }
+.ledger-wrap.ledger-wrap { position: relative; min-width: 0; max-width: 100%; overflow-x: auto; overscroll-behavior-inline: contain; }
+.op-card { min-width: 0; }
+.op-card-title, .op-card-sub, .op-row-val { overflow-wrap: anywhere; }
+.op-card-title { display: block; min-width: 0; max-width: 100%; }
+.op-card-title-row > div, .op-opname-item-title { min-width: 0; }
+.op-card-info { min-width: 0; }
+.op-card .ui-btn.op-card-title, .op-card .ui-btn.op-cash-title { justify-content: flex-start; text-align: left; white-space: normal; padding: 0; border: 0; width: 100%; height: auto; min-height: var(--touch-target); }
+.op-card-footer, .table-actions, .quick-chips-group { flex-wrap: wrap; gap: var(--space-2); }
+.recording-filters { display: grid; grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr)) auto; align-items: end; gap: var(--space-3); margin-block: var(--space-5); }
+.recording-filters > label { display: grid; gap: var(--space-2); min-width: 0; }
+.recording-filters .field-caption { display: inline-flex; align-items: center; gap: var(--space-1); }
+.recording-metrics.recording-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); border: 0; background: transparent; box-shadow: none; }
+.recording-metrics strong { overflow-wrap: anywhere; }
+.ledger-table .table-relations-pill-group { min-width: 220px; }
+.ledger-table .table-relations-pill-group > * { max-width: 240px; overflow-wrap: anywhere; }
+@media (max-width: 1023px) { .recording-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.quick-chip { display: inline-flex; align-items: center; gap: var(--space-1); }
+@media (max-width: 900px) {
+  .settings-content-grid { grid-template-columns: minmax(0, 1fr); }
+  .settings-content-grid > .color-style-card, .settings-content-grid > .theme-live-preview-card { grid-column: auto; grid-row: auto; }
+}
+@media (max-width: 767px) {
+  .settings-container .settings-tabs-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); overflow: visible; width: 100%; }
+  .settings-tabs-row > .ui-btn { min-width: 0; white-space: normal; }
+  .recording-tabs.recording-tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-radius: var(--r-lg); gap: var(--space-1); overflow: visible; width: 100%; }
+  .recording-tabs > a { min-width: 0; white-space: normal; min-height: var(--touch-target); }
+  .recording-filters { grid-template-columns: minmax(0, 1fr); }
+  .recording-metrics.recording-metrics { grid-template-columns: minmax(0, 1fr); }
+  .color-swatches-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .guide-steps.guide-steps, .guide-books { grid-template-columns: minmax(0, 1fr); }
+  .meeting-action-row > :is(a, .ui-btn) { flex: 1 1 140px; }
+}
 /* Legacy dialog geometry must not shrink accessible touch targets. */
 /* stylelint-disable declaration-no-important */
 dialog[open] .ui-btn.ui-btn.ui-btn, .date-picker.date-picker.date-picker button { min-width: max(var(--h-md), var(--touch-target)) !important; min-height: max(var(--h-md), var(--touch-target)) !important; }

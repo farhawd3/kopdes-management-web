@@ -2,6 +2,7 @@
 import { useDragSort } from '@/components/ui/useDragSort';
 import { DragOverlay } from '@/components/ui/DragOverlay';
 import { IconButton } from '@/components/ui/Button';
+import { AppIcon } from '@/components/ui/AppIcon';
 import { GripVertical } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -1189,15 +1190,16 @@ export function Records({
       return renderCalendarTaskCard(row);
     }
     return (
-      <article className={`record card ${entity === 'units' ? 'unit-record' : ''}`} key={row.id}>
+      <article className={`record card ${entity === 'units' ? 'unit-record' : ''} ${entity === 'meetings' ? 'meeting-record' : ''}`} key={row.id}>
         <div className="section-head">
           <h3>
+            {(entity === 'units' || entity === 'meetings') && <span className="record-domain-icon"><AppIcon name={entity === 'units' ? 'store' : 'meeting'} size={20} /></span>}
             {['work-items', 'journal'].includes(entity) && (
               <span className="task-code-tag mr-2">
                 {formatDisplayCode(String(row.data.code), entity, row.id)}
               </span>
             )}
-            {String(row.data.title)}
+            <span className="record-title-text">{String(row.data.title)}</span>
           </h3>
           {Boolean(row.data.status) && (
             <span className={'badge ' + (row.data.status === 'selesai' ? 'ok' : '')}>
@@ -1276,7 +1278,7 @@ export function Records({
               })()}
             </>
           )}
-          {Boolean(row.data.assignee) && <span>{String(row.data.assignee)}</span>}
+          {Boolean(row.data.assignee) && <span>{entity === 'units' ? 'Penanggung jawab: ' : ''}{String(row.data.assignee)}</span>}
           {Boolean(row.data.priority) && <span>Prioritas {String(row.data.priority)}</span>}
           {Boolean(row.data.due_date || row.data.date) && (
             <span
@@ -1474,7 +1476,7 @@ export function Records({
             );
           })()}
         {['description', 'notes', 'minutes', 'reason', 'follow_up']
-          .filter((key) => entity !== 'stakeholders' || key !== 'follow_up')
+          .filter((key) => (entity !== 'stakeholders' || key !== 'follow_up') && (entity !== 'meetings' || key !== 'minutes'))
           .map((key) =>
             row.data[key] ? (
               <p className="record-text" key={key}>
@@ -1657,7 +1659,7 @@ export function Records({
             </Button>
           )}
           <details className="record-options">
-            <summary>Opsi lainnya</summary>
+            <summary><AppIcon name="more" size={16} /><span>Opsi lainnya</span><ChevronDown size={14} aria-hidden="true" /></summary>
             <div className="actions">
               {entity === 'work-items' && (
                 <>
@@ -1698,21 +1700,16 @@ export function Records({
                   </div>
                 </>
               )}
-              {(entity === 'meetings' || entity === 'issues') && (
+              {entity === 'issues' && (
                 <Button
                   onClick={() => {
                     window.dispatchEvent(
                       new CustomEvent('hub-task', {
                         detail: {
                           title: `Tindak lanjut: ${row.data.title}`,
-                          description:
-                            entity === 'meetings'
-                              ? String(row.data.minutes || row.data.agenda || '')
-                              : String(row.data.description || ''),
+                          description: String(row.data.description || ''),
                           notes: `Sumber ${entity}: ${row.id}`,
-                          ...(entity === 'meetings'
-                            ? { meeting_id: row.id }
-                            : { issue_id: row.id }),
+                          issue_id: row.id,
                         },
                       }),
                     );

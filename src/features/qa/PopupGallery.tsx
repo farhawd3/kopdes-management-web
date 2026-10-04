@@ -13,7 +13,10 @@ import { Reports } from '../reports/Reports';
 import { reportSnapshot } from '../reports/report-snapshot';
 import { WorkspaceSearch } from '../workspace/WorkspaceSearch';
 import { TaskTimeline } from '../tasks/TaskTimeline';
-import { popupEntities, popupLabels, popupWorkspace, cardWorkspace } from './popup-fixtures';
+import { Operations } from '../operations/Operations';
+import { ManagerGuide } from '../workspace/ManagerGuide';
+import { Settings } from '../settings/Settings';
+import { popupEntities, popupLabels, popupWorkspace, cardWorkspace, bookWorkspace } from './popup-fixtures';
 import type { Entity } from '../schemas';
 const sampleReports = [{ id: 'qa-report', title: 'Laporan contoh pemeriksaan', period_start: '2026-10-01', period_end: '2026-10-04', snapshot: { ...reportSnapshot(popupWorkspace, '2026-10-01', '2026-10-04'), notes: 'Catatan contoh pemeriksaan', status: 'draft' as const } }];
 
@@ -40,7 +43,7 @@ export function PopupGallery() {
     <Button onClick={() => setDark(!dark)}>{dark ? 'Tema terang' : 'Tema gelap'}</Button>
     <Select ariaLabel="Domain contoh" value={entity} onChange={value => setEntity(value as Entity)} options={popupEntities.map(value => ({value, label: popupLabels[value]}))} />
     <div className="ui-gallery-row">
-      {['Tambah', 'Ubah', 'Tugas cepat', 'Detail tugas', 'Sprint baru', 'Sprint terisi', 'Jadwal berulang', 'Pusat aksi', 'Daftar dan CSV', 'Dashboard dan rutinitas', 'Laporan terisi', 'Pencarian contoh', 'Linimasa contoh'].map(label => <Button key={label} onClick={() => setPopup(label)}>{label}</Button>)}
+      {['Tambah', 'Ubah', 'Tugas cepat', 'Detail tugas', 'Sprint baru', 'Sprint terisi', 'Jadwal berulang', 'Pusat aksi', 'Daftar dan CSV', 'Dashboard dan rutinitas', 'Laporan terisi', 'Pencarian contoh', 'Linimasa contoh', 'Anggota contoh', 'Buku kas contoh', 'Barang contoh', 'Opname contoh', 'Panduan', 'Pengaturan'].map(label => <Button key={label} onClick={() => setPopup(label)}>{label}</Button>)}
     </div>
     {(popup === 'Tambah' || popup === 'Ubah' || popup === 'Tugas cepat') && <Editor
       entity={popup === 'Tugas cepat' ? 'work-items' : entity}
@@ -56,5 +59,8 @@ export function PopupGallery() {
     {popup === 'Laporan terisi' && <Reports previewReports={sampleReports} />}
     {popup === 'Pencarian contoh' && <WorkspaceSearch workspace={popupWorkspace} onNavigate={() => {}} />}
     {popup === 'Linimasa contoh' && <TaskTimeline items={popupWorkspace['work-items']!} workspace={popupWorkspace} refresh={async () => {}} />}
+    {['Anggota contoh', 'Buku kas contoh', 'Barang contoh', 'Opname contoh'].includes(popup) && <Operations key={popup} draftScope="qa-popup" slug={{ 'Anggota contoh': 'anggota', 'Buku kas contoh': 'keuangan', 'Barang contoh': 'barang', 'Opname contoh': 'stok-opname' }[popup]!} data={bookWorkspace} ready refresh={async () => {}} />}
+    {popup === 'Panduan' && <ManagerGuide />}
+    {popup === 'Pengaturan' && <Settings preferenceScope="qa-popup:" refresh={async () => {}} />}
   </main>;
 }

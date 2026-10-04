@@ -1,9 +1,10 @@
 'use client';
 import { Button } from '@/components/ui/Button';
+import { AppIcon } from '@/components/ui/AppIcon';
 import { Input } from '@/components/ui/Input';
 import { EmptyState } from '@/components/ui/EmptyState';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useSyncExternalStore } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   ArrowUpRight,
@@ -16,6 +17,16 @@ import {
   Download,
   Search,
   FilePenLine,
+  UserCheck,
+  TrendingUp,
+  TrendingDown,
+  AlertTriangle,
+  CheckCircle2,
+  LayoutGrid,
+  List,
+  Phone,
+  Calendar,
+  Sparkles,
 } from 'lucide-react';
 import { Editor } from '../Editor';
 import { catalog, labels, formatChoiceLabel } from '../catalog';
@@ -109,16 +120,26 @@ const modules = [
   },
 ] as const;
 export const recordingPaths = ['pencatatan', ...modules.map((entry) => entry.path)];
+function subscribeCompactView(callback: () => void) {
+  if (typeof window.matchMedia !== 'function') return () => {};
+  const query = window.matchMedia('(max-width: 767px)');
+  query.addEventListener('change', callback);
+  return () => query.removeEventListener('change', callback);
+}
+const compactView = () => typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 767px)').matches;
+const serverCompactView = () => false;
 export function Operations({
   slug,
   data,
   ready,
   refresh,
+  draftScope,
 }: {
   slug: string;
   data: Workspace;
   ready: boolean;
   refresh: () => Promise<void>;
+  draftScope?: string;
 }) {
   const book = modules.find((entry) => entry.path === slug);
   const query = useSearchParams();
@@ -163,6 +184,11 @@ export function Operations({
   const [month, setMonth] = useState('');
   const [filter, setFilter] = useState('');
   const [unit, setUnit] = useState('');
+  const [chosenView, setViewMode] = useState<'table' | 'cards' | null>(null);
+  const compact = useSyncExternalStore(subscribeCompactView, compactView, serverCompactView);
+  const viewMode = chosenView ?? (compact ? 'cards' : 'table');
+  const [inventoryFilter, setInventoryFilter] = useState<'' | 'aman' | 'menipis' | 'habis'>('');
+  const [opnameFilter, setOpnameFilter] = useState<'' | 'sesuai' | 'selisih'>('');
   const [captureEntity, setCaptureEntity] = useState<Entity>();
   const entity = book?.entity || captureEntity;
   const recent = modules
@@ -176,16 +202,42 @@ export function Operations({
     .slice(0, 8);
   const all = entity ? data[entity] || [] : [];
   const rows = all
-    .filter(
-      (row) =>
-        JSON.stringify(row.data).toLocaleLowerCase('id').includes(search.toLocaleLowerCase('id')) &&
-        (!month || String(row.data.date).startsWith(month)) &&
-        (!filter || row.data.status === filter || row.data.direction === filter) &&
-        (!unit ||
-          row.data.unit_id === unit ||
-          data['inventory-items']?.find((item) => item.id === row.data.item_id)?.data.unit_id ===
-            unit),
-    )
+    .filter((row) => {
+      const matchSearch =
+        !search ||
+        JSON.stringify(row.data).toLocaleLowerCase('id').includes(search.toLocaleLowerCase('id'));
+      if (!matchSearch) return false;
+
+      const matchMonth =
+        !month || String(row.data.date || row.data.created_at || '').startsWith(month);
+      if (!matchMonth) return false;
+
+      const matchFilter = !filter || row.data.status === filter || row.data.direction === filter;
+      if (!matchFilter) return false;
+
+      const matchUnit =
+        !unit ||
+        row.data.unit_id === unit ||
+        data['inventory-items']?.find((item) => item.id === row.data.item_id)?.data.unit_id ===
+          unit;
+      if (!matchUnit) return false;
+
+      if (entity === 'inventory-items' && inventoryFilter) {
+        const qty = Number(row.data.book_quantity || 0);
+        const min = Number(row.data.minimum_quantity || 0);
+        if (inventoryFilter === 'habis' && qty > 0) return false;
+        if (inventoryFilter === 'menipis' && (qty <= 0 || qty > min)) return false;
+        if (inventoryFilter === 'aman' && qty <= min) return false;
+      }
+
+      if (entity === 'stock-counts' && opnameFilter) {
+        const diff = stockDifference(row);
+        if (opnameFilter === 'sesuai' && diff !== 0) return false;
+        if (opnameFilter === 'selisih' && diff === 0) return false;
+      }
+
+      return true;
+    })
     .sort((a, b) =>
       String(b.data.date || b.updated_at).localeCompare(String(a.data.date || a.updated_at)),
     );
@@ -269,28 +321,53 @@ export function Operations({
       return (
         <Button
           type="button"
-          className="table-title"
+          className="table-row-title-btn"
           onClick={() => setEdit(row)}
           title="Klik untuk mengubah catatan"
         >
-          <span className="table-title-text">{display(row, field)}</span>
-          {entity === 'cash-entries' && (member || item) && (
-            <span className="table-title-subtitle">
-              {member && (
-                <span className="inline-flex items-center gap-1">
-                  <User size={12} className="inline-icon" />
-                  {String(member.data.title)}
-                </span>
-              )}
-              {member && item && ' · '}
-              {item && (
-                <span className="inline-flex items-center gap-1">
-                  <Package size={12} className="inline-icon" />
-                  {String(item.data.title)}
-                </span>
-              )}
+          {entity === 'members' && (
+            <span className="member-avatar-mini" aria-hidden>
+              {String(row.data.title || 'A').charAt(0).toUpperCase()}
             </span>
           )}
+          {entity === 'cash-entries' && (
+            <span
+              className={`cash-dir-mini ${row.data.direction === 'masuk' ? 'in' : 'out'}`}
+              aria-hidden
+            >
+              {row.data.direction === 'masuk' ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+            </span>
+          )}
+          {entity === 'inventory-items' && (
+            <span className="item-icon-mini" aria-hidden>
+              <Package size={13} />
+            </span>
+          )}
+          {entity === 'stock-counts' && (
+            <span className="opname-icon-mini" aria-hidden>
+              <ClipboardCheck size={13} />
+            </span>
+          )}
+          <span className="table-title-text-group">
+            <span className="table-title-main">{display(row, field)}</span>
+            {entity === 'cash-entries' && (member || item) && (
+              <span className="table-title-subtitle">
+                {member && (
+                  <span className="inline-flex items-center gap-1">
+                    <User size={11} className="inline-icon" />
+                    {String(member.data.title)}
+                  </span>
+                )}
+                {member && item && ' · '}
+                {item && (
+                  <span className="inline-flex items-center gap-1">
+                    <Package size={11} className="inline-icon" />
+                    {String(item.data.title)}
+                  </span>
+                )}
+              </span>
+            )}
+          </span>
         </Button>
       );
     }
@@ -483,15 +560,29 @@ export function Operations({
   return (
     <>
       <nav className="recording-tabs" aria-label="Halaman pencatatan">
-        <Link href="/pencatatan" aria-current={!book ? 'page' : undefined}>
-          Ringkasan
+        <Link
+          href="/pencatatan"
+          className={`recording-tab-item ${!book ? 'is-active' : ''}`}
+          aria-current={!book ? 'page' : undefined}
+        >
+          <Sparkles size={14} />
+          <span>Ringkasan</span>
         </Link>
-        {modules.map(({ path, title, Icon }) => (
-          <Link key={path} href={'/' + path} aria-current={path === slug ? 'page' : undefined}>
-            <Icon size={16} />
-            {title}
-          </Link>
-        ))}
+        {modules.map(({ path, entity: modEntity, title, Icon }) => {
+          const count = ready ? (data[modEntity] || []).length : 0;
+          return (
+            <Link
+              key={path}
+              href={'/' + path}
+              className={`recording-tab-item ${path === slug ? 'is-active' : ''}`}
+              aria-current={path === slug ? 'page' : undefined}
+            >
+              <Icon size={14} />
+              <span>{title}</span>
+              {ready && count > 0 && <span className="tab-count-badge">{count}</span>}
+            </Link>
+          );
+        })}
       </nav>
       {!ready && (
         <section className="activation-notice">
@@ -547,6 +638,7 @@ export function Operations({
 
                   <div className="notebook-actions">
                     <Button
+                      variant="secondary"
                       className="notebook-add-btn"
                       disabled={
                         !ready || (entity === 'stock-counts' && !data['inventory-items']?.length)
@@ -562,7 +654,7 @@ export function Operations({
                         setEdit(null);
                       }}
                     >
-                      <Plus size={15} />
+                      <Plus size={14} />
                       <span>Tambah</span>
                     </Button>
                     <Link
@@ -634,22 +726,25 @@ export function Operations({
               <p>{catalog[entity!].description}</p>
             </div>
             <div className="actions">
-              <Button disabled={!ready || !rows.length} onClick={exportCsv}>
-                <Download size={16} />
-                CSV
+              <Button variant="secondary" disabled={!ready || !rows.length} onClick={exportCsv}>
+                <Download size={15} />
+                <span>CSV</span>
               </Button>
               <Button
+                variant="primary"
                 className="primary"
                 disabled={!ready || (entity === 'stock-counts' && !data['inventory-items']?.length)}
                 onClick={() => setEdit(null)}
               >
-                <Plus size={16} />
-                Tambah{' '}
-                {entity === 'cash-entries'
-                  ? 'transaksi'
-                  : entity === 'stock-counts'
-                    ? 'opname'
-                    : book.title.toLowerCase()}
+                <Plus size={15} />
+                <span>
+                  Tambah{' '}
+                  {entity === 'cash-entries'
+                    ? 'transaksi'
+                    : entity === 'stock-counts'
+                      ? 'opname'
+                      : book.title.toLowerCase()}
+                </span>
               </Button>
             </div>
           </div>
@@ -662,73 +757,144 @@ export function Operations({
             <div className="recording-metrics">
               {(entity === 'cash-entries'
                 ? [
-                    ['Masuk', rupiah(summary.incoming), 'income'],
-                    ['Keluar', rupiah(summary.outgoing), 'expense'],
-                    ['Selisih kas tercatat', rupiah(summary.net), 'net'],
+                    {
+                      label: 'Masuk',
+                      value: rupiah(summary.incoming),
+                      type: 'income',
+                      Icon: TrendingUp,
+                      subtitle: 'Total kas masuk terfilter',
+                    },
+                    {
+                      label: 'Keluar',
+                      value: rupiah(summary.outgoing),
+                      type: 'expense',
+                      Icon: TrendingDown,
+                      subtitle: 'Total kas keluar terfilter',
+                    },
+                    {
+                      label: 'Selisih kas tercatat',
+                      value: rupiah(summary.net),
+                      type: 'net',
+                      Icon: Wallet,
+                      subtitle: 'Selisih transaksi; bukan saldo bank',
+                    },
                   ]
                 : entity === 'members'
-                  ? [
-                      ['Total Anggota', rows.length, 'total'],
-                      ['Aktif', rows.filter((row) => row.data.status === 'aktif').length, 'active'],
-                      [
-                        'Simpanan Anggota Tercatat',
-                        rupiah(
-                          (data['cash-entries'] || [])
-                            .filter(
-                              (c) =>
-                                rows.some((m) => m.id === c.data.member_id) &&
-                                c.data.direction === 'masuk',
-                            )
-                            .reduce((sum, c) => sum + Number(c.data.amount || 0), 0),
-                        ),
-                        'income',
-                      ],
-                    ]
+                  ? (() => {
+                      const activeCount = rows.filter((r) => r.data.status === 'aktif').length;
+                      const memberCash = (data['cash-entries'] || []).filter(
+                        (c) => rows.some((m) => m.id === c.data.member_id) && c.data.direction === 'masuk',
+                      );
+                      const totalSav = memberCash.reduce((s, c) => s + Number(c.data.amount || 0), 0);
+                      return [
+                        {
+                          label: 'Total Anggota',
+                          value: rows.length,
+                          type: 'total',
+                          Icon: Users,
+                          subtitle: `${all.length} anggota tercatat di sistem`,
+                        },
+                        {
+                          label: 'Aktif',
+                          value: activeCount,
+                          type: 'active',
+                          Icon: UserCheck,
+                          subtitle: all.length
+                            ? `${Math.round((activeCount / all.length) * 100)}% dari total anggota`
+                            : 'Belum ada data',
+                        },
+                        {
+                          label: 'Simpanan Anggota Tercatat',
+                          value: rupiah(totalSav),
+                          type: 'income',
+                          Icon: Wallet,
+                          subtitle: `${memberCash.length} transaksi kas masuk`,
+                        },
+                      ];
+                    })()
                   : entity === 'inventory-items'
-                    ? [
-                        ['Jenis Barang', rows.length, 'total'],
-                        [
-                          'Estimasi Nilai Persediaan',
-                          rupiah(
-                            rows.reduce(
-                              (sum, r) =>
-                                sum + Number(r.data.book_quantity || 0) * Number(r.data.price || 0),
-                              0,
-                            ),
-                          ),
-                          'income',
-                        ],
-                        [
-                          'Stok Menipis / Perlu Belanja',
-                          rows.filter(
-                            (row) =>
-                              Number(row.data.book_quantity) <= Number(row.data.minimum_quantity),
-                          ).length,
-                          'warning',
-                        ],
-                      ]
-                    : [
-                        ['Pemeriksaan', rows.length, 'total'],
-                        [
-                          'Ada selisih',
-                          rows.filter((row) => stockDifference(row) !== 0).length,
-                          'warning',
-                        ],
-                        [
-                          'Stok fisik sesuai',
-                          rows.filter((row) => stockDifference(row) === 0).length,
-                          'active',
-                        ],
-                      ]
-              ).map(([label, value, type]) => (
+                    ? (() => {
+                        const lowStock = rows.filter(
+                          (r) => Number(r.data.book_quantity) <= Number(r.data.minimum_quantity),
+                        );
+                        const outOfStock = rows.filter((r) => Number(r.data.book_quantity) <= 0);
+                        const totalVal = rows.reduce(
+                          (s, r) => s + Number(r.data.book_quantity || 0) * Number(r.data.price || 0),
+                          0,
+                        );
+                        return [
+                          {
+                            label: 'Jenis Barang',
+                            value: rows.length,
+                            type: 'total',
+                            Icon: Package,
+                            subtitle: `${all.length} jenis dalam katalog`,
+                          },
+                          {
+                            label: 'Estimasi Nilai Persediaan',
+                            value: rupiah(totalVal),
+                            type: 'income',
+                            Icon: Wallet,
+                            subtitle: 'Kalkulasi stok buku × harga satuan',
+                          },
+                          {
+                            label: 'Stok Menipis / Perlu Belanja',
+                            value: lowStock.length,
+                            type: 'warning',
+                            Icon: AlertTriangle,
+                            subtitle: outOfStock.length
+                              ? `${outOfStock.length} barang habis (0 unit)`
+                              : lowStock.length
+                                ? `${lowStock.length} item mencapai batas min`
+                                : 'Semua stok dalam batas aman',
+                          },
+                        ];
+                      })()
+                    : (() => {
+                        const diffRows = rows.filter((r) => stockDifference(r) !== 0);
+                        const matchRows = rows.filter((r) => stockDifference(r) === 0);
+                        return [
+                          {
+                            label: 'Pemeriksaan',
+                            value: rows.length,
+                            type: 'total',
+                            Icon: ClipboardCheck,
+                            subtitle: 'Total sesi audit fisik dilakukan',
+                          },
+                          {
+                            label: 'Ada selisih',
+                            value: diffRows.length,
+                            type: 'warning',
+                            Icon: AlertTriangle,
+                            subtitle: diffRows.length
+                              ? 'Perlu investigasi fisik vs buku'
+                              : 'Tidak ada temuan selisih',
+                          },
+                          {
+                            label: 'Stok fisik sesuai',
+                            value: matchRows.length,
+                            type: 'active',
+                            Icon: CheckCircle2,
+                            subtitle: `${matchRows.length} pemeriksaan akurat 100%`,
+                          },
+                        ];
+                      })()
+              ).map(({ label, value, type, Icon, subtitle }) => (
                 <div key={label} className={`metric-card metric-${type}`}>
-                  <small className="metric-label">{label}</small>
+                  <div className="metric-header">
+                    <small className="metric-label">{label}</small>
+                    <div className={`metric-icon-wrap icon-${type}`} aria-hidden>
+                      <Icon size={16} />
+                    </div>
+                  </div>
                   <strong className="metric-value">{value}</strong>
+                  {subtitle && <span className="metric-sub">{subtitle}</span>}
                 </div>
               ))}
             </div>
           )}
-          <div className="filters">
+
+          <div className="recording-filters">
             <label>
               <span className="field-caption">
                 <Search size={14} />
@@ -798,54 +964,368 @@ export function Operations({
                 setMonth('');
                 setFilter('');
                 setUnit('');
+                setInventoryFilter('');
+                setOpnameFilter('');
               }}
             >
               Hapus filter
             </Button>
           </div>
+
+          {/* Quick Filter Chips */}
+          <div className="quick-chips-row" role="group" aria-label="Filter cepat">
+            <span className="quick-chips-label">Filter Cepat:</span>
+            {entity === 'members' && (
+              <div className="quick-chips-group">
+                <Button
+                  type="button"
+                  className={`quick-chip ${!filter ? 'is-active' : ''}`}
+                  onClick={() => setFilter('')}
+                >
+                  Semua ({all.length})
+                </Button>
+                <Button
+                  type="button"
+                  className={`quick-chip chip-active ${filter === 'aktif' ? 'is-active' : ''}`}
+                  onClick={() => setFilter('aktif')}
+                >
+                  ● Aktif ({all.filter((r) => r.data.status === 'aktif').length})
+                </Button>
+                <Button
+                  type="button"
+                  className={`quick-chip chip-inactive ${filter === 'nonaktif' ? 'is-active' : ''}`}
+                  onClick={() => setFilter('nonaktif')}
+                >
+                  ○ Nonaktif ({all.filter((r) => r.data.status === 'nonaktif').length})
+                </Button>
+              </div>
+            )}
+            {entity === 'cash-entries' && (
+              <div className="quick-chips-group">
+                <Button
+                  type="button"
+                  className={`quick-chip ${!filter ? 'is-active' : ''}`}
+                  onClick={() => setFilter('')}
+                >
+                  Semua ({all.length})
+                </Button>
+                <Button
+                  type="button"
+                  className={`quick-chip chip-income ${filter === 'masuk' ? 'is-active' : ''}`}
+                  onClick={() => setFilter('masuk')}
+                >
+                  + Uang Masuk ({all.filter((r) => r.data.direction === 'masuk').length})
+                </Button>
+                <Button
+                  type="button"
+                  className={`quick-chip chip-expense ${filter === 'keluar' ? 'is-active' : ''}`}
+                  onClick={() => setFilter('keluar')}
+                >
+                  - Uang Keluar ({all.filter((r) => r.data.direction === 'keluar').length})
+                </Button>
+              </div>
+            )}
+            {entity === 'inventory-items' && (
+              <div className="quick-chips-group">
+                <Button
+                  type="button"
+                  className={`quick-chip ${!inventoryFilter ? 'is-active' : ''}`}
+                  onClick={() => setInventoryFilter('')}
+                >
+                  Semua ({all.length})
+                </Button>
+                <Button
+                  type="button"
+                  className={`quick-chip chip-active ${inventoryFilter === 'aman' ? 'is-active' : ''}`}
+                  onClick={() => setInventoryFilter('aman')}
+                >
+                  <AppIcon name="complete" size={16} /> Stok aman ({all.filter((r) => Number(r.data.book_quantity) > Number(r.data.minimum_quantity)).length})
+                </Button>
+                <Button
+                  type="button"
+                  className={`quick-chip chip-warning ${inventoryFilter === 'menipis' ? 'is-active' : ''}`}
+                  onClick={() => setInventoryFilter('menipis')}
+                >
+                  <AppIcon name="warning" size={16} /> Menipis ({all.filter((r) => Number(r.data.book_quantity) > 0 && Number(r.data.book_quantity) <= Number(r.data.minimum_quantity)).length})
+                </Button>
+                <Button
+                  type="button"
+                  className={`quick-chip chip-expense ${inventoryFilter === 'habis' ? 'is-active' : ''}`}
+                  onClick={() => setInventoryFilter('habis')}
+                >
+                  <AppIcon name="unavailable" size={16} /> Habis ({all.filter((r) => Number(r.data.book_quantity) <= 0).length})
+                </Button>
+              </div>
+            )}
+            {entity === 'stock-counts' && (
+              <div className="quick-chips-group">
+                <Button
+                  type="button"
+                  className={`quick-chip ${!opnameFilter ? 'is-active' : ''}`}
+                  onClick={() => setOpnameFilter('')}
+                >
+                  Semua ({all.length})
+                </Button>
+                <Button
+                  type="button"
+                  className={`quick-chip chip-active ${opnameFilter === 'sesuai' ? 'is-active' : ''}`}
+                  onClick={() => setOpnameFilter('sesuai')}
+                >
+                  <AppIcon name="complete" size={16} /> Fisik sesuai ({all.filter((r) => stockDifference(r) === 0).length})
+                </Button>
+                <Button
+                  type="button"
+                  className={`quick-chip chip-warning ${opnameFilter === 'selisih' ? 'is-active' : ''}`}
+                  onClick={() => setOpnameFilter('selisih')}
+                >
+                  <AppIcon name="warning" size={16} /> Ada selisih ({all.filter((r) => stockDifference(r) !== 0).length})
+                </Button>
+              </div>
+            )}
+          </div>
+
           {ready && (
             <>
-              <p className="result-count">
-                {rows.length} dari {all.length} catatan
-                {entity === 'cash-entries'
-                  ? ' · Ringkasan mengikuti filter; bukan saldo rekening atau laporan laba rugi.'
-                  : ''}
-              </p>
-              <div className="ledger-wrap">
-                <table className="ledger-table">
-                  <thead>
-                    <tr>
-                      {columns.map((field) => (
-                        <th key={field} className={getColumnClass(field)}>
-                          {field === 'difference' ? 'Selisih' : labels[field]}
-                        </th>
-                      ))}
-                      <th className="col-action">Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {rows.map((row) => (
-                      <tr key={row.id}>
+              <div className="results-toolbar-bar">
+                <p className="result-count">
+                  {rows.length} dari {all.length} catatan
+                  {entity === 'cash-entries'
+                    ? ' · Ringkasan mengikuti filter; bukan saldo rekening atau laporan laba rugi.'
+                    : ''}
+                </p>
+
+                <div className="op-view-switcher" role="group" aria-label="Pilihan tampilan data">
+                  <Button
+                    type="button"
+                    className={`op-view-btn ${viewMode === 'table' ? 'is-active' : ''}`}
+                    onClick={() => setViewMode('table')}
+                    title="Tampilan tabel"
+                  >
+                    <List size={14} />
+                    <span>Tabel</span>
+                  </Button>
+                  <Button
+                    type="button"
+                    className={`op-view-btn ${viewMode === 'cards' ? 'is-active' : ''}`}
+                    onClick={() => setViewMode('cards')}
+                    title="Tampilan kartu"
+                  >
+                    <LayoutGrid size={14} />
+                    <span>Kartu</span>
+                  </Button>
+                </div>
+              </div>
+
+              {viewMode === 'table' ? (
+                <div className="ledger-wrap">
+                  <table className="ledger-table">
+                    <thead>
+                      <tr>
                         {columns.map((field) => (
-                          <td key={field} className={getColumnClass(field)}>
-                            {renderCell(row, field)}
-                          </td>
+                          <th key={field} className={getColumnClass(field)}>
+                            {field === 'difference' ? 'Selisih' : labels[field]}
+                          </th>
                         ))}
-                        <td className="col-action">
-                          <div className="table-actions">
-                            <Button
-                              type="button"
-                              className="table-btn-edit"
-                              onClick={() => setEdit(row)}
-                              title="Ubah data"
-                            >
-                              Ubah
-                            </Button>
-                            {entity === 'members' && (
+                        <th className="col-action">Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rows.map((row) => (
+                        <tr key={row.id}>
+                          {columns.map((field) => (
+                            <td key={field} className={getColumnClass(field)}>
+                              {renderCell(row, field)}
+                            </td>
+                          ))}
+                          <td className="col-action">
+                            <div className="table-actions">
+                              <Button
+                                type="button"
+                                className="table-btn-edit"
+                                onClick={() => setEdit(row)}
+                                title="Ubah data"
+                              >
+                                Ubah
+                              </Button>
+                              {entity === 'members' && (
+                                <Button
+                                  type="button"
+                                  className="table-btn-action table-btn-cash"
+                                  title="Catat kas untuk anggota ini"
+                                  onClick={() => {
+                                    setCaptureEntity('cash-entries');
+                                    setEdit({
+                                      id: '',
+                                      created_at: '',
+                                      updated_at: '',
+                                      data: {
+                                        title: `Setoran kas: ${row.data.title}`,
+                                        date: today(),
+                                        direction: 'masuk',
+                                        account: 'Kas Utama Koperasi',
+                                        amount: 0,
+                                        member_id: row.id,
+                                        item_id: '',
+                                        unit_id: '',
+                                        notes: `Transaksi untuk anggota ${row.data.title} (${row.data.member_number || ''})`,
+                                      },
+                                    });
+                                  }}
+                                >
+                                  <Wallet size={12} />
+                                  <span>+ Kas</span>
+                                </Button>
+                              )}
+                              {entity === 'inventory-items' && (
+                                <>
+                                  <Button
+                                    type="button"
+                                    className="table-btn-action table-btn-buy"
+                                    title="Catat pengeluaran kas pembelian barang ini"
+                                    onClick={() => {
+                                      setCaptureEntity('cash-entries');
+                                      setEdit({
+                                        id: '',
+                                        created_at: '',
+                                        updated_at: '',
+                                        data: {
+                                          title: `Beli Stok: ${row.data.title}`,
+                                          date: today(),
+                                          direction: 'keluar',
+                                          account: 'Pengadaan Barang & Persediaan',
+                                          amount: Number(row.data.price || 0) * 10,
+                                          item_id: row.id,
+                                          member_id: '',
+                                          unit_id: row.data.unit_id || '',
+                                          notes: `Pembelian stok untuk ${row.data.title} (${row.data.sku || ''})`,
+                                        },
+                                      });
+                                    }}
+                                  >
+                                    <Wallet size={12} />
+                                    <span>+ Beli</span>
+                                  </Button>
+                                  <Link
+                                    className="table-btn-action"
+                                    href={`/stok-opname?barang=${row.id}`}
+                                    title="Hitung fisik opname"
+                                  >
+                                    Opname
+                                  </Link>
+                                </>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {!rows.length && (
+                    <EmptyState
+                      icon={<book.Icon size={30} />}
+                      title={all.length
+                          ? 'Tidak ada data yang cocok'
+                          : `Belum ada catatan ${book.title.toLowerCase()}`}
+                      description={all.length
+                          ? 'Coba kata pencarian atau bersihkan filter di atas.'
+                          : entity === 'stock-counts' && !data['inventory-items']?.length
+                            ? 'Daftarkan barang sebelum mencatat hasil hitung fisik.'
+                          : `Gunakan tombol Tambah di atas untuk mengisi catatan ${book.title.toLowerCase()} pertama.`}
+                      action={all.length ? {
+                          label: 'Hapus filter',
+                          onClick: () => {
+                            setSearch('');
+                            setMonth('');
+                            setFilter('');
+                            setUnit('');
+                            setInventoryFilter('');
+                            setOpnameFilter('');
+                          },
+                        } : entity === 'stock-counts' && !data['inventory-items']?.length
+                          ? { label: 'Daftarkan barang', href: '/barang' }
+                          : undefined}
+                    />
+                  )}
+                </div>
+              ) : (
+                /* Card / Grid View */
+                <div className="operations-cards-container">
+                  <div className="operations-card-grid">
+                    {rows.map((row) => {
+                      if (entity === 'members') {
+                        const memberEntries = (data['cash-entries'] || []).filter(
+                          (c) => c.data.member_id === row.id,
+                        );
+                        const totalIn = memberEntries
+                          .filter((c) => c.data.direction === 'masuk')
+                          .reduce((sum, c) => sum + Number(c.data.amount || 0), 0);
+                        const isAktif = row.data.status === 'aktif';
+
+                        return (
+                          <article className="op-card op-member-card" key={row.id}>
+                            <div className="op-card-header">
+                              <div className="op-member-avatar" aria-hidden>
+                                {String(row.data.title || 'A').charAt(0).toUpperCase()}
+                              </div>
+                              <div className="op-card-info">
+                                <div className="op-card-title-row">
+                                  <Button variant="ghost" className="op-card-title" onClick={() => setEdit(row)}>
+                                    {String(row.data.title)}
+                                  </Button>
+                                  <span
+                                    className={`table-badge ${isAktif ? 'badge-active' : 'badge-inactive'}`}
+                                  >
+                                    {isAktif ? 'Aktif' : 'Nonaktif'}
+                                  </span>
+                                </div>
+                                <div className="op-card-meta">
+                                  {Boolean(row.data.member_number) && (
+                                    <code className="op-code-chip">
+                                      #{String(row.data.member_number)}
+                                    </code>
+                                  )}
+                                  <span className="op-date-chip">
+                                    <Calendar size={12} />{' '}
+                                    {formatDate(String(row.data.date || row.data.created_at))}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="op-card-body">
+                              {Boolean(row.data.contact) && (
+                                <div className="op-card-row">
+                                  <span className="op-row-label">
+                                    <Phone size={12} /> Kontak
+                                  </span>
+                                  <span className="op-row-val">{String(row.data.contact)}</span>
+                                </div>
+                              )}
+                              <div className="op-card-row op-highlight-row">
+                                <span className="op-row-label">
+                                  <Wallet size={12} /> Kas Tercatat
+                                </span>
+                                <span className="op-row-val op-cash-val">
+                                  {totalIn > 0 ? rupiah(totalIn) : 'Belum ada'}
+                                  <small> ({memberEntries.length} transaksi)</small>
+                                </span>
+                              </div>
+                              {Boolean(row.data.notes) && (
+                                <p className="op-card-notes">{String(row.data.notes)}</p>
+                              )}
+                            </div>
+
+                            <div className="op-card-footer">
+                              <Button
+                                type="button"
+                                className="table-btn-edit"
+                                onClick={() => setEdit(row)}
+                              >
+                                Ubah
+                              </Button>
                               <Button
                                 type="button"
                                 className="table-btn-action table-btn-cash"
-                                title="Catat kas untuk anggota ini"
                                 onClick={() => {
                                   setCaptureEntity('cash-entries');
                                   setEdit({
@@ -869,82 +1349,328 @@ export function Operations({
                                 <Wallet size={12} />
                                 <span>+ Kas</span>
                               </Button>
-                            )}
-                            {entity === 'inventory-items' && (
-                              <>
-                                <Button
-                                  type="button"
-                                  className="table-btn-action table-btn-buy"
-                                  title="Catat pengeluaran kas pembelian barang ini"
-                                  onClick={() => {
-                                    setCaptureEntity('cash-entries');
-                                    setEdit({
-                                      id: '',
-                                      created_at: '',
-                                      updated_at: '',
-                                      data: {
-                                        title: `Beli Stok: ${row.data.title}`,
-                                        date: today(),
-                                        direction: 'keluar',
-                                        account: 'Pengadaan Barang & Persediaan',
-                                        amount: Number(row.data.price || 0) * 10,
-                                        item_id: row.id,
-                                        member_id: '',
-                                        unit_id: row.data.unit_id || '',
-                                        notes: `Pembelian stok untuk ${row.data.title} (${row.data.sku || ''})`,
-                                      },
-                                    });
-                                  }}
-                                >
-                                  <Wallet size={12} />
-                                  <span>+ Beli</span>
+                            </div>
+                          </article>
+                        );
+                      }
+
+                      if (entity === 'cash-entries') {
+                        const isMasuk = row.data.direction === 'masuk';
+                        const member = row.data.member_id
+                          ? data.members?.find((m) => m.id === row.data.member_id)
+                          : null;
+                        const item = row.data.item_id
+                          ? data['inventory-items']?.find((i) => i.id === row.data.item_id)
+                          : null;
+
+                        return (
+                          <article
+                            className={`op-card op-cash-card ${isMasuk ? 'card-income' : 'card-expense'}`}
+                            key={row.id}
+                          >
+                            <div className="op-card-header">
+                              <span
+                                className={`table-badge ${isMasuk ? 'badge-income' : 'badge-expense'}`}
+                              >
+                                {isMasuk ? '+ Uang Masuk' : '- Uang Keluar'}
+                              </span>
+                              <span className="op-date-chip">
+                                <Calendar size={12} /> {formatDate(String(row.data.date))}
+                              </span>
+                            </div>
+
+                            <div className="op-cash-amount-box">
+                              <strong
+                                className={`op-cash-amount ${isMasuk ? 'amount-in' : 'amount-out'}`}
+                              >
+                                {isMasuk ? '+ ' : '- '}
+                                {rupiah(Number(row.data.amount))}
+                              </strong>
+                              <Button variant="ghost" className="op-cash-title" onClick={() => setEdit(row)}>
+                                {String(row.data.title)}
+                              </Button>
+                            </div>
+
+                            <div className="op-card-body">
+                              {Boolean(row.data.account) && (
+                                <div className="op-card-row">
+                                  <span className="op-row-label">Akun / Kas</span>
+                                  <span className="table-account-tag">
+                                    {String(row.data.account)}
+                                  </span>
+                                </div>
+                              )}
+                              {(member || item) && (
+                                <div className="op-card-row">
+                                  <span className="op-row-label">Terkait</span>
+                                  <div className="table-relations-pill-group">
+                                    {member && (
+                                      <span
+                                        className="relation-pill member-pill"
+                                        title={`Anggota: ${member.data.title}`}
+                                      >
+                                        <Users size={11} />
+                                        <span>{String(member.data.title)}</span>
+                                      </span>
+                                    )}
+                                    {item && (
+                                      <span
+                                        className="relation-pill item-pill"
+                                        title={`Barang: ${item.data.title}`}
+                                      >
+                                        <Package size={11} />
+                                        <span>{String(item.data.title)}</span>
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+                              {Boolean(row.data.unit_id) && (
+                                <div className="op-card-row">
+                                  <span className="op-row-label">Gerai</span>
+                                  <span className="op-row-val">{display(row, 'unit_id')}</span>
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="op-card-footer">
+                              <Button
+                                type="button"
+                                className="table-btn-edit"
+                                onClick={() => setEdit(row)}
+                              >
+                                Ubah Transaksi
+                              </Button>
+                            </div>
+                          </article>
+                        );
+                      }
+
+                      if (entity === 'inventory-items') {
+                        const qty = Number(row.data.book_quantity || 0);
+                        const minQty = Number(row.data.minimum_quantity || 0);
+                        const price = Number(row.data.price || 0);
+                        const percent =
+                          minQty > 0
+                            ? Math.min(100, Math.max(10, Math.round((qty / (minQty * 2)) * 100)))
+                            : 100;
+
+                        return (
+                          <article className="op-card op-inventory-card" key={row.id}>
+                            <div className="op-card-header">
+                              <div className="op-item-icon" aria-hidden>
+                                <Package size={20} />
+                              </div>
+                              <div className="op-card-info">
+                                <Button variant="ghost" className="op-card-title" onClick={() => setEdit(row)}>
+                                  {String(row.data.title)}
                                 </Button>
-                                <Link
-                                  className="table-btn-action"
-                                  href={`/stok-opname?barang=${row.id}`}
-                                  title="Hitung fisik opname"
+                                <div className="op-card-meta">
+                                  {Boolean(row.data.sku) && (
+                                    <code className="op-code-chip">{String(row.data.sku)}</code>
+                                  )}
+                                  {Boolean(row.data.unit_id) && (
+                                    <span className="op-unit-tag">{display(row, 'unit_id')}</span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="op-stock-meter-box">
+                              <div className="op-stock-meter-header">
+                                <span className="op-stock-label">Stok Buku</span>
+                                <strong className="op-stock-qty">
+                                  {qty.toLocaleString('id-ID')}{' '}
+                                  <small>{String(row.data.measurement || 'unit')}</small>
+                                </strong>
+                              </div>
+                              <div className="op-stock-bar-track">
+                                <div
+                                  className={`op-stock-bar-fill ${qty <= 0 ? 'fill-empty' : qty <= minQty ? 'fill-warning' : 'fill-ok'}`}
+                                  style={{ width: `${percent}%` }}
+                                />
+                              </div>
+                              <div className="op-stock-meter-footer">
+                                <small>Min: {minQty.toLocaleString('id-ID')}</small>
+                                <span
+                                  className={`table-badge ${qty <= 0 ? 'badge-diff-minus' : qty <= minQty ? 'badge-warning' : 'badge-active'}`}
                                 >
-                                  Opname
-                                </Link>
-                              </>
+                                  {qty <= 0 ? 'Habis' : qty <= minQty ? 'Menipis' : 'Aman'}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="op-card-body">
+                              {price > 0 && (
+                                <div className="op-card-row">
+                                  <span className="op-row-label">Harga Satuan</span>
+                                  <strong className="op-row-val">{rupiah(price)}</strong>
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="op-card-footer">
+                              <Button
+                                type="button"
+                                className="table-btn-edit"
+                                onClick={() => setEdit(row)}
+                              >
+                                Ubah
+                              </Button>
+                              <Button
+                                type="button"
+                                className="table-btn-action table-btn-buy"
+                                onClick={() => {
+                                  setCaptureEntity('cash-entries');
+                                  setEdit({
+                                    id: '',
+                                    created_at: '',
+                                    updated_at: '',
+                                    data: {
+                                      title: `Beli Stok: ${row.data.title}`,
+                                      date: today(),
+                                      direction: 'keluar',
+                                      account: 'Pengadaan Barang & Persediaan',
+                                      amount: Number(row.data.price || 0) * 10,
+                                      item_id: row.id,
+                                      member_id: '',
+                                      unit_id: row.data.unit_id || '',
+                                      notes: `Pembelian stok untuk ${row.data.title} (${row.data.sku || ''})`,
+                                    },
+                                  });
+                                }}
+                              >
+                                <Wallet size={12} />
+                                <span>+ Beli</span>
+                              </Button>
+                              <Link
+                                className="table-btn-action"
+                                href={`/stok-opname?barang=${row.id}`}
+                              >
+                                <ClipboardCheck size={12} />
+                                <span>Opname</span>
+                              </Link>
+                            </div>
+                          </article>
+                        );
+                      }
+
+                      // entity === 'stock-counts'
+                      const diff = stockDifference(row);
+                      const product = data['inventory-items']?.find(
+                        (item) => item.id === row.data.item_id,
+                      );
+
+                      return (
+                        <article className="op-card op-opname-card" key={row.id}>
+                          <div className="op-card-header">
+                            <span className="op-date-chip">
+                              <Calendar size={12} /> {formatDate(String(row.data.date))}
+                            </span>
+                            {diff === 0 ? (
+                              <span className="table-badge badge-diff-zero"><AppIcon name="complete" size={16} /> Sesuai (0)</span>
+                            ) : diff < 0 ? (
+                              <span className="table-badge badge-diff-minus">
+                                Kurang ({diff.toLocaleString('id-ID')})
+                              </span>
+                            ) : (
+                              <span className="table-badge badge-diff-plus">
+                                Lebih (+{diff.toLocaleString('id-ID')})
+                              </span>
                             )}
                           </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                {!rows.length && (
-                  <EmptyState
-                    icon={<book.Icon size={30} />}
-                    title={all.length
-                        ? 'Tidak ada data yang cocok'
-                        : `Belum ada catatan ${book.title.toLowerCase()}`}
-                    description={all.length
-                        ? 'Coba kata pencarian atau bersihkan filter di atas.'
-                        : entity === 'stock-counts' && !data['inventory-items']?.length
-                          ? 'Daftarkan barang sebelum mencatat hasil hitung fisik.'
-                        : `Gunakan tombol Tambah di atas untuk mengisi catatan ${book.title.toLowerCase()} pertama.`}
-                    action={all.length ? {
-                        label: 'Hapus filter',
-                        onClick: () => {
-                          setSearch('');
-                          setMonth('');
-                          setFilter('');
-                          setUnit('');
-                        },
-                      } : entity === 'stock-counts' && !data['inventory-items']?.length
-                        ? { label: 'Daftarkan barang', href: '/barang' }
-                        : undefined}
-                  />
-                )}
-              </div>
+
+                          <div className="op-opname-item-title">
+                            <Button variant="ghost" className="op-card-title" onClick={() => setEdit(row)}>
+                              {product ? String(product.data.title) : 'Barang tidak ditemukan'}
+                            </Button>
+                            {product && (
+                              <small className="op-card-sub">
+                                {String(product.data.sku || '—')} · Satuan:{' '}
+                                {String(product.data.measurement || 'unit')}
+                              </small>
+                            )}
+                          </div>
+
+                          <div className="op-opname-compare-grid">
+                            <div className="op-compare-cell">
+                              <span className="op-compare-lbl">Stok Buku</span>
+                              <strong className="op-compare-val">
+                                {Number(row.data.book_quantity || 0).toLocaleString('id-ID')}
+                              </strong>
+                            </div>
+                            <div className="op-compare-arrow">→</div>
+                            <div className="op-compare-cell">
+                              <span className="op-compare-lbl">Hitung Fisik</span>
+                              <strong className="op-compare-val">
+                                {Number(row.data.counted_quantity || 0).toLocaleString('id-ID')}
+                              </strong>
+                            </div>
+                          </div>
+
+                          {Boolean(row.data.assignee) && (
+                            <div className="op-card-row">
+                              <span className="op-row-label">Petugas</span>
+                              <span className="op-row-val">{String(row.data.assignee)}</span>
+                            </div>
+                          )}
+
+                          <div className="op-card-footer">
+                            <Button
+                              type="button"
+                              className="table-btn-edit"
+                              onClick={() => setEdit(row)}
+                            >
+                              Ubah Hasil Opname
+                            </Button>
+                          </div>
+                        </article>
+                      );
+                    })}
+                  </div>
+                  {!rows.length && (
+                    <EmptyState
+                      icon={<book.Icon size={30} />}
+                      title={
+                        all.length
+                          ? 'Tidak ada data yang cocok'
+                          : `Belum ada catatan ${book.title.toLowerCase()}`
+                      }
+                      description={
+                        all.length
+                          ? 'Coba kata pencarian atau bersihkan filter di atas.'
+                          : entity === 'stock-counts' && !data['inventory-items']?.length
+                            ? 'Daftarkan barang sebelum mencatat hasil hitung fisik.'
+                            : `Gunakan tombol Tambah di atas untuk mengisi catatan ${book.title.toLowerCase()} pertama.`
+                      }
+                      action={
+                        all.length
+                          ? {
+                              label: 'Hapus filter',
+                              onClick: () => {
+                                setSearch('');
+                                setMonth('');
+                                setFilter('');
+                                setUnit('');
+                                setInventoryFilter('');
+                                setOpnameFilter('');
+                              },
+                            }
+                          : entity === 'stock-counts' && !data['inventory-items']?.length
+                            ? { label: 'Daftarkan barang', href: '/barang' }
+                            : undefined
+                      }
+                    />
+                  )}
+                </div>
+              )}
             </>
           )}
         </>
       )}
       {edit !== undefined && entity && (
         <OperationEditor
+          draftScope={draftScope}
           entity={entity}
           item={edit || undefined}
           data={data}
@@ -966,12 +1692,14 @@ function OperationEditor({
   data,
   refresh,
   close,
+  draftScope,
 }: {
   entity: Entity;
   item?: Item;
   data: Workspace;
   refresh: () => Promise<void>;
   close: () => void;
+  draftScope?: string;
 }) {
-  return <Editor entity={entity} item={item} workspace={data} onSaved={refresh} onClose={close} />;
+  return <Editor draftScope={draftScope} entity={entity} item={item} workspace={data} onSaved={refresh} onClose={close} />;
 }

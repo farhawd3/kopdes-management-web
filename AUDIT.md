@@ -6,7 +6,7 @@ Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at
 
 | Metrik | Jumlah |
 |---|---:|
-| button | 43 |
+| button | 27 |
 | input | 3 |
 | select | 1 |
 | textarea | 1 |
@@ -14,10 +14,10 @@ Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at
 | inline | 86 |
 | hexTsx | 26 |
 | hexCss | 808 |
-| important | 2835 |
-| bytes | 565680 |
-| Elemen mentah di luar components/ui | 34 |
-| Selector berulang | 384 |
+| important | 2806 |
+| bytes | 572772 |
+| Elemen mentah di luar components/ui | 18 |
+| Selector berulang | 389 |
 | Nilai border-radius unik | 12 |
 | Nilai font-size unik | 25 |
 | Nilai height unik | 58 |
@@ -27,9 +27,9 @@ Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at
 | Berkas | Byte | !important |
 |---|---:|---:|
 | src/app/globals.css | 17334 | 2 |
-| src/app/personal.css | 519383 | 2728 |
+| src/app/personal.css | 519013 | 2699 |
 | src/app/tokens.css | 3101 | 3 |
-| src/app/ui.css | 25862 | 102 |
+| src/app/ui.css | 33324 | 102 |
 
 ## Inventaris halaman dan overlay
 
@@ -65,28 +65,12 @@ Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at
 | textarea | src/components/ui/Input.tsx:11 | HTML textarea | Primitive internal | Textarea | Pustaka UI |
 | select | src/components/ui/Select.tsx:175 | HTML select | Primitive internal | Select | Pustaka UI |
 | button | src/components/ui/Select.tsx:257 | HTML button | Primitive internal | Button / IconButton | Pustaka UI |
-| button | src/features/operations/Operations.tsx:309 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/operations/Operations.tsx:967 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/operations/Operations.tsx:974 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/operations/Operations.tsx:981 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/operations/Operations.tsx:992 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/operations/Operations.tsx:999 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/operations/Operations.tsx:1006 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/operations/Operations.tsx:1017 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/operations/Operations.tsx:1024 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/operations/Operations.tsx:1031 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/operations/Operations.tsx:1038 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/operations/Operations.tsx:1049 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/operations/Operations.tsx:1056 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/operations/Operations.tsx:1063 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/operations/Operations.tsx:1085 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/operations/Operations.tsx:1094 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/Records.tsx:567 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/Records.tsx:680 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/Records.tsx:726 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/Records.tsx:770 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/Records.tsx:2006 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/Records.tsx:2104 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
+| button | src/features/Records.tsx:568 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
+| button | src/features/Records.tsx:681 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
+| button | src/features/Records.tsx:727 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
+| button | src/features/Records.tsx:771 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
+| button | src/features/Records.tsx:2003 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
+| button | src/features/Records.tsx:2101 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
 | button | src/features/tasks/TaskTimeline.tsx:386 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
 | button | src/features/tasks/TaskTimeline.tsx:394 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
 | button | src/features/tasks/TaskTimeline.tsx:482 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
@@ -454,9 +438,8 @@ Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at
 | src/app/personal.css | .project-next-actions > summary | 18297, 18314 |
 | src/app/personal.css | .project-next-actions | 18313, 19931 |
 | src/app/personal.css | @media (max-width: 767px) → .manager-home .compact-bar-actions | 18331, 19238 |
-| src/app/personal.css | .custom-select-trigger | 18335, 18372, 20325 |
-| src/app/personal.css | .custom-select-option | 18335, 18421 |
 | src/app/personal.css | select:not(.custom-select-native) | 18343, 20325 |
+| src/app/personal.css | .custom-select-trigger | 18372, 20325 |
 | src/app/personal.css | .task-status-custom-select :is(.custom-select-trigger, .ui-select-trigger) | 18479, 20332 |
 | src/app/personal.css | .drawer-properties-grid | 18599, 20163 |
 | src/app/personal.css | .prop-user-chip | 18651, 20375 |
@@ -483,10 +466,16 @@ Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at
 | src/app/personal.css | .timeline-mobile-header-actions | 20399, 20412 |
 | src/app/personal.css | .gantt-nav-today-btn | 20654, 20674 |
 | src/app/tokens.css | :root | 2, 51 |
-| src/app/ui.css | .ui-stat-card | 149, 198 |
-| src/app/ui.css | .ui-focus-task | 160, 198 |
-| src/app/ui.css | .ui-modal > header | 167, 168 |
-| src/app/ui.css | .ui-modal > footer | 167, 169 |
+| src/app/ui.css | .ui-select-trigger.ui-select-trigger | 62, 68 |
+| src/app/ui.css | .unit-record .record-meta | 82, 181 |
+| src/app/ui.css | .record.card > .actions > .record-options | 83, 174 |
+| src/app/ui.css | .record.card > .actions > .record-options > summary | 84, 176 |
+| src/app/ui.css | .record.card > .actions > .record-options[open] | 85, 175 |
+| src/app/ui.css | .op-card-title | 111, 112 |
+| src/app/ui.css | .ui-stat-card | 222, 271 |
+| src/app/ui.css | .ui-focus-task | 233, 271 |
+| src/app/ui.css | .ui-modal > header | 240, 241 |
+| src/app/ui.css | .ui-modal > footer | 240, 242 |
 
 ## Nilai deklarasi
 

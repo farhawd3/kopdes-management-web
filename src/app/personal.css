@@ -13389,28 +13389,28 @@ dialog.editor textarea:not(.ui-input):focus,
 }
 
 .settings-content-grid {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 24px !important;
-  width: 100% !important;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
 }
 
 .settings-tabs-row {
-  display: flex !important;
-  gap: 10px !important;
-  overflow-x: auto !important;
-  padding-bottom: 12px !important;
-  border-bottom: 1.5px solid var(--line) !important;
-  scrollbar-width: none !important;
-  width: 100% !important;
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  border-bottom: 1.5px solid var(--line);
+  scrollbar-width: none;
+  width: 100%;
 }
 
 .color-swatches-grid {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 6px !important;
-  margin-top: 6px !important;
-  width: 100% !important;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+  width: 100%;
 }
 
 
@@ -18332,7 +18332,7 @@ button:not(.ui-btn).dash-bar-col.is-selected-bar {
 }
 
 /* Kontrol bersama: edit token di globals.css, bukan font per halaman. */
-input:not(.ui-input), select, textarea:not(.ui-input), .custom-select-trigger, .custom-select-option {
+input:not(.ui-input), select, textarea:not(.ui-input) {
   font-family: var(--font-sans);
   font-size: 13px !important;
   line-height: 1.4 !important;
@@ -20776,17 +20776,17 @@ button:not(.ui-btn).button,
 
 /* Modern Recording Tabs */
 .recording-tabs {
-  display: flex !important;
-  align-items: center !important;
-  gap: 6px !important;
-  padding: 6px !important;
-  background: var(--surface) !important;
-  border: 1px solid var(--line) !important;
-  border-radius: var(--r-full) !important;
-  overflow-x: auto !important;
-  scrollbar-width: none !important;
-  margin-bottom: 22px !important;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02) !important;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-full);
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin-bottom: 22px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
 }
 
 .recording-tabs::-webkit-scrollbar {
@@ -21215,8 +21215,8 @@ button:not(.ui-btn).button,
   color: var(--ink-heading) !important;
   cursor: pointer !important;
   overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  white-space: nowrap !important;
+  text-overflow: clip;
+  white-space: normal;
 }
 
 .op-card-title:hover {

@@ -39,10 +39,18 @@ popupWorkspace['stock-counts']![0].data.item_id = popupWorkspace['inventory-item
 
 const readyUnit = { ...popupWorkspace.units![0], id: '00000000-0000-4000-8000-000000009001', data: schemas.units.parse({ title: 'Contoh gerai dengan penilaian sebagian', status: 'persiapan', assignee: 'Contoh QA' }) };
 const completeUnit = { ...readyUnit, id: '00000000-0000-4000-8000-000000009002', data: schemas.units.parse({ title: 'Contoh gerai dengan seluruh syarat selesai', status: 'siap uji' }) };
-export const cardWorkspace: Workspace = { ...popupWorkspace, units: [...popupWorkspace.units!, readyUnit, completeUnit], checklist: [
+export const cardWorkspace: Workspace = { ...popupWorkspace,
+  meetings: [{ ...popupWorkspace.meetings![0], data: schemas.meetings.parse({ ...popupWorkspace.meetings![0].data, title: 'Contoh rapat koordinasi pengadaan', mode: 'online', meeting_url: 'https://example.com/rapat', participants: 'Contoh pengurus', agenda: 'Tinjau kebutuhan gerai dan pembagian tindak lanjut.', minutes: 'Catatan contoh untuk memeriksa tata letak notulen.' }) }],
+  units: [...popupWorkspace.units!, readyUnit, completeUnit], checklist: [
   ...popupWorkspace.checklist!,
   ...(['legalitas', 'fisik', 'sdm', 'sop', 'sistem'] as const).flatMap((dimension, index) => [readyUnit, completeUnit].map((unit, unitIndex) => ({
     ...popupWorkspace.checklist![0], id: `00000000-0000-4000-8000-${String(9100 + index * 2 + unitIndex).padStart(12, '0')}`,
     data: schemas.checklist.parse({ title: `Contoh syarat ${dimension}`, unit_id: unit.id, dimension, required: true, status: unitIndex === 1 || index < 2 ? 'selesai' : 'rencana' }),
   }))),
 ] };
+export const bookWorkspace: Workspace = { ...cardWorkspace,
+  'cash-entries': [
+    { ...popupWorkspace['cash-entries']![0], data: schemas['cash-entries'].parse({ ...popupWorkspace['cash-entries']![0].data, amount: 1234567890, member_id: popupWorkspace.members![0].id, item_id: popupWorkspace['inventory-items']![0].id, unit_id: popupWorkspace.units![0].id }) },
+    { ...popupWorkspace['cash-entries']![0], id: '00000000-0000-4000-8000-000000009300', data: schemas['cash-entries'].parse({ ...popupWorkspace['cash-entries']![0].data, title: 'Contoh pengeluaran pemeriksaan', date: '2026-10-04', direction: 'keluar', amount: 125000 }) },
+  ],
+};

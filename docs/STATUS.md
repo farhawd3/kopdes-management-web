@@ -1,5 +1,7 @@
 # Status produk — 4 Oktober 2026
 
+Paket tata letak terbaru: form rapat sempit tidak meluap, empat buku memakai kartu bawaan mobile dan filter terlihat, Gerai/Rapat serta opsi dirapikan, panduan berikon dan pilihan tema menjadi kisi dengan pratinjau lipat. 247 tes/39 berkas, tipe, ESLint, build dan audit sumber 95/95 lulus. QA 48 kombinasi enam halaman, 16 kombinasi opsi kartu, form rapat dan pratinjau pada empat lebar. check:ui (18 kontrol mentah) dan lint:ui (111 temuan legacy) tetap terbuka. Rincian: docs/QA-TATA-LETAK.md; panduan ikon: docs/IKON.md.
+
 Koreksi lima screenshot pemilik selesai: fokus pencarian tunggal, kartu Gerai/rincian kesiapan lebih padat, font aksi sesuai konteks, form/tab mobile dan dropdown tidak terpotong, Hari ini sesuai tanggal Jakarta. QA fixture 21 domain 360 terang/gelap; lima kartu dan empat form pada empat lebar. 245 tes/37 berkas, tipe, ESLint, build dan audit sumber 94/94 lulus. lint:ui dan check:ui tetap gagal pada utang legacy checkout (termasuk 34 kontrol mentah). Rincian dan batasan: docs/QA-POPUP.md.
 
 Penyempurnaan visual, konsistensi tipografi, perbaikan tampilan kegiatan, dan tampilan pencatatan modern:

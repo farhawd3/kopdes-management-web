@@ -1,8 +1,11 @@
 # Checklist produk aktif
 
+- [x] Rapikan form rapat sempit, empat buku/kartu mobile, opsi Gerai/Rapat, panduan dan kisi tema; tambah panduan ikon bersama. Cakupan dan batas pemeriksaan di QA-TATA-LETAK.md.
+- [x] Pengukuran enam halaman pada empat lebar/dua tema, opsi Gerai/Rapat terbuka, form rapat dan pratinjau tema; 247 tes/39 berkas.
+
 - [x] Koreksi lima screenshot: satu bingkai fokus pencarian, menu dropdown terpisah dari lebar pemicu, ukuran teks aksi berdasarkan konteks, form satu kolom/tab dua kolom mobile, kartu Gerai tanpa radar kosong, Hari ini sesuai tanggal Jakarta.
 - [x] Konten contoh 21 domain pada 360 terang/gelap; lima jenis kartu dan empat form relasi di empat lebar diperiksa ulang. Rincian/batasan di QA-POPUP.md.
-- [ ] lint:ui legacy dan 34 kontrol mentah pada checkout terbaru belum memenuhi audit UI.
+- [ ] lint:ui legacy (111 temuan) dan 18 kontrol mentah pada checkout terbaru belum memenuhi audit UI.
 
 - [x] Inventaris popup dan fixture 21 domain; panggilan API diblokir, draft/preferensi QA terpisah.
 - [x] Form panjang, input rutinitas, label tanggal, target tombol dialog dan Escape popup bertingkat diperbaiki.

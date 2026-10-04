@@ -1,5 +1,14 @@
 # Changelog
 
+## Tata letak pencatatan, rapat, panduan dan tema — 4 Oktober 2026
+
+- Form rapat mengikuti lebar kontainer, kontrol tidak terpotong dan aksi membungkus.
+- Empat buku: kartu bawaan mobile, filter terlihat, judul panjang dan gulir tabel aman; tombol memakai komponen bersama.
+- Gerai/Rapat berikon dan opsi berpanel; tindak lanjut/notulen rapat tidak diduplikasi.
+- Panduan kartu tautan dan buku operasional; palet tema dalam kisi, pratinjau dapat dilipat.
+- Tambah AppIcon dan IKON.md; fixture lokal serta tes regresi mobile/aksi rapat.
+- 247 tes, tipe, ESLint, build dan audit sumber lulus. Audit UI legacy belum lulus; cakupan nyata di docs/QA-TATA-LETAK.md.
+
 ## Koreksi pencarian, kartu dan kontrol mobile — 4 Oktober 2026
 
 - Hilangkan bingkai fokus ganda, sesuaikan teks aksi menurut ukuran/konteks, gunakan form satu kolom dan tab dua kolom pada ponsel.

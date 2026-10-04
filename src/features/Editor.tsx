@@ -712,7 +712,7 @@ export function Editor({
                     <div className="inline-quick-creator-card">
                       <div className="inline-creator-head">
                         <Video size={16} />
-                        <strong>Buat & Tautkan Rapat Online / Pertemuan</strong>
+                        <strong>Tambah dan tautkan rapat</strong>
                       </div>
                       <div className="inline-creator-grid">
                         <label className="inline-creator-field">
@@ -735,9 +735,9 @@ export function Editor({
                                   setInlineMode(val);
                               }}
                               options={[
-                                { value: 'online', label: 'Online Penuh (Google Meet / Zoom)' },
-                                { value: 'tatap muka', label: 'Tatap Muka Langsung' },
-                                { value: 'hybrid', label: 'Hybrid (Tatap Muka + Daring)' },
+                                { value: 'online', label: 'Online' },
+                                { value: 'tatap muka', label: 'Tatap muka' },
+                                { value: 'hybrid', label: 'Hybrid' },
                               ]}
                               ariaLabel="Mode Rapat"
                             />
@@ -756,6 +756,7 @@ export function Editor({
                           <label className="inline-creator-field">
                             <span>Tanggal</span>
                             <DateInput
+                              aria-label="Tanggal rapat baru"
                               value={inlineDate}
                               onValueChange={(value) => setInlineDate(value)}
                             />

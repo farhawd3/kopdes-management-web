@@ -1,4 +1,5 @@
 'use client';
+import { AppIcon } from '@/components/ui/AppIcon';
 import { useDragSort } from '@/components/ui/useDragSort';
 import { DragOverlay } from '@/components/ui/DragOverlay';
 import { IconButton } from '@/components/ui/Button';
@@ -442,7 +443,7 @@ export function ScrumBoardView({
                                   title="Tandai tugas selesai"
                                   aria-label="Tandai tugas selesai"
                                 >
-                                  <span>✓ Selesai</span>
+                                  <span><AppIcon name="complete" size={16} /> Selesai</span>
                                 </Button>
                               </div>
                             )}

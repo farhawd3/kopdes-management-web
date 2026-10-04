@@ -20,12 +20,12 @@ import {
 } from 'lucide-react';
 import { Select } from '@/components/ui/Select';
 
-export function Settings({ refresh }: { refresh: () => Promise<void> }) {
+export function Settings({ refresh, preferenceScope = '' }: { refresh: () => Promise<void>; preferenceScope?: string }) {
   const { colorStyle, setColorStyle, preference, setTheme } = useTheme();
   const [activeTab, setActiveTab] = useState<'tampilan' | 'profil' | 'keamanan' | 'cadangan'>('tampilan');
-  const [density, setDensity] = usePreference('hub-density', 'comfortable');
-  const [motion, setMotion] = usePreference('hub-motion', 'system');
-  const [navStyle, setNavStyle] = usePreference('hub-nav-style', 'soft');
+  const [density, setDensity] = usePreference(preferenceScope + 'hub-density', 'comfortable');
+  const [motion, setMotion] = usePreference(preferenceScope + 'hub-motion', 'system');
+  const [navStyle, setNavStyle] = usePreference(preferenceScope + 'hub-nav-style', 'soft');
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
 
@@ -110,9 +110,8 @@ export function Settings({ refresh }: { refresh: () => Promise<void> }) {
         <div className="settings-content-grid">
           {/* Color Palettes Selection */}
           <section className="card color-style-card">
-            <span className="eyebrow">PALET RUANG KERJA</span>
-            <h2>Pilihan Tema Warna</h2>
-            <p>Pilih nuansa warna kerja yang nyaman dan sesuai pencahayaan ruangan Anda.</p>
+            <span className="eyebrow">TEMA WARNA</span>
+            <h2>Palet Warna</h2>
 
             <div className="color-swatches-grid">
               {COLOR_STYLES.map((c) => {
@@ -125,15 +124,6 @@ export function Settings({ refresh }: { refresh: () => Promise<void> }) {
                     onClick={() => setColorStyle(c.id)}
                     aria-pressed={isSelected}
                   >
-                    <div className="swatch-header-row">
-                      <strong>{c.name}</strong>
-                      {isSelected ? (
-                        <span className="swatch-active-badge">
-                          <Check size={12} strokeWidth={3} />
-                          <span>Aktif</span>
-                        </span>
-                      ) : null}
-                    </div>
                     <div className="swatch-palette-strip">
                       <span
                         className="swatch-color-pill swatch-primary-pill"
@@ -151,7 +141,15 @@ export function Settings({ refresh }: { refresh: () => Promise<void> }) {
                         title="Latar Lembut"
                       />
                     </div>
-                    <small className="swatch-desc-text">{c.desc}</small>
+                    <div className="swatch-header-row">
+                      <strong>{c.name}</strong>
+                      {isSelected ? (
+                        <span className="swatch-active-badge">
+                          <Check size={11} strokeWidth={3} />
+                          <span>Aktif</span>
+                        </span>
+                      ) : null}
+                    </div>
                   </Button>
                 );
               })}
@@ -159,9 +157,8 @@ export function Settings({ refresh }: { refresh: () => Promise<void> }) {
           </section>
 
           {/* Live Component Preview Card */}
-          <section className="card theme-live-preview-card">
-            <span className="eyebrow">PRATINJAU LANGSUNG</span>
-            <h2>Pratinjau Komponen Tema</h2>
+          <details className="card theme-live-preview-card">
+            <summary><Palette size={18} aria-hidden="true" /> Pratinjau komponen tema</summary>
             <p>Berikut tampilan tombol, kartu tugas, dan indikator dengan tema <strong>{selectedPalette.name}</strong>:</p>
 
             <div className="theme-preview-stage" style={{ background: 'var(--canvas)', borderColor: 'var(--line)' }}>
@@ -179,7 +176,7 @@ export function Settings({ refresh }: { refresh: () => Promise<void> }) {
                   className="preview-companion-chip"
                   style={{ background: 'var(--brand-soft)', borderColor: 'var(--brand-soft-border)', color: 'var(--ink-heading)' }}
                 >
-                  3 Tugas Hari Ini
+                  Contoh status tugas
                 </span>
                 <span className="preview-status-pill">
                   Selesai Tepat Waktu
@@ -193,8 +190,8 @@ export function Settings({ refresh }: { refresh: () => Promise<void> }) {
                     <Check size={12} color="var(--brand-text)" />
                   </div>
                   <div className="preview-task-text">
-                    <strong>Pemeriksaan Kesiapan Gerai Toko KDMP</strong>
-                    <small>Tenggat: Hari ini · Proyek: Persiapan Gerai</small>
+                    <strong>Contoh tugas pemeriksaan gerai</strong>
+                    <small>Pratinjau tampilan kartu tugas</small>
                   </div>
                   <span className="preview-tag-high">Prioritas Tinggi</span>
                 </div>
@@ -203,7 +200,7 @@ export function Settings({ refresh }: { refresh: () => Promise<void> }) {
                 </div>
               </div>
             </div>
-          </section>
+          </details>
 
           {/* Display & Motion Controls */}
           <section className="card appearance-settings">
