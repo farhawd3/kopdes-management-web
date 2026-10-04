@@ -415,6 +415,7 @@ export const navigation = [
   ['/tugas', 'Daftar Tugas', ''],
   ['/tindak-lanjut', 'Perlu Perhatian', ''],
   ['/proyek', 'Proyek', ''],
+  ['/riwayat-proyek', 'Riwayat Proyek', ''],
   ['/roadmap', 'Linimasa', ''],
   ['/jurnal', 'Kegiatan', ''],
   ['/pencatatan', 'Ringkasan Buku', ''],

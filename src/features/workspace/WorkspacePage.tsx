@@ -33,15 +33,15 @@ export function WorkspacePage({ slug }: { slug: string }) {
   const query = useSearchParams();
   const router = useRouter();
   const requestedSection = query.get('bagian');
-  const taskScope = ['selesai', 'dibatalkan'].includes(query.get('status') || '')
+  const taskScope = ['proyek', 'riwayat-proyek'].includes(slug) ? 'all' : ['selesai', 'dibatalkan'].includes(query.get('status') || '')
     ? 'history'
     : 'current';
   const requestedRecord =
-    query.get('record') || query.get('task') || (slug === 'proyek' ? query.get('id') : null);
+    query.get('record') || query.get('task') || (['proyek', 'riwayat-proyek'].includes(slug) ? query.get('id') : null);
   const selectedEntity = (
     query.get('task')
       ? 'work-items'
-      : slug === 'proyek' && query.get('id')
+      : ['proyek', 'riwayat-proyek'].includes(slug) && query.get('id')
         ? 'workstreams'
         : query.get('bagian') || pages[slug]?.[0]
   ) as Entity | undefined;
@@ -54,7 +54,7 @@ export function WorkspacePage({ slug }: { slug: string }) {
       : undefined;
   const { data, loading, error, refresh, operations, more, loadMore, fetching } = useWorkspace(
       slug,
-      { scope: taskScope },
+      { scope: taskScope, ...(['proyek', 'riwayat-proyek'].includes(slug) && /^[a-f\d-]{36}$/i.test(query.get('id') || '') ? { project: query.get('id')! } : {}) },
       detail,
     ),
     [tabChoice, setTabChoice] = useState<{ section: string | null; index: number } | null>(null),
@@ -122,7 +122,7 @@ export function WorkspacePage({ slug }: { slug: string }) {
       )}
       {slug === 'tindak-lanjut' && <FollowUps data={data} />}
       {slug === 'beranda' && <Dashboard data={data} />}
-      {slug === 'proyek' && <Projects data={data} refresh={refresh} />}
+      {['proyek', 'riwayat-proyek'].includes(slug) && <Projects data={data} refresh={refresh} history={slug === 'riwayat-proyek'} />}
       {recordingPaths.includes(slug) && (
         <Operations
           key={slug + query.toString()}

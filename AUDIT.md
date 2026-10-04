@@ -6,7 +6,7 @@ Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at
 
 | Metrik | Jumlah |
 |---|---:|
-| button | 27 |
+| button | 16 |
 | input | 3 |
 | select | 1 |
 | textarea | 1 |
@@ -15,8 +15,8 @@ Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at
 | hexTsx | 26 |
 | hexCss | 808 |
 | important | 2806 |
-| bytes | 572772 |
-| Elemen mentah di luar components/ui | 18 |
+| bytes | 575445 |
+| Elemen mentah di luar components/ui | 7 |
 | Selector berulang | 389 |
 | Nilai border-radius unik | 12 |
 | Nilai font-size unik | 25 |
@@ -27,9 +27,9 @@ Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at
 | Berkas | Byte | !important |
 |---|---:|---:|
 | src/app/globals.css | 17334 | 2 |
-| src/app/personal.css | 519013 | 2699 |
+| src/app/personal.css | 519067 | 2699 |
 | src/app/tokens.css | 3101 | 3 |
-| src/app/ui.css | 33324 | 102 |
+| src/app/ui.css | 35943 | 102 |
 
 ## Inventaris halaman dan overlay
 
@@ -50,7 +50,7 @@ Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at
 
 | Komponen | File:baris | Varian saat ini | Masalah | Pengganti | Status |
 |---|---|---|---|---|---|
-| button | src/components/layout/AppShell.tsx:260 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
+| button | src/components/layout/AppShell.tsx:262 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
 | button | src/components/ui/Button.tsx:17 | HTML button | Primitive internal | Button / IconButton | Pustaka UI |
 | input | src/components/ui/CsvDropzone.tsx:79 | HTML input | Primitive internal | Input / DateInput | Pustaka UI |
 | input | src/components/ui/DateField.tsx:78 | HTML input | Primitive internal | Input / DateInput | Pustaka UI |
@@ -69,19 +69,8 @@ Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at
 | button | src/features/Records.tsx:681 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
 | button | src/features/Records.tsx:727 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
 | button | src/features/Records.tsx:771 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/Records.tsx:2003 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/Records.tsx:2101 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/tasks/TaskTimeline.tsx:386 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/tasks/TaskTimeline.tsx:394 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/tasks/TaskTimeline.tsx:482 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/tasks/TaskTimeline.tsx:492 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/tasks/TaskTimeline.tsx:510 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/tasks/TaskTimeline.tsx:517 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/tasks/TaskTimeline.tsx:524 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/tasks/TaskTimeline.tsx:534 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/tasks/TaskTimeline.tsx:543 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/tasks/TaskTimeline.tsx:551 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
-| button | src/features/tasks/TaskTimeline.tsx:562 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
+| button | src/features/Records.tsx:2009 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
+| button | src/features/Records.tsx:2108 | HTML button | Gaya tersebar; tinjau perilaku | Button / IconButton | Belum dimigrasi |
 
 ## Selector berulang
 
@@ -135,12 +124,12 @@ Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at
 | src/app/personal.css | .workspace-intro | 976, 1304, 1313 |
 | src/app/personal.css | .project-card:hover | 988, 1326, 3255, 13056, 14150 |
 | src/app/personal.css | .record-options summary | 1030, 12510 |
-| src/app/personal.css | .recording-tabs | 1041, 1337, 2887, 4924, 13693, 20778 |
+| src/app/personal.css | .recording-tabs | 1041, 1337, 2887, 4924, 13693, 20781 |
 | src/app/personal.css | .recording-tabs a | 1050, 1344, 2903, 4936 |
 | src/app/personal.css | .recording-tabs a[aria-current='page'] | 1058, 2924, 4960 |
 | src/app/personal.css | .activation-notice | 1063, 2931 |
 | src/app/personal.css | .activation-notice h2 | 1074, 2943 |
-| src/app/personal.css | .recording-metrics | 1077, 1347, 3107, 20837 |
+| src/app/personal.css | .recording-metrics | 1077, 1347, 3107, 20840 |
 | src/app/personal.css | .recording-metrics > div | 1082, 1353 |
 | src/app/personal.css | .recording-metrics strong | 1088, 1362 |
 | src/app/personal.css | .ledger-wrap | 1099, 1304, 9033, 13708 |
@@ -214,11 +203,11 @@ Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at
 | src/app/personal.css | .subtask-tree-row | 2791, 20209 |
 | src/app/personal.css | .add-subtask-form | 2852, 20214, 20363 |
 | src/app/personal.css | .btn-add-subtask | 2870, 20354 |
-| src/app/personal.css | .recording-tabs::-webkit-scrollbar | 2901, 20792 |
+| src/app/personal.css | .recording-tabs::-webkit-scrollbar | 2901, 20795 |
 | src/app/personal.css | .recording-tabs a:hover | 2919, 4953 |
 | src/app/personal.css | .notebook-index | 3010, 4857 |
-| src/app/personal.css | .recording-metrics .metric-card | 3114, 20844 |
-| src/app/personal.css | .recording-metrics .metric-card:hover | 3128, 20858 |
+| src/app/personal.css | .recording-metrics .metric-card | 3114, 20847 |
+| src/app/personal.css | .recording-metrics .metric-card:hover | 3128, 20861 |
 | src/app/personal.css | dialog.editor | 3270, 12376, 12719 |
 | src/app/personal.css | .editor-modal-head | 3290, 12414 |
 | src/app/personal.css | .editor-badge-eyebrow | 3301, 20389 |
@@ -464,7 +453,7 @@ Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at
 | src/app/personal.css | .project-properties-grid | 19723, 20248 |
 | src/app/personal.css | .project-progress-card | 19810, 20252 |
 | src/app/personal.css | .timeline-mobile-header-actions | 20399, 20412 |
-| src/app/personal.css | .gantt-nav-today-btn | 20654, 20674 |
+| src/app/personal.css | .gantt-nav-today-btn | 20657, 20677 |
 | src/app/tokens.css | :root | 2, 51 |
 | src/app/ui.css | .ui-select-trigger.ui-select-trigger | 62, 68 |
 | src/app/ui.css | .unit-record .record-meta | 82, 181 |

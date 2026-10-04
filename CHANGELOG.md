@@ -1,5 +1,13 @@
 # Changelog
 
+## Riwayat proyek dan alur pengisian — 4 Oktober 2026
+
+- Proyek selesai/arsip keluar dari sidebar berjalan dan tersedia di Riwayat Proyek. Detail memuat semua status tugas dengan paginasi; tugas lama tetap tersimpan.
+- Server menolak tugas baru pada proyek tertutup; pembaruan historis tidak menghasilkan pengulangan berikutnya. Proyek/tugas tidak diselesaikan otomatis.
+- Gantt fullscreen lewat portal, rotasi aman pada potret dan desktop tetap lanskap; tombol bersama, fokus dan Escape.
+- Form tugas mendahulukan proyek/tugas mandiri; buku memisahkan hubungan opsional dan menampilkan langkah pengisian. Kartu proyek dan bubble timeline diperjelas.
+- 253 tes, tipe, ESLint, build dan audit sumber lulus; cakupan dan batas di docs/ALUR-PENGISIAN.md.
+
 ## Tata letak pencatatan, rapat, panduan dan tema — 4 Oktober 2026
 
 - Form rapat mengikuti lebar kontainer, kontrol tidak terpotong dan aksi membungkus.

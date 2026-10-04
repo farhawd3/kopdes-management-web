@@ -1,6 +1,7 @@
 'use client';
 import { Button } from '@/components/ui/Button';
 import { AppIcon } from '@/components/ui/AppIcon';
+import { EntryGuide } from '../workspace/EntryGuide';
 import { Input } from '@/components/ui/Input';
 import { EmptyState } from '@/components/ui/EmptyState';
 import Link from 'next/link';
@@ -748,6 +749,7 @@ export function Operations({
               </Button>
             </div>
           </div>
+          {entity && <EntryGuide entity={entity} />}
           {entity === 'stock-counts' && ready && !data['inventory-items']?.length && (
             <p className="notice">
               Daftarkan barang terlebih dahulu di <Link href="/barang">halaman Barang →</Link>

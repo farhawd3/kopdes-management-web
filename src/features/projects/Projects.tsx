@@ -41,15 +41,16 @@ import { Meter } from '@/components/charts/Charts';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { recordHref } from '../workspace/workspace-navigation';
 import { formatChoiceLabel } from '../catalog';
+import { isProjectHistory } from './project-lifecycle';
 
-export function Projects({ data, refresh }: { data: Workspace; refresh: () => Promise<void> }) {
+export function Projects({ data, refresh, history = false, draftScope }: { data: Workspace; refresh: () => Promise<void>; history?: boolean; draftScope?: string }) {
   const query = useSearchParams(),
     router = useRouter();
   const [edit, setEdit] = useState<Item | null | undefined>();
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('');
-  const projects = data.workstreams || [];
-  const selected = projects.find((row) => row.id === query.get('id'));
+  const projects = (data.workstreams || []).filter((project) => isProjectHistory(project) === history);
+  const selected = (data.workstreams || []).find((row) => row.id === query.get('id'));
   const projectTasks = selected
     ? (data['work-items'] || []).filter((row) => row.data.workstream_id === selected.id)
     : [];
@@ -81,7 +82,7 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
             <Button
               type="button"
               className="btn-back-project"
-              onClick={() => router.push('/proyek')}
+              onClick={() => router.push(history ? '/riwayat-proyek' : '/proyek')}
             >
               <ArrowLeft size={15} />
               <span>Semua proyek</span>
@@ -196,6 +197,8 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
               <Meter value={scopeProgress(tasksFor(selected.id))} />
             </div>
           </section>
+
+          {!isProjectHistory(selected) && tasksFor(selected.id).length > 0 && tasksFor(selected.id).every((task) => ['selesai', 'dibatalkan'].includes(task.status)) && <p className="notice">Seluruh tugas sudah selesai atau dibatalkan. Proyek masih berstatus {formatChoiceLabel(String(selected.data.status || 'rencana'))}. Buka properti proyek dan pilih Selesai setelah meninjau hasil.</p>}
 
           <nav className="project-section-nav" aria-label="Bagian proyek">
             <a href="#project-tasks" className="project-nav-link">
@@ -410,6 +413,9 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
               workspace={data}
               refresh={refresh}
               scopeId={selected.id}
+              initialFilter="all"
+              initialView={isProjectHistory(selected) ? 'daftar' : undefined}
+              draftScope={draftScope}
             />
           </div>
         </>
@@ -418,12 +424,13 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
           <section className="workspace-intro projects-intro-banner">
             <div>
               <span className="eyebrow">Ruang proyek</span>
-              <h2>Proyek Anda</h2>
-              <p>Tugas, milestone, dan catatan untuk setiap proyek.</p>
+              <h2>{history ? 'Riwayat proyek' : 'Proyek Anda'}</h2>
+              <p>{history ? 'Proyek selesai dan arsip beserta tugas, milestone, dan catatannya.' : 'Buat proyek, susun tugas, catat hasil, lalu tinjau sebelum menyelesaikan proyek.'}</p>
             </div>
-            <Button className="primary" onClick={() => setEdit(null)}>
+            <Link className="ui-btn ui-btn-secondary" href={history ? '/proyek' : '/riwayat-proyek'}>{history ? 'Proyek berjalan' : 'Riwayat proyek'}</Link>
+            {!history && <Button className="primary" onClick={() => setEdit(null)}>
               <Plus size={18} /> Proyek baru
-            </Button>
+            </Button>}
           </section>
 
           {/* Project Summary KPI Bar */}
@@ -443,9 +450,9 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
               </span>
               <div className="kpi-info">
                 <strong>
-                  {projects.filter((p) => (p.data.status || 'rencana') === 'aktif').length}
+                  {projects.filter((p) => (p.data.status || 'rencana') === (history ? 'diarsipkan' : 'aktif')).length}
                 </strong>
-                <small>Proyek Berjalan</small>
+                <small>{history ? 'Proyek Diarsipkan' : 'Proyek Berjalan'}</small>
               </div>
             </div>
             <div className="project-kpi-card">
@@ -463,7 +470,7 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
               </span>
               <div className="kpi-info">
                 <strong>
-                  {(data['work-items'] || []).filter((t) => Boolean(t.data.workstream_id)).length}
+                  {(data['work-items'] || []).filter((t) => projects.some((project) => project.id === t.data.workstream_id)).length}
                 </strong>
                 <small>Tugas Terhubung</small>
               </div>
@@ -495,14 +502,14 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
             </div>
 
             <div className="project-status-tabs" aria-label="Filter status proyek">
-              {[
+              {(history ? [
+                ['', 'Semua'], ['selesai', 'Selesai'], ['diarsipkan', 'Arsip'],
+              ] : [
                 ['', 'Semua'],
                 ['aktif', 'Aktif'],
                 ['rencana', 'Rencana'],
                 ['ditunda', 'Ditunda'],
-                ['selesai', 'Selesai'],
-                ['diarsipkan', 'Arsip'],
-              ].map(([value, label]) => {
+              ]).map(([value, label]) => {
                 const active = status === value;
                 return (
                   <Button
@@ -563,7 +570,7 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
                 return (
                   <Link
                     className={`project-card project-card-compact ${pastelTone}`}
-                    href={`/proyek?id=${row.id}`}
+                    href={`/${history ? 'riwayat-proyek' : 'proyek'}?id=${row.id}`}
                     key={row.id}
                   >
                     <div className="project-card-header">
@@ -635,10 +642,10 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
           {!projects.length ? (
             <EmptyState
               icon={<FolderOpen size={28} />}
-              title="Belum ada proyek kerja"
-              description="Buat proyek untuk mengelompokkan tugas, milestone, dan dokumen inisiatif koperasi secara teratur."
+              title={history ? 'Belum ada riwayat proyek' : 'Belum ada proyek kerja'}
+              description={history ? 'Proyek yang ditandai selesai atau diarsipkan muncul di sini; tugas dan catatan tetap tersimpan.' : 'Buat proyek untuk mengelompokkan tugas, milestone, dan dokumen inisiatif koperasi secara teratur.'}
               pastelVariant="blue"
-              action={{
+              action={history ? { label: 'Buka proyek berjalan', href: '/proyek' } : {
                 label: 'Buat Proyek Pertama',
                 onClick: () => setEdit(null),
                 icon: <Plus size={16} />,
@@ -670,6 +677,7 @@ export function Projects({ data, refresh }: { data: Workspace; refresh: () => Pr
       {edit !== undefined && (
         <Editor
           entity="workstreams"
+          draftScope={draftScope}
           item={edit || undefined}
           workspace={data}
           onClose={() => setEdit(undefined)}

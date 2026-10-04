@@ -54,3 +54,8 @@ export const bookWorkspace: Workspace = { ...cardWorkspace,
     { ...popupWorkspace['cash-entries']![0], id: '00000000-0000-4000-8000-000000009300', data: schemas['cash-entries'].parse({ ...popupWorkspace['cash-entries']![0].data, title: 'Contoh pengeluaran pemeriksaan', date: '2026-10-04', direction: 'keluar', amount: 125000 }) },
   ],
 };
+
+export const projectWorkspace: Workspace = { ...popupWorkspace, workstreams: [
+  { ...popupWorkspace.workstreams![0], data: schemas.workstreams.parse({ ...popupWorkspace.workstreams![0].data, title: 'Contoh proyek berjalan untuk pemeriksaan', status: 'aktif' }) },
+  { ...popupWorkspace.workstreams![0], id: '00000000-0000-4000-8000-000000000101', data: schemas.workstreams.parse({ title: 'Contoh proyek selesai dengan tugas historis', code: 'QA-H', status: 'selesai' }) },
+], 'work-items': [...popupWorkspace['work-items']!, { ...popupWorkspace['work-items']![0], id: '00000000-0000-4000-8000-000000000102', data: schemas['work-items'].parse({ title: 'Contoh tugas historis tetap tersimpan', due_date: '2026-08-01', completed_at: '2026-08-01', status: 'selesai', workstream_id: '00000000-0000-4000-8000-000000000101' }) }] };

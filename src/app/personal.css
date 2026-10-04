@@ -20492,6 +20492,7 @@ button:not(.ui-btn).button,
   animation: modalFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+@media (orientation: portrait) {
 .stock-gantt-overlay.is-rotated-landscape {
   width: 100vh !important;
   height: 100vw !important;
@@ -20499,6 +20500,8 @@ button:not(.ui-btn).button,
   left: 100vw !important;
   transform: rotate(90deg);
   transform-origin: top left;
+  animation: none;
+}
 }
 
 .fullscreen-gantt-topbar {

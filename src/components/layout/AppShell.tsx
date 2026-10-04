@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 import { ThemeProvider, useTheme } from '@/lib/ThemeContext';
 import { api, resetAuthNavigation } from '@/lib/client';
 import { navigation } from '@/features/catalog';
+import { isProjectHistory } from '@/features/projects/project-lifecycle';
 import type { Workspace } from '@/features/workspace/useWorkspace';
 import {
   House,
@@ -52,6 +53,7 @@ const navIcons: Record<string, React.ComponentType<{ size?: number; className?: 
   '/tugas': CheckCheck,
   '/tindak-lanjut': AlertCircle,
   '/proyek': FolderKanban,
+  '/riwayat-proyek': FolderKanban,
   '/roadmap': Milestone,
   '/jurnal': BookOpen,
   '/pencatatan': Landmark,
@@ -74,7 +76,7 @@ const navIcons: Record<string, React.ComponentType<{ size?: number; className?: 
 const sections = [
   [
     'Pekerjaan & Proyek',
-    ['/beranda', '/hari-ini', '/tugas', '/proyek', '/roadmap', '/tindak-lanjut'],
+    ['/beranda', '/hari-ini', '/tugas', '/proyek', '/riwayat-proyek', '/roadmap', '/tindak-lanjut'],
     'blue',
   ],
   ['Kegiatan Lapangan', ['/jurnal'], 'amber'],
@@ -520,7 +522,7 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
             {workspace ? (
               <div className="sidebar-projects-list">
                 {(workspace.workstreams || [])
-                  .filter((p) => p.data.status !== 'diarsipkan')
+                  .filter((p) => !isProjectHistory(p))
                   .map((p) => (
                     <Link
                       className="manager-project-link"
@@ -539,9 +541,10 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
             ) : (
               <small className="sidebar-empty-note">Proyek belum dimuat.</small>
             )}
-            {workspace && !workspace.workstreams?.length && (
-              <small className="sidebar-empty-note">Belum ada proyek.</small>
+            {workspace && !workspace.workstreams?.some((p) => !isProjectHistory(p)) && (
+              <small className="sidebar-empty-note">Tidak ada proyek berjalan.</small>
             )}
+            <Link href="/riwayat-proyek" className="manager-project-link" onClick={() => setMenu(false)}>Riwayat proyek</Link>
           </section>
         </div>
 

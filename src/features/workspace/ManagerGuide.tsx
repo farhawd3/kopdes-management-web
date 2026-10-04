@@ -48,7 +48,9 @@ export function ManagerGuide() {
         ))}
       </ol>
       <section aria-labelledby="guide-books-title">
+        <div className="entry-guide"><strong>Menutup proyek</strong><p>Periksa tugas yang masih aktif, catat hasil, lalu ubah status proyek menjadi selesai. Status tugas tidak diubah otomatis. Proyek selesai keluar dari sidebar proyek berjalan; tugas, milestone dan catatan tetap dapat dibuka melalui <Link href="/riwayat-proyek">Riwayat proyek</Link>.</p></div>
         <h3 id="guide-books-title">Catatan operasional</h3>
+        <p>Daftarkan anggota bila ada transaksi anggota. Daftarkan barang sebelum stok opname. Buku kas dapat dicatat tanpa anggota, barang atau gerai; hubungan tersebut opsional dan tidak membuat pencatatan lain otomatis.</p>
         <div className="guide-books">
           {books.map(book => <Link key={book.href} href={book.href} className="guide-card-link">
             <span className="guide-icon"><AppIcon name={book.icon} size={24} /></span>

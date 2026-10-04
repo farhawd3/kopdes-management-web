@@ -792,6 +792,7 @@ export function Records({
   workspace,
   refresh,
   initialFilter = '',
+  initialView,
   scopeId,
   draftScope,
 }: {
@@ -799,6 +800,7 @@ export function Records({
   workspace: Workspace;
   refresh: () => Promise<void>;
   initialFilter?: string;
+  initialView?: string;
   scopeId?: string;
   draftScope?: string;
 }) {
@@ -826,6 +828,7 @@ export function Records({
     [priority, setPriority] = useState(''),
     [sort, setSort] = useState('due'),
     [view, setView] = useState<string>(() => {
+      if (initialView) return initialView;
       const paramView = query.get('view');
       if (paramView && ['daftar', 'papan', 'kalender', 'gantt', 'harian'].includes(paramView)) {
         return paramView;
@@ -850,7 +853,9 @@ export function Records({
       } catch {}
     }
   };
+  const closedProject = Boolean(scopeId && workspace.workstreams?.some((project) => project.id === scopeId && ['selesai', 'diarsipkan'].includes(String(project.data.status))));
   function createTask(date = today(), status = 'rencana') {
+    if (closedProject) { setError('Buka kembali proyek sebelum menambah tugas baru. Tugas yang sudah ada tetap dapat diperiksa.'); return; }
     setEdit({
       id: '',
       created_at: '',
@@ -916,6 +921,8 @@ export function Records({
               ? row.data.status === 'selesai'
               : effectiveFilter === 'terlambat'
                 ? String(row.data.due_date) < today() && isActiveTask(row.data.status)
+                : effectiveFilter === 'all'
+                  ? true
                 : effectiveFilter
                   ? row.data.status === effectiveFilter
                   : isActiveTask(row.data.status)) &&
@@ -1771,9 +1778,7 @@ export function Records({
               <span className="stat-label">Total Selesai</span>
               <strong>{rows.length} tugas</strong>
             </div>
-            <Link href={scopeId ? `/proyek` : `/tugas`} className="btn-back-to-active-tasks">
-              ← Kembali ke Tugas Aktif
-            </Link>
+            {scopeId ? <Button className="btn-back-to-active-tasks" onClick={() => setFilter('all')}>Semua tugas proyek</Button> : <Link href="/tugas" className="btn-back-to-active-tasks">← Kembali ke Tugas Aktif</Link>}
           </div>
         </div>
       ) : (
@@ -1784,6 +1789,7 @@ export function Records({
           </div>
           <Button
             className="primary"
+            disabled={entity === 'work-items' && closedProject}
             onClick={() =>
               setEdit(
                 entity === 'organization' && all[0]
@@ -1812,6 +1818,7 @@ export function Records({
           </Button>
         </div>
       )}
+      {entity === 'work-items' && closedProject && <p className="notice">Proyek sudah selesai atau diarsipkan. Seluruh tugas tetap tersimpan. Ubah status proyek ke aktif sebelum menambah tugas baru.</p>}
       {entity === 'journal' && !isCompletedArchive && (
         <div className="recording-metrics journal-metrics">
           <div className="metric-card metric-total">
@@ -1950,7 +1957,7 @@ export function Records({
               ))}
           </div>
         )}
-      {entity === 'work-items' && !isCompletedArchive && view === 'daftar' && (
+      {entity === 'work-items' && !isCompletedArchive && !closedProject && view === 'daftar' && (
         <form
           className="today-quick-add-card"
           onSubmit={async (event) => {
@@ -2036,7 +2043,8 @@ export function Records({
                     }
                   }}
                   options={[
-                    { value: '', label: 'Semua Status' },
+                    { value: '', label: entity === 'work-items' ? 'Tugas aktif' : 'Semua Status' },
+                    ...(scopeId && entity === 'work-items' ? [{ value: 'all', label: 'Semua status (termasuk selesai)' }] : []),
                     ...(entity === 'work-items'
                       ? [{ value: 'terlambat', label: 'Terlambat' }]
                       : []),
@@ -2221,7 +2229,7 @@ export function Records({
           title={`Belum ada ${catalog[entity].title.toLowerCase()}`}
           description={`Mulai dengan menambah ${catalog[entity].title.toLowerCase()} baru atau sesuaikan filter pencarian.`}
           tone="emerald"
-          action={{
+          action={closedProject ? undefined : {
             label: `Tambah ${catalog[entity].title}`,
             onClick: () => setEdit(null),
           }}

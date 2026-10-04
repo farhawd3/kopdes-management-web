@@ -16,7 +16,8 @@ import { TaskTimeline } from '../tasks/TaskTimeline';
 import { Operations } from '../operations/Operations';
 import { ManagerGuide } from '../workspace/ManagerGuide';
 import { Settings } from '../settings/Settings';
-import { popupEntities, popupLabels, popupWorkspace, cardWorkspace, bookWorkspace } from './popup-fixtures';
+import { Projects } from '../projects/Projects';
+import { popupEntities, popupLabels, popupWorkspace, cardWorkspace, bookWorkspace, projectWorkspace } from './popup-fixtures';
 import type { Entity } from '../schemas';
 const sampleReports = [{ id: 'qa-report', title: 'Laporan contoh pemeriksaan', period_start: '2026-10-01', period_end: '2026-10-04', snapshot: { ...reportSnapshot(popupWorkspace, '2026-10-01', '2026-10-04'), notes: 'Catatan contoh pemeriksaan', status: 'draft' as const } }];
 
@@ -60,6 +61,8 @@ export function PopupGallery() {
     {popup === 'Pencarian contoh' && <WorkspaceSearch workspace={popupWorkspace} onNavigate={() => {}} />}
     {popup === 'Linimasa contoh' && <TaskTimeline items={popupWorkspace['work-items']!} workspace={popupWorkspace} refresh={async () => {}} />}
     {['Anggota contoh', 'Buku kas contoh', 'Barang contoh', 'Opname contoh'].includes(popup) && <Operations key={popup} draftScope="qa-popup" slug={{ 'Anggota contoh': 'anggota', 'Buku kas contoh': 'keuangan', 'Barang contoh': 'barang', 'Opname contoh': 'stok-opname' }[popup]!} data={bookWorkspace} ready refresh={async () => {}} />}
+    <Button onClick={() => setPopup('Proyek contoh')}>Proyek contoh</Button><Button onClick={() => setPopup('Riwayat proyek contoh')}>Riwayat proyek contoh</Button>
+    {['Proyek contoh', 'Riwayat proyek contoh'].includes(popup) && <Projects draftScope="qa-popup" data={projectWorkspace} refresh={async () => {}} history={popup === 'Riwayat proyek contoh'} />}
     {popup === 'Panduan' && <ManagerGuide />}
     {popup === 'Pengaturan' && <Settings preferenceScope="qa-popup:" refresh={async () => {}} />}
   </main>;
