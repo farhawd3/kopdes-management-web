@@ -174,6 +174,7 @@ export function SprintModal({
               </span>
               <DateInput
                 value={startDate}
+                aria-label="Tanggal mulai periode"
                 onValueChange={(value) => {
                   setStartDate(value);
                   if (duration === '1 minggu') setEndDate(addDays(value, 7));
@@ -190,6 +191,7 @@ export function SprintModal({
               </span>
               <DateInput
                 value={endDate}
+                aria-label="Tanggal selesai periode"
                 onValueChange={(value) => setEndDate(value)}
                 className="text-input"
               />

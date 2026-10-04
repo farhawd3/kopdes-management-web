@@ -2,6 +2,7 @@
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
+import { Modal } from '@/components/ui/Modal';
 import { DateInput } from '@/components/ui/DateField';
 import { useEffect, useState } from 'react';
 import {
@@ -75,9 +76,9 @@ const sectionMeta = {
   },
 } as const;
 
-export function Reports() {
-  const [reports, setReports] = useState<Report[]>([]);
-  const [selected, setSelected] = useState<Report | null>(null);
+export function Reports({ previewReports }: { previewReports?: Report[] } = {}) {
+  const [reports, setReports] = useState<Report[]>(previewReports || []);
+  const [selected, setSelected] = useState<Report | null>(previewReports?.[0] || null);
   const [filterTab, setFilterTab] = useState<'all' | 'draft' | 'final'>('all');
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
@@ -105,10 +106,11 @@ export function Reports() {
   };
 
   useEffect(() => {
+    if (previewReports) return;
     // Initial synchronization with the reports API completes asynchronously.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     void loadReports();
-  }, []);
+  }, [previewReports]);
 
   const handleDelete = async (id: string) => {
     setBusy(true);
@@ -221,6 +223,7 @@ export function Reports() {
             <label className="field-item">
               <span className="field-caption">Dari Tanggal</span>
               <DateInput
+                aria-label="Awal periode laporan"
                 className="field-input"
                 name="start"
                 defaultValue={addDays(today(), -6)}
@@ -229,7 +232,7 @@ export function Reports() {
             </label>
             <label className="field-item">
               <span className="field-caption">Sampai Tanggal</span>
-              <DateInput className="field-input" name="end" defaultValue={today()} required />
+              <DateInput aria-label="Akhir periode laporan" className="field-input" name="end" defaultValue={today()} required />
             </label>
             <label className="field-item field-wide wide">
               <span className="field-caption">Catatan manajer</span>
@@ -470,12 +473,12 @@ export function Reports() {
 
           {/* Delete Confirmation Modal / Banner */}
           {deleteConfirmId && (
-            <div className="delete-confirm-box no-print" role="dialog" aria-modal="true">
+            <Modal className="delete-confirm-box no-print" aria-labelledby="delete-report-title" onDismiss={() => { if (!busy) setDeleteConfirmId(null); }}>
               <div className="confirm-icon-wrap">
                 <AlertTriangle size={24} />
               </div>
               <div className="confirm-content">
-                <strong>Hapus {isCurrentDraft ? 'Draf Laporan' : 'Laporan'} Ini?</strong>
+                <strong id="delete-report-title">Hapus {isCurrentDraft ? 'Draf Laporan' : 'Laporan'} Ini?</strong>
                 <p>
                   Tindakan ini akan menghapus laporan {selected.title} secara permanen dari basis
                   data. Data tugas, buku kas, dan catatan koperasi tidak akan terpengaruh.
@@ -500,7 +503,7 @@ export function Reports() {
                   </Button>
                 </div>
               </div>
-            </div>
+            </Modal>
           )}
 
           {/* Official Kop Surat Koperasi */}

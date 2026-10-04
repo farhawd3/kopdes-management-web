@@ -1,5 +1,12 @@
 # Changelog
 
+## Audit popup berdata — 4 Oktober 2026
+
+- Fixture development 21 domain membuka form tambah/ubah, detail tugas, sprint, jadwal, CSV, rutinitas dan konfirmasi laporan tanpa panggilan database. Draft/preferensi QA terpisah.
+- Perbaiki form panjang, target tombol kecil, input rutinitas, label tanggal, Escape popup bertingkat dan filter pencarian. Modal native dipakai CSV/rutinitas/konfirmasi laporan; fokus menu ponsel dibatasi/dipulihkan dan bantuan diberi padding.
+- Matriks ukuran dan batas pengujian dicatat di docs/QA-POPUP.md; tidak menandai seluruh kombinasi/perangkat selesai.
+- 242 tes/35 berkas, typecheck, lint/lint:ui, build, check:ui dan audit sumber 94/94 lulus.
+
 ## PLAN-ASTRA — keadaan kosong pencatatan — 4 Oktober 2026
 
 - Satukan keadaan kosong empat buku dengan EmptyState. Opname tanpa barang menyediakan tautan Daftarkan barang sesuai prasyarat tombol Tambah.

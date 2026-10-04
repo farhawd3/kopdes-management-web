@@ -151,6 +151,31 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
     [error, setError] = useState(''),
     [actionModalOpen, setActionModalOpen] = useState(false);
   const dialog = useRef<HTMLDialogElement>(null);
+  const mobileSheet = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (!menu) return;
+    const sheet = mobileSheet.current;
+    if (!sheet) return;
+    const previous = document.activeElement;
+    const controls = () => [...sheet.querySelectorAll<HTMLElement>('button:not([disabled]), a[href], input:not([disabled]), [tabindex="0"]')]
+      .filter(node => node.getClientRects().length > 0);
+    controls()[0]?.focus();
+    const containFocus = (event: KeyboardEvent) => {
+      if (event.key !== 'Tab') return;
+      const nodes = controls(), first = nodes[0], last = nodes.at(-1);
+      if (!first || !last) return;
+      const outside = !sheet.contains(document.activeElement);
+      if (outside || (event.shiftKey ? document.activeElement === first : document.activeElement === last)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first).focus();
+      }
+    };
+    document.addEventListener('keydown', containFocus);
+    return () => {
+      document.removeEventListener('keydown', containFocus);
+      if (previous instanceof HTMLElement && previous.isConnected) previous.focus();
+    };
+  }, [menu]);
 
   useEffect(() => {
     const receive = (event: Event) => setWorkspace((event as CustomEvent<Workspace | null>).detail);
@@ -542,7 +567,7 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
         )}
         {children}
       </main>
-      {shortcutHelp && <Modal onDismiss={() => setShortcutHelp(false)} aria-labelledby="shortcut-title">
+      {shortcutHelp && <Modal className="shortcut-help-dialog" onDismiss={() => setShortcutHelp(false)} aria-labelledby="shortcut-title">
         <h2 id="shortcut-title">Pintasan keyboard</h2>
         <p><kbd>N</kbd> Buat tugas · <kbd>T</kbd> Hari Ini · <kbd>?</kbd> Bantuan</p>
         <p><kbd>Ctrl/⌘ K</kbd> Cari · <kbd>Ctrl/⌘ B</kbd> Menu samping · <kbd>Esc</kbd> Tutup</p>
@@ -557,6 +582,7 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
         aria-hidden={!menu}
       />
       <aside
+        ref={mobileSheet}
         className={`mobile-app-sheet ${menu ? 'is-open' : ''}`}
         inert={!menu}
         aria-hidden={!menu}

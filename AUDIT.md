@@ -14,8 +14,8 @@ Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at
 | inline | 84 |
 | hexTsx | 24 |
 | hexCss | 765 |
-| important | 1970 |
-| bytes | 514373 |
+| important | 1972 |
+| bytes | 515761 |
 | Elemen mentah di luar components/ui | 0 |
 | Selector berulang | 384 |
 | Nilai border-radius unik | 9 |
@@ -28,13 +28,14 @@ Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at
 |---|---:|---:|
 | src/app/globals.css | 17334 | 2 |
 | src/app/personal.css | 477247 | 1965 |
-| src/app/tokens.css | 3056 | 3 |
-| src/app/ui.css | 16736 | 0 |
+| src/app/tokens.css | 3080 | 3 |
+| src/app/ui.css | 18100 | 2 |
 
 ## Inventaris halaman dan overlay
 
 - src/app/(app)/[slug]/page.tsx
 - src/app/dev/komponen/page.tsx
+- src/app/dev/popup/page.tsx
 - src/app/page.tsx
 - src/app/pin/page.tsx
 - src/components/layout/AppShell.tsx
@@ -447,11 +448,11 @@ Dibuat ulang dengan `npm run audit:ui`. Duplikat dihitung dalam konteks media/at
 | src/app/personal.css | button:not(.ui-btn).sprint-action-btn:hover | 18466, 19809 |
 | src/app/personal.css | .project-properties-grid | 19227, 19752 |
 | src/app/personal.css | .project-progress-card | 19314, 19756 |
-| src/app/tokens.css | :root | 2, 49 |
-| src/app/ui.css | .ui-stat-card | 76, 111 |
-| src/app/ui.css | .ui-focus-task | 87, 111 |
-| src/app/ui.css | .ui-modal > header | 94, 95 |
-| src/app/ui.css | .ui-modal > footer | 94, 96 |
+| src/app/tokens.css | :root | 2, 50 |
+| src/app/ui.css | .ui-stat-card | 90, 126 |
+| src/app/ui.css | .ui-focus-task | 101, 126 |
+| src/app/ui.css | .ui-modal > header | 108, 109 |
+| src/app/ui.css | .ui-modal > footer | 108, 110 |
 
 ## Nilai deklarasi
 

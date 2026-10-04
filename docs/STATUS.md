@@ -1,5 +1,9 @@
 # Status produk — 4 Oktober 2026
 
+Audit popup memakai fixture 21 domain dalam halaman development /dev/popup dengan API diblokir dan lingkup draft/preferensi QA terpisah. Temuan form panjang, tombol kecil, input rutinitas sempit, Escape modal bertingkat, label tanggal dan filter pencarian diperbaiki. Impor CSV/rutinitas/konfirmasi laporan memakai modal native bersama. Menu ponsel kini memindahkan, membatasi, dan mengembalikan fokus keyboard; bantuan mendapat padding.
+
+Cakupan rinci dan batasan ada di [QA-POPUP](QA-POPUP.md). Pemeriksaan akhir lulus: 242 tes/35 berkas, typecheck, lint, lint:ui, build, check:ui dan audit sumber 94/94. Matriks form terisi 360/768/1024/1440 tidak meluap. Ini bukan bukti seluruh kombinasi kondisi, aksen warna, keyboard virtual atau perangkat fisik telah diuji.
+
 Pencatatan memakai EmptyState bersama. Stok Opname tanpa barang mengarahkan ke pendaftaran barang, bukan meminta tombol Tambah yang masih nonaktif. Tes regresi baru lulus; 196 tes/31 berkas. Ringkasan, Anggota, Buku Kas, Barang, Stok Opname dan Gerai diukur setelah data tampil pada 360 px tanpa luapan; Opname juga 768/1024/1440. Ini belum mencakup data terisi atau semua tema.
 
 Keadaan kosong Beranda/Hari Ini memakai EmptyState netral dan aksi yang jelas. Daftar proyek seluruhnya diarsipkan kini menampilkan keadaan kosong. Kartu Hari Ini membungkus judul panjang pada ponsel, kontrol centang mengikuti ukuran primitive dan Enter pada aksi anak tidak membuka detail kartu. 195 tes/31 berkas, typecheck, lint/lint:ui, build dan audit sumber 91/91 lulus. CSS terakhir 514.373 byte, important 1.970, duplikat 384; kontrol mentah luar UI tetap nol.

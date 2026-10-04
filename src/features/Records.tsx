@@ -76,6 +76,7 @@ import { downloadMeeting, meetingJoinUrl } from './meetings/meeting';
 import { DailyTasksView } from './tasks/DailyTasksView';
 import { TaskDetailDrawer } from './tasks/TaskDetailDrawer';
 import { SprintModal } from './projects/SprintModal';
+import { Modal } from '@/components/ui/Modal';
 import { SprintCard } from './projects/SprintCard';
 import { CsvDropzone } from '@/components/ui/CsvDropzone';
 import { ScrumBoardView } from './tasks/ScrumBoardView';
@@ -1824,6 +1825,7 @@ export function Records({
                   type="button"
                   className="btn-sprint-trigger"
                   title="Kelola Target Periode (Sprint)"
+                  aria-label="Kelola periode kerja"
                   onClick={(e) => {
                     e.currentTarget.closest('details')?.removeAttribute('open');
                     setShowSprintModal(true);
@@ -1836,6 +1838,7 @@ export function Records({
                   type="button"
                   className="btn-csv-trigger"
                   title="Tarik & Lepas File CSV"
+                  aria-label="Impor CSV"
                   onClick={(e) => {
                     e.currentTarget.closest('details')?.removeAttribute('open');
                     setShowCsvModal(true);
@@ -2468,13 +2471,10 @@ export function Records({
         />
       )}
       {showCsvModal && (
-        <div
-          className="sprint-modal-backdrop"
-          role="dialog"
+        <Modal
+          className="sprint-modal-dialog"
           aria-labelledby="csv-modal-title"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setShowCsvModal(false);
-          }}
+          onDismiss={() => setShowCsvModal(false)}
         >
           <div className="sprint-modal-card">
             <header className="sprint-modal-head">
@@ -2524,7 +2524,7 @@ export function Records({
             />
             {error && <p className="notice error">{error}</p>}
           </div>
-        </div>
+        </Modal>
       )}
     </section>
   );

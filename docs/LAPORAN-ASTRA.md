@@ -115,6 +115,8 @@ Migrasi visual penuh, interaktivitas, animasi dan QA menyeluruh masih berjalan. 
 
 ## Pekerjaan berikutnya
 
+Audit popup berdata terbaru ada di [QA-POPUP](QA-POPUP.md): fixture 21 domain, form panjang/label/target tombol, modal native dan regresi Escape bertingkat. Temuan dan cakupan perangkat/keadaan yang masih terbuka dipisahkan dari kelulusan tes.
+
 ### Paket keadaan kosong dan kartu Hari Ini
 
 - EmptyState netral dengan ikon, judul, deskripsi dan aksi digunakan Beranda/Hari Ini. Proyek seluruhnya diarsipkan kini mendapat keadaan kosong. Judul tugas mobile membungkus; centang mengikuti primitive; Enter pada tombol anak tidak membuka kartu.

@@ -93,6 +93,7 @@ export function RecursiveScheduleModal({
               <Calendar size={16} aria-hidden="true" /> Batas pengulangan (opsional)
             </span>
             <DateInput
+              aria-label="Batas pengulangan"
               value={endDate}
               onValueChange={(value) => setEndDate(value)}
               className="text-input"

@@ -1,5 +1,10 @@
 # Checklist produk aktif
 
+- [x] Inventaris popup dan fixture 21 domain; panggilan API diblokir, draft/preferensi QA terpisah.
+- [x] Form panjang, input rutinitas, label tanggal, target tombol dialog dan Escape popup bertingkat diperbaiki.
+- [x] Impor CSV/rutinitas/konfirmasi laporan memakai modal native; pencarian/bantuan/menu diperiksa, fokus menu ponsel dibatasi dan dipulihkan.
+- [ ] Seluruh kombinasi popup/state/aksen dan perangkat fisik; cakupan nyata ada di QA-POPUP.md.
+
 - [x] Keadaan kosong buku pencatatan memakai EmptyState; Opname tanpa barang mengarahkan pendaftaran barang, dengan regresi.
 - [x] Enam halaman pencatatan/gerai pada 360 px setelah isi tampil tidak meluap; Opname juga 768/1024/1440. Data terisi/tema lain tetap terbuka.
 

@@ -2,6 +2,10 @@
 
 ## Lanjutan PLAN-ASTRA — 4 Oktober 2026
 
+- Rujuk docs/QA-POPUP.md untuk audit popup terbaru. /dev/popup hanya development, fixture 21 domain, API diblokir sebelum fetch; draft form dan preferensi rutinitas QA terpisah. Jangan menghapus guard atau memakai fixture sebagai data operasional.
+- Temuan: grid/label panjang, target tombol kecil, input rutinitas menyusut, Escape menutup dua lapis, label tanggal generik, filter pencarian menyusut dan fokus menu ponsel. Fix tersedia; konfirmasi laporan/CSV/rutinitas memakai modal native.
+- Kalender sempit mempertahankan target 44 px dengan gulir kisi di dalam menu. Dua important di ui.css untuk target dialog masih utang cascade legacy, bukan penyelesaian target CSS PLAN-ASTRA.
+
 - Pencatatan kini memakai EmptyState; Opname tanpa barang mengarahkan ke /barang. Tes terbaru 196/31 berkas. QA ukuran enam halaman pencatatan/gerai 360 dan Opname 768/1024/1440 tanpa luapan setelah isi muncul; tidak ada mutasi data nyata.
 
 - Paket terbaru: EmptyState Beranda/Hari Ini, daftar proyek seluruhnya diarsipkan, kartu tugas mobile dan guard keyboard aksi anak. 195 tes/31 berkas serta typecheck/lint/lint:ui/build dan audit sumber 91/91 lulus.

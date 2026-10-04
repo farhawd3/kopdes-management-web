@@ -82,6 +82,7 @@ export function Editor({
   onClose,
   onSaved,
   quick = false,
+  draftScope,
 }: {
   entity: Entity;
   item?: Item;
@@ -89,6 +90,7 @@ export function Editor({
   onClose: () => void;
   onSaved: () => Promise<void>;
   quick?: boolean;
+  draftScope?: string;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
@@ -97,7 +99,7 @@ export function Editor({
   const [restoredDraft, setRestoredDraft] = useState<Record<string, unknown> | null>(null);
   const [formVersion, setFormVersion] = useState(0);
   const [draftNotice, setDraftNotice] = useState('');
-  const draftKey = 'hub-draft:' + entity + ':' + (item?.id || 'new');
+  const draftKey = 'hub-draft:' + (draftScope ? draftScope + ':' : '') + entity + ':' + (item?.id || 'new');
   useEffect(() => {
     try {
       const raw = sessionStorage.getItem(draftKey);

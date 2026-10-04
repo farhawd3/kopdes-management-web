@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { z } from 'zod';
 import { usePreference } from '@/lib/usePreference';
+import { Modal } from '@/components/ui/Modal';
 import {
   ArrowUpRight,
   CalendarDays,
@@ -54,12 +55,12 @@ function parseRoutinePreference<T>(text: string, schema: z.ZodType<T>, fallback:
   }
 }
 
-export function Dashboard({ data }: { data: Workspace }) {
+export function Dashboard({ data, preferenceScope = '' }: { data: Workspace; preferenceScope?: string }) {
   const now = today();
   const [projectId, setProjectId] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
-  const [routineOpen, setRoutineOpen] = usePreference('hub-dashboard-routine-open', 'false');
-  const [chartsOpen, setChartsOpen] = usePreference('hub-dashboard-charts-open', 'false');
+  const [routineOpen, setRoutineOpen] = usePreference(preferenceScope + 'hub-dashboard-routine-open', 'false');
+  const [chartsOpen, setChartsOpen] = usePreference(preferenceScope + 'hub-dashboard-charts-open', 'false');
   const allTasks = (data['work-items'] || []).map((row) => ({
     ...schemas['work-items'].parse(row.data),
     id: row.id,
@@ -106,10 +107,10 @@ export function Dashboard({ data }: { data: Workspace }) {
   ];
 
   const [routineText, setRoutineText] = usePreference(
-    ROUTINE_CONFIG_KEY,
+    preferenceScope + ROUTINE_CONFIG_KEY,
     JSON.stringify(DEFAULT_ROUTINES),
   );
-  const [completedText, setCompletedText] = usePreference(ROUTINE_KEY, '[]');
+  const [completedText, setCompletedText] = usePreference(preferenceScope + ROUTINE_KEY, '[]');
   const routines = parseRoutinePreference(routineText, routineSchema, DEFAULT_ROUTINES);
   const completedRoutines = parseRoutinePreference(completedText, z.array(z.string()), []);
   const routineCompletedCount = routines.filter((routine) =>
@@ -661,12 +662,9 @@ export function Dashboard({ data }: { data: Workspace }) {
 
       {/* ── Modal Atur Rutinitas Manajer ─────────────────── */}
       {showRoutineModal && (
-        <div className="sprint-modal-backdrop" onClick={() => setShowRoutineModal(false)}>
+        <Modal className="sprint-modal-dialog" aria-labelledby="routine-config-title" onDismiss={() => setShowRoutineModal(false)}>
           <div
             className="sprint-modal-card routine-config-modal-card"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="routine-config-title"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="sprint-modal-head">
@@ -700,6 +698,7 @@ export function Dashboard({ data }: { data: Workspace }) {
                     onChange={(e) => setNewRoutineTime(e.target.value)}
                     className="routine-time-input"
                     title="Waktu rutinitas"
+                    aria-label="Waktu rutinitas baru"
                     required
                   />
                   <Input
@@ -708,6 +707,7 @@ export function Dashboard({ data }: { data: Workspace }) {
                     value={newRoutineTitle}
                     onChange={(e) => setNewRoutineTitle(e.target.value)}
                     className="routine-title-input"
+                    aria-label="Judul rutinitas baru"
                     maxLength={120}
                     required
                   />
@@ -759,7 +759,7 @@ export function Dashboard({ data }: { data: Workspace }) {
               </Button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

@@ -29,6 +29,10 @@ export async function api<T>(
   method = body === undefined ? 'GET' : 'POST',
   options?: { bypassCache?: boolean; ttlMs?: number },
 ): Promise<T> {
+  // Fixture popup tidak boleh membaca atau mengubah database operasional.
+  if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined' && window.location.pathname === '/dev/popup') {
+    throw new Error('Mode pemeriksaan popup: permintaan database diblokir.');
+  }
   const isRead = body === undefined && method === 'GET';
   const cacheKey = `${path}`;
 
