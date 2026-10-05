@@ -47,9 +47,9 @@ export const worldStations = [
   },
   {
     id: 'dokumen',
-    title: 'Arsip & buku',
+    title: 'Arsip & Pencatatan',
     href: '/dokumen',
-    description: 'Dokumen koperasi dan pintasan pencatatan.',
+    description: 'Lemari arsip tiga zona: Anggota (data keanggotaan), Kas (buku kas masuk/keluar), dan Barang (stok & opname). Klik rak untuk membuka modul pencatatan terkait.',
     position: [-7.6, 0, 5.6],
     scope: 'kantor',
   },

@@ -912,20 +912,39 @@ export function createInterior(parent: THREE.Group) {
     box(parent, [2.0, 0.03, 0.22], [lx, 3.16, -4.5], '#fffbeb', 0.02);
   }
 
-  // Modern glass partition dividing West Manager Suite from Central Workstation
-  box(parent, [0.08, 2.8, 6.2], [-4.4, 1.4, -4.4], '#c9e0ec', 0.02);
-  for (const z of [-7.2, -1.4]) {
-    box(parent, [0.12, 2.9, 0.12], [-4.4, 1.45, z], '#fafcff', 0.02);
+  // ==========================================
+  // DINDING PARTISI RUANG MANAJER (Barat) — Tebal solid 0.22 dengan pintu masuk Z = -2.0...-1.0
+  // ==========================================
+  // Segmen bawah selatan (Z = -1.2 ke Z = -4.3) — sebelum pintu
+  box(parent, [0.22, 3.2, 3.1], [-4.4, 1.6, -2.85], '#cfe5f0', 0.05);
+  // Segmen atas pintu (transom kaca) — di atas bukaan pintu
+  box(parent, [0.22, 0.7, 1.1], [-4.4, 3.1, -1.15], '#cfe5f0', 0.05);
+  // Segmen utara (Z = -4.3 ke Z = -7.5)
+  box(parent, [0.22, 3.2, 3.2], [-4.4, 1.6, -5.9], '#cfe5f0', 0.05);
+  // Tiang bingkai partisi ekstra kuat
+  for (const z of [-7.3, -4.3, -0.6]) {
+    box(parent, [0.26, 3.4, 0.26], [-4.4, 1.7, z], '#fafcff', 0.04);
   }
-  // Signboard pintu masuk Ruang Manajer
-  sign(parent, 'RUANG MANAJER', [-4.4, 2.65, -2.4], 2.2, '#1e3a8a');
+  // Pelat pintu bingkai kuningan dan pegangan
+  box(parent, [0.1, 2.2, 0.06], [-4.4, 1.7, -1.9], '#f59e0b', 0.03); // Bingkai pintu
+  cylinder(parent, 0.04, 0.28, [-4.52, 1.6, -1.6], '#f59e0b'); // Handle pintu
+  // Signboard pintu masuk Ruang Manajer (papan nama tebal, bukan tipis)
+  box(parent, [0.2, 0.48, 1.8], [-4.4, 2.9, -3.2], '#1e3a8a', 0.06);
+  sign(parent, 'RUANG MANAJER', [-4.4, 2.9, -3.2], 1.7, '#ffffff');
 
-  // Modern glass partition dividing East Meeting Room from Central Workstation
-  box(parent, [0.08, 2.8, 6.2], [4.4, 1.4, -4.4], '#c9e0ec', 0.02);
-  for (const z of [-7.2, -1.4]) {
-    box(parent, [0.12, 2.9, 0.12], [4.4, 1.45, z], '#fafcff', 0.02);
+  // ==========================================
+  // DINDING PARTISI RUANG RAPAT (Timur) — Tebal solid 0.22 dengan pintu masuk Z = -2.0...-1.0
+  // ==========================================
+  box(parent, [0.22, 3.2, 3.1], [4.4, 1.6, -2.85], '#cfe5f0', 0.05);
+  box(parent, [0.22, 0.7, 1.1], [4.4, 3.1, -1.15], '#cfe5f0', 0.05);
+  box(parent, [0.22, 3.2, 3.2], [4.4, 1.6, -5.9], '#cfe5f0', 0.05);
+  for (const z of [-7.3, -4.3, -0.6]) {
+    box(parent, [0.26, 3.4, 0.26], [4.4, 1.7, z], '#fafcff', 0.04);
   }
-  sign(parent, 'RUANG RAPAT', [4.4, 2.65, -2.4], 2.0, '#1e3a8a');
+  box(parent, [0.1, 2.2, 0.06], [4.4, 1.7, -1.9], '#f59e0b', 0.03);
+  cylinder(parent, 0.04, 0.28, [4.52, 1.6, -1.6], '#f59e0b');
+  box(parent, [0.2, 0.48, 1.8], [4.4, 2.9, -3.2], '#1e3a8a', 0.06);
+  sign(parent, 'RUANG RAPAT', [4.4, 2.9, -3.2], 1.6, '#ffffff');
 
   // ==========================================
   // ZONA A: RUANG KERJA EKSEKUTIF MANAJER (Barat-Utara: x: -11...-4.5, z: -7.6...-1.2)
@@ -985,21 +1004,47 @@ export function createInterior(parent: THREE.Group) {
   }
 
   // ==========================================
-  // ZONA C: ARSIP & LEGALITAS KOPERASI (Barat-Selatan: x: -10...-5, z: 2...7)
+  // ZONA C: ARSIP & PENCATATAN KOPERASI (Barat-Selatan: x: -10...-5, z: 2...7)
+  // Zona ini menampung arsip anggota, buku kas, dan barang / stok opname
   // ==========================================
-  for (const x of [-9.6, -7.6, -5.6]) {
-    box(parent, [1.5, 2.0, 0.85], [x, 1.0, 5.6], palette.wood, 0.06);
-    box(parent, [1.54, 0.14, 0.9], [x, 2.06, 5.6], '#ffffff', 0.03);
-    for (let i = 0; i < 6; i++) {
+  // 3 Rak lemari arsip utama — setiap rak diberi label bertema pencatatan
+  const archiveLabels = ['ANGGOTA', 'KAS', 'BARANG'];
+  const archiveColors: [string, string, string] = ['#3b82f6', '#10b981', '#f59e0b'];
+  for (let ai = 0; ai < 3; ai++) {
+    const ax = -9.6 + ai * 2.0;
+    // Badan lemari kayu solid berketebalan cukup (bukan tipis kertas)
+    box(parent, [1.6, 2.2, 0.95], [ax, 1.1, 5.6], palette.wood, 0.08);
+    box(parent, [1.64, 0.18, 1.0], [ax, 2.28, 5.6], '#ffffff', 0.04);
+    // Label papan nama lemari berkolom sesuai domain pencatatan
+    box(parent, [1.3, 0.36, 0.1], [ax, 2.04, 5.13], archiveColors[ai], 0.06);
+    sign(parent, archiveLabels[ai], [ax, 2.04, 5.0], 1.24, '#ffffff');
+    // Buku dan dokumen berwarna di rak
+    for (let bi = 0; bi < 8; bi++) {
       box(
         parent,
-        [0.15, 0.5, 0.35],
-        [x - 0.5 + i * 0.2, 2.38, 5.6],
-        ['#6d91dd', '#b7b6e0', '#88b9a4', '#f59e0b'][i % 4],
+        [0.12, 0.52, 0.34],
+        [ax - 0.55 + bi * 0.16, 1.56, 5.6],
+        ['#6d91dd', '#b7b6e0', '#88b9a4', '#f59e0b', '#e879a0', '#34d399', '#818cf8', '#fbbf24'][bi],
+        0.02,
+      );
+    }
+    for (let bi = 0; bi < 6; bi++) {
+      box(
+        parent,
+        [0.12, 0.42, 0.3],
+        [ax - 0.42 + bi * 0.16, 0.94, 5.6],
+        ['#cbd5e1', '#93c5fd', '#a3e635', '#fb923c', '#c4b5fd', '#fca5a5'][bi],
         0.02,
       );
     }
   }
+  // Meja kerja pencatatan dengan PC dan keyboard untuk staf arsip
+  box(parent, [2.4, 0.14, 1.1], [-7.5, 1.0, 3.2], '#ffffff', 0.06);
+  box(parent, [2.45, 0.04, 1.15], [-7.5, 0.94, 3.2], palette.wood, 0.04);
+  box(parent, [0.8, 0.5, 0.06], [-7.5, 1.52, 3.2], '#344761', 0.03);
+  box(parent, [0.72, 0.42, 0.02], [-7.5, 1.52, 3.16], '#8ebcfa', 0.01);
+  box(parent, [0.55, 0.04, 0.24], [-7.5, 1.07, 3.78], '#cbd5e1', 0.02);
+  chair(parent, -7.5, 4.2, 0);
   tree(parent, -10.0, 3.0, 0.9);
 
   // ==========================================
@@ -1111,15 +1156,28 @@ export function createCharacter(
   sphere(head, 0.33, [0, 0, 0], skin, [0.96, 1.06, 0.9]);
 
   if (gender === 'wanita') {
-    // Karakter wanita: sanggul rapi atau kerudung/hijab pastel
     if (variant === 1) {
-      sphere(head, 0.35, [0, 0.06, -0.02], '#818cf8', [1.02, 1.06, 1.04]); // Hijab
-      sphere(head, 0.31, [0, 0, 0.04], skin, [0.92, 0.95, 0.85]);
+      // Rambut panjang natural untuk Anisa — bukan topeng, melainkan lapisan rambut multi-sphere
+      // Bagian atas kepala (crown hair)
+      sphere(head, 0.36, [0, 0.18, -0.03], '#2d1b0e', [1.05, 0.7, 1.05]);
+      // Sisi kanan dan kiri rambut panjang menjuntai ke bawah (ear-length)
+      sphere(head, 0.28, [-0.28, -0.06, -0.02], '#2d1b0e', [0.65, 1.0, 0.82]);
+      sphere(head, 0.28, [0.28, -0.06, -0.02], '#2d1b0e', [0.65, 1.0, 0.82]);
+      // Rambut panjang di belakang menjuntai ke bawah leher
+      sphere(head, 0.32, [0, -0.18, -0.22], '#2d1b0e', [1.0, 1.2, 0.82]);
+      sphere(head, 0.24, [0, -0.38, -0.30], '#2d1b0e', [1.0, 1.0, 0.72]);
+      sphere(head, 0.18, [-0.16, -0.52, -0.28], '#2d1b0e');
+      sphere(head, 0.18, [0.16, -0.52, -0.28], '#2d1b0e');
+      // Poni depan lembut menutupi dahi atas
+      sphere(head, 0.24, [0, 0.12, 0.22], '#2d1b0e', [1.2, 0.55, 0.7]);
+      sphere(head, 0.16, [-0.22, 0.06, 0.24], '#2d1b0e', [0.8, 0.55, 0.7]);
+      sphere(head, 0.16, [0.22, 0.06, 0.24], '#2d1b0e', [0.8, 0.55, 0.7]);
     } else {
-      sphere(head, 0.34, [0, 0.14, -0.05], '#34364b', [1.02, 0.85, 1.0]);
-      sphere(head, 0.18, [0, 0.12, -0.32], '#34364b'); // Sanggul rambut belakang
-      sphere(head, 0.12, [-0.22, 0.08, 0.1], '#34364b'); // Belahan poni
-      sphere(head, 0.12, [0.22, 0.08, 0.1], '#34364b');
+      // Karakter wanita variant lain: sanggul rapi berwarna gelap
+      sphere(head, 0.34, [0, 0.14, -0.05], '#2d1b0e', [1.02, 0.85, 1.0]);
+      sphere(head, 0.18, [0, 0.12, -0.32], '#2d1b0e'); // Sanggul rambut belakang
+      sphere(head, 0.12, [-0.22, 0.08, 0.1], '#2d1b0e'); // Belahan poni
+      sphere(head, 0.12, [0.22, 0.08, 0.1], '#2d1b0e');
     }
   } else {
     // Karakter pria
