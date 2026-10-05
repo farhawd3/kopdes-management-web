@@ -1,5 +1,39 @@
 # Changelog
 
+## Paket Revisi Interaksi & Kawasan Dunia Koperasi: Redesain Jalan Kanan, NPC Bergerak, Karyawan Kantor Dinamis, dan Tipografi Proporsional — 5 Oktober 2026
+
+- **Redesain Jalan & Simpang Lampu Merah Kanan**:
+  - Memindahkan jalan raya cabang dan tiang lampu merah dari arah tengah kantor koperasi ke sisi kanan (timur) kawasan (`X = 24.5`), membentang vertikal ke arah utara di samping gerai (`Z = 12` hingga `Z = -17.5`).
+  - Menghadirkan persimpangan Simpang-T di sisi kanan lengkap dengan 3 tiang traffic light modular, garis henti (stop lines), marka zebra cross, serta trotoar timur dan barat yang dibingkai tiang lampu jalan dan pepohonan hijau.
+  - Mengubah jalan aspal tengah lama menjadi Plaza Promenade pedestrian taman berpaving lembut (`#d0dcf2`), air mancur, bangku taman, dan tanaman hias sehingga pintu masuk kantor koperasi lebih ramah pejalan kaki dan kawasan timur tampak hidup/tidak kosong.
+  - Memperbarui simulasi lalu lintas `world-traffic.ts` dengan titik henti kendaraan di persimpangan kanan (`stopLineEast = 20.5`, `stopLineWest = 28.5`).
+- **Eliminasi Pin Biru & Interaksi Langsung Model 3D**:
+  - Menghilangkan tombol bulat pin biru HTML (`.cw-character-pin`) di atas kepala manajer yang sebelumnya terkesan mengganggu visual.
+  - Interaksi kini didukung melalui klik langsung model 3D manajer di canvas Three.js (raycaster selection), memunculkan kartu profil manajer dan memicu dialog komik dinamis.
+- **NPC Bergerak di Kawasan Luar**:
+  - Menambahkan NPC pejalan kaki yang aktif bergerak secara dinamis:
+    - NPC Pejalan Trotoar Gerai: patroli bolak-balik sepanjang trotoar depan gerai 1–7 dengan animasi langkah kaki dan ayunan tangan berirama.
+    - NPC Pejalan Jalan Kanan: berjalan menyusuri trotoar jalan raya samping kanan di antara pepohonan dan tiang lampu.
+  - Karakter luar kini berjumlah 5 figur (Manajer berpatroli, Warga duduk di bangku plaza selatan, Warga duduk di plaza utara, NPC pejalan trotoar gerai, dan NPC pejalan jalan samping kanan).
+- **Karyawan Interior Dinamis Bersyarat Kegiatan Nyata**:
+  - Menghadirkan 4 staf di dalam denah kantor 22×15: Manajer, Karyawan Tugas (Workstation Zona B), Karyawan Rapat (Meja Rapat Zona A), dan Karyawan Lapangan/Arsip (Zona C & Gym Zona D).
+  - Menerapkan perilaku dinamis berbasis status operasional nyata:
+    - Jika ada kegiatan/tugas/rapat yang sedang berjalan: karyawan duduk di stasiun masing-masing dengan pose mengetik/diskusi/membaca dokumen.
+    - Jika tidak ada kegiatan/tugas/rapat: karyawan bergerak aktif berjalan-jalan (roaming) menyusuri koridor, bersantai di sofa lobi, memeriksa arsip, atau berolahraga di treadmill gym.
+- **Variasi Percakapan Kontekstual & Faktual**:
+  - Memperkaya dialog manajer dan staf dengan variasi santai/ramah (sapaan waktu pagi/siang/sore/malam WIB, komentar cuaca desa yang sejuk, ajakan minum teh) bergantian dengan informasi faktual operasional (jumlah gerai terisi vs siap pakai, status tugas berjalan dan selesai, logistik gudang, dan jadwal rapat).
+- **Penyelarasan & Keseimbangan Ukuran Font (Tipografi)**:
+  - Mengeliminasi seluruh teks mikro ekstrem berukuran 7px, 8px, dan 9px di seluruh halaman Dunia Koperasi.
+  - Menetapkan skala tipografi proporsional yang seimbang dan mudah dibaca:
+    - Label, badge, pill, dan sub-keterangan: 11px.
+    - Isi teks, deskripsi, dan tombol kontrol: 12px – 13px.
+    - Subjudul dan nama stasiun/objek: 14px – 16px.
+    - Metrik KPI utama: 18px.
+  - Memastikan keterbacaan optimal pada semua breakpoint layar (desktop, tablet, hingga mobile 360px).
+- **Pengujian & Kualitas**:
+  - Seluruh 275 pengujian unit dan integrasi lulus 100%.
+  - Typecheck TypeScript 0 error, ESLint 0 error dan 0 warning, serta build Next.js Turbopack sukses untuk seluruh rute.
+
 ## Paket 7 Dunia Koperasi: Verifikasi Menyeluruh & Dokumentasi Final — 5 Oktober 2026
 
 - Rampungkan seluruh rangkaian 8 paket kerja (Paket 0 hingga Paket 7) sesuai dokumen spesifikasi `PRD & Rencana Implementasi Mendalam: Dunia Koperasi — Revisi Visual & Interaksi Hidup (v2)`.

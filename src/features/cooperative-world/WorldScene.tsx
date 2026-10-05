@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { Building2, Plus, MessageCircle, MapPin } from 'lucide-react';
+import { Building2, Plus, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import {
   animateCharacter,
@@ -176,27 +176,37 @@ export function WorldScene({
       createInterior(world);
     }
     const color = { biru: palette.navy, lavender: '#4338ca', hijau: '#1e3a8a' }[outfit];
-    const characters = [
-      createCharacter(world, location === 'luar' ? [-5, 0.1, 3.5] : [-7.5, 0.42, -3.0], color, 0, 'manager'),
-      createCharacter(
-        world,
-        location === 'luar' ? [4, 0.42, 2.6] : [1.8, 0.42, -2.0],
-        '#3b82f6',
-        1,
-        'staff',
-      ),
-      createCharacter(world, location === 'luar' ? [-2.2, 0.1, 1.2] : [9.2, 0.35, 4.8], '#50ab90', 2, location === 'luar' ? 'npc' : 'staff'),
-    ];
+    const characters =
+      location === 'luar'
+        ? [
+            createCharacter(world, [-5, 0.1, 3.5], color, 0, 'manager'),
+            createCharacter(world, [4, 0.42, 2.6], '#e11d48', 1, 'npc'),
+            createCharacter(world, [4, 0.42, -2.6], '#f59e0b', 0, 'npc'),
+            createCharacter(world, [-14, 0.1, -4.8], '#10b981', 2, 'npc'),
+            createCharacter(world, [20.6, 0.1, 2.0], '#6366f1', 1, 'npc'),
+          ]
+        : [
+            createCharacter(world, [-7.5, 0.42, -3.0], color, 0, 'manager'),
+            createCharacter(world, [-1.8, 0.42, -4.4], '#3b82f6', 0, 'staff'),
+            createCharacter(world, [-6.0, 0.42, -3.0], '#0284c7', 1, 'staff'),
+            createCharacter(world, [9.2, 0.35, 4.8], '#10b981', 2, 'staff'),
+          ];
+
     characters[0].group.userData.selection = 'manajer';
-    characters[1].group.userData.selection = 'karakter';
-    characters[2].group.userData.selection = 'karakter';
+    for (let i = 1; i < characters.length; i++) {
+      characters[i].group.userData.selection = 'karakter';
+    }
+
     if (location === 'luar') {
       // Karakter 1 duduk santai di bangku plaza selatan menghadap utara
       characters[1].group.rotation.y = Math.PI;
+      // Karakter 2 duduk santai di bangku plaza utara menghadap selatan
+      characters[2].group.rotation.y = 0;
     } else {
       characters[0].group.rotation.y = Math.PI;
       characters[1].group.rotation.y = Math.PI;
-      characters[2].group.rotation.y = 0;
+      characters[2].group.rotation.y = Math.PI;
+      characters[3].group.rotation.y = 0;
     }
     const raycaster = new THREE.Raycaster();
     const pointer = new THREE.Vector2();
@@ -287,8 +297,8 @@ export function WorldScene({
     // Waypoints for manager exterior patrol
     const pOffice = new THREE.Vector3(-5, 0.1, 3.5);
     const pPlaza = new THREE.Vector3(3.5, 0.1, 3.5);
-    const pWalkway = new THREE.Vector3(3.5, 0.1, -4.5);
-    const pPlots = new THREE.Vector3(-9, 0.1, -4.5);
+    const pRightRoad = new THREE.Vector3(20.6, 0.1, 2.0);
+    const pPlots = new THREE.Vector3(-10, 0.1, -4.8);
 
     // Traffic Simulation State (Paket 3 PRD v2)
     const trafficBag = createTrafficShuffleBag(99);
@@ -521,56 +531,126 @@ export function WorldScene({
         }
       }
 
-      // Exterior Manager Patrol
+      // Exterior & Interior NPC Patrol and Dynamic Behaviors
       let isManagerWalking = false;
+      const isWalkingFlags: boolean[] = [false, false, false, false, false];
+
+      const hasTaskProcess = model.tasks.some((t) => t.data.status === 'proses');
+      const hasMeeting = Boolean(model.currentMeeting || model.meetings.length > 0);
+      const hasActivities = model.activities.length > 0;
+
       if (location === 'luar') {
         if (!reduced.matches) {
-          const loop = 80;
+          // Patroli Manajer di Luar (loop 90 detik melewati kantor, plaza, jalan samping kanan, dan deretan gerai)
+          const loop = 90;
           const phase = elapsed % loop;
-          if (phase < 35) {
-            // Standing at Office front: looking around & idle
+          if (phase < 25) {
+            // Berdiri di depan kantor koperasi: menyapa dan mengamati kawasan
             characters[0].group.position.copy(pOffice);
             characters[0].group.rotation.y = Math.PI * 0.12;
             characters[0].base.copy(pOffice);
-          } else if (phase < 45) {
-            // Walking from Office to Plaza
+          } else if (phase < 36) {
+            // Berjalan dari Kantor ke Plaza Air Mancur
             isManagerWalking = true;
-            const r = (phase - 35) / 10;
+            isWalkingFlags[0] = true;
+            const r = (phase - 25) / 11;
             characters[0].group.position.lerpVectors(pOffice, pPlaza, r);
             characters[0].group.rotation.y = Math.PI * 0.5;
             characters[0].base.copy(characters[0].group.position);
-          } else if (phase < 55) {
-            // Inspecting Plaza fountain
+          } else if (phase < 46) {
+            // Berdiri di Plaza mengamati air mancur & menyapa warga
             characters[0].group.position.copy(pPlaza);
             characters[0].group.rotation.y = -Math.PI * 0.2;
             characters[0].base.copy(pPlaza);
-          } else if (phase < 65) {
-            // Walking to Plots walkway
+          } else if (phase < 58) {
+            // Berjalan dari Plaza ke trotoar Jalan Raya Samping Kanan (X = 20.6)
             isManagerWalking = true;
-            const r = (phase - 55) / 10;
-            characters[0].group.position.lerpVectors(pPlaza, pWalkway, r);
+            isWalkingFlags[0] = true;
+            const r = (phase - 46) / 12;
+            characters[0].group.position.lerpVectors(pPlaza, pRightRoad, r);
+            characters[0].group.rotation.y = Math.PI * 0.45;
+            characters[0].base.copy(characters[0].group.position);
+          } else if (phase < 68) {
+            // Berjalan dari Jalan Samping Kanan ke deretan gerai (X = -10, Z = -4.8)
+            isManagerWalking = true;
+            isWalkingFlags[0] = true;
+            const r = (phase - 58) / 10;
+            characters[0].group.position.lerpVectors(pRightRoad, pPlots, r);
+            characters[0].group.rotation.y = -Math.PI * 0.6;
+            characters[0].base.copy(characters[0].group.position);
+          } else if (phase < 78) {
+            // Menginspeksi kesiapan unit usaha gerai
+            characters[0].group.position.copy(pPlots);
             characters[0].group.rotation.y = Math.PI;
-            characters[0].base.copy(characters[0].group.position);
-          } else if (phase < 72) {
-            // Walking along Plots sidewalk
-            isManagerWalking = true;
-            const r = (phase - 65) / 7;
-            characters[0].group.position.lerpVectors(pWalkway, pPlots, r);
-            characters[0].group.rotation.y = -Math.PI * 0.5;
-            characters[0].base.copy(characters[0].group.position);
+            characters[0].base.copy(pPlots);
           } else {
-            // Returning to Office
+            // Kembali ke depan Kantor Koperasi
             isManagerWalking = true;
-            const r = (phase - 72) / 8;
+            isWalkingFlags[0] = true;
+            const r = (phase - 78) / 12;
             characters[0].group.position.lerpVectors(pPlots, pOffice, r);
             characters[0].group.rotation.y = Math.PI * 0.35;
             characters[0].base.copy(characters[0].group.position);
+          }
+
+          // Karakter 3: NPC Pejalan Kaki di Trotoar Depan Gerai (bolak-balik X = -15 s/d 12 di Z = -4.8)
+          if (characters[3]) {
+            const walkLoop = 40;
+            const wPhase = elapsed % walkLoop;
+            const pStart = new THREE.Vector3(-15, 0.1, -4.8);
+            const pEnd = new THREE.Vector3(12, 0.1, -4.8);
+            if (wPhase < 16) {
+              isWalkingFlags[3] = true;
+              const r = wPhase / 16;
+              characters[3].group.position.lerpVectors(pStart, pEnd, r);
+              characters[3].group.rotation.y = Math.PI * 0.5;
+            } else if (wPhase < 22) {
+              // Berhenti melihat gerai
+              characters[3].group.position.copy(pEnd);
+              characters[3].group.rotation.y = Math.PI;
+            } else if (wPhase < 36) {
+              isWalkingFlags[3] = true;
+              const r = (wPhase - 22) / 14;
+              characters[3].group.position.lerpVectors(pEnd, pStart, r);
+              characters[3].group.rotation.y = -Math.PI * 0.5;
+            } else {
+              characters[3].group.position.copy(pStart);
+              characters[3].group.rotation.y = 0;
+            }
+            characters[3].base.copy(characters[3].group.position);
+          }
+
+          // Karakter 4: NPC Pejalan Kaki di Trotoar Jalan Raya Samping Kanan (X = 20.6, Z = 7.0 s/d -13.0)
+          if (characters[4]) {
+            const rightLoop = 36;
+            const rPhase = (elapsed + 10) % rightLoop;
+            const pSouth = new THREE.Vector3(20.6, 0.1, 7.0);
+            const pNorth = new THREE.Vector3(20.6, 0.1, -13.0);
+            if (rPhase < 15) {
+              isWalkingFlags[4] = true;
+              const r = rPhase / 15;
+              characters[4].group.position.lerpVectors(pSouth, pNorth, r);
+              characters[4].group.rotation.y = Math.PI;
+            } else if (rPhase < 20) {
+              characters[4].group.position.copy(pNorth);
+              characters[4].group.rotation.y = Math.PI * 0.5;
+            } else if (rPhase < 32) {
+              isWalkingFlags[4] = true;
+              const r = (rPhase - 20) / 12;
+              characters[4].group.position.lerpVectors(pNorth, pSouth, r);
+              characters[4].group.rotation.y = 0;
+            } else {
+              characters[4].group.position.copy(pSouth);
+              characters[4].group.rotation.y = -Math.PI * 0.5;
+            }
+            characters[4].base.copy(characters[4].group.position);
           }
         } else {
           characters[0].base.copy(pOffice);
         }
       } else {
-        // Interior Placement for Manager in 22x15 office
+        // Interior 22x15: Penempatan & Perilaku Dinamis Karyawan Kantor
+        // Karakter 0 (Manajer KDMP)
         if (state.activity === 'meeting') {
           characters[0].base.set(-7.5, 0.42, -3.0);
           characters[0].group.rotation.y = Math.PI;
@@ -581,8 +661,114 @@ export function WorldScene({
           characters[0].base.set(-1.8, 0.42, -2.0);
           characters[0].group.rotation.y = Math.PI;
         } else {
-          characters[0].base.set(0, 0.1, 3.2);
-          characters[0].group.rotation.y = 0;
+          // Jika tidak ada kegiatan wajib, manajer berkeliling santai mengecek lobi dan arsip
+          const mLoop = 36;
+          const mPhase = elapsed % mLoop;
+          const pLobby = new THREE.Vector3(0, 0.1, 3.5);
+          const pArchiveCheck = new THREE.Vector3(-7.6, 0.1, 3.0);
+          if (mPhase < 12) {
+            isWalkingFlags[0] = true;
+            characters[0].group.position.lerpVectors(pLobby, pArchiveCheck, mPhase / 12);
+            characters[0].group.rotation.y = -Math.PI * 0.5;
+          } else if (mPhase < 22) {
+            characters[0].group.position.copy(pArchiveCheck);
+            characters[0].group.rotation.y = Math.PI;
+          } else if (mPhase < 30) {
+            isWalkingFlags[0] = true;
+            characters[0].group.position.lerpVectors(pArchiveCheck, pLobby, (mPhase - 22) / 8);
+            characters[0].group.rotation.y = Math.PI * 0.5;
+          } else {
+            characters[0].group.position.copy(pLobby);
+            characters[0].group.rotation.y = 0;
+          }
+          characters[0].base.copy(characters[0].group.position);
+        }
+
+        // Karakter 1 (Karyawan Staf Meja Tugas)
+        if (characters[1]) {
+          if (hasTaskProcess) {
+            // Ada tugas: duduk bekerja di meja komputer workstation
+            characters[1].base.set(-1.8, 0.42, -4.4);
+            characters[1].group.position.set(-1.8, 0.42, -4.4);
+            characters[1].group.rotation.y = Math.PI;
+          } else {
+            // Tidak ada tugas: berjalan-jalan santai ke Pojok Santai / Pantry
+            const tLoop = 32;
+            const tPhase = elapsed % tLoop;
+            const pDesk = new THREE.Vector3(-1.8, 0.1, -2.5);
+            const pLounge = new THREE.Vector3(7.8, 0.1, -4.5);
+            if (tPhase < 10) {
+              isWalkingFlags[1] = true;
+              characters[1].group.position.lerpVectors(pDesk, pLounge, tPhase / 10);
+              characters[1].group.rotation.y = Math.PI * 0.5;
+            } else if (tPhase < 24) {
+              characters[1].group.position.copy(pLounge);
+              characters[1].group.rotation.y = Math.PI;
+            } else {
+              isWalkingFlags[1] = true;
+              characters[1].group.position.lerpVectors(pLounge, pDesk, (tPhase - 24) / 8);
+              characters[1].group.rotation.y = -Math.PI * 0.5;
+            }
+            characters[1].base.copy(characters[1].group.position);
+          }
+        }
+
+        // Karakter 2 (Karyawan Staf Rapat & Notulen)
+        if (characters[2]) {
+          if (hasMeeting) {
+            // Ada rapat: duduk di kursi meja rapat eksekutif
+            characters[2].base.set(-6.0, 0.42, -3.0);
+            characters[2].group.position.set(-6.0, 0.42, -3.0);
+            characters[2].group.rotation.y = Math.PI;
+          } else {
+            // Tidak ada rapat: berjalan-jalan ke Zona Arsip & Buku
+            const rLoop = 36;
+            const rPhase = (elapsed + 6) % rLoop;
+            const pMeet = new THREE.Vector3(-6.0, 0.1, -2.0);
+            const pArchive = new THREE.Vector3(-7.6, 0.1, 4.0);
+            if (rPhase < 12) {
+              isWalkingFlags[2] = true;
+              characters[2].group.position.lerpVectors(pMeet, pArchive, rPhase / 12);
+              characters[2].group.rotation.y = Math.PI;
+            } else if (rPhase < 26) {
+              characters[2].group.position.copy(pArchive);
+              characters[2].group.rotation.y = Math.PI * 0.5;
+            } else {
+              isWalkingFlags[2] = true;
+              characters[2].group.position.lerpVectors(pArchive, pMeet, (rPhase - 26) / 10);
+              characters[2].group.rotation.y = 0;
+            }
+            characters[2].base.copy(characters[2].group.position);
+          }
+        }
+
+        // Karakter 3 (Karyawan Staf Lapangan & Gym)
+        if (characters[3]) {
+          if (hasActivities) {
+            // Ada kegiatan olahraga/jurnal: berlatih di treadmill gym
+            characters[3].base.set(9.2, 0.35, 4.8);
+            characters[3].group.position.set(9.2, 0.35, 4.8);
+            characters[3].group.rotation.y = 0;
+          } else {
+            // Tidak ada kegiatan: berjalan-jalan santai di koridor lobi
+            const gLoop = 30;
+            const gPhase = (elapsed + 14) % gLoop;
+            const pGym = new THREE.Vector3(7.8, 0.1, 2.5);
+            const pLobby = new THREE.Vector3(0, 0.1, 4.5);
+            if (gPhase < 11) {
+              isWalkingFlags[3] = true;
+              characters[3].group.position.lerpVectors(pGym, pLobby, gPhase / 11);
+              characters[3].group.rotation.y = -Math.PI * 0.5;
+            } else if (gPhase < 19) {
+              characters[3].group.position.copy(pLobby);
+              characters[3].group.rotation.y = 0;
+            } else {
+              isWalkingFlags[3] = true;
+              characters[3].group.position.lerpVectors(pLobby, pGym, (gPhase - 19) / 11);
+              characters[3].group.rotation.y = Math.PI * 0.5;
+            }
+            characters[3].base.copy(characters[3].group.position);
+          }
         }
       }
 
@@ -591,18 +777,23 @@ export function WorldScene({
       const dialogueCtx: DialogueContext = {
         managerName: model.manager || 'Manajer',
         openTasksCount: model.tasks.length,
+        inProgressTasksCount: model.tasks.filter((t) => t.data.status === 'proses').length,
+        completedTasksCount: model.tasks.filter((t) => t.data.status === 'selesai').length,
         hasMeetingSoon: Boolean(model.currentMeeting),
         meetingTitle: model.currentMeeting?.data.title ? String(model.currentMeeting.data.title) : undefined,
         recordedUnitsCount: model.units.length,
+        emptyPlotsCount: Math.max(0, 7 - model.units.length),
+        hasActivitiesToday: model.activities.length > 0,
+        activitiesCount: model.activities.length,
         weather: state.weather,
         timeHour: state.hour,
       };
 
       if (location === 'luar') {
-        const loop = 80;
+        const loop = 90;
         const phase = elapsed % loop;
-        // When manager visits Plaza fountain where citizen sits (phase 46-52)
-        if (phase >= 46 && phase <= 52) {
+        // Ketika manajer berada di Plaza dekat warga (phase 38-46)
+        if (phase >= 38 && phase <= 46) {
           dialogueManager.triggerDialogue(
             'manajer',
             'warga-plaza',
@@ -613,14 +804,38 @@ export function WorldScene({
             elapsed,
             'pass_by',
           );
+        } else if (phase >= 52 && phase <= 58) {
+          // Ketika manajer melintasi jalan samping kanan dekat NPC kurir/staf
+          dialogueManager.triggerDialogue(
+            'manajer',
+            'npc-jalan-kanan',
+            model.manager || 'Manajer',
+            'manager',
+            [characters[0].group.position.x, 0, characters[0].group.position.z],
+            dialogueCtx,
+            elapsed,
+            'pass_by',
+          );
+        } else if (phase >= 68 && phase <= 74) {
+          // Ketika manajer melintasi trotoar gerai
+          dialogueManager.triggerDialogue(
+            'manajer',
+            'npc-pejalan',
+            model.manager || 'Manajer',
+            'manager',
+            [characters[0].group.position.x, 0, characters[0].group.position.z],
+            dialogueCtx,
+            elapsed,
+            'pass_by',
+          );
         }
       } else {
-        // In office: manager visiting workstation desk (elapsed % 45 between 10 and 18)
-        const deskPhase = elapsed % 45;
+        // Di kantor: manajer mengunjungi meja kerja staf (elapsed % 40 antara 10 dan 18)
+        const deskPhase = elapsed % 40;
         if (deskPhase >= 10 && deskPhase <= 18) {
           dialogueManager.triggerDialogue(
             'manajer',
-            'staf-meja',
+            'karyawan-tugas',
             model.manager || 'Manajer',
             'manager',
             [characters[0].group.position.x, 0, characters[0].group.position.z],
@@ -637,30 +852,48 @@ export function WorldScene({
       const isListening = (id: string) => activeBubblesList.some((b) => b.receiverId === id);
 
       characters.forEach((character, index) => {
-        let mode: CharacterActivity =
-          location === 'luar'
-            ? index === 1
-              ? 'meeting' // Karakter wanita duduk santai di bangku taman plaza
-              : 'idle'
-            : index === 0
-              ? state.activity
-              : index === 1
-                ? state.activity === 'work'
-                  ? 'work'
-                  : 'idle'
-                : state.activity === 'gym'
-                  ? 'gym'
-                  : 'idle';
+        let mode: CharacterActivity = 'idle';
 
-        const charId = index === 0 ? 'manajer' : index === 1 ? (location === 'luar' ? 'warga-plaza' : 'staf-meja') : 'staf-2';
+        if (location === 'luar') {
+          if (index === 0) {
+            mode = isManagerWalking ? 'walk' : 'idle';
+          } else if (index === 1 || index === 2) {
+            // Warga duduk santai di bangku taman plaza
+            mode = 'meeting';
+          } else if (index === 3 || index === 4) {
+            // NPC pejalan kaki di gerai / jalan samping kanan
+            mode = isWalkingFlags[index] ? 'walk' : 'idle';
+          }
+        } else {
+          // Interior
+          if (index === 0) {
+            mode = isWalkingFlags[0] ? 'walk' : state.activity;
+          } else if (index === 1) {
+            // Karyawan Meja Tugas: kerja bila ada tugas proses, jalan roaming bila tidak
+            mode = hasTaskProcess ? 'work' : isWalkingFlags[1] ? 'walk' : 'idle';
+          } else if (index === 2) {
+            // Karyawan Notulen/Rapat: rapat bila ada agenda, jalan roaming bila tidak
+            mode = hasMeeting ? 'meeting' : isWalkingFlags[2] ? 'walk' : 'idle';
+          } else if (index === 3) {
+            // Karyawan Lapangan/Gym: gym bila ada kegiatan, jalan roaming bila tidak
+            mode = hasActivities ? 'gym' : isWalkingFlags[3] ? 'walk' : 'idle';
+          }
+        }
+
+        const charIds =
+          location === 'luar'
+            ? ['manajer', 'warga-plaza', 'warga-plaza-utara', 'npc-pejalan', 'npc-jalan-kanan']
+            : ['manajer', 'karyawan-tugas', 'karyawan-rapat', 'karyawan-kegiatan'];
+
+        const charId = charIds[index] || `char-${index}`;
         if (isSpeaking(charId)) {
           mode = 'talk';
         } else if (isListening(charId) && mode === 'idle') {
           mode = 'greet';
         }
 
-        const walking = index === 0 && isManagerWalking;
-        animateCharacter(character, elapsed + index * 2, mode, reduced.matches, walking);
+        const isWalking = isWalkingFlags[index] || (index === 0 && isManagerWalking);
+        animateCharacter(character, elapsed + index * 2, mode, reduced.matches, isWalking);
       });
 
       // Synchronize floating dialogue bubbles to 2D screen coordinates
@@ -787,25 +1020,16 @@ export function WorldScene({
             </Button>
           </div>
         ))}
-      {!failed && (
+      {!failed && (selected === 'karakter' || selected === 'manajer') && bubble && (
         <div
           className="cw-marker cw-character-marker"
           ref={(node) => {
             if (node) markerRefs.current.set('karakter', node);
           }}
         >
-          {selected === 'karakter' && (
-            <div className="cw-speech" role="status">
-              {bubble}
-            </div>
-          )}
-          <Button
-            className="cw-character-pin"
-            aria-label="Ajak maskot berbicara"
-            onClick={() => onSelect('karakter')}
-          >
-            <MessageCircle size={16} />
-          </Button>
+          <div className="cw-speech" role="status">
+            {bubble}
+          </div>
         </div>
       )}
       {!failed &&

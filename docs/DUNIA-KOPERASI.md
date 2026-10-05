@@ -118,3 +118,30 @@ Denah luas dengan koridor utama 3.0 dan koridor vertikal 2.5:
 - **Paket 5:** Cahaya matahari kontinu, lampu malam otomatis, pembersihan bar atas, dan popover Suasana.
 - **Paket 6:** Interaksi klik, braket sudut seleksi, kamera fokus, dan kartu detail lengkap.
 - **Paket 7:** Verifikasi menyeluruh (4 lebar viewport × 3 waktu), pengujian suite, dokumentasi STATUS/CHANGELOG, commit & push.
+
+---
+
+## 10. Paket Revisi Pengguna (5 Oktober 2026)
+
+Berdasarkan evaluasi langsung pemilik proyek KDMP Puntukrejo:
+1. **Penghapusan Pin Bulat Biru:** Tombol pin interaksi melayang berdiameter 44px (`.cw-character-pin` berlatar belakang `#5075ef` dengan ikon balon pesan) di atas kepala manajer dihilangkan; digantikan dengan seleksi klik langsung pada karakter 3D manajer dan pemunculan balon komik dinamis tanpa bulatan pengganggu.
+2. **Redesain Jalan Raya Sisi Kanan & Simpang Lampu Merah:**
+   - Cabang jalan aspal di tengah (`X = 0`) digantikan menjadi Plaza Promenade pedestrian taman yang menghubungkan trotoar selatan ke taman air mancur.
+   - Dibangun jalan raya baru di sisi kanan (timur) kawasan pada koordinat `X = 24.5` (lebar 5.8 unit, membentang dari jalan selatan `Z = 12` hingga tembus ke utara `Z = -17.5` di samping gerai dan gudang logistik).
+   - Simpang-T lampu merah dan tiang lampu lalu lintas 3 warna dipindahkan ke persimpangan kanan (`X ≈ 20.5` dan `X ≈ 28.5`, `Z = 9.2`), lengkap dengan garis henti kendaraan dan zebra cross penyeberangan.
+   - Sisi timur jalan raya baru dilengkapi trotoar pedestrian, deretan tiang lampu jalan bercahaya malam hari, dan pepohonan rindang sehingga kawasan sisi kanan hidup dan tidak kosong.
+3. **NPC Pejalan Kaki Bergerak di Luar:**
+   - Penambahan NPC pejalan kaki di trotoar pedestrian depan gerai yang berjalan bolak-balik dan sesekali berhenti mengamati toko gerai.
+   - Penambahan NPC pejalan kaki di trotoar barat jalan raya baru sisi kanan yang berjalan melintasi gudang logistik dan simpang lampu merah.
+   - Penambahan NPC warga yang duduk santai di bangku utara plaza air mancur melengkapi bangku selatan.
+4. **Karyawan Interior Dinamis Berbasis Operasional:**
+   - Penambahan 3 karyawan di kantor: Karyawan Meja Tugas (seragam biru dinas), Karyawan Meja Rapat & Notulen (seragam cyan), dan Karyawan Lapangan/Gym (seragam hijau toska).
+   - Logika dinamis:
+     - Jika ada tugas proses aktif (`model.tasks.some(status === 'proses')`): Karyawan Tugas duduk bekerja di workstation komputer; jika tidak ada tugas, ia berjalan roaming ke Pojok Santai / Pantry untuk rehat.
+     - Jika ada agenda rapat (`model.currentMeeting` / agenda rapat): Karyawan Rapat duduk di kursi rapat eksekutif; jika tidak ada rapat, ia berjalan roaming ke Zona Arsip & Buku menata dokumen.
+     - Jika ada kegiatan jurnal hari ini (`model.activities.length > 0`): Karyawan Lapangan berolahraga di treadmill gym; jika tidak ada kegiatan, ia berjalan roaming di koridor lobi depan.
+5. **Percakapan Kontekstual Variatif:**
+   - Sistem dialog mendukung pergantian obrolan santai/biasa (sapaan waktu WIB, suasana sejuk Puntukrejo, ajakan rehat/minum teh hangat) dan informasi faktual operasional (jumlah gerai aktif & lahan kosong siap pakai, progres tugas terbuka, agenda rapat mendatang, dan kelancaran suplai logistik gudang).
+6. **Standarisasi Tipografi Terpadu:**
+   - Mengeliminasi seluruh font mikro berukuran 7px, 8px, dan 9px di seluruh halaman.
+   - Menyelaraskan hierarki tipografi proporsional: 11px untuk badge/label mikro, 12-13px untuk isi teks dan list, 14-16px untuk subjudul/nama stasiun, dan 18px untuk nilai metrik kartu KPI.

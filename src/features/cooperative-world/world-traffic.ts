@@ -183,8 +183,8 @@ export function stepTrafficSimulation(
   vehicles: TrafficVehicleState[],
   dt: number,
   isMainGreen: boolean,
-  stopLineEast = -4.5,
-  stopLineWest = 4.5,
+  stopLineEast = 20.5,
+  stopLineWest = 28.5,
 ): void {
   // Sort per jalur untuk mendeteksi kendaraan di depan
   const eastLane = vehicles

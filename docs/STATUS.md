@@ -62,7 +62,15 @@ Versi sekarang belum diterima: kawasan kecil/sepi, mobil belum ada, tampilan aga
     5. Balon dialog kontekstual berintegritas data dan identitas resmi Manajer KDMP Puntukrejo.
     6. Suasana malam dengan pencahayaan hangat lampu jalan, pendar tanah, jendela bercahaya, dan interior yang terang nyaman.
     7. Kemudahan interaksi klik dengan siku braket seleksi biru `#3866f6`, perpindahan kamera halus (lerp ~600ms), kartu detail gudang logistik bertab (Dermaga & Mitra Ekspedisi), dan pemulihan cepat via tombol `Escape`.
-- Exterior luas (58 × 38 unit): kantor koperasi, jalan dua arah, plaza air mancur dan 4 bangku taman ber-anchor, area parkir mobil manajer, gudang logistik, dan tujuh lahan gerai yang terhubung catatan `units`.
+- **Paket Revisi Pengguna Selesai (5 Oktober 2026):**
+  - Penghapusan pin bulat biru (`.cw-character-pin`) di atas kepala manajer; beralih ke klik langsung objek karakter 3D dan balon dialog mengambang elegan.
+  - Redesain jalan raya: cabang jalan aspal tengah diganti menjadi plaza promenade pedestrian taman, dan dibangun jalan raya baru di sisi kanan (timur, X = 24.5) membentang ke utara di samping deretan gerai dan gudang logistik.
+  - Simpang-T lampu merah dan tiang lampu modular 3 warna dipindahkan ke persimpangan kanan (X ≈ 20.5 & 28.5), sinkron dengan garis henti kendaraan dan zebra cross penyeberangan.
+  - Penambahan NPC pejalan kaki yang bergerak di trotoar depan gerai dan trotoar barat jalan raya samping kanan, melengkapi warga duduk di taman air mancur.
+  - Penambahan 3 karyawan di interior kantor dengan perilaku dinamis berdasarkan data operasional nyata (bekerja di meja tugas / meja rapat / gym bila ada kegiatan, dan berjalan-jalan santai roaming bila tidak ada beban tugas).
+  - Percakapan kontekstual kaya yang membedakan obrolan santai/biasa dan informasi faktual operasional (tugas, gerai, rapat, gudang).
+  - Standarisasi tipografi terpadu: eliminasi total font mikro 7-9px, menyelaraskan ukuran font menjadi 11px (label/badge), 12-13px (isi/daftar), dan 16-18px (judul/metrik) yang seimbang dan mudah dibaca di semua viewport.
+- Exterior luas (58 × 38 unit): kantor koperasi, jalan utama dua arah di selatan, jalan raya sisi kanan ke utara, simpang lampu merah kanan, plaza air mancur dan 4 bangku taman ber-anchor, area parkir mobil manajer, gudang logistik, dan tujuh lahan gerai yang terhubung catatan `units`.
 - Style dunia terisolasi di `world.css` dan palet Three.js di `world-objects.ts`.
 
 ## Pemeriksaan paket terbaru
@@ -70,8 +78,7 @@ Versi sekarang belum diterima: kawasan kecil/sepi, mobil belum ada, tampilan aga
 - `npm test -- --maxWorkers=2`: **275 tes / 44 berkas lulus 100%**.
 - `npm run typecheck`: **lulus** (0 error TypeScript).
 - `npm run lint`: **lulus** (0 error, 0 warning ESLint).
-- `npm run build`: **lulus** (Turbopack production build sukses).
-- QA visual & fungsional: seluruh 8 paket (Paket 0 hingga Paket 7) dari PRD & Rencana Implementasi Mendalam Dunia Koperasi v2 telah selesai, teruji, dan terdokumentasi secara lengkap di cabang `codex/dunia-koperasi`.
+- `npm run build`: **lulus** (Turbopack production build sukses untuk seluruh 12 rute).
 
 ## Halaman operasional yang tersedia
 

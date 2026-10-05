@@ -21,9 +21,14 @@ export interface DialogueBubble {
 export interface DialogueContext {
   managerName: string;
   openTasksCount: number;
+  inProgressTasksCount?: number;
+  completedTasksCount?: number;
   hasMeetingSoon: boolean;
   meetingTitle?: string;
   recordedUnitsCount: number;
+  emptyPlotsCount?: number;
+  hasActivitiesToday?: boolean;
+  activitiesCount?: number;
   weather: 'cerah' | 'berawan' | 'hujan';
   timeHour: number; // 0-23
 }
@@ -44,71 +49,161 @@ export function getTimeGreeting(hour: number): string {
 }
 
 /**
- * Generate dialog kontekstual bersyarat data nyata
+ * Generate dialog kontekstual bersyarat data nyata.
+ * Mendukung obrolan santai/biasa dan informasi operasional faktual.
  */
 export function getContextualDialogue(
   speakerRole: 'manager' | 'staff' | 'npc',
   context: DialogueContext,
-  interactionType: 'desk_visit' | 'pass_by' | 'rain' | 'meeting_call',
+  interactionType: 'desk_visit' | 'pass_by' | 'rain' | 'meeting_call' | 'info_broadcast' | 'casual_chat' = 'pass_by',
 ): { text: string; reply?: string } {
   const greeting = getTimeGreeting(context.timeHour);
+  const emptyPlots = context.emptyPlotsCount ?? Math.max(0, 7 - context.recordedUnitsCount);
 
+  // Reaksi cuaca hujan
   if (interactionType === 'rain' || context.weather === 'hujan') {
-    return {
-      text: 'Wah, hujan rintik-rintik. Lebih baik berteduh sejenak.',
-      reply: 'Iya, mari kita istirahat sejenak di kantor.',
-    };
+    const rainDialogues = [
+      {
+        text: 'Hujan rintik di Puntukrejo. Mari koordinasikan pencatatan dari dalam kantor.',
+        reply: 'Iya Pak/Bu, kami pastikan dokumen dan inventaris terlindung aman.',
+      },
+      {
+        text: 'Alhamdulillah hujan membawa kesejukan. Suasana kawasan jadi semakin tenang.',
+        reply: 'Betul, kopi hangat di ruang santai pas sekali dinikmati saat ini.',
+      },
+    ];
+    return rainDialogues[Math.abs(Math.sin(context.timeHour * 3.7)) > 0.5 ? 0 : 1];
   }
 
+  // Panggilan rapat terjadwal
   if (interactionType === 'meeting_call' || context.hasMeetingSoon) {
     return {
       text: context.meetingTitle
-        ? `Rapat "${context.meetingTitle}" akan dimulai sebentar lagi.`
-        : 'Rapat koperasi akan segera dimulai di ruang pertemuan.',
-      reply: 'Baik, kami segera menuju meja rapat.',
+        ? `Agenda rapat "${context.meetingTitle}" akan dimulai. Mari berkumpul di meja rapat.`
+        : 'Rapat koordinasi koperasi akan segera dimulai di ruang pertemuan.',
+      reply: 'Baik Pak/Bu Manajer, berkas agenda dan notulen sudah kami siapkan.',
     };
   }
 
+  // Interaksi meja kerja / kunjungan kantor
   if (interactionType === 'desk_visit') {
     if (context.openTasksCount > 0) {
+      const taskMessages = [
+        `Halo tim, ada ${context.openTasksCount} tugas aktif hari ini. Semangat menuntaskan!`,
+        `Fokus kita hari ini menyelesaikan ${context.openTasksCount} agenda terbuka. Prioritaskan yang mendesak ya.`,
+        `Mari cek progres tugas: ${context.openTasksCount} item sedang berjalan. Jika ada kendala segera koordinasikan.`,
+      ];
+      const pickIdx = Math.floor(Math.abs(Math.cos(context.openTasksCount + context.timeHour) * 10)) % taskMessages.length;
       return {
-        text: `Halo rekan-rekan, ada ${context.openTasksCount} tugas aktif hari ini. Semangat!`,
-        reply: 'Siap Pak/Bu, kami selesaikan sesuai urutan prioritas.',
+        text: taskMessages[pickIdx],
+        reply: 'Siap Pak/Bu, kami kerjakan bertahap sesuai urutan prioritas.',
       };
     }
     return {
-      text: 'Semua tugas hari ini terpantau rapi dan lancar. Pertahankan!',
-      reply: 'Terima kasih, Pak/Bu Manajer!',
+      text: 'Semua tugas hari ini terpantau rapi dan tuntas. Kerja sama tim luar biasa!',
+      reply: 'Terima kasih, Pak/Bu Manajer! Kami tetap siaga bila ada kebutuhan tambahan.',
     };
   }
 
-  // Pass-by / sapaan berpapasan umum
+  // Manajer: Variasi berbicara biasa (santai) dan informasi faktual
   if (speakerRole === 'manager') {
+    // Bergantian antara informasi operasional dan obrolan biasa
+    const isInformational = Math.abs(Math.sin(context.timeHour * 2.3 + context.recordedUnitsCount)) > 0.45;
+
+    if (isInformational) {
+      // Informasi Faktual Operasional
+      const infoVariants = [
+        // Info Gerai & Lahan
+        {
+          text: `Dari 7 lahan gerai, ${context.recordedUnitsCount} unit usaha aktif melayani warga Puntukrejo.`,
+          reply: `Alhamdulillah, kehadiran gerai sangat dirasakan manfaatnya oleh warga sekitar.`,
+        },
+        // Info Lahan Siap Pakai
+        emptyPlots > 0
+          ? {
+              text: `Saat ini masih ada ${emptyPlots} petak lahan gerai yang siap kita kembangkan untuk unit baru.`,
+              reply: `Bagus sekali Pak/Bu, potensi kemitraan usaha warga bisa kita ajak bergabung.`,
+            }
+          : {
+              text: 'Seluruh 7 lahan gerai terisi penuh! Kawasan niaga desa beroperasi maksimal.',
+              reply: 'Luar biasa, semoga perputaran ekonomi koperasi terus tumbuh berkah.',
+            },
+        // Info Logistik & Gudang
+        {
+          text: 'Aktivitas gudang logistik dan armada distribusi terpantau tertib memasok barang gerai.',
+          reply: 'Betul Pak/Bu, jalur distribusi timur sangat lancar untuk bongkar muat.',
+        },
+        // Info Tugas / Rapat
+        context.openTasksCount > 0
+          ? {
+              text: `Dashboard mencatat ${context.openTasksCount} tugas yang memerlukan tindak lanjut hari ini.`,
+              reply: 'Baik Pak/Bu, kami terus perbarui status penyelesaian di sistem.',
+            }
+          : {
+              text: 'Hari ini tidak ada beban tugas menunggak. Waktu yang baik untuk menata arsip.',
+              reply: 'Siap Pak/Bu, kami manfaatkan untuk inventarisasi dan kebersihan ruangan.',
+            },
+      ];
+      const pick = infoVariants[Math.floor(Math.abs(Math.sin(context.timeHour + context.openTasksCount)) * 10) % infoVariants.length];
+      return pick;
+    }
+
+    // Obrolan Santai / Sapaan Biasa Manajer
+    const casualVariants = [
+      `${greeting}! Bagaimana suasana dan aktivitas di sekitar gerai hari ini?`,
+      `Udara Puntukrejo hari ini sangat sejuk. Senang melihat kawasan kita semakin hidup.`,
+      `Koperasi yang sehat dibangun dari keramahan dan pelayanan tulus kepada warga.`,
+      `Jangan lupa rehat sejenak dan minum air ya rekan-rekan, stamina harus tetap terjaga.`,
+      `Pemandangan taman dan air mancur di depan membuat suasana kerja terasa teduh.`,
+    ];
+    const pickCasual = casualVariants[Math.floor(Math.abs(Math.cos(context.timeHour * 1.7)) * 10) % casualVariants.length];
     return {
-      text: `${greeting}! Bagaimana aktivitas di gerai dan kantor hari ini?`,
-      reply: `${greeting}, Pak/Bu ${context.managerName}! Semua berjalan aman dan teratur.`,
+      text: pickCasual,
+      reply: `${greeting}, Pak/Bu ${context.managerName}! Semua berjalan aman, ramah, dan tertib.`,
     };
   }
 
+  // Staf Koperasi
   if (speakerRole === 'staff') {
-    return {
-      text: `${greeting}, Pak/Bu ${context.managerName}! Kawasan Puntukrejo hari ini ceria.`,
-      reply: `${greeting}! Terima kasih atas dedikasinya untuk koperasi kita.`,
-    };
+    const staffMessages = [
+      {
+        text: `${greeting}, Pak/Bu ${context.managerName}! Data pencatatan harian sedang kami rapikan.`,
+        reply: `${greeting}! Terima kasih atas dedikasi dan ketelitiannya.`,
+      },
+      {
+        text: `Pasokan barang di gudang sudah dicek, siap didistribusikan ke unit gerai.`,
+        reply: `Bagus, pastikan mutasi stok dicatat akurat di buku barang ya.`,
+      },
+      {
+        text: `Kawasan koperasi hari ini ramai dikunjungi warga desa yang berbelanja.`,
+        reply: `Alhamdulillah, terus berikan senyum dan pelayanan terbaik untuk warga.`,
+      },
+    ];
+    const pick = staffMessages[Math.floor(Math.abs(Math.sin(context.timeHour * 2.1)) * 10) % staffMessages.length];
+    return pick;
   }
 
-  // NPC pengunjung warga
-  const npcQuestions = [
-    `${greeting}, Pak/Bu! Senang melihat kawasan koperasi semakin ramai dan bersih.`,
-    'Gerai koperasi sangat membantu kebutuhan warga desa di sini.',
-    'Udara sejuk sekali hari ini di sekitar taman air mancur.',
+  // NPC Warga / Pengunjung Desa
+  const npcMessages = [
+    {
+      text: `${greeting}, Pak/Bu! Senang melihat kawasan koperasi semakin rapi, hijau, dan bersih.`,
+      reply: `Terima kasih! Kebersihan dan kenyamanan kawasan adalah komitmen bersama.`,
+    },
+    {
+      text: `Gerai koperasi sangat membantu kebutuhan harian warga di desa Puntukrejo ini.`,
+      reply: `Alhamdulillah, kami terus berupaya menyediakan pasokan lengkap dan harga wajar.`,
+    },
+    {
+      text: `Jalan raya dan trotoar baru di samping gerai membuat akses warga jadi jauh lebih mudah.`,
+      reply: `Betul, akses tertib mempermudah warga berbelanja sekaligus menjaga keselamatan lalu lintas.`,
+    },
+    {
+      text: `Suasana di sekitar air mancur asri sekali untuk duduk bersantai sejenak.`,
+      reply: `Silakan menikmati suasana taman desa kita! Selamat beraktivitas!`,
+    },
   ];
-  const pick = npcQuestions[Math.floor(Math.abs(Math.sin(context.timeHour + context.openTasksCount) * 100)) % npcQuestions.length];
-
-  return {
-    text: pick,
-    reply: 'Terima kasih atas kunjungannya, mari bersama majukan koperasi desa!',
-  };
+  const pickNpc = npcMessages[Math.floor(Math.abs(Math.sin(context.timeHour + context.recordedUnitsCount)) * 10) % npcMessages.length];
+  return pickNpc;
 }
 
 /**
@@ -138,7 +233,7 @@ export class DialogueManager {
     position: [number, number, number],
     context: DialogueContext,
     currentElapsed: number,
-    interactionType: 'desk_visit' | 'pass_by' | 'rain' | 'meeting_call' = 'pass_by',
+    interactionType: 'desk_visit' | 'pass_by' | 'rain' | 'meeting_call' | 'info_broadcast' | 'casual_chat' = 'pass_by',
     maxBubbles = 2,
   ): boolean {
     if (!this.canTriggerDialogue(senderId, receiverId, currentElapsed)) {

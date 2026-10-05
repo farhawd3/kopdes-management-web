@@ -597,51 +597,71 @@ export function createExterior(parent: THREE.Group, model: WorldModel) {
   // Layer 4: Badan Jalan Utama (Top = 0.040, tebal 0.06, menembus tanah ke -0.02, castShadow = false)
   // Jalan utama timur-barat di Z = 12
   box(parent, [58, 0.06, 6.4], [0, 0.01, 12], palette.road, 0, false);
-  // Cabang jalan simpang ke utara (arah kantor/plaza) di X = 0
-  box(parent, [5.2, 0.06, 5.8], [0, 0.01, 5.9], palette.road, 0, false);
+  // Jalan raya baru di sisi kanan (timur) membentang ke arah utara di samping gerai & gudang (X = 24.5)
+  box(parent, [5.8, 0.06, 29.5], [24.5, 0.01, -2.75], palette.road, 0, false);
+  // Plaza promenade pejalan kaki penghubung trotoar selatan ke taman air mancur di tengah (X = 0)
+  box(parent, [4.2, 0.05, 5.8], [0, 0.008, 5.9], '#f8fafc', 0.035, false);
 
   // Layer 5: Marka Jalan, Zebra Cross & Garis Dermaga (Top = 0.052, tebal 0.012, castShadow = false)
-  // Marka tengah putus-putus
-  for (let x = -27; x < 28; x += 3.5) {
-    if (Math.abs(x) > 3.0) {
-      box(parent, [1.8, 0.012, 0.14], [x, 0.046, 12], '#ffffff', 0, false);
-    }
+  // Marka tengah jalan utama selatan (putus-putus)
+  for (let x = -27; x < 21; x += 3.5) {
+    box(parent, [1.8, 0.012, 0.14], [x, 0.046, 12], '#ffffff', 0, false);
   }
-  // Marka garis tepi jalan
-  box(parent, [58, 0.012, 0.12], [0, 0.046, 9.1], '#ffffff', 0, false);
+  // Marka tengah jalan raya sisi kanan ke arah utara (putus-putus sepanjang Z dari 8.0 s/d -16.5)
+  for (let z = 8.0; z > -16.5; z -= 3.5) {
+    box(parent, [0.14, 0.012, 1.8], [24.5, 0.046, z], '#ffffff', 0, false);
+  }
+  // Marka garis tepi jalan utama selatan
+  box(parent, [50, 0.012, 0.12], [-4, 0.046, 9.1], '#ffffff', 0, false);
   box(parent, [58, 0.012, 0.12], [0, 0.046, 14.9], '#ffffff', 0, false);
+  // Marka garis tepi jalan raya sisi kanan
+  box(parent, [0.12, 0.012, 25.5], [21.6, 0.046, -4.75], '#ffffff', 0, false);
+  box(parent, [0.12, 0.012, 31.5], [27.4, 0.046, -1.75], '#ffffff', 0, false);
+
+  // Garis henti (Stop Lines) Simpang Lampu Merah Kanan
+  box(parent, [0.35, 0.012, 2.8], [20.6, 0.046, 10.8], '#ffffff', 0, false); // Arah timur
+  box(parent, [0.35, 0.012, 2.8], [28.4, 0.046, 13.2], '#ffffff', 0, false); // Arah barat
+  box(parent, [2.6, 0.012, 0.35], [25.8, 0.046, 8.5], '#ffffff', 0, false); // Dari utara
+
   // Marka kuning dermaga gudang
   box(parent, [15.6, 0.012, 0.12], [18, 0.046, 9.1], palette.dockStripe, 0, false);
   for (let i = 0; i < 4; i++) {
     box(parent, [0.1, 0.012, 3.2], [14 + i * 2.6, 0.046, 5.8], palette.dockStripe, 0, false);
   }
 
-  // Zebra Cross Simpang (3 Penyeberangan)
+  // Zebra Cross Simpang Kanan Baru & Akses Taman
   for (let i = 0; i < 6; i++) {
-    // Zebra penyeberangan barat (X = -3.8)
-    box(parent, [0.65, 0.012, 0.5], [-3.8, 0.046, 9.5 + i * 0.9], '#ffffff', 0, false);
-    // Zebra penyeberangan timur (X = 3.8)
-    box(parent, [0.65, 0.012, 0.5], [3.8, 0.046, 9.5 + i * 0.9], '#ffffff', 0, false);
+    // Zebra penyeberangan barat simpang (X = 19.8)
+    box(parent, [0.65, 0.012, 0.5], [19.8, 0.046, 9.5 + i * 0.9], '#ffffff', 0, false);
+    // Zebra penyeberangan pejalan kaki di depan taman air mancur (X = 0)
+    box(parent, [0.65, 0.012, 0.5], [0, 0.046, 9.5 + i * 0.9], '#ffffff', 0, false);
   }
-  // Zebra penyeberangan cabang utara (Z = 8.5)
+  // Zebra penyeberangan cabang utara simpang kanan (Z = 8.0)
   for (let i = 0; i < 5; i++) {
-    box(parent, [0.5, 0.012, 0.65], [-1.8 + i * 0.9, 0.046, 8.5], '#ffffff', 0, false);
+    box(parent, [0.5, 0.012, 0.65], [22.5 + i * 0.9, 0.046, 8.0], '#ffffff', 0, false);
   }
 
   // Layer 6: Trotoar & Kerb (Top = 0.120, tebal 0.14, castShadow = true)
+  // Trotoar tepi selatan platform
   box(parent, [58, 0.14, 2.0], [0, 0.05, 16.2], palette.sidewalk, 0.035, true);
-  box(parent, [25.4, 0.14, 2.2], [-16.3, 0.05, 7.7], palette.sidewalk, 0.035, true);
-  box(parent, [25.4, 0.14, 2.2], [16.3, 0.05, 7.7], palette.sidewalk, 0.035, true);
-  // Trotoar pedestrian penghubung utara-selatan
-  box(parent, [58, 0.06, 2.4], [0, 0.02, -4.8], palette.sidewalk, 0.035, false);
+  // Trotoar utara jalan selatan (dari barat hingga simpang kanan)
+  box(parent, [48.6, 0.14, 2.2], [-3.7, 0.05, 7.7], palette.sidewalk, 0.035, true);
+  // Trotoar barat jalan raya sisi kanan (membentang di samping gerai & gudang)
+  box(parent, [1.8, 0.14, 25.2], [20.6, 0.05, -4.9], palette.sidewalk, 0.035, true);
+  // Trotoar timur jalan raya sisi kanan (tepi timur platform)
+  box(parent, [2.0, 0.14, 33.7], [28.4, 0.05, -0.65], palette.sidewalk, 0.035, true);
+
+  // Trotoar pedestrian penghubung utara-selatan di kawasan gerai
+  box(parent, [39.0, 0.06, 2.4], [-0.5, 0.02, -4.8], palette.sidewalk, 0.035, false);
   for (const wx of [-18, -5, 4, 18]) {
     box(parent, [2.4, 0.06, 10.2], [wx, 0.02, 1.4], palette.sidewalk, 0.035, false);
   }
 
-  // Simpang Lampu Merah (Traffic Lights) di X = -3.2 dan X = 3.2
-  const tlWest = createTrafficLight(parent, -3.2, 8.6, 0);
-  const tlEast = createTrafficLight(parent, 3.2, 8.6, Math.PI);
-  const trafficLights = [tlWest, tlEast];
+  // Simpang Lampu Merah Modular (Traffic Lights) di Simpang Kanan
+  const tlWest = createTrafficLight(parent, 20.2, 8.4, 0);
+  const tlEast = createTrafficLight(parent, 28.8, 15.6, Math.PI);
+  const tlNorth = createTrafficLight(parent, 28.2, 8.4, -Math.PI / 2);
+  const trafficLights = [tlWest, tlEast, tlNorth];
 
   // Area Parkir Mobil Manajer di X = -18, Z = 6.5
   box(parent, [11, 0.035, 5.0], [-17, 0.005, 6.5], '#475569', 0.035, false);
@@ -722,11 +742,17 @@ export function createExterior(parent: THREE.Group, model: WorldModel) {
   const streetLamps: THREE.Mesh[] = [];
   const groundGlows: THREE.Mesh[] = [];
 
-  for (const lx of [-24, -12, 0, 12, 24]) {
+  for (const lx of [-24, -12, 0, 12]) {
     const lamp1 = streetLamp(parent, lx, 8.4);
     const lamp2 = streetLamp(parent, lx, 15.6);
     streetLamps.push(lamp1.bulb, lamp2.bulb);
     groundGlows.push(lamp1.glow, lamp2.glow);
+  }
+  // Tiang lampu jalan di sepanjang jalan raya sisi kanan ke arah utara
+  for (const lz of [4, -4, -12]) {
+    const lamp = streetLamp(parent, 28.2, lz);
+    streetLamps.push(lamp.bulb);
+    groundGlows.push(lamp.glow);
   }
   const lampNorth1 = streetLamp(parent, -1, 3.2);
   const lampNorth2 = streetLamp(parent, 9, 3.2);
@@ -734,12 +760,15 @@ export function createExterior(parent: THREE.Group, model: WorldModel) {
   groundGlows.push(lampNorth1.glow, lampNorth2.glow);
 
   // Pepohonan Hijau Kawasan
-  for (const tx of [-26, -21, -15, -9, 0, 9, 15, 21, 26]) {
+  for (const tx of [-26, -21, -15, -9, 0, 9, 15, 21]) {
     tree(parent, tx, -16, 1.15);
   }
   for (const tz of [-12, -6, 0, 6]) {
     tree(parent, -26, tz, 1.0);
-    tree(parent, 26, tz, 1.0);
+  }
+  // Deretan pohon pembingkai di sisi timur jalan raya baru
+  for (const tz of [-15, -9, -3, 3, 9, 15]) {
+    tree(parent, 29.8, tz, 0.95);
   }
   tree(parent, -0.8, -2.6, 0.85);
   tree(parent, 8.8, -2.6, 0.85);
