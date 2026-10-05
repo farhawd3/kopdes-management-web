@@ -16,7 +16,6 @@ import {
   Plus,
   Send,
   Trash2,
-  Calendar,
   Flag,
   ExternalLink,
   Link2,
@@ -503,7 +502,6 @@ export function TaskDetailDrawer({
             <div className="drawer-prop-row">
               <span className="drawer-prop-label">Tenggat</span>
               <div className="drawer-prop-control date-prop-editable" title="Ubah tanggal tenggat tugas">
-                <Calendar size={13} className="drawer-prop-calendar-icon" />
                 <DateInput
                   aria-label="Tenggat tugas"
                   className="drawer-date-inline-input"

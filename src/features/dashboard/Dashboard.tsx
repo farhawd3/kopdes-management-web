@@ -294,45 +294,46 @@ export function Dashboard({ data, preferenceScope = '' }: { data: Workspace; pre
       <div className="ui-home-grid">
         {/* ── Left Column: Task Focus & Daily Routine ───────── */}
         <section className="home-work" aria-label="Tugas pilihan">
-          <Link href="/rapat" className="next-meeting">
-            <span className="meeting-icon-box">
-              <CalendarDays size={22} />
-            </span>
-            <div className="meeting-info-content">
-              <div className="meeting-eyebrow-row">
-                <small>{meeting ? 'Rapat berikutnya' : 'Agenda rapat'}</small>
-                {meeting && (
-                  <span className="meeting-mode-pill">{String(meeting.data.mode || 'tatap muka')}</span>
+          <div className="next-meeting" role="region" aria-label="Agenda rapat koordinasi">
+            <Link href="/rapat" className="next-meeting-link">
+              <span className="meeting-icon-box">
+                <CalendarDays size={22} />
+              </span>
+              <div className="meeting-info-content">
+                <div className="meeting-eyebrow-row">
+                  <small>{meeting ? 'Rapat berikutnya' : 'Agenda rapat'}</small>
+                  {meeting && (
+                    <span className="meeting-mode-pill">{String(meeting.data.mode || 'tatap muka')}</span>
+                  )}
+                </div>
+                <strong>{meeting ? String(meeting.data.title) : 'Belum ada jadwal rapat'}</strong>
+                {meeting ? (
+                  <span className="meeting-meta-time">
+                    {formatDate(String(meeting.data.date))} ·{' '}
+                    {String(meeting.data.time || 'Waktu belum diisi')}
+                  </span>
+                ) : (
+                  <span className="meeting-meta-empty">Klik untuk menjadwalkan rapat koordinasi</span>
                 )}
               </div>
-              <strong>{meeting ? String(meeting.data.title) : 'Belum ada jadwal rapat'}</strong>
-              {meeting ? (
-                <span className="meeting-meta-time">
-                  {formatDate(String(meeting.data.date))} ·{' '}
-                  {String(meeting.data.time || 'Waktu belum diisi')}
-                </span>
-              ) : (
-                <span className="meeting-meta-empty">Klik untuk menjadwalkan rapat koordinasi</span>
-              )}
-            </div>
+            </Link>
             {meetingOnlineUrl ? (
               <a
                 href={meetingOnlineUrl}
                 target="_blank"
                 rel="noreferrer"
                 className="btn-join-meeting-direct"
-                onClick={(e) => e.stopPropagation()}
                 title="Buka ruang rapat daring langsung"
               >
                 <Video size={14} />
                 <span>Gabung ↗</span>
               </a>
             ) : (
-              <span className="round-arrow" aria-hidden="true">
+              <Link href="/rapat" className="round-arrow" aria-label="Buka agenda rapat" tabIndex={-1}>
                 <ArrowRight size={18} />
-              </span>
+              </Link>
             )}
-          </Link>
+          </div>
 
           <div className="focus-filters" aria-label="Filter pekerjaan">
             {[
@@ -681,6 +682,7 @@ export function Dashboard({ data, preferenceScope = '' }: { data: Workspace; pre
               </div>
               <Button
                 type="button"
+                variant="ghost"
                 className="close-btn"
                 onClick={() => setShowRoutineModal(false)}
                 aria-label="Tutup"
@@ -703,7 +705,7 @@ export function Dashboard({ data, preferenceScope = '' }: { data: Workspace; pre
                   />
                   <Input
                     type="text"
-                    placeholder="Tambah rutinitas baru (misal: Cek suhu showcase)..."
+                    placeholder="Rutinitas baru (misal: Cek suhu showcase)..."
                     value={newRoutineTitle}
                     onChange={(e) => setNewRoutineTitle(e.target.value)}
                     className="routine-title-input"
@@ -712,7 +714,7 @@ export function Dashboard({ data, preferenceScope = '' }: { data: Workspace; pre
                     required
                   />
                 </div>
-                <Button type="submit" className="btn-add-routine">
+                <Button type="submit" variant="primary" className="btn-add-routine">
                   <Plus size={15} />
                   <span>Tambah</span>
                 </Button>
@@ -725,6 +727,7 @@ export function Dashboard({ data, preferenceScope = '' }: { data: Workspace; pre
                     <span className="routine-config-title">{item.title}</span>
                     <Button
                       type="button"
+                      variant="ghost"
                       className="btn-delete-routine"
                       onClick={() => handleDeleteRoutine(item.id)}
                       title="Hapus rutinitas ini"
@@ -743,6 +746,7 @@ export function Dashboard({ data, preferenceScope = '' }: { data: Workspace; pre
             <div className="routine-modal-footer">
               <Button
                 type="button"
+                variant="secondary"
                 className="btn-reset-routine"
                 onClick={handleResetRoutines}
                 title="Kembalikan ke rutinitas standar KDMP"
@@ -752,6 +756,7 @@ export function Dashboard({ data, preferenceScope = '' }: { data: Workspace; pre
               </Button>
               <Button
                 type="button"
+                variant="primary"
                 className="btn-primary-finish"
                 onClick={() => setShowRoutineModal(false)}
               >

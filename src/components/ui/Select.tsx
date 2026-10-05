@@ -212,7 +212,7 @@ export function Select({
         ref={triggerRef}
         type="button"
         id={`${selectId}-trigger`}
-        className="ui-select-trigger"
+        className="ui-select-trigger custom-select-trigger"
         aria-haspopup="listbox"
         aria-label={ariaLabel ? `${ariaLabel}: ${displayLabel}` : displayLabel}
         aria-controls={`${selectId}-menu`}

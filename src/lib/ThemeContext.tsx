@@ -16,7 +16,7 @@ export const COLOR_STYLES: {
 }[] = [
   {
     id: 'sage',
-    name: '🌿 Mint & Sage',
+    name: 'Mint & Sage',
     primary: '#5E8B7E',
     companion: '#A7C4BC',
     soft: '#E8F1ED',
@@ -25,7 +25,7 @@ export const COLOR_STYLES: {
   },
   {
     id: 'lavender',
-    name: '🪻 Lavender Mist',
+    name: 'Lavender Mist',
     primary: '#8D7BB8',
     companion: '#C2B0E2',
     soft: '#EFEBFA',
@@ -34,7 +34,7 @@ export const COLOR_STYLES: {
   },
   {
     id: 'peach',
-    name: '🍑 Peach & Oat',
+    name: 'Peach & Oat',
     primary: '#C47D5E',
     companion: '#E6D3BF',
     soft: '#FAF0EB',
@@ -43,7 +43,7 @@ export const COLOR_STYLES: {
   },
   {
     id: 'sky',
-    name: '🌊 Pastel Sky',
+    name: 'Pastel Sky',
     primary: '#5A84A2',
     companion: '#9FC5CB',
     soft: '#E7F0F6',
@@ -52,7 +52,7 @@ export const COLOR_STYLES: {
   },
   {
     id: 'lime',
-    name: '🍵 Matcha & Lime',
+    name: 'Matcha & Lime',
     primary: '#7B9B4B',
     companion: '#C9DC87',
     soft: '#EFF5E4',
@@ -61,7 +61,7 @@ export const COLOR_STYLES: {
   },
   {
     id: 'sand',
-    name: '🍙 Charcoal & Slate',
+    name: 'Charcoal & Slate',
     primary: '#5C6B73',
     companion: '#9DB4C0',
     soft: '#EEF2F4',

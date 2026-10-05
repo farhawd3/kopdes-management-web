@@ -2,13 +2,14 @@
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { Building2, Plus, MessageCircle, MapPin } from 'lucide-react';
+import { Building2, Plus, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import {
   animateCharacter,
   createCharacter,
   createExterior,
   createInterior,
+  createSelectionBrackets,
   palette,
 } from './world-objects';
 import {
@@ -18,12 +19,26 @@ import {
   type WorldModel,
   type WorldPreferences,
 } from './world-model';
+import {
+  createTrafficShuffleBag,
+  stepTrafficSimulation,
+  type TrafficVehicleState,
+  type VehicleType,
+} from './world-traffic';
+import {
+  DialogueManager,
+  type DialogueBubble,
+  type DialogueContext,
+} from './world-dialogue';
+import { getLightingForMinute } from './world-lighting';
 
 type Props = {
   model: WorldModel;
   location: WorldLocation;
   weather: WorldPreferences['weather'];
   hour: number;
+  minuteOfDay?: number;
+  isPaused?: boolean;
   outfit: WorldPreferences['outfit'];
   activity: CharacterActivity;
   zoom: number;
@@ -37,6 +52,8 @@ export function WorldScene({
   location,
   weather,
   hour,
+  minuteOfDay,
+  isPaused = false,
   outfit,
   activity,
   zoom,
@@ -50,15 +67,20 @@ export function WorldScene({
   const runtime = useRef<{ camera: THREE.OrthographicCamera; controls: OrbitControls } | null>(
     null,
   );
-  const motion = useRef({ activity, weather, hour });
+  const motion = useRef({ activity, weather, hour, minuteOfDay, isPaused });
   const selectAction = useRef(onSelect);
+  const selectedRef = useRef(selected);
   const [failed, setFailed] = useState(false);
+  const [screenBubbles, setScreenBubbles] = useState<({ x: number; y: number } & DialogueBubble)[]>([]);
   useEffect(() => {
-    motion.current = { activity, weather, hour };
-  }, [activity, weather, hour]);
+    motion.current = { activity, weather, hour, minuteOfDay, isPaused };
+  }, [activity, weather, hour, minuteOfDay, isPaused]);
   useEffect(() => {
     selectAction.current = onSelect;
   }, [onSelect]);
+  useEffect(() => {
+    selectedRef.current = selected;
+  }, [selected]);
   useEffect(() => {
     if (!runtime.current) return;
     runtime.current.camera.zoom = zoom;
@@ -85,7 +107,7 @@ export function WorldScene({
     }
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.type = THREE.PCFShadowMap;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.22;
@@ -98,66 +120,95 @@ export function WorldScene({
     node.prepend(renderer.domElement);
     const scene = new THREE.Scene();
     scene.background = new THREE.Color('#e7edf9');
-    const camera = new THREE.OrthographicCamera(-20, 20, 14, -14, 0.1, 150);
-    camera.position.set(26, 23, 26);
+    const camera = new THREE.OrthographicCamera(-26, 26, 18, -18, 0.1, 200);
+    camera.position.set(34, 30, 34);
     camera.lookAt(0, 0, 0);
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.09;
-    controls.minZoom = 0.65;
-    controls.maxZoom = 2.8;
+    controls.minZoom = 0.6;
+    controls.maxZoom = 3.0;
     controls.minPolarAngle = 0.45;
     controls.maxPolarAngle = 1.18;
     controls.enablePan = true;
-    controls.maxTargetRadius = 12;
+    controls.maxTargetRadius = 26;
     runtime.current = { camera, controls };
-    const ambient = new THREE.HemisphereLight('#f3f8ff', '#a1acc4', 2.5);
+    const ambient = new THREE.HemisphereLight('#f4f8ff', '#9fb0cc', 2.8);
     scene.add(ambient);
-    const sun = new THREE.DirectionalLight('#fff5e3', 3.5);
-    sun.position.set(-10, 20, 10);
+    const sun = new THREE.DirectionalLight('#fff8ec', 3.8);
+    sun.position.set(-16, 26, 16);
     sun.castShadow = true;
     sun.shadow.mapSize.set(2048, 2048);
     Object.assign(sun.shadow.camera, {
-      left: -22,
-      right: 22,
-      top: 22,
-      bottom: -22,
-      near: 0.5,
-      far: 65,
+      left: -32,
+      right: 32,
+      top: 24,
+      bottom: -24,
+      near: 1.0,
+      far: 90,
     });
-    sun.shadow.bias = -0.0005;
-    sun.shadow.normalBias = 0.04;
+    sun.shadow.bias = -0.0003;
+    sun.shadow.normalBias = 0.025;
     scene.add(sun);
+
+    const nightPointLight = new THREE.PointLight('#fef08a', 0, 36, 1.8);
+    nightPointLight.position.set(2, 6, 8);
+    scene.add(nightPointLight);
+
+    const interiorPointLight = new THREE.PointLight('#fff1dc', 0, 26, 1.6);
+    interiorPointLight.position.set(0, 5.5, -1.0);
+    scene.add(interiorPointLight);
     const floor = new THREE.Mesh(
-      new THREE.PlaneGeometry(300, 300),
+      new THREE.PlaneGeometry(500, 500),
       new THREE.MeshStandardMaterial({ color: '#e5ebf8', roughness: 1 }),
     );
     floor.rotation.x = -Math.PI / 2;
-    floor.position.y = -0.4;
+    floor.position.y = -0.45;
     floor.receiveShadow = true;
     scene.add(floor);
     const world = new THREE.Group();
     scene.add(world);
-    if (location === 'luar') createExterior(world, model);
-    else createInterior(world);
-    const color = { biru: palette.blue, lavender: '#a18ae0', hijau: '#51aa8a' }[outfit];
-    const characters = [
-      createCharacter(world, location === 'luar' ? [-1.3, 0.1, 5] : [-4, 0.1, -0.95], color),
-      createCharacter(
-        world,
-        location === 'luar' ? [5.4, 0.1, -0.7] : [2, 0.1, -0.15],
-        '#a18ae0',
-        1,
-      ),
-      createCharacter(world, location === 'luar' ? [-7, 0.1, -1] : [5.3, 0.3, 3.5], '#50ab90', 2),
-    ];
-    characters.forEach((character) => {
-      character.group.userData.selection = 'karakter';
-    });
-    if (location === 'dalam') {
-      characters[0].group.rotation.y = Math.PI;
+    const selectionBrackets = createSelectionBrackets(world);
+    let exteriorResult: ReturnType<typeof createExterior> | undefined;
+    if (location === 'luar') {
+      exteriorResult = createExterior(world, model);
+    } else {
+      createInterior(world);
+    }
+    const color = { biru: palette.navy, lavender: '#4338ca', hijau: '#1e3a8a' }[outfit];
+    const characters =
+      location === 'luar'
+        ? [
+            createCharacter(world, [-5, 0.1, 3.5], color, 0, 'manager', 'pria'),
+            createCharacter(world, [4, 0.42, 2.6], '#e11d48', 1, 'npc', 'pria'), // Pak Subagyo (warga)
+            createCharacter(world, [4, 0.42, -2.6], '#f59e0b', 0, 'npc', 'wanita'), // Bu Ratna (UMKM)
+            createCharacter(world, [-14, 0.1, -4.8], '#10b981', 0, 'npc', 'wanita'), // Siti Rahma (pejalan gerai - wanita)
+            createCharacter(world, [39.0, 0.1, 7.0], '#6366f1', 2, 'npc', 'pria'), // Fajar (kurir - topi baret baru)
+          ]
+        : [
+            createCharacter(world, [-7.8, 0.42, -5.5], color, 0, 'manager', 'pria'), // Pak Hartono (di Ruang Kerja Manajer)
+            createCharacter(world, [-1.8, 0.42, -4.4], '#3b82f6', 1, 'staff', 'wanita'), // Anisa (staf tugas - wanita)
+            createCharacter(world, [7.8, 0.42, -3.4], '#0284c7', 0, 'staff', 'pria'), // Bambang (staf notulen di Ruang Rapat)
+            createCharacter(world, [9.2, 0.35, 4.8], '#10b981', 2, 'staff', 'pria'), // Dedi (lapangan/gym - topi baret)
+          ];
+
+    if (location === 'luar') {
+      characters[0].group.userData.selection = 'manajer';
+      characters[1].group.userData.selection = 'npc-warga-selatan';
+      characters[2].group.userData.selection = 'npc-warga-utara';
+      characters[3].group.userData.selection = 'npc-pejalan';
+      characters[4].group.userData.selection = 'npc-jalan-kanan';
       characters[1].group.rotation.y = Math.PI;
-      characters[2].group.rotation.y = Math.PI;
+      characters[2].group.rotation.y = 0;
+    } else {
+      characters[0].group.userData.selection = 'manajer';
+      characters[1].group.userData.selection = 'karyawan-tugas';
+      characters[2].group.userData.selection = 'karyawan-rapat';
+      characters[3].group.userData.selection = 'karyawan-gym';
+      characters[0].group.rotation.y = 0; // Manajer menghadap ke depan/selatan mejanya
+      characters[1].group.rotation.y = Math.PI; // Anisa menghadap ke utara/mejanya
+      characters[2].group.rotation.y = Math.PI; // Bambang menghadap ke utara/meja rapat
+      characters[3].group.rotation.y = 0; // Dedi di gym
     }
     const raycaster = new THREE.Raycaster();
     const pointer = new THREE.Vector2();
@@ -185,13 +236,19 @@ export function WorldScene({
     };
     renderer.domElement.addEventListener('pointerdown', startPointer);
     renderer.domElement.addEventListener('pointerup', pickObject);
-    const rainCount = 350,
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        selectAction.current('kawasan');
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    const rainCount = 450,
       rainPositions = new Float32Array(rainCount * 6);
     for (let i = 0; i < rainCount; i++) {
-      const x = ((i * 17.37) % 34) - 17,
-        y = (i * 7.19) % 16,
-        z = ((i * 11.63) % 26) - 13;
-      rainPositions.set([x, y, z, x - 0.12, y + 0.5, z], i * 6);
+      const x = ((i * 17.37) % 60) - 30,
+        y = (i * 7.19) % 20,
+        z = ((i * 11.63) % 40) - 20;
+      rainPositions.set([x, y, z, x - 0.12, y + 0.6, z], i * 6);
     }
     const rainGeometry = new THREE.BufferGeometry();
     rainGeometry.setAttribute('position', new THREE.BufferAttribute(rainPositions, 3));
@@ -211,7 +268,7 @@ export function WorldScene({
       if (!width || !height) return;
       renderer.setSize(width, height);
       const aspect = width / height;
-      const span = location === 'luar' ? (aspect < 1 ? 20 : 13.2) : aspect < 1 ? 11.5 : 8.5;
+      const span = location === 'luar' ? (aspect < 1 ? 29 : 20.5) : aspect < 1 ? 16 : 11.5;
       camera.left = -span * aspect;
       camera.right = span * aspect;
       camera.top = span;
@@ -223,60 +280,792 @@ export function WorldScene({
     resize();
     const positions = new Map<string, THREE.Vector3>();
     if (location === 'luar') {
-      positions.set('koperasi', new THREE.Vector3(-3, 4.1, 2.7));
+      positions.set('koperasi', new THREE.Vector3(-5, 4.3, 0));
+      positions.set('gudang', new THREE.Vector3(30, 4.2, -1.5));
       model.plots.forEach((plot) =>
         positions.set(
           plot.id,
-          new THREE.Vector3(plot.position[0], plot.unit ? 3.1 : 0.6, plot.position[1]),
+          new THREE.Vector3(plot.position[0], plot.unit ? 3.2 : 0.6, plot.position[1]),
         ),
       );
-    } else
-      worldStations.forEach((station) =>
-        positions.set(station.id, new THREE.Vector3(station.position[0], 2.2, station.position[2])),
-      );
+    } else {
+      worldStations
+        .filter((station) => station.scope === 'kantor')
+        .forEach((station) =>
+          positions.set(station.id, new THREE.Vector3(station.position[0], 2.2, station.position[2])),
+        );
+    }
+
+    // Waypoints for manager exterior patrol
+    const pOffice = new THREE.Vector3(-5, 0.1, 3.5);
+    const pPlaza = new THREE.Vector3(3.5, 0.1, 3.5);
+    const pRightRoad = new THREE.Vector3(39.0, 0.1, 2.0);
+    const pPlots = new THREE.Vector3(-10, 0.1, -4.8);
+
+    // Traffic Simulation State (Paket 3 PRD v2)
+    const trafficBag = createTrafficShuffleBag(99);
+    let nextVehicleSpawn = 1.0;
+    const trafficVehicles: Record<VehicleType, TrafficVehicleState> = {
+      motor: {
+        id: 'pool-motor',
+        type: 'motor',
+        color: '#79c8a0',
+        direction: 1,
+        x: -35,
+        z: 10.8,
+        speed: 2.8,
+        targetSpeed: 2.8,
+        opacity: 0,
+        scale: 0.94,
+        castShadow: false,
+        state: 'despawned',
+        lane: 'east',
+      },
+      mobil: {
+        id: 'pool-mobil',
+        type: 'mobil',
+        color: palette.blue,
+        direction: -1,
+        x: 35,
+        z: 13.2,
+        speed: 3.2,
+        targetSpeed: 3.2,
+        opacity: 0,
+        scale: 0.94,
+        castShadow: false,
+        state: 'despawned',
+        lane: 'west',
+      },
+      van: {
+        id: 'pool-van',
+        type: 'van',
+        color: '#fafcff',
+        direction: 1,
+        x: -35,
+        z: 10.8,
+        speed: 2.6,
+        targetSpeed: 2.6,
+        opacity: 0,
+        scale: 0.94,
+        castShadow: false,
+        state: 'despawned',
+        lane: 'east',
+      },
+      truk: {
+        id: 'pool-truk',
+        type: 'truk',
+        color: palette.navy,
+        direction: 1,
+        x: -35,
+        z: 10.8,
+        speed: 2.2,
+        targetSpeed: 2.2,
+        opacity: 0,
+        scale: 0.94,
+        castShadow: false,
+        state: 'despawned',
+        lane: 'east',
+      },
+    };
+
+    const dialogueManager = new DialogueManager();
+    let lastBubbleSync = 0;
+
+    const targetLookAt = new THREE.Vector3(0, 0, 0);
+    const getTargetCoords = (sel: string): [number, number, number] | null => {
+      if (sel === 'manajer') return location === 'luar' ? [-5, 0.4, 3.5] : [-7.8, 0.4, -5.2];
+      if (sel === 'karakter') return location === 'luar' ? [4, 0.4, 2.6] : [0, 0.4, -2.0];
+      if (sel === 'npc-warga-selatan') return [4, 0.5, 2.8];
+      if (sel === 'npc-warga-utara') return [4, 0.5, -2.8];
+      if (sel === 'npc-pejalan') return [-10, 0.5, -4.8];
+      if (sel === 'npc-jalan-kanan') return [39.0, 0.5, 2.0];
+      if (sel === 'karyawan-tugas') return [-1.8, 0.5, -4.4];
+      if (sel === 'karyawan-rapat') return [7.8, 0.5, -3.4];
+      if (sel === 'karyawan-gym') return [9.2, 0.5, 4.8];
+      if (sel === 'gudang' || sel === 'logistik') return [30, 1.2, -1.5];
+      if (sel === 'kendaraan-manajer') return [-18.2, 0.5, 5.2];
+      if (sel === 'kendaraan-van') return [25.8, 0.5, 6.2];
+      if (sel === 'kendaraan-truk-mitra') return [34.2, 0.6, 6.2];
+      if (sel === 'kendaraan-box-logistik') return [24.8, 0.5, 5.2];
+      if (sel === 'koperasi') return [-5, 1.2, 0];
+      if (sel === 'ruang-manajer') return [-7.8, 0.8, -4.5];
+      if (sel === 'rapat') return [7.8, 0.8, -4.5];
+      if (sel === 'tugas') return [0, 0.8, -4.5];
+      if (sel === 'kegiatan') return [7.8, 0.8, 4.6];
+      if (sel === 'dokumen' || sel === 'arsip') return [-7.6, 0.8, 5.6];
+      if (sel === 'lobi') return [0, 0.8, 6.2];
+      if (sel === 'halte-bus') return [-8, 0.8, 16.6];
+      if (sel === 'atm-koperasi') return [-3.2, 0.8, 16.6];
+      if (sel === 'pos-satpam') return [-28, 0.8, 8.5];
+      const p = model.plots.find((item) => item.id === sel);
+      if (p) return [p.position[0], 0.8, p.position[1]];
+      return null;
+    };
+
     const draw = (stamp: number) => {
       if (disposed) return;
       frame = requestAnimationFrame(draw);
       if (document.hidden || stamp - previous < 32) return;
-      elapsed += Math.min((stamp - previous) / 1000, 0.06);
+      const dt = Math.min((stamp - previous) / 1000, 0.06);
+      const state = motion.current;
+      if (!state.isPaused) {
+        elapsed += dt;
+      }
       previous = stamp;
+
+      // Smooth camera focus lerp
+      const currentSelected = selectedRef.current;
+      const coords = getTargetCoords(currentSelected);
+      if (coords && currentSelected !== 'kawasan' && currentSelected !== 'lingkungan') {
+        targetLookAt.set(coords[0], coords[1], coords[2]);
+        selectionBrackets.position.set(coords[0], coords[1] + 0.05, coords[2]);
+        selectionBrackets.visible = true;
+      } else {
+        targetLookAt.set(0, 0, 0);
+        selectionBrackets.visible = false;
+      }
+      controls.target.lerp(targetLookAt, 0.06);
       controls.update();
-      const state = motion.current,
-        night = state.hour < 6 || state.hour >= 19,
-        dusk = state.hour >= 16 && state.hour < 19;
-      const sky = night
-        ? '#23304e'
-        : dusk
-          ? '#e5d8ed'
-          : state.weather === 'cerah'
-            ? '#e7edf9'
-            : '#cbd7e9';
-      scene.background = new THREE.Color(sky);
-      (floor.material as THREE.MeshStandardMaterial).color.set(sky);
-      ambient.intensity = night ? 1.2 : 2.5;
-      sun.intensity = night ? 0.6 : state.weather === 'cerah' ? 3.5 : 1.5;
-      sun.color.set(dusk ? '#ffd0a6' : night ? '#9cb8ff' : '#fff5e3');
-      characters.forEach((character, index) => {
-        const mode =
-          location === 'luar'
-            ? 'idle'
-            : index === 0
-              ? state.activity === 'meeting'
-                ? 'meeting'
-                : 'idle'
-              : index === 1
-                ? state.activity === 'work'
-                  ? 'work'
-                  : 'idle'
-                : state.activity === 'gym'
-                  ? 'gym'
-                  : 'idle';
-        animateCharacter(character, elapsed + index * 2, mode, reduced.matches);
+
+      const currentMinute =
+        state.minuteOfDay !== undefined
+          ? state.minuteOfDay
+          : state.hour * 60;
+      const lighting = getLightingForMinute(currentMinute, state.weather);
+
+      scene.background = new THREE.Color(lighting.skyBackground);
+      (floor.material as THREE.MeshStandardMaterial).color.set(lighting.skyBackground);
+
+      ambient.color.set(lighting.ambientColor);
+      ambient.intensity = lighting.ambientIntensity * 2.6;
+
+      sun.color.set(lighting.sunColor);
+      sun.intensity = lighting.sunIntensity * 3.4;
+      sun.position.set(lighting.sunPosition[0], lighting.sunPosition[1], lighting.sunPosition[2]);
+
+      // Point lights untuk malam dan interior
+      if (location === 'luar') {
+        nightPointLight.intensity = lighting.lampIntensity * 2.2;
+        interiorPointLight.intensity = 0;
+      } else {
+        nightPointLight.intensity = 0;
+        interiorPointLight.intensity = lighting.lampIntensity * 2.4 + 1.2;
+      }
+
+      // Update tiang lampu jalan & pendar tanah
+      if (exteriorResult?.streetLamps) {
+        for (const bulb of exteriorResult.streetLamps) {
+          const mat = bulb.material as THREE.MeshStandardMaterial;
+          mat.emissive.set(lighting.streetLightEmissive);
+          mat.emissiveIntensity = lighting.lampIntensity * 1.5;
+        }
+      }
+      if (exteriorResult?.groundGlows) {
+        for (const glow of exteriorResult.groundGlows) {
+          const mat = glow.material as THREE.MeshStandardMaterial;
+          mat.opacity = lighting.lampIntensity * 0.45;
+        }
+      }
+
+      // Animate 2-phase Traffic Light
+      let isMainGreen = true;
+      if (exteriorResult?.trafficLights && location === 'luar') {
+        const cycle = 31; // 14s green, 3s yellow, 14s red
+        const tPhase = elapsed % cycle;
+        isMainGreen = tPhase < 14;
+        const isMainYellow = tPhase >= 14 && tPhase < 17;
+        const isMainRed = tPhase >= 17;
+
+        for (const tl of exteriorResult.trafficLights) {
+          const redMat = tl.red.material as THREE.MeshStandardMaterial;
+          const yellowMat = tl.yellow.material as THREE.MeshStandardMaterial;
+          const greenMat = tl.green.material as THREE.MeshStandardMaterial;
+
+          redMat.emissiveIntensity = isMainRed ? 0.95 : 0.05;
+          yellowMat.emissiveIntensity = isMainYellow ? 0.95 : 0.05;
+          greenMat.emissiveIntensity = isMainGreen ? 0.95 : 0.05;
+        }
+      }
+
+      // Animate Traffic Fleet (Motor, Mobil, Van, Truk) with Shuffle-Bag Spawner & Fade
+      if (exteriorResult?.trafficPool && location === 'luar') {
+        if (!reduced.matches) {
+          // Calm budget: max active vehicles (desktop 3, mobile 2)
+          const maxActive = window.innerWidth <= 768 ? 2 : 3;
+          const activeCount = Object.values(trafficVehicles).filter((v) => v.state !== 'despawned').length;
+
+          // Spawner: spawn vehicle if budget allows and timer reached
+          if (elapsed >= nextVehicleSpawn && activeCount < maxActive) {
+            const nextType = trafficBag.draw();
+            const candidate = trafficVehicles[nextType];
+            if (candidate && candidate.state === 'despawned') {
+              const dir: 1 | -1 = trafficBag.nextRandom() > 0.45 ? 1 : -1;
+              candidate.direction = dir;
+              candidate.x = dir === 1 ? -31 : 31;
+              candidate.z = dir === 1 ? 10.8 : 13.2;
+              candidate.speed = candidate.targetSpeed;
+              candidate.state = 'driving';
+              candidate.opacity = 0;
+              candidate.scale = 0.94;
+              candidate.castShadow = false;
+              nextVehicleSpawn = elapsed + 5 + trafficBag.nextRandom() * 7; // jeda acak 5-12 dtk
+            }
+          }
+
+          // Step simulation
+          stepTrafficSimulation(Object.values(trafficVehicles), dt, isMainGreen);
+
+          // Update Three.js meshes
+          for (const key of ['motor', 'mobil', 'van', 'truk'] as VehicleType[]) {
+            const v = trafficVehicles[key];
+            const meshGroup = exteriorResult.trafficPool[key];
+            if (!meshGroup) continue;
+
+            if (v.state === 'despawned' || v.opacity <= 0.01) {
+              meshGroup.visible = false;
+            } else {
+              meshGroup.visible = true;
+              meshGroup.position.x = v.x;
+              meshGroup.position.z = v.z;
+              meshGroup.rotation.y = v.direction === 1 ? 0 : Math.PI;
+              meshGroup.scale.setScalar(v.scale);
+
+              meshGroup.traverse((child) => {
+                if (child instanceof THREE.Mesh && child.material) {
+                  child.material.opacity = v.opacity;
+                  child.castShadow = v.castShadow;
+                }
+              });
+            }
+          }
+        } else {
+          for (const key of ['motor', 'mobil', 'van', 'truk'] as VehicleType[]) {
+            const meshGroup = exteriorResult.trafficPool[key];
+            if (meshGroup) meshGroup.visible = false;
+          }
+        }
+      }
+
+      // Exterior & Interior NPC Patrol and Dynamic Behaviors
+      let isManagerWalking = false;
+      const isWalkingFlags: boolean[] = [false, false, false, false, false];
+
+      const hasTaskProcess = model.tasks.some((t) => t.data.status === 'proses');
+      const hasMeeting = Boolean(model.currentMeeting || model.meetings.length > 0);
+      const hasActivities = model.activities.length > 0;
+
+      if (location === 'luar') {
+        if (!reduced.matches) {
+          // Patroli Manajer di Luar (loop 90 detik melewati kantor, plaza, jalan samping kanan, dan deretan gerai)
+          const loop = 90;
+          const phase = elapsed % loop;
+          if (phase < 25) {
+            // Berdiri di depan kantor koperasi: menyapa dan mengamati kawasan
+            characters[0].group.position.copy(pOffice);
+            characters[0].group.rotation.y = Math.PI * 0.12;
+            characters[0].base.copy(pOffice);
+          } else if (phase < 36) {
+            // Berjalan dari Kantor ke Plaza Air Mancur
+            isManagerWalking = true;
+            isWalkingFlags[0] = true;
+            const r = (phase - 25) / 11;
+            characters[0].group.position.lerpVectors(pOffice, pPlaza, r);
+            const dx = pPlaza.x - pOffice.x;
+            const dz = pPlaza.z - pOffice.z;
+            characters[0].group.rotation.y = Math.atan2(dx, dz);
+            characters[0].base.copy(characters[0].group.position);
+          } else if (phase < 46) {
+            // Berdiri di Plaza mengamati air mancur & menyapa warga
+            characters[0].group.position.copy(pPlaza);
+            characters[0].group.rotation.y = -Math.PI * 0.2;
+            characters[0].base.copy(pPlaza);
+          } else if (phase < 58) {
+            // Berjalan dari Plaza ke trotoar Jalan Raya Samping Kanan baru (X = 39.0)
+            isManagerWalking = true;
+            isWalkingFlags[0] = true;
+            const r = (phase - 46) / 12;
+            characters[0].group.position.lerpVectors(pPlaza, pRightRoad, r);
+            const dx = pRightRoad.x - pPlaza.x;
+            const dz = pRightRoad.z - pPlaza.z;
+            characters[0].group.rotation.y = Math.atan2(dx, dz);
+            characters[0].base.copy(characters[0].group.position);
+          } else if (phase < 68) {
+            // Berjalan dari Jalan Samping Kanan ke deretan gerai (X = -10, Z = -4.8)
+            isManagerWalking = true;
+            isWalkingFlags[0] = true;
+            const r = (phase - 58) / 10;
+            characters[0].group.position.lerpVectors(pRightRoad, pPlots, r);
+            const dx = pPlots.x - pRightRoad.x;
+            const dz = pPlots.z - pRightRoad.z;
+            characters[0].group.rotation.y = Math.atan2(dx, dz);
+            characters[0].base.copy(characters[0].group.position);
+          } else if (phase < 78) {
+            // Menginspeksi kesiapan unit usaha gerai
+            characters[0].group.position.copy(pPlots);
+            characters[0].group.rotation.y = Math.PI;
+            characters[0].base.copy(pPlots);
+          } else {
+            // Kembali ke depan Kantor Koperasi
+            isManagerWalking = true;
+            isWalkingFlags[0] = true;
+            const r = (phase - 78) / 12;
+            characters[0].group.position.lerpVectors(pPlots, pOffice, r);
+            const dx = pOffice.x - pPlots.x;
+            const dz = pOffice.z - pPlots.z;
+            characters[0].group.rotation.y = Math.atan2(dx, dz);
+            characters[0].base.copy(characters[0].group.position);
+          }
+
+          // Karakter 3: NPC Pejalan Kaki di Trotoar Depan Gerai (bolak-balik X = -15 s/d 14 di Z = -4.8)
+          if (characters[3]) {
+            const walkLoop = 40;
+            const wPhase = elapsed % walkLoop;
+            const pStart = new THREE.Vector3(-15, 0.1, -4.8);
+            const pEnd = new THREE.Vector3(14, 0.1, -4.8);
+            if (wPhase < 16) {
+              isWalkingFlags[3] = true;
+              const r = wPhase / 16;
+              characters[3].group.position.lerpVectors(pStart, pEnd, r);
+              characters[3].group.rotation.y = Math.PI * 0.5; // Menghadap timur
+            } else if (wPhase < 22) {
+              characters[3].group.position.copy(pEnd);
+              characters[3].group.rotation.y = Math.PI; // Menghadap gerai
+            } else if (wPhase < 36) {
+              isWalkingFlags[3] = true;
+              const r = (wPhase - 22) / 14;
+              characters[3].group.position.lerpVectors(pEnd, pStart, r);
+              characters[3].group.rotation.y = -Math.PI * 0.5; // Menghadap barat
+            } else {
+              characters[3].group.position.copy(pStart);
+              characters[3].group.rotation.y = 0; // Menghadap selatan
+            }
+            characters[3].base.copy(characters[3].group.position);
+          }
+
+          // Karakter 4: NPC Pejalan Kaki di Trotoar Jalan Raya Samping Kanan (X = 39.0, Z = 7.0 s/d -14.0)
+          if (characters[4]) {
+            const rightLoop = 36;
+            const rPhase = (elapsed + 10) % rightLoop;
+            const pSouth = new THREE.Vector3(39.0, 0.1, 7.0);
+            const pNorth = new THREE.Vector3(39.0, 0.1, -14.0);
+            if (rPhase < 15) {
+              isWalkingFlags[4] = true;
+              const r = rPhase / 15;
+              characters[4].group.position.lerpVectors(pSouth, pNorth, r);
+              characters[4].group.rotation.y = Math.PI; // Menghadap utara
+            } else if (rPhase < 20) {
+              characters[4].group.position.copy(pNorth);
+              characters[4].group.rotation.y = -Math.PI * 0.5; // Menghadap barat melihat gudang
+            } else if (rPhase < 32) {
+              isWalkingFlags[4] = true;
+              const r = (rPhase - 20) / 12;
+              characters[4].group.position.lerpVectors(pNorth, pSouth, r);
+              characters[4].group.rotation.y = 0; // Menghadap selatan
+            } else {
+              characters[4].group.position.copy(pSouth);
+              characters[4].group.rotation.y = -Math.PI * 0.5; // Menghadap barat
+            }
+            characters[4].base.copy(characters[4].group.position);
+          }
+        } else {
+          characters[0].base.copy(pOffice);
+        }
+      } else {
+        // Interior 22x15: Penempatan & Perilaku Dinamis Karyawan Kantor
+        // Karakter 0 (Manajer KDMP) \u2014 rute melalui pintu partisi di Z=-1.6 (jangan menembus dinding)
+        if (state.activity === 'meeting') {
+          // Duduk di Ruang Rapat Sayap Timur-Utara
+          characters[0].base.set(7.8, 0.42, -5.6);
+          characters[0].group.position.set(7.8, 0.42, -5.6);
+          characters[0].group.rotation.y = 0;
+        } else if (state.activity === 'gym') {
+          characters[0].base.set(6.4, 0.35, 4.8);
+          characters[0].group.rotation.y = 0;
+        } else if (state.activity === 'work') {
+          // Duduk bekerja di Ruang Kerja Manajer
+          characters[0].base.set(-7.8, 0.42, -5.5);
+          characters[0].group.position.set(-7.8, 0.42, -5.5);
+          characters[0].group.rotation.y = 0;
+        } else {
+          // Manajer berjalan melalui jalur lorong bebas ruangan dan pintu partisi (bukaan di Z = -1.6, X = -4.2)
+          // Rute bebas tabrakan: Meja -> Lorong Samping Meja -> Pintu Partisi -> Koridor Tengah -> Lobi -> Kembali
+          const mLoop = 60;
+          const mPhase = elapsed % mLoop;
+          const pManagerDesk = new THREE.Vector3(-7.8, 0.42, -5.5);       // Duduk di belakang meja kerja
+          const pAisleNorth = new THREE.Vector3(-5.8, 0.1, -5.0);         // Melangkah ke lorong samping meja
+          const pAisleSouth = new THREE.Vector3(-5.8, 0.1, -1.6);         // Di depan pintu dalam ruangan
+          const pDoorway = new THREE.Vector3(-4.2, 0.1, -1.6);            // Melangkah melewati pintu partisi
+          const pCorridorCenter = new THREE.Vector3(0, 0.1, 0.5);         // Pusat koridor penghubung
+          const pLounge = new THREE.Vector3(3.5, 0.1, 2.0);               // Area santai / resepsionis lobi
+
+          if (mPhase < 20) {
+            // Duduk bekerja di Ruang Kerja Manajer
+            characters[0].group.position.copy(pManagerDesk);
+            characters[0].group.rotation.y = 0;
+          } else if (mPhase < 23) {
+            // Bergeser dari belakang meja ke lorong samping meja (ke arah timur)
+            isWalkingFlags[0] = true;
+            const r = (mPhase - 20) / 3;
+            characters[0].group.position.lerpVectors(pManagerDesk, pAisleNorth, r);
+            const dx = pAisleNorth.x - pManagerDesk.x;
+            const dz = pAisleNorth.z - pManagerDesk.z;
+            characters[0].group.rotation.y = Math.atan2(dx, dz);
+          } else if (mPhase < 27) {
+            // Berjalan di lorong bebas menuju arah pintu keluar
+            isWalkingFlags[0] = true;
+            const r = (mPhase - 23) / 4;
+            characters[0].group.position.lerpVectors(pAisleNorth, pAisleSouth, r);
+            const dx = pAisleSouth.x - pAisleNorth.x;
+            const dz = pAisleSouth.z - pAisleNorth.z;
+            characters[0].group.rotation.y = Math.atan2(dx, dz);
+          } else if (mPhase < 30) {
+            // Melangkah keluar melewati pintu partisi
+            isWalkingFlags[0] = true;
+            const r = (mPhase - 27) / 3;
+            characters[0].group.position.lerpVectors(pAisleSouth, pDoorway, r);
+            const dx = pDoorway.x - pAisleSouth.x;
+            const dz = pDoorway.z - pAisleSouth.z;
+            characters[0].group.rotation.y = Math.atan2(dx, dz);
+          } else if (mPhase < 34) {
+            // Menuju pusat koridor kantor
+            isWalkingFlags[0] = true;
+            const r = (mPhase - 30) / 4;
+            characters[0].group.position.lerpVectors(pDoorway, pCorridorCenter, r);
+            const dx = pCorridorCenter.x - pDoorway.x;
+            const dz = pCorridorCenter.z - pDoorway.z;
+            characters[0].group.rotation.y = Math.atan2(dx, dz);
+          } else if (mPhase < 40) {
+            // Berdiri memantau suasana di koridor kantor
+            characters[0].group.position.copy(pCorridorCenter);
+            characters[0].group.rotation.y = Math.PI * 0.15;
+          } else if (mPhase < 44) {
+            // Berjalan santai ke area lobi
+            isWalkingFlags[0] = true;
+            const r = (mPhase - 40) / 4;
+            characters[0].group.position.lerpVectors(pCorridorCenter, pLounge, r);
+            const dx = pLounge.x - pCorridorCenter.x;
+            const dz = pLounge.z - pCorridorCenter.z;
+            characters[0].group.rotation.y = Math.atan2(dx, dz);
+          } else if (mPhase < 48) {
+            // Berdiri di lobi mengamati pelayanan
+            characters[0].group.position.copy(pLounge);
+            characters[0].group.rotation.y = -Math.PI * 0.3;
+          } else if (mPhase < 51) {
+            // Berjalan kembali dari lobi ke koridor
+            isWalkingFlags[0] = true;
+            const r = (mPhase - 48) / 3;
+            characters[0].group.position.lerpVectors(pLounge, pCorridorCenter, r);
+            const dx = pCorridorCenter.x - pLounge.x;
+            const dz = pCorridorCenter.z - pLounge.z;
+            characters[0].group.rotation.y = Math.atan2(dx, dz);
+          } else if (mPhase < 54) {
+            // Berjalan dari koridor masuk ke pintu partisi
+            isWalkingFlags[0] = true;
+            const r = (mPhase - 51) / 3;
+            characters[0].group.position.lerpVectors(pCorridorCenter, pDoorway, r);
+            const dx = pDoorway.x - pCorridorCenter.x;
+            const dz = pDoorway.z - pCorridorCenter.z;
+            characters[0].group.rotation.y = Math.atan2(dx, dz);
+          } else if (mPhase < 56) {
+            // Melangkah masuk ke lorong dalam ruang manajer
+            isWalkingFlags[0] = true;
+            const r = (mPhase - 54) / 2;
+            characters[0].group.position.lerpVectors(pDoorway, pAisleSouth, r);
+            const dx = pAisleSouth.x - pDoorway.x;
+            const dz = pAisleSouth.z - pDoorway.z;
+            characters[0].group.rotation.y = Math.atan2(dx, dz);
+          } else if (mPhase < 58) {
+            // Menyusuri lorong menuju belakang meja
+            isWalkingFlags[0] = true;
+            const r = (mPhase - 56) / 2;
+            characters[0].group.position.lerpVectors(pAisleSouth, pAisleNorth, r);
+            const dx = pAisleNorth.x - pAisleSouth.x;
+            const dz = pAisleNorth.z - pAisleSouth.z;
+            characters[0].group.rotation.y = Math.atan2(dx, dz);
+          } else {
+            // Kembali duduk ke kursi kerja meja manajer
+            isWalkingFlags[0] = true;
+            const r = (mPhase - 58) / 2;
+            characters[0].group.position.lerpVectors(pAisleNorth, pManagerDesk, r);
+            const dx = pManagerDesk.x - pAisleNorth.x;
+            const dz = pManagerDesk.z - pAisleNorth.z;
+            characters[0].group.rotation.y = Math.atan2(dx, dz);
+          }
+          characters[0].base.copy(characters[0].group.position);
+        }
+
+        // Karakter 1 (Karyawan Staf Meja Tugas - Anisa)
+        if (characters[1]) {
+          if (hasTaskProcess) {
+            // Ada tugas: duduk bekerja di meja komputer workstation
+            characters[1].base.set(-1.8, 0.42, -4.4);
+            characters[1].group.position.set(-1.8, 0.42, -4.4);
+            characters[1].group.rotation.y = Math.PI;
+          } else {
+            // Tidak ada tugas: berjalan-jalan santai ke koridor
+            const tLoop = 32;
+            const tPhase = elapsed % tLoop;
+            const pDesk = new THREE.Vector3(-1.8, 0.1, -2.5);
+            const pLounge = new THREE.Vector3(3.5, 0.1, -2.5);
+            if (tPhase < 10) {
+              isWalkingFlags[1] = true;
+              characters[1].group.position.lerpVectors(pDesk, pLounge, tPhase / 10);
+              characters[1].group.rotation.y = Math.PI * 0.5; // Menghadap timur
+            } else if (tPhase < 24) {
+              characters[1].group.position.copy(pLounge);
+              characters[1].group.rotation.y = -Math.PI * 0.5;
+            } else {
+              isWalkingFlags[1] = true;
+              characters[1].group.position.lerpVectors(pLounge, pDesk, (tPhase - 24) / 8);
+              characters[1].group.rotation.y = -Math.PI * 0.5; // Menghadap barat
+            }
+            characters[1].base.copy(characters[1].group.position);
+          }
+        }
+
+        // Karakter 2 (Karyawan Staf Rapat & Notulen - Bambang)
+        if (characters[2]) {
+          if (hasMeeting) {
+            // Ada rapat: duduk di kursi meja rapat eksekutif di Ruang Rapat
+            characters[2].base.set(7.8, 0.42, -3.4);
+            characters[2].group.position.set(7.8, 0.42, -3.4);
+            characters[2].group.rotation.y = Math.PI;
+          } else {
+            // Tidak ada rapat: berjalan santai di Ruang Rapat dan koridor
+            const rLoop = 36;
+            const rPhase = (elapsed + 6) % rLoop;
+            const pMeet = new THREE.Vector3(7.8, 0.42, -3.4);
+            const pCorridor = new THREE.Vector3(4.4, 0.1, 1.5);
+            if (rPhase < 12) {
+              isWalkingFlags[2] = true;
+              characters[2].group.position.lerpVectors(pMeet, pCorridor, rPhase / 12);
+              const dx = pCorridor.x - pMeet.x;
+              const dz = pCorridor.z - pMeet.z;
+              characters[2].group.rotation.y = Math.atan2(dx, dz);
+            } else if (rPhase < 26) {
+              characters[2].group.position.copy(pCorridor);
+              characters[2].group.rotation.y = 0;
+            } else {
+              isWalkingFlags[2] = true;
+              characters[2].group.position.lerpVectors(pCorridor, pMeet, (rPhase - 26) / 10);
+              const dx = pMeet.x - pCorridor.x;
+              const dz = pMeet.z - pCorridor.z;
+              characters[2].group.rotation.y = Math.atan2(dx, dz);
+            }
+            characters[2].base.copy(characters[2].group.position);
+          }
+        }
+
+        // Karakter 3 (Karyawan Staf Lapangan & Gym - Dedi)
+        if (characters[3]) {
+          if (hasActivities) {
+            // Ada kegiatan: berlatih di treadmill gym
+            characters[3].base.set(9.2, 0.35, 4.8);
+            characters[3].group.position.set(9.2, 0.35, 4.8);
+            characters[3].group.rotation.y = 0;
+          } else {
+            // Tidak ada kegiatan: berjalan-jalan santai di koridor lobi
+            const gLoop = 30;
+            const gPhase = (elapsed + 14) % gLoop;
+            const pGym = new THREE.Vector3(7.8, 0.1, 2.0);
+            const pLobbyCenter = new THREE.Vector3(1.5, 0.1, 2.0);
+            if (gPhase < 11) {
+              isWalkingFlags[3] = true;
+              characters[3].group.position.lerpVectors(pGym, pLobbyCenter, gPhase / 11);
+              characters[3].group.rotation.y = -Math.PI * 0.5; // Menghadap barat
+            } else if (gPhase < 19) {
+              characters[3].group.position.copy(pLobbyCenter);
+              characters[3].group.rotation.y = 0;
+            } else {
+              isWalkingFlags[3] = true;
+              characters[3].group.position.lerpVectors(pLobbyCenter, pGym, (gPhase - 19) / 11);
+              characters[3].group.rotation.y = Math.PI * 0.5; // Menghadap timur
+            }
+            characters[3].base.copy(characters[3].group.position);
+          }
+        }
+      }
+
+      dialogueManager.update(dt, elapsed, (id) => {
+        const char = characters.find((c) => c.group.userData.selection === id);
+        if (char) {
+          return [char.group.position.x, char.group.position.y, char.group.position.z];
+        }
+        return [0, 0, 0];
       });
+
+      const dialogueCtx: DialogueContext = {
+        managerName: model.manager || 'Manajer',
+        openTasksCount: model.tasks.length,
+        inProgressTasksCount: model.tasks.filter((t) => t.data.status === 'proses').length,
+        completedTasksCount: model.tasks.filter((t) => t.data.status === 'selesai').length,
+        hasMeetingSoon: Boolean(model.currentMeeting),
+        meetingTitle: model.currentMeeting?.data.title ? String(model.currentMeeting.data.title) : undefined,
+        recordedUnitsCount: model.units.length,
+        emptyPlotsCount: Math.max(0, 7 - model.units.length),
+        hasActivitiesToday: model.activities.length > 0,
+        activitiesCount: model.activities.length,
+        weather: state.weather,
+        timeHour: state.hour,
+      };
+
+      if (location === 'luar') {
+        const loop = 90;
+        const phase = elapsed % loop;
+        // Ketika manajer berada di Plaza dekat warga (phase 38-46)
+        if (phase >= 38 && phase <= 46) {
+          dialogueManager.triggerDialogue(
+            'manajer',
+            'warga-plaza',
+            model.manager || 'Manajer',
+            'manager',
+            [characters[0].group.position.x, 0, characters[0].group.position.z],
+            dialogueCtx,
+            elapsed,
+            'pass_by',
+          );
+        } else if (phase >= 52 && phase <= 58) {
+          // Ketika manajer melintasi jalan samping kanan dekat NPC kurir/staf
+          dialogueManager.triggerDialogue(
+            'manajer',
+            'npc-jalan-kanan',
+            model.manager || 'Manajer',
+            'manager',
+            [characters[0].group.position.x, 0, characters[0].group.position.z],
+            dialogueCtx,
+            elapsed,
+            'pass_by',
+          );
+        } else if (phase >= 68 && phase <= 74) {
+          // Ketika manajer melintasi trotoar gerai
+          dialogueManager.triggerDialogue(
+            'manajer',
+            'npc-pejalan',
+            model.manager || 'Manajer',
+            'manager',
+            [characters[0].group.position.x, 0, characters[0].group.position.z],
+            dialogueCtx,
+            elapsed,
+            'pass_by',
+          );
+        }
+      } else {
+        // Di kantor: manajer mengunjungi meja kerja staf (elapsed % 40 antara 10 dan 18)
+        const deskPhase = elapsed % 40;
+        if (deskPhase >= 10 && deskPhase <= 18) {
+          dialogueManager.triggerDialogue(
+            'manajer',
+            'karyawan-tugas',
+            model.manager || 'Manajer',
+            'manager',
+            [characters[0].group.position.x, 0, characters[0].group.position.z],
+            dialogueCtx,
+            elapsed,
+            'desk_visit',
+          );
+        }
+      }
+
+      // Check speaking & listening status for pose reaction
+      const activeBubblesList = dialogueManager.getBubbles();
+      const isSpeaking = (id: string) => activeBubblesList.some((b) => b.senderId === id);
+      const isListening = (id: string) => activeBubblesList.some((b) => b.receiverId === id);
+
+      characters.forEach((character, index) => {
+        let mode: CharacterActivity = 'idle';
+
+        if (location === 'luar') {
+          if (index === 0) {
+            mode = isManagerWalking ? 'walk' : 'idle';
+          } else if (index === 1 || index === 2) {
+            // Warga duduk santai di bangku taman plaza
+            mode = 'meeting';
+          } else if (index === 3 || index === 4) {
+            // NPC pejalan kaki di gerai / jalan samping kanan
+            mode = isWalkingFlags[index] ? 'walk' : 'idle';
+          }
+        } else {
+          // Interior
+          if (index === 0) {
+            mode = isWalkingFlags[0] ? 'walk' : state.activity;
+          } else if (index === 1) {
+            // Karyawan Meja Tugas: kerja bila ada tugas proses, jalan roaming bila tidak
+            mode = hasTaskProcess ? 'work' : isWalkingFlags[1] ? 'walk' : 'idle';
+          } else if (index === 2) {
+            // Karyawan Notulen/Rapat: rapat bila ada agenda, jalan roaming bila tidak
+            mode = hasMeeting ? 'meeting' : isWalkingFlags[2] ? 'walk' : 'idle';
+          } else if (index === 3) {
+            // Karyawan Lapangan/Gym: gym bila ada kegiatan, jalan roaming bila tidak
+            mode = hasActivities ? 'gym' : isWalkingFlags[3] ? 'walk' : 'idle';
+          }
+        }
+
+        const charIds =
+          location === 'luar'
+            ? ['manajer', 'warga-plaza', 'warga-plaza-utara', 'npc-pejalan', 'npc-jalan-kanan']
+            : ['manajer', 'karyawan-tugas', 'karyawan-rapat', 'karyawan-kegiatan'];
+
+        const charId = charIds[index] || `char-${index}`;
+        if (isSpeaking(charId)) {
+          mode = 'talk';
+        } else if (isListening(charId) && mode === 'idle') {
+          mode = 'greet';
+        }
+
+        const isWalking = isWalkingFlags[index] || (index === 0 && isManagerWalking);
+        animateCharacter(character, elapsed + index * 2, mode, reduced.matches, isWalking);
+      });
+
+      // Synchronize floating dialogue bubbles to 2D screen coordinates (mengikuti karakter yang berjalan secara real-time)
+      if (elapsed - lastBubbleSync >= 0.03) {
+        lastBubbleSync = elapsed;
+        if (activeBubblesList.length > 0) {
+          const projectedBubbles = activeBubblesList.map((b) => {
+            let charPos: THREE.Vector3 | null = null;
+            if (b.senderId === 'manajer' && characters[0]) {
+              charPos = characters[0].group.position;
+            } else if (location === 'luar') {
+              if ((b.senderId === 'warga-plaza' || b.senderId === 'npc-warga-selatan') && characters[1]) {
+                charPos = characters[1].group.position;
+              } else if (b.senderId === 'npc-warga-utara' && characters[2]) {
+                charPos = characters[2].group.position;
+              } else if (b.senderId === 'npc-pejalan' && characters[3]) {
+                charPos = characters[3].group.position;
+              } else if (b.senderId === 'npc-jalan-kanan' && characters[4]) {
+                charPos = characters[4].group.position;
+              }
+            } else {
+              if (b.senderId === 'karyawan-tugas' && characters[1]) {
+                charPos = characters[1].group.position;
+              } else if (b.senderId === 'karyawan-rapat' && characters[2]) {
+                charPos = characters[2].group.position;
+              } else if ((b.senderId === 'karyawan-gym' || b.senderId === 'karyawan-kegiatan') && characters[3]) {
+                charPos = characters[3].group.position;
+              }
+            }
+            const worldX = charPos ? charPos.x : b.position[0];
+            const worldY = (charPos ? charPos.y : b.position[1]) + 2.3;
+            const worldZ = charPos ? charPos.z : b.position[2];
+
+            const v = new THREE.Vector3(worldX, worldY, worldZ);
+            v.project(camera);
+            return {
+              ...b,
+              x: (v.x * 0.5 + 0.5) * node.clientWidth,
+              y: (-v.y * 0.5 + 0.5) * node.clientHeight,
+            };
+          });
+          setScreenBubbles(projectedBubbles);
+        } else {
+          setScreenBubbles([]);
+        }
+      }
+
       positions.set(
         'karakter',
         characters[0].group.position.clone().add(new THREE.Vector3(0, 2.4, 0)),
       );
+
       for (const [id, position] of positions) {
         const marker = markerRefs.current.get(id);
         if (!marker) continue;
@@ -286,13 +1075,14 @@ export function WorldScene({
         marker.style.visibility =
           Math.abs(projected.x) > 1.05 || Math.abs(projected.y) > 1.05 ? 'hidden' : 'visible';
       }
+
       rain.visible = state.weather === 'hujan' && location === 'luar';
       if (rain.visible && !reduced.matches) {
         const a = rainGeometry.attributes.position;
         for (let i = 0; i < rainCount; i++) {
-          const y = (16 + ((i * 7.19) % 16) - ((elapsed * 7) % 16)) % 16;
+          const y = (20 + ((i * 7.19) % 20) - ((elapsed * 9) % 20)) % 20;
           a.setY(i * 2, y);
-          a.setY(i * 2 + 1, y + 0.5);
+          a.setY(i * 2 + 1, y + 0.6);
         }
         a.needsUpdate = true;
       }
@@ -323,6 +1113,7 @@ export function WorldScene({
         }
       });
       renderer.domElement.removeEventListener('webglcontextlost', lost);
+      window.removeEventListener('keydown', onKey);
       renderer.dispose();
       renderer.domElement.remove();
     };
@@ -375,27 +1166,36 @@ export function WorldScene({
             </Button>
           </div>
         ))}
-      {!failed && (
+      {!failed && (selected === 'karakter' || selected === 'manajer') && bubble && (
         <div
           className="cw-marker cw-character-marker"
           ref={(node) => {
             if (node) markerRefs.current.set('karakter', node);
           }}
         >
-          {selected === 'karakter' && (
-            <div className="cw-speech" role="status">
-              {bubble}
-            </div>
-          )}
-          <Button
-            className="cw-character-pin"
-            aria-label="Ajak maskot berbicara"
-            onClick={() => onSelect('karakter')}
-          >
-            <MessageCircle size={16} />
-          </Button>
+          <div className="cw-speech" role="status">
+            {bubble}
+          </div>
         </div>
       )}
+      {!failed &&
+        screenBubbles.map((b) => (
+          <div
+            key={b.id}
+            className="cw-dialogue-bubble"
+            style={{
+              left: `${b.x}px`,
+              top: `${b.y}px`,
+            }}
+            aria-hidden="true"
+          >
+            <div className="cw-bubble-card">
+              <strong>{b.speakerName}</strong>
+              <p>{b.text}</p>
+            </div>
+            <div className="cw-bubble-tail" />
+          </div>
+        ))}
     </div>
   );
 }

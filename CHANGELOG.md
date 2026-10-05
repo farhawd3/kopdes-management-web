@@ -1,5 +1,183 @@
 # Changelog
 
+## Paket Mandiri (Standalone) di Luar Web — 5 Oktober 2026
+
+- **Paket Mandiri Luar Web di `D:\Koding\dunia-koperasi-standalone`**:
+  - Mengekspor seluruh subsistem Dunia Koperasi 3D ke proyek terpisah mandiri berbasis Vite + React 19 + Three.js + TypeScript, terlepas 100% dari Next.js, database Supabase, maupun backend server.
+  - Memuat seluruh geometri 3D prosedural: Gedung Gudang Logistik WareTrack (AC chiller HVAC atap, elevated loading dock bergaris marka kuning, 3 rolling doors berlampu status, stasiun pengisian forklift paving mint, forklift & palet kardus berlakban), Truk Kontainer Nordline aerodinamis, Kantor 6 Zona (Ruang Manajer, Ruang Rapat, Meja Tugas Anisa berambut panjang, Lemari Arsip 3 Zona, Gym LED, dan Lobi Resepsionis), Plang Nama Ruangan 3D tebal solid (RoundedBox 0.09 unit), serta rute patroli manajer anti-tembus objek.
+  - Mock data operasional terpadu di `App.tsx` (barang logistik, gerai, tugas, rapat, kegiatan, mitra suplier, anggota aktif).
+  - Shims mandiri ringan untuk preferensi lokal (`usePreference` dengan localStorage), routing simulasi instan (`Link` & `recordHref`), dan utilitas tanggal (`today`, `formatDate`).
+  - Verifikasi build produksi mandiri: `npm run build` (`tsc && vite build`) lulus 100% tanpa error, menghasilkan bundle web statis siap deploy di `dist/` (HTML 0.95 kB, CSS 28 kB, JS bundle Three.js 964 kB).
+
+## Paket Revisi Interaksi & Kawasan Dunia Koperasi (Batch 3): Ruang Kerja Manajer Eksekutif, Dialog 2 Arah Berbalas, Topi Baret & Gender NPC, Pad Lahan 06/07 Padat Lembut, Orientasi Kursi, dan Fasilitas Baru Kawasan — 5 Oktober 2026
+
+
+- **Ruang Kerja Manajer Eksekutif di Interior Kantor**:
+  - Membangun ruang kerja pribadi Manajer di Sayap Barat-Utara kantor (`X = -11` hingga `-4.5`, `Z = -7.6` hingga `-1.2`) berdinding partisi kaca tempered berbingkai putih modern dan plakat resmi "RUANG MANAJER".
+  - Dilengkapi karpet wol navy eksklusif, meja eksekutif L-shaped kayu mahoni, kursi direktur kulit ergonomis beroda, 2 kursi hadap tamu, laptop kerja, monitor widescreen, lampu arsitek kuningan, miniatur bendera Merah Putih, plakat nama meja emas, lemari arsip display piala penghargaan, sofa santai tamu, dan pot tanaman monstera.
+  - Memindahkan Ruang Rapat Eksekutif ke Sayap Timur-Utara (`X = 5` hingga `10.5`, `Z = -7` hingga `-2`) dengan meja rapat oval kayu madu 4.8×2.0m, 6 kursi eksekutif tertata rapi, proyektor, dan layar presentasi dinding.
+  - Penempatan default Manajer di mode interior duduk di kursi kerja eksekutifnya dengan pose bekerja, dan dapat berpatroli menyusuri koridor kantor.
+- **Sistem Percakapan Dua Arah Berbalas dari NPC (Turn-Taking Dialogue)**:
+  - Mengembangkan sistem antrean balasan otomatis (`PendingReply` & `pendingReplies`) pada `DialogueManager` di `world-dialogue.ts`.
+  - Ketika seorang karakter berbicara, sistem otomatis menjadwalkan tanggapan/balasan dari NPC lawan bicara yang muncul 1.8 detik kemudian di atas kepala NPC penerima.
+  - Balasan mencakup dialog kontekstual dua arah: koordinasi laporan gerai, progres tugas operasional, sapaan pagi/sore hari, hingga ajakan ngopi santai di sela istirahat.
+- **Perbaikan Topi Karakter Hijau & Penetapan Jenis Kelamin NPC (Gender Identity)**:
+  - Mengganti kubah topi kotak datar lebar kaku pada karakter hijau (varian 2 `createCharacter`) dengan topi baret/pet proporsional melengkung lembut (`sphere` r=0.32, visor depan rounded `box` [0.36, 0.04, 0.2], dan kancing atas).
+  - Menetapkan atribut `gender: 'pria' | 'wanita'` untuk seluruh 8 profil karakter di `world-dialogue.ts` dan logika model 3D (Pak Hartono: pria, Anisa: wanita, Bambang: pria, Dedi: pria bertopi baret, Pak Subagyo: pria, Bu Ratna: wanita, Siti Rahma: wanita, Fajar: pria).
+  - Memastikan karakter wanita memakai gaya rambut sanggul rapi atau hijab pastel tanpa memakai topi baret pria.
+  - Menambahkan lencana jenis kelamin (*gender chip*) di panel kartu profil NPC samping atas (`.cw-npc-gender-pill`) bertuliskan "Pria" atau "Wanita".
+- **Perbaikan Landasan Lahan 06 & 07 (Pad Landasan Padat, Tebal, dan Lembut)**:
+  - Mengeliminasi total artefak garis-garis dan pasak-pasak tajam berjejer pada plot Lahan 06 dan Lahan 07.
+  - Menggantinya dengan landasan padat tebal bertingkat (`5.4 × 0.22 × 4.2 unit` ber-bevel halus radius 0.12, elevasi Y = 0.11), 4 pilar sudut batu bulat halus, hamparan rumput hijau lembut, dan plakat marmer bulat plus timbul di tengah.
+- **Koreksi Posisi dan Orientasi Kursi**:
+  - Memperbaiki orientasi bangku Halte Bus Koperasi di `[-8, 17.2]`: diputar `Math.PI` menghadap lurus ke utara ke arah jalan raya tempat bus berhenti.
+  - Memperbaiki bangku taman jalur hijau selatan di `[2, 17.2]`: diputar `Math.PI` menghadap utara ke arah taman kawasan.
+  - Memperbaiki bangku lobi kantor: dipindahkan bersandar di partisi barat lobi `[-6.0, 5.2]` dan diputar `Math.PI / 2` menghadap ke timur menuju meja resepsionis.
+  - Mengatur ulang jarak dan sudut hadap kursi kerja serta kursi tamu di ruang manajer dan ruang rapat agar ergonomis dan menghadap meja secara presisi.
+- **Penambahan Objek Baru di Peta Kawasan Eksterior**:
+  - **Pos Keamanan & Portal Satpam KDMP** di akses barat (`[-28, 1.2, 8.5]`) lengkap dengan pos satpam kaca modern berkanopi dan palang portal otomatis merah-putih.
+  - **Kios ATM Center KDMP** kaca modern berkanopi di samping Halte Koperasi (`[-3.2, 1.25, 16.6]`).
+  - **Stasiun Rak Sepeda & Sepeda Santai** berdesain pastel di samping barat kantor (`[-10.5, 0.02, 2.4]`).
+  - **Tempat Sampah Pilah 3 Tabung** (Organik Hijau, Anorganik Kuning, B3 Biru) di halte dan plaza air mancur.
+  - **Gazebo Pergola Taman Teduh** dengan tiang kayu, pergola atap kisi-kisi, dan tanaman rambat di area timur-selatan (`[35, 0.14, 16.6]`).
+  - **Mobil Box Logistik Tambahan & Drum Pasokan** di apron gudang timur (`[27.5, 0.65, 3.8]`).
+- **Kualitas & Keandalan**:
+  - 275 pengujian unit/integrasi lulus 100%, typecheck TypeScript 0 error, linter ESLint 0 error dan 0 warning, build Next.js Turbopack sukses untuk 12 rute.
+
+## Paket Revisi Interaksi & Kawasan Dunia Koperasi (Batch 2): Orientasi NPC Anti Mundur, Redesain Gudang & Pembebasan Lahan 07, Objek Halte/Monumen Selatan, Kartu Profil NPC, dan Harmonisasi UI — 5 Oktober 2026
+
+- **Perbaikan Arah Gerak & Navigasi NPC (Anti Jalan Mundur & Tabrakan Objek)**:
+  - Mengimplementasikan orientasi arah hadap dinamis berbasis `Math.atan2(dx, dz)` pada lerp waypoints pergerakan 3D karakter. Karakter selalu menghadap 100% ke depan mengikuti vektor gerak, melenyapkan bug jalan mundur saat berbalik arah.
+  - Memperlebar koridor sirkulasi lobi kantor menjadi 3.5 meter dan trotoar pedestrian untuk memastikan karakter tidak menabrak perabot atau dinding.
+- **Eliminasi Belang Hitam Parkir Lahan 06**:
+  - Mengganti teluk parkir aspal gelap di dekat Lahan 06 yang mengalami clipping/z-fighting dengan **Carport Eksekutif**: kanopi melengkung biru pastel, tiang baja putih, lantai paving halus (`#dbe5f2`), dan wheel stops karet solid.
+- **Ekspansi Map Kawasan & Redesain Gudang Logistik (Lahan 07 Bebas Total)**:
+  - Memperluas platform kawasan 3D dari 62 unit menjadi 88 unit (rentang sumbu X dari `-36` hingga `+52`).
+  - Menggeser jalan raya samping kanan ke `X = 43.2` lengkap dengan simpang-T lampu merah di `Z = 12`.
+  - **Membebaskan Lahan 07 (`[18, 0]`) secara utuh** dari tumpukan gedung gudang, kini berdiri independen sebagai plot gerai terbuka hijau dengan buffer taman penanda.
+  - **Memperbesar Gudang Logistik KDMP** menjadi `14.2 × 4.0 × 6.4 unit` di koordinat `X = 30, Z = -1.5` dengan 3 rolling door bay berkanopi, dock bumper karet tebal, signage resmi, dan apron manuver kendaraan luas (`16 × 8.5 unit`) untuk truk mitra, forklift, mobil box, dan palet logistik.
+- **Penambahan Fasilitas Kawasan Sisi Selatan**:
+  - Menghadirkan **Halte Bus Koperasi** ("HALTE KOPERASI") berkanopi modern dan bangku tunggu di tepi jalan selatan (`X = -8, Z = 16.6`).
+  - Menghadirkan **Monumen Gerbang Kawasan "KDMP PUNTUKREJO"** berstruktur batu pualam halus dan panel kayu di `X = 12, Z = 16.6`.
+  - Menanam deretan pepohonan peneduh dan jalur hijau pedestrian di sepanjang sisi selatan.
+- **Kualitas Desain Objek Solid & Lembut (Anti Tipis/Pecah)**:
+  - Seluruh geometri 3D kawasan dan interior memiliki ketebalan solid, rounded edge/bevel yang lembut, elevasi bertingkat terukur untuk mencegah z-fighting, dan pencahayaan lembut tanpa artefak pecah.
+- **Balon Percakapan Komik Dinamis Mengikuti Posisi Jalan NPC**:
+  - Sistem proyeksi balon dialog 3D-ke-2D membaca koordinat posisi real-time NPC (`senderId`) setiap frame, membuat teks percakapan ikut melayang halus bersama karakter saat berjalan.
+- **Kartu Profil & Data NPC di Samping Atas**:
+  - Klik pada setiap karakter/NPC (Manajer, Anisa, Bambang, Dedi, Pak Subagyo, Bu Ratna, Siti Rahma, Fajar) membuka kartu profil lengkap di panel samping atas (`.cw-detail`): menampilkan peran, lencana status aktivitas terkini, kutipan khas (*quote*), dan tombol aksi terhubung ke modul terkait.
+- **Penggantian Objek Hitam Lobi Kantor**:
+  - Mengeliminasi total lempengan hitam tipis di Zona F lobi kantor.
+  - Menggantikannya dengan **Meja Resepsionis & Pusat Informasi Lobi KDMP** bertema kayu krem dan marmer putih solid, dilengkapi komputer resepsionis dan tanaman anggrek hias.
+- **Harmonisasi Tata Letak UI (Anti Tumpang-Tindih)**:
+  - Menyatukan kartu statistik KPI atas (*Gerai*, *Tugas*, *Rapat*) dan breadcrumb lokasi *Kawasan* ke dalam flex container vertikal `.cw-top-left-group` dengan jarak aman 12px, menjamin tidak ada overlap visual di resolusi apa pun.
+- **Kualitas & Keandalan**:
+  - 275 pengujian unit/integrasi lulus 100%, typecheck TypeScript 0 error, linter ESLint 0 error dan 0 warning, build Next.js Turbopack sukses untuk 12 rute.
+
+## Paket Revisi Interaksi & Kawasan Dunia Koperasi: Redesain Jalan Kanan, NPC Bergerak, Karyawan Kantor Dinamis, dan Tipografi Proporsional — 5 Oktober 2026
+
+- **Redesain Jalan & Simpang Lampu Merah Kanan**:
+  - Memindahkan jalan raya cabang dan tiang lampu merah dari arah tengah kantor koperasi ke sisi kanan (timur) kawasan (`X = 24.5`), membentang vertikal ke arah utara di samping gerai (`Z = 12` hingga `Z = -17.5`).
+  - Menghadirkan persimpangan Simpang-T di sisi kanan lengkap dengan 3 tiang traffic light modular, garis henti (stop lines), marka zebra cross, serta trotoar timur dan barat yang dibingkai tiang lampu jalan dan pepohonan hijau.
+  - Mengubah jalan aspal tengah lama menjadi Plaza Promenade pedestrian taman berpaving lembut (`#d0dcf2`), air mancur, bangku taman, dan tanaman hias sehingga pintu masuk kantor koperasi lebih ramah pejalan kaki dan kawasan timur tampak hidup/tidak kosong.
+  - Memperbarui simulasi lalu lintas `world-traffic.ts` dengan titik henti kendaraan di persimpangan kanan (`stopLineEast = 20.5`, `stopLineWest = 28.5`).
+- **Eliminasi Pin Biru & Interaksi Langsung Model 3D**:
+  - Menghilangkan tombol bulat pin biru HTML (`.cw-character-pin`) di atas kepala manajer yang sebelumnya terkesan mengganggu visual.
+  - Interaksi kini didukung melalui klik langsung model 3D manajer di canvas Three.js (raycaster selection), memunculkan kartu profil manajer dan memicu dialog komik dinamis.
+- **NPC Bergerak di Kawasan Luar**:
+  - Menambahkan NPC pejalan kaki yang aktif bergerak secara dinamis:
+    - NPC Pejalan Trotoar Gerai: patroli bolak-balik sepanjang trotoar depan gerai 1–7 dengan animasi langkah kaki dan ayunan tangan berirama.
+    - NPC Pejalan Jalan Kanan: berjalan menyusuri trotoar jalan raya samping kanan di antara pepohonan dan tiang lampu.
+  - Karakter luar kini berjumlah 5 figur (Manajer berpatroli, Warga duduk di bangku plaza selatan, Warga duduk di plaza utara, NPC pejalan trotoar gerai, dan NPC pejalan jalan samping kanan).
+- **Karyawan Interior Dinamis Bersyarat Kegiatan Nyata**:
+  - Menghadirkan 4 staf di dalam denah kantor 22×15: Manajer, Karyawan Tugas (Workstation Zona B), Karyawan Rapat (Meja Rapat Zona A), dan Karyawan Lapangan/Arsip (Zona C & Gym Zona D).
+  - Menerapkan perilaku dinamis berbasis status operasional nyata:
+    - Jika ada kegiatan/tugas/rapat yang sedang berjalan: karyawan duduk di stasiun masing-masing dengan pose mengetik/diskusi/membaca dokumen.
+    - Jika tidak ada kegiatan/tugas/rapat: karyawan bergerak aktif berjalan-jalan (roaming) menyusuri koridor, bersantai di sofa lobi, memeriksa arsip, atau berolahraga di treadmill gym.
+- **Variasi Percakapan Kontekstual & Faktual**:
+  - Memperkaya dialog manajer dan staf dengan variasi santai/ramah (sapaan waktu pagi/siang/sore/malam WIB, komentar cuaca desa yang sejuk, ajakan minum teh) bergantian dengan informasi faktual operasional (jumlah gerai terisi vs siap pakai, status tugas berjalan dan selesai, logistik gudang, dan jadwal rapat).
+- **Penyelarasan & Keseimbangan Ukuran Font (Tipografi)**:
+  - Mengeliminasi seluruh teks mikro ekstrem berukuran 7px, 8px, dan 9px di seluruh halaman Dunia Koperasi.
+  - Menetapkan skala tipografi proporsional yang seimbang dan mudah dibaca:
+    - Label, badge, pill, dan sub-keterangan: 11px.
+    - Isi teks, deskripsi, dan tombol kontrol: 12px – 13px.
+    - Subjudul dan nama stasiun/objek: 14px – 16px.
+    - Metrik KPI utama: 18px.
+  - Memastikan keterbacaan optimal pada semua breakpoint layar (desktop, tablet, hingga mobile 360px).
+- **Pengujian & Kualitas**:
+  - Seluruh 275 pengujian unit dan integrasi lulus 100%.
+  - Typecheck TypeScript 0 error, ESLint 0 error dan 0 warning, serta build Next.js Turbopack sukses untuk seluruh rute.
+
+## Paket 7 Dunia Koperasi: Verifikasi Menyeluruh & Dokumentasi Final — 5 Oktober 2026
+
+- Rampungkan seluruh rangkaian 8 paket kerja (Paket 0 hingga Paket 7) sesuai dokumen spesifikasi `PRD & Rencana Implementasi Mendalam: Dunia Koperasi — Revisi Visual & Interaksi Hidup (v2)`.
+- Validasi otomatis lengkap: 275 tes unit & integrasi lulus 100% (`vitest run --maxWorkers=2`), typecheck TypeScript 0 error (`tsc --noEmit`), linter ESLint 0 error dan 0 warning (`eslint src tests`), serta build produksi Next.js Turbopack sukses untuk seluruh rute (`next build`).
+- Finalisasi dokumentasi status aktif produk di `docs/STATUS.md`, catatan riwayat perubahan di `CHANGELOG.md`, serta keselarasan dengan panduan arsitektur dan gaya di `AGENTS.md` dan `docs/DUNIA-KOPERASI.md`.
+- Seluruh 8 berkas kerja uncommitted pengguna (`DateField.tsx`, `Select.tsx`, `Dashboard.tsx`, `SprintModal.tsx`, `RecursiveScheduleModal.tsx`, `TaskDetailDrawer.tsx`, `ThemeContext.tsx`, dan `docs/PLAN-ASTRA-Kopdes.md`) dipertahankan secara utuh tanpa modifikasi atau staging.
+
+## Paket 6 Dunia Koperasi: Interaksi Klik, Kamera Fokus Halus & Kartu Detail Gudang Logistik — 5 Oktober 2026
+
+- Bangun 4 siku braket sudut seleksi biru 3D (`createSelectionBrackets`) dengan aksen warna `#3866f6` yang melayang mengitari objek aktif (gudang, armada kendaraan, lahan gerai, kantor koperasi) saat dipilih oleh pengguna, mengadopsi pola seleksi canggih video referensi f08.
+- Terapkan pergerakan kamera fokus halus (smooth camera target lerp ~600ms) di `WorldScene.tsx` yang menggeser pandangan secara mulus dan nyaman ke arah objek terpilih tanpa sentakan kaku.
+- Sediakan pintasan keyboard `Escape` untuk secara instan memulihkan fokus kamera kembali membidik pusat kawasan (`kawasan` overview) dan menyembunyikan braket seleksi.
+- Kembangkan kartu detail interaktif Gudang Logistik (`Pusat Distribusi & Logistik`) dengan arsitektur bertingkat:
+  - Tab **Dermaga (3 Slot)**: status visual dan fungsional Dermaga 1 (Gudang transit stok tertutup), Dermaga 2 (Bongkar muat forklift & tumpukan palet kayu), dan Dermaga 3 (Truk ekspedisi mitra bersandar di bawah kanopi).
+  - Tab **Mitra Ekspedisi**: menampilkan daftar mitra suplier/distributor dari data workspace `stakeholders` nyata disertai aksi navigasi langsung ke pengelolaan mitra & suplier, mematuhi prinsip integritas data tanpa data fiktif.
+- Kembangkan kartu detail Truk Ekspedisi Mitra yang menampilkan profil suplier, status peragaan visual dermaga, dan penegasan status muatan non-fiktif.
+- 275 tes unit lulus 100%, typecheck 0 error, lint 0 error, build Next.js Turbopack sukses; verifikasi visual browser merekam kehalusan perpindahan kamera, tampilan siku braket seleksi biru, interaktivitas tab Dermaga & Mitra Ekspedisi pada kartu gudang, serta pemulihan kamera saat tombol `Escape` ditekan.
+
+## Paket 5 Dunia Koperasi: Cahaya Dinamis Kontinu, Lampu Malam & Pusat Kontrol Suasana — 5 Oktober 2026
+
+- Kembangkan modul pencahayaan dinamis murni `world-lighting.ts`: implementasi kurva kontinu matahari/bulan 24 jam dengan interpolasi smoothstep, batas elevasi directional light >= 30 derajat anti shadow acne, modulasi ambient & directional light, adaptasi cuaca cerah/berawan/hujan, serta kontinuitas 00:00 = 24:00.
+- Terapkan sistem pencahayaan malam atmosferik: lampu jalan menyala emisi kuning hangat (`#fef08a`), pendar tanah (*ground glow*) melingkar di bawah tiang lampu, jendela kantor dan gudang bercahaya hangat, serta interior kantor dilengkapi lampu plafon gantung dan layar monitor pendar sejuk yang terang dan nyaman.
+- Bangun Popover Suasana terpadu: menghapus bilah horizontal cepat atas yang menutupi kartu KPI/rapat, menyatukan 3 titik akses (pil jam header, kartu cuaca kiri-bawah, dan tab Suasana di dock bawah) ke dalam satu dialog popover kaca modern dengan kontrol mode Live WIB vs Simulasi slider jam 00–24, tombol pintas waktu (Pagi/Siang/Senja/Malam), pemilihan cuaca, putar otomatis waktu (kecepatan 1x/3x), serta sakelar jeda animasi.
+- Integrasikan indikator status simulasi waktu di header: pil jam menampilkan titik oranye berdenyut dan label `Simulasi {jam}` saat mode simulasi aktif, dan kembali ke jam WIB asli saat beralih ke Live.
+- 275 tes unit lulus 100%, typecheck 0 error, lint 0 error, build produksi Next.js sukses; audit browser membuktikan hilangnya bilah atas, berfungsinya popover suasana, pemandangan malam yang indah, dan layout mobile 375x812px responsif.
+
+## Paket 4 Dunia Koperasi: Karakter Manajer, Tim Staf & Dialog Kontekstual — 5 Oktober 2026
+
+- Bangun modul dialog murni `world-dialogue.ts`: sistem percakapan kontekstual bersyarat data nyata (`getTimeGreeting`, `getContextualDialogue`, `DialogueManager`), cooldown per pasangan 45 dtk, cooldown global 8 dtk, kapasitas maks 2 balon ucapan.
+- Desain pakaian karakter dinamis: figur Manajer resmi mengenakan jas formal navy (`palette.navy`), kerah kemeja putih, dan dasi merah; staf mengenakan seragam kerja dan lanyard ID badge. Animasi procedural karakter mendukung pose lambaian tangan menyapa (`greet`) dan anggukan berbicara (`talk`).
+- Hadirkan balon percakapan komik mengambang (`.cw-dialogue-bubble`) di atas kepala karakter via proyeksi 3D ke 2D viewport, dengan teks kontekstual akurat yang memvalidasi ketersediaan data tugas nyata ("Ada tugas yang perlu ditinjau hari ini? (1 tugas)").
+- Integrasikan identitas Manajer KDMP Puntukrejo dan Tim Staf: perbarui chip kiri-bawah menjadi "Manajer · {aktivitas}" yang membuka kartu profil Manajer lengkap dengan ringkasan tugas, rapat, dan gerai; tab Karakter di dock membuka daftar tim staf serta form `+ Tambah Anggota Tim` yang langsung tersinkronisasi ke API staf tanpa modifikasi tabel eksternal.
+- 274 tes unit lulus 100%, typecheck 0 error, lint 0 error, Next.js build sukses; verifikasi browser membuktikan kartu profil Manajer, daftar staf, form penambahan anggota, dan kemunculan balon dialog komik berjalan mulus di desktop (1440px) dan mobile (360px).
+
+## Paket 3 Dunia Koperasi: Armada Kendaraan, Lalu Lintas & Fade Mulus — 5 Oktober 2026
+
+- Bangun model Sepeda Motor Dinas (`createMotorcycle`) berbalut warna pastel, lampu bulat, setang baja, dan figur pengendara berhelm bulat sesuai gaya karakter proyek.
+- Kembangkan modul simulasi lalu lintas murni `world-traffic.ts`: sistem spawner shuffle-bag berbobot (motor 40%, mobil 25%, van 15%, truk 20%) tanpa ada 3 kemunculan berurutan jenis yang sama, dengan jeda acak 5-12 detik dan pembagian lajur timur & barat.
+- Terapkan mekanisme fade in/out mulus di batas platform (modulasi opasitas dan skala 0.94 -> 1.0) dengan aturan bayangan selektif (`castShadow` hanya aktif saat opasitas >= 0.85) untuk melenyapkan artefak pop bayangan.
+- Terapkan perilaku kepatuhan simpang lampu merah: kendaraan melambat dan berhenti rapi di belakang garis henti zebra cross saat lampu merah/kuning, mengantre dengan jarak aman, dan melaju saat fase hijau.
+- Tempatkan Truk Ekspedisi Mitra (`kendaraan-truk-mitra`) di dermaga gudang logistik dengan livery khusus dan informasi mitra terhubung data `stakeholders`.
+- Rapikan tata letak baris "Armada & Kendaraan" pada panel detail sisi kanan: judul armada dan subjudul jenis tersusun secara vertikal dengan hierarki tipografi dan jarak yang rapi tanpa menempel.
+- 273 tes lulus 100%, typecheck 0 error, lint 0 error, build Next.js Turbopack sukses; QA browser merekam pergerakan lalu lintas dinamis di viewport 1440, 1024, dan 360 px.
+
+## Paket 2 Dunia Koperasi: Interior 22×15 Lapang 6 Zona dan Bentuk Berbobot — 5 Oktober 2026
+
+- Perlebar denah interior kantor dari 15×12 menjadi 22×15 unit dengan 6 zona lapang: Zona A (Rapat 6×6 dengan meja kayu madu 5.2×2.2, 6 kursi eksekutif berjarak lega, laptop, cangkir kopi, dan partisi kaca tempered berbingkai), Zona B (Workstation 5×6 dengan 4 meja komputer PC All-in-One berlayar pendar), Zona C (Arsip & Buku 6×6 dengan 3 lemari bertingkat, buku pastel, tanaman keramik), Zona D (Gym 6×6 dengan matras slate gelap 5.6×4.8, dual treadmill LED hijau dengan animasi latihan berolahraga, dumbbell rack, dispenser air), Zona E (Pojok Santai 6×6 dengan sofa empuk, meja kopi, dan tanaman sudut), Zona F (Lobi & Pintu Masuk, bangku tunggu, tanaman penyambut).
+- Sediakan koridor sirkulasi utama selebar 2.5–3.0 unit dengan rasio jejak perabot <= 30% luas lantai, melenyapkan kesan sempit, sesak, dan perabot menempel dinding/partisi.
+- Perluas span kamera ortografis interior (11.5–16 unit) agar seluruh ruangan 22×15 terbingkai utuh, proporsional, dan estetik.
+- Tetapkan pembedaan lingkup stasiun (`scope: 'kantor' | 'luar'`) pada model dunia dan kartu detail UI sehingga navigasi interior bersih dan landmark luar (gudang) terorganisir rapi.
+- 270 tes lulus 100%, typecheck 0 error, lint 0 error, build Next.js Turbopack sukses; QA screenshot browser membuktikan kelegaan tata letak 6 zona interior di viewport 1440, 1024, 768, dan 360 px.
+
+## Paket 1 Dunia Koperasi: Geometri Shading Anti-Acne, Simpang Lampu Merah, Gudang Logistik, dan Seat Anchor — 5 Oktober 2026
+
+- Perbaiki tekstur jalan dengan tabel layer permukaan atas (top) presisi dan konfigurasi Three.js `sun.shadow.bias = -0.0003`, `sun.shadow.normalBias = 0.025`, serta penonaktifan `castShadow` pada objek datar: garis hitam shadow acne di jalan raya berhasil dihilangkan total pada mode siang maupun malam.
+- Kembalikan palet warna jalan raya ke biru pastel lembut (`#b8c9e5`) yang berbobot dan menyatu dengan lingkungan diorama.
+- Hadirkan simpang lampu merah (traffic light intersection) 3D modular dengan tiang baja ramping dan 3 lensa (merah, kuning, hijau) yang berganti fase secara dinamis di persimpangan jalan utama dan akses kantor/plaza.
+- Bangun gedung Gudang Logistik (Warehouse) solid 3 dermaga rolling door, kanopi pelindung dermaga muat, apron bertanda marka kuning, forklift, dan palet kayu di sisi timur kawasan.
+- Terapkan sistem `SeatAnchor` pada bangku taman plaza: karakter wanita di taman kini duduk rapi di atas bangku menghadap utara dengan pose duduk wajar, menuntaskan masalah karakter berdiri/menginjak bangku.
+- 269 tes lulus 100%, typecheck 0 error, lint 0 error, build produksi Turbopack lulus; verifikasi visual browser membuktikan lenyapnya pita hitam jalan dan kerapian duduk karakter.
+
+## Perluasan kawasan Dunia Koperasi, kontrol waktu/cuaca cepat, armada, patroli dan gym — 5 Oktober 2026
+
+- Perbesar map luar menjadi 58 × 38 unit: jalan aspal dua arah dengan marka tengah & zebra cross, plaza sentral air mancur & bangku, area parkir, loading dock logistik berkanopi, dan tujuh lahan gerai.
+- Tetapkan default siang cerah dan hadirkan kontrol cepat Waktu (Siang, Pagi, Senja, Malam, WIB) serta Cuaca (Cerah, Berawan, Hujan) langsung pada layar desktop dan ponsel (touch target >= 44 px).
+- Tambahkan tiga kendaraan suasana modular (Mobil Manajer, Van Distribusi, Truk Muatan Logistik) dengan kartu status simulasi lingkungan dan pergerakan truk di jalan raya.
+- Terapkan alur patroli berkala manajer memeriksa kawasan dengan langkah berjalan dan arah hadap dinamis; bubble dialog kontekstual ("Ada tugas yang perlu ditinjau?", "Ada kegiatan hari ini di jurnal!", dll.) muncul jarang dan menjeda patroli saat interaksi.
+- Hadirkan zona Gym modern di kantor: dual treadmill berpanel LED, bangku latihan, rak dumbbell beban bertingkat, dispenser air minum, dan penanda Gym & Kegiatan. Karakter aktif olahraga di treadmill saat ada kegiatan jurnal, duduk saat rapat, dan bekerja di meja tugas.
+- 269 tes / 44 berkas lulus 100%, typecheck, lint, dan build production lolos; QA browser multiplatform 360/768/1024/1440 px terverifikasi.
+
 ## Sederhanakan aturan AI dan lingkup panduan — 5 Oktober 2026
 
 - Ringkas KEPUTUSAN, skill clean-code dan indeks dokumen; satu jalur acuan AGENTS → DUNIA-KOPERASI → STATUS.

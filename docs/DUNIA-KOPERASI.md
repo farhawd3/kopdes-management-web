@@ -1,168 +1,212 @@
-# Dunia Koperasi — kontrak desain dan implementasi
+# Dunia Koperasi — kontrak desain dan implementasi (v2)
 
-Acuan permintaan 4 Oktober, diperjelas 5 Oktober 2026. Prioritas pemilik: lingkungan, karakter dan UI mengikuti video, dengan backend yang siap dikembangkan. Target desain dan fitur nyata dibedakan di bawah.
+> **Status:** Kontrak desain aktif v2 (disahkan 5 Oktober 2026).
+> **Acuan:** Permintaan pengguna 5 Oktober 2026, frame video referensi (`video_f01_gudang`, `video_f04_jalan`, `video_f08_kendaraan`, `video_f22_kompleks`), dan screenshot aktual web.
+> **Cabang kerja:** `codex/dunia-koperasi`
 
-## Satu acuan gaya yang wajib dijaga
+---
 
-Dokumen ini adalah **satu-satunya kontrak gaya dan rencana pengembangan Dunia Koperasi**. AGENTS mengatur proses/keamanan; STATUS hanya mencatat implementasi/bukti; LANJUTAN-AI hanya menunjuk pekerjaan berikutnya. DESAIN-ANTARMUKA mengatur halaman operasional dan mengarahkan dunia ke dokumen ini. Jangan menyalin spesifikasi dunia ke Markdown baru atau menganggap screenshot implementasi sebagai desain yang telah disetujui.
+## 1. Satu Acuan Gaya yang Wajib Dijaga
 
-Arahan langsung pemilik terbaru mengatasi konflik. Jika gaya berubah atas permintaan pemilik, perbarui kontrak ini dan sumber kode bersama. Riwayat QA, PRD lama, dan PLAN-ASTRA-Kopdes.md bukan sumber gaya dunia yang mengalahkan kontrak ini. Jangan menghapus catatan pengguna hanya untuk mengurangi jumlah berkas.
+Dokumen ini adalah **satu-satunya kontrak gaya dan rencana pengembangan Dunia Koperasi**. AGENTS mengatur proses/keamanan; STATUS hanya mencatat implementasi/bukti; LANJUTAN-AI hanya menunjuk pekerjaan berikutnya. DESAIN-ANTARMUKA mengatur halaman operasional dan mengarahkan dunia ke dokumen ini.
 
-**Yang dipertahankan:** perspektif isometrik 3D, bentuk maskot membulat, biru-putih, interior putih/kayu/kaca, komposisi kartu dari video, tujuh lahan gerai, style terisolasi. **Yang harus diperbaiki:** skala kawasan, kepadatan detail/interaksi, kendaraan, pencahayaan, keterlihatan kontrol waktu, gerak berpindah manajer, dan gym yang benar-benar digunakan karakter. Menjaga style bukan membekukan kekurangan versi sekarang.
+**Prinsip Desain:**
+1. **Solid & berbobot:** bentuk berbalok tebal, bevel halus, tanpa bagian setipis kertas.
+2. **Satu bahasa bentuk:** objek baru hanya dari primitif yang sudah dipakai proyek.
+3. **Pastel ceria menyatu:** satu palet pusat; kontras gelap hanya sebagai aksen fungsional (matras, alas, ban).
+4. **Tenang tapi hidup:** gerak lambat, jarang, tidak serempak (anggaran ketenangan).
+5. **Jujur pada data:** tampilkan hanya yang didukung data; sisanya diberi label "simulasi" atau disembunyikan.
+6. **Satu sumber kebenaran:** posisi objek, jejak (footprint), titik duduk, dan jalur NPC berasal dari data yang sama.
 
-## Referensi
+---
 
-- Video pengguna ssstwitter.com_1791130638800.mp4 berdurasi 72,26 detik; dianalisis empat frame pada 1,0 / 20,2 / 39,7 / 63,6 detik.
-- [Contact sheet video](referensi-dunia/video-contact-sheet.jpg): sumber komposisi kartu dan lingkungan luar. Label/angka video tidak menjadi data aplikasi.
-- [Interior pengguna](referensi-dunia/interior-pengguna.png): kantor cutaway isometrik, putih, kaca, workstation berkelompok, kayu muda. Referensi berwatermark tidak dipakai sebagai aset latar web.
-- Screenshot QA lokal: artifacts/world-reference/qa/. Screenshot awal desktop sebelum penghapusan blur sudah usang; gunakan bukti terbaru pada STATUS.
-- Implementasi tersimpan: [kawasan desktop](referensi-dunia/kawasan-1440.png), [interior desktop](referensi-dunia/interior-1440.png), [interior ponsel](referensi-dunia/interior-360.png). Ini dokumentasi keadaan render, bukan pengganti referensi video atau tanda desain final disetujui.
+## 2. Tabel Layer & Aturan Shading Anti-Acne
 
-![Komposisi UI dan lingkungan video](referensi-dunia/video-contact-sheet.jpg)
+| Lapisan | Top (y) | Tebal | Cast shadow | Catatan |
+|---|---|---|---|---|
+| Alas platform (tepi navy) | ≤ −0.02 | sesuai kode | Tidak | Tidak boleh sejajar dengan tanah |
+| Tanah / rumput | 0.000 | sesuai kode | Tidak | |
+| Apron gudang / paving plaza | 0.030 | 0.05 | Tidak | Berbeda tinggi dari jalan |
+| Badan jalan | 0.040 | 0.06 | Tidak | Menembus ke bawah tanah (−0.02) agar tak ada celah |
+| Marka, zebra cross, garis dermaga | 0.052 | 0.012 | Tidak | Selalu +0.012 di atas lapisan induknya |
+| Trotoar & kerb | 0.120 | 0.14 | Ya | |
+| Tepi kolam air mancur / air | 0.200 / 0.140 | — | Ya / Tidak | |
 
-## Gaya dan palet
+- **Shadow:** `sun.shadow.bias ≈ -0.0003`, `sun.shadow.normalBias ≈ 0.025`, frustum rapat ke platform terlihat.
+- **Batas elevasi cahaya:** Sudut sinar matahari/bulan dikunci `≥ 28–30°` sepanjang hari untuk mencegah shadow acne miring.
+- **Warna jalan:** Kembali ke pastel `#b8c9e5` (siang). Mode malam memiliki batas luminansi minimum agar marka tetap terbaca.
 
-Diorama 3D bersih, objek membulat ringan, cahaya lembut, bayangan kontak, detail terbaca. Kamera ortografis menampilkan sisi atas dan dua sisi objek. Hindari pixel art, outline komik, neon, gradien pelangi, foto stok sebagai dunia dan angka dekoratif. Target mengikuti video belum berarti identik piksel atau sudah diterima pemilik.
+---
 
-| Peran | Nilai sumber |
-|---|---|
-| Biru objek / UI | #3866f6 / #426bf4 |
-| Biru gelap atap/trim | #2443a6 |
-| Putih objek | #fafcff |
-| Kaca | #a7c8e9 |
-| Lantai kawasan | #e4eaf6 |
-| Vegetasi | #79c8a0 |
-| Kayu muda | #dfc59c |
-| Teks UI | --cw-ink: #263750 |
-| Metadata UI | --cw-muted: #74839b |
-| Garis | --cw-line: #e4eaf4 |
-| Kartu putih transparan | --cw-card: rgba(255,255,255,.94) |
+## 3. Kamus Bentuk (Shape Grammar) & Palet
 
-Sumber aktual: world-objects.ts dan world.css. Palet literal Three.js merupakan palet dunia; jangan memakainya untuk mengganti token semua halaman. Bila pemilik mengubah palet, ubah sumber dan tabel ini bersama.
+- **Primitif:** Balok (bevel halus via box helper), silinder, bola/elipsoid.
+- **Warna:** Satu warna datar per bagian dari `palette`; tanpa tekstur gambar bitmap eksternal.
+- **Ketebalan minimum:** Tidak ada bagian < 0.04 unit; tidak ada dua permukaan koplanar yang bertumpuk; selisih minimum 0.01 antar bidang sejajar. Tumpang tindih (overlap) 0.01–0.02 pada sambungan.
+- **Palet Utama:**
+  - Jalan (siang): `#b8c9e5`
+  - Trotoar: `#f4f7fd`
+  - Marka: `#ffffff`
+  - Marka dermaga: `#f5c542`
+  - Air mancur: `#72a8e8`
+  - Dinding gudang / lis: `#e2e8f0` / `#2443a6`
+  - Baja tiang: `#475569`
+  - Matras gym: `#334155`
+  - Kaca: `#c9e0ec`
+  - Lampu lalu lintas: `#ef4444` / `#f59e0b` / `#10b981`
+  - Lampu malam: `#fef08a`
+  - Aksen UI: `#3866f6`; kartu: `rgba(255,255,255,0.94)`
 
-## Komposisi kartu seperti video
+---
 
-1. Header putih 66 px desktop / 58 px ponsel: identitas dunia, pencarian lokasi, profil koperasi, waktu WIB, pengaturan dan manajer.
-2. Tiga ringkasan kiri atas: gerai, tugas terbuka, rapat hari ini. Data dari catatan yang dimuat; loading/error memakai tanda —.
-3. Panel kanan desktop sekitar 292 px: ikon, judul, status, isi, tautan sumber. Isi bergulir, panel bisa ditutup. Ponsel memakai panel bawah terbatas.
-4. Kontrol kamera dekat panel: zoom, putar seperempat putaran, reset. Geser/cubit/gulir melalui OrbitControls.
-5. Cuaca dan ringkasan kegiatan kiri bawah desktop. Tugas/rapat/kegiatan menggantikan shipment tracker video dengan isi koperasi.
-6. Dock bawah: Beranda, Kawasan, Kantor, Karakter, Suasana. AppShell tidak menggandakan sidebar pada halaman dunia.
+## 4. Spesifikasi Kawasan Exterior
 
-Kartu radius sekitar 11 px, border putih halus, bayangan ringan; ikon biru pada permukaan biru pucat; font Inter. Style dibatasi .cooperative-world dan cw-*. Tidak menggunakan backdrop blur setelah ditemukan mengganggu ketajaman render. Ponsel menyederhanakan header dan menyembunyikan ringkasan bawah agar lingkungan tetap terlihat.
+- **Simpang Lampu Merah:** Jalan utama 2 arah dengan simpang 4 lengan menuju kantor dan gudang. Tiang lampu modular 3 warna dengan siklus otomatis dan garis henti kendaraan.
+- **Gudang Logistik (Warehouse):** Bangunan solid 3 dermaga rolling door di sisi timur, apron beton bertanda marka kuning, forklift berpatroli pelan, palet kargo, dan slot armada ekspedisi.
+- **Plaza Air Mancur & Taman:** Kolam air mancur riak lembut, 4 bangku ber-Seat Anchor. Karakter duduk di bangku secara teratur atau berjalan di trotoar plaza tanpa tumpang-tindih fisik.
+- **7 Lahan Gerai:** Terhubung ke domain `units`. Gerai aktif menampilkan toko 3D, lahan kosong menampilkan petak berpagar rapi.
 
-## Exterior
+---
 
-- Kantor koperasi biru di X/Z [-3,2.7], dapat diklik langsung atau lewat penanda untuk masuk interior.
-- Tujuh lahan: [-9,-6], [-3,-6], [3,-6], [9,-6], [-9,3], [3,3], [9,3]. Bidang kosong hijau pucat dengan garis batas, tanda tambah dan nomor.
-- Unit dari domain units diurutkan created_at lalu ID untuk mengisi lahan. Gerai di luar tujuh slot tetap ada di daftar Gerai; jumlah sisanya diberitahukan.
-- Nama/status bangunan dari catatan asli. Detail membuka catatan yang sama melalui recordHref.
-- Jalan depan, jalur pejalan kaki, pohon, bangku, lampu dan area pengembangan logistik.
-- Suplier/mobil ekspedisi masih rencana. Tidak menampilkan pengiriman aktif palsu.
+## 5. Interior Kantor 22 × 15 (Denah 6 Zona)
 
-Penempatan bersifat turunan, belum permanen: penghapusan unit dapat menggeser slot berikutnya. Belum tersedia drag/editor lahan atau mapping slot cloud.
+Denah luas dengan koridor utama 3.0 dan koridor vertikal 2.5:
+- **Zona A — Meja Rapat (barat-utara):** Meja kayu madu 6–8 kursi eksekutif, layar dinding, laptop, cangkir kopi.
+- **Zona B — Workstation (tengah-utara):** 4 meja kerja partisi kaca, PC berlayar menyala, lampu meja.
+- **Zona C — Arsip (barat-selatan):** Lemari arsip tinggi, buku-buku pastel, dokumen, tanaman indoor.
+- **Zona D — Gym (timur-selatan):** Matras slate gelap, dual treadmill LED hijau, dumbbell rack, bench, dispenser.
+- **Zona E — Pojok Santai (timur-utara):** Sofa kecil, meja kopi, pantry/dispenser untuk istirahat staf.
+- **Zona F — Lobi & Pintu (tengah-selatan):** Pintu portal keluar-masuk, tanaman penyambut, bangku tunggu.
 
-## Interior dan karakter
+---
 
-Kantor cutaway tanpa atap/dinding depan. Empat area: meja rapat kayu muda dengan enam kursi, workstation komputer, arsip/buku, treadmill kegiatan. Penanda/detail membuka /rapat, /tugas, /dokumen, /pencatatan atau /jurnal.
+## 6. Armada Kendaraan & Lalu Lintas
 
-Karakter berupa kelompok mesh kepala/rambut/topi/mata/pipi/mulut/badan/lengan/kaki. Bentuk membulat dan proporsi maskot, tiga variasi penampilan. Gerak dihitung dalam loop animasi. Pakaian utama dapat dipilih biru/lavender/hijau.
+- **Armada:** Sepeda motor/skuter dengan pengendara bermaskot berhelm lucu, sedan mobil dinas manajer, van distribusi, dan truk boks ekspedisi.
+- **Spawner Shuffle-bag:** Kemunculan acak berbobot (motor 40%, mobil 25%, van 15%, truk 20%), jeda 6–18 dtk, tanpa 3 jenis sama berurutan.
+- **Fade Masuk/Keluar:** Transisi opasitas halus di tepi batas jalan raya (zona 4–5 unit).
+- **Truk Mitra (Suplier):** Livery deterministik dari data `stakeholders`. Kartu truk menampilkan informasi mitra tanpa memalsukan muatan.
 
-| Pemicu | Animasi | Makna |
-|---|---|---|
-| Rapat sedang berlangsung berdasarkan WIB/durasi | Duduk rapat | Jadwal, bukan bukti kehadiran pegawai |
-| Jurnal bertanggal hari ini WIB | Gym/olahraga | Simbol kegiatan, bukan klaim kegiatan nyata adalah olahraga |
-| Tugas berstatus proses | Bekerja | Visualisasi tugas dalam proses |
-| Tanpa pemicu | Idle/gerak tangan/kepala | Suasana lingkungan |
+---
 
-Prioritas global: rapat → jurnal hari ini → tugas proses → idle. Mode pratinjau gerakan tidak mengubah catatan. Bubble di atas kepala maskot utama muncul ketika dipilih, memakai konteks catatan atau teks pratinjau. Belum ada AI chat, suara, avatar pegawai nyata atau kehadiran tim.
+## 7. Sistem Karakter, Tim & Dialog
 
-## Cuaca dan waktu
+- **Manajer:** Karakter berjas resmi biru tua. Rute patroli keluar-masuk kantor, mengunjungi meja kerja dan menanyakan tugas aktif. Klik membuka kartu profil Manajer.
+- **Tim Koperasi:** Terhubung dengan data `staff`. Staf muncul sebagai karakter bernama; panel Karakter menyediakan tombol `+ Tambah anggota tim`.
+- **Perilaku Sesuai Data:** Ada tugas -> kerja di workstation; tidak ada tugas -> berkeliaran santai ke gym, pojok santai, arsip, atau taman.
+- **Balon Percakapan Otomatis:** Dialog komik saat NPC berpapasan atau manajer menghampiri meja kerja, bersyarat data nyata.
 
-Cuaca manual cerah/berawan/hujan. Hujan memakai partikel garis exterior; cuaca memengaruhi latar dan intensitas cahaya. Pencahayaan pagi/siang/senja/malam atau otomatis WIB. Jam UI tetap WIB aktual meskipun cahaya manual. Jam diperbarui setiap 60 detik; tick tidak membangun ulang geometri/kamera.
+---
 
-Preferensi {version:1, weather, time, outfit} divalidasi worldPreferencesSchema dan disimpan usePreference dengan key hub-world-preferences-v1. Nilai korup kembali ke default. Penyimpanan lokal perangkat, belum antarperangkat. Reduced-motion menghentikan gerakan periodik karakter/hujan dan animasi CSS.
+## 8. Pencahayaan Kontinu, Lampu Malam & Popover Suasana
 
-## Berkas dan backend
+- **Matahari/Bulan Kontinu:** Posisi dan warna cahaya mengalir halus berdasarkan waktu WIB / slider.
+- **Lampu Malam:** Lampu jalan/taman menyala (`#fef08a`), jendela kantor dan gudang berpendar hangat, interior menyalakan lampu plafon/meja.
+- **Pembersihan Header:** Menghapus bar tombol waktu/cuaca yang menimpa kartu KPI.
+- **Popover Suasana:** Satu popover terpadu yang dibuka dari tab dock Suasana, pil jam di header, dan kartu cuaca kiri-bawah.
+- **Label Chip:** Chip kiri-bawah diperbarui menjadi **Manajer · {aktivitas}**.
 
-Semua berkas dunia berada pada src/features/cooperative-world/:
+---
 
-| Berkas | Peran |
-|---|---|
-| CooperativeWorld.tsx | Kartu, dock, scene/detail, preferensi dan pintasan |
-| WorldScene.tsx | WebGL, kamera, raycast, proyeksi penanda, animasi, disposal |
-| world-objects.ts | Mesh lingkungan, gedung, perabot, karakter dan gerakan |
-| world-model.ts | Adapter data, tujuh slot, stasiun, prioritas aktivitas, Zod, jam WIB |
-| world.css | Style dunia dan breakpoint |
+## 9. Rencana Eksekusi Bertahap
 
-Integrasi melalui WorkspacePage/useWorkspace, workspace-scope, catalog dan AppShell. Domain yang dimuat: organization, workstreams, units, work-items, meetings, journal. /dev/dunia-koperasi hanya development dan memakai workspace kosong tanpa database.
+- **Paket 0:** Audit & baseline (riwayat git jalan, inventaris helper/palet, koordinat, baseline tes & screenshot).
+- **Paket 1:** Geometri, shading, anti-acne, simpang lampu merah, gudang, dan perbaikan bangku/karakter.
+- **Paket 2:** Interior 22 × 15 lapang dan 6 zona berbobot.
+- **Paket 3:** Armada motor/mobil/van/truk, spawner acak, fade batas jalan, dan kepatuhan lampu merah.
+- **Paket 4:** Karakter manajer berjas, integrasi tim `staff`, patroli keluar-masuk kantor, dan dialog otomatis.
+- **Paket 5:** Cahaya matahari kontinu, lampu malam otomatis, pembersihan bar atas, dan popover Suasana.
+- **Paket 6:** Interaksi klik, braket sudut seleksi, kamera fokus, dan kartu detail lengkap.
+- **Paket 7:** Verifikasi menyeluruh (4 lebar viewport × 3 waktu), pengujian suite, dokumentasi STATUS/CHANGELOG, commit & push.
 
-Backend tetap API domain dengan sesi, Zod, Origin dan RLS. Dunia membaca data serta membuka editor asli; tidak menulis diam-diam. Tidak ada tabel baru, supplier domain, migrasi 8 atau reset dalam paket ini. Jangan mengambil paket commit 4a0c01d secara massal: implementasi terdahulu itu dibatalkan oleh 751c4c2.
+---
 
-## Koneksi dunia dengan web
+## 10. Paket Revisi Pengguna (5 Oktober 2026)
 
-Fokus visual dan koneksi dikembangkan pada aplikasi ini, bukan proyek demo terpisah. Workspace/API yang sudah ada tetap satu sumber catatan. Gerai muncul dari units; tugas dari work-items; rapat dari meetings; kegiatan dari journal; identitas dari organization/profil. Catatan proyek/workstreams mempertahankan relasi yang sudah ada.
+Berdasarkan evaluasi langsung pemilik proyek KDMP Puntukrejo:
+1. **Penghapusan Pin Bulat Biru:** Tombol pin interaksi melayang berdiameter 44px (`.cw-character-pin` berlatar belakang `#5075ef` dengan ikon balon pesan) di atas kepala manajer dihilangkan; digantikan dengan seleksi klik langsung pada karakter 3D manajer dan pemunculan balon komik dinamis tanpa bulatan pengganggu.
+2. **Redesain Jalan Raya Sisi Kanan & Simpang Lampu Merah:**
+   - Cabang jalan aspal di tengah (`X = 0`) digantikan menjadi Plaza Promenade pedestrian taman yang menghubungkan trotoar selatan ke taman air mancur.
+   - Dibangun jalan raya baru di sisi kanan (timur) kawasan pada koordinat `X = 24.5` (lebar 5.8 unit, membentang dari jalan selatan `Z = 12` hingga tembus ke utara `Z = -17.5` di samping gerai dan gudang logistik).
+   - Simpang-T lampu merah dan tiang lampu lalu lintas 3 warna dipindahkan ke persimpangan kanan (`X ≈ 20.5` dan `X ≈ 28.5`, `Z = 9.2`), lengkap dengan garis henti kendaraan dan zebra cross penyeberangan.
+   - Sisi timur jalan raya baru dilengkapi trotoar pedestrian, deretan tiang lampu jalan bercahaya malam hari, dan pepohonan rindang sehingga kawasan sisi kanan hidup dan tidak kosong.
+3. **NPC Pejalan Kaki Bergerak di Luar:**
+   - Penambahan NPC pejalan kaki di trotoar pedestrian depan gerai yang berjalan bolak-balik dan sesekali berhenti mengamati toko gerai.
+   - Penambahan NPC pejalan kaki di trotoar barat jalan raya baru sisi kanan yang berjalan melintasi gudang logistik dan simpang lampu merah.
+   - Penambahan NPC warga yang duduk santai di bangku utara plaza air mancur melengkapi bangku selatan.
+4. **Karyawan Interior Dinamis Berbasis Operasional:**
+   - Penambahan 3 karyawan di kantor: Karyawan Meja Tugas (seragam biru dinas), Karyawan Meja Rapat & Notulen (seragam cyan), dan Karyawan Lapangan/Gym (seragam hijau toska).
+   - Logika dinamis:
+     - Jika ada tugas proses aktif (`model.tasks.some(status === 'proses')`): Karyawan Tugas duduk bekerja di workstation komputer; jika tidak ada tugas, ia berjalan roaming ke Pojok Santai / Pantry untuk rehat.
+     - Jika ada agenda rapat (`model.currentMeeting` / agenda rapat): Karyawan Rapat duduk di kursi rapat eksekutif; jika tidak ada rapat, ia berjalan roaming ke Zona Arsip & Buku menata dokumen.
+     - Jika ada kegiatan jurnal hari ini (`model.activities.length > 0`): Karyawan Lapangan berolahraga di treadmill gym; jika tidak ada kegiatan, ia berjalan roaming di koridor lobi depan.
+5. **Percakapan Kontekstual Variatif:**
+   - Sistem dialog mendukung pergantian obrolan santai/biasa (sapaan waktu WIB, suasana sejuk Puntukrejo, ajakan rehat/minum teh hangat) dan informasi faktual operasional (jumlah gerai aktif & lahan kosong siap pakai, progres tugas terbuka, agenda rapat mendatang, dan kelancaran suplai logistik gudang).
+6. **Standarisasi Tipografi Terpadu:**
+   - Mengeliminasi seluruh font mikro berukuran 7px, 8px, dan 9px di seluruh halaman.
+   - Menyelaraskan hierarki tipografi proporsional: 11px untuk badge/label mikro, 12-13px untuk isi teks dan list, 14-16px untuk subjudul/nama stasiun, dan 18px untuk nilai metrik kartu KPI.
 
-Klik objek membuka detail atau editor modul asli melalui recordHref. Setelah penyimpanan berhasil, invalidasi/refresh workspace memperbarui dunia; jangan menambah salinan database gerai/tugas. Periksa koneksi tambah/ubah gerai, perubahan status tugas, jadwal rapat dan kegiatan menggunakan data uji yang terkendali. Mode dev kosong hanya bukti render, bukan bukti sinkronisasi data nyata.
+---
 
-Paket berikut dimulai dari terang/kontrol waktu/perluasan map sesuai rencana di bawah; integrasi adapter dipertahankan sepanjang paket. SQL cloud/pengiriman nyata hanya bila kebutuhan data tidak dapat ditangani domain yang ada, dengan proses MIGRASI-SQL. Jangan mengarang domain pengiriman untuk kendaraan suasana.
+## 11. Paket Revisi Pengguna Batch 2 (5 Oktober 2026 - Lanjutan)
 
-## Cara AI berikutnya meningkatkan lingkungan
+Menanggapi masukan pengguna mengenai tabrakan NPC, jalan mundur, penataan gudang, Lahan 07, objek hitam, dan keseimbangan UI:
+1. **Perbaikan Sirkulasi & Arah Gerak NPC (Anti Jalan Mundur & Tabrakan):**
+   - Mengganti interpolasi rotasi manual dengan orientasi dinamis `Math.atan2(dx, dz)` pada lerp waypoints. Arah hadap 3D karakter selalu 100% menghadap vektor arah pergerakan, meniadakan efek jalan mundur saat berbalik arah.
+   - Ruang gerak koridor interior dan trotoar pedestrian diperlebar (koridor lobi kantor kini berjarak sirkulasi lega 3.5m).
+2. **Eliminasi Belang Hitam Putus-Putus Lahan 06:**
+   - Teluk parkir mobil manajer beraspal gelap di dekat Lahan 06 yang mengalami pemotongan/clipping trotoar digantikan dengan **Carport Eksekutif Teduh**: kanopi lengkung biru pastel lembut, tiang penopang baja putih, lantai paving halus (`#dbe5f2`), dan wheel stops karet solid.
+3. **Ekspansi Peta & Redesain Gudang Logistik (Membebaskan Lahan 07):**
+   - Platform kawasan diekspansi ke arah timur (`X` diperlebar dari 62 unit menjadi 88 unit, rentang X: `-36` s/d `52`).
+   - Jalan raya samping kanan digeser ke `X = 43.2` dengan simpang-T lampu lalu lintas di `X = 43.2, Z = 12`.
+   - **Lahan 07 (`[18, 0]`) dibebaskan 100%**, berdiri sebagai plot terbuka hijau mandiri dengan buffer taman dan penanda yang jelas.
+   - **Gudang Logistik KDMP diperbesar** (`14.2 × 4.0 × 6.4 unit`), ditempatkan di `X = 30, Z = -1.5`, dilengkapi 3 pintu dock bay berpintu gulung biru navy, kanopi overhung, dock bumper karet tebal, signage nama resmi, apron luas (`16 × 8.5 unit`) di sisi selatan untuk manuver truk mitra, mobil box, forklift, dan palet logistik.
+4. **Fasilitas Tambahan Sisi Selatan:**
+   - Membangun **Halte Bus Koperasi** berkanopi modern dan bangku tunggu di `X = -8, Z = 16.6`.
+   - Membangun **Monumen Gerbang Kawasan "KDMP PUNTUKREJO"** berstruktur batu pualam halus dan panel kayu di `X = 12, Z = 16.6`.
+   - Penambahan jalur hijau pedestrian dan pepohonan peneduh di sepanjang sisi selatan jalan raya.
+5. **Kualitas Desain Objek Lembut & Solid:**
+   - Menghilangkan objek-objek tipis/pecah. Seluruh geometri menggunakan ketebalan solid, rounded bevel, dan elevasi berlapis anti z-fighting.
+6. **Balon Dialog Dinamis Mengikuti Pergerakan NPC:**
+   - Proyeksi koordinat 3D balon komik membaca posisi real-time pengirim (`senderId`) setiap frame sehingga balon dialog bergerak mulus mengikuti langkah karakter.
+7. **Kartu Profil & Data NPC di Samping Atas:**
+   - Seluruh 8 karakter/NPC (Pak Hartono, Anisa, Bambang, Dedi, Pak Subagyo, Bu Ratna, Siti Rahma, Fajar) dapat diklik langsung untuk membuka kartu profil di panel kanan atas (`.cw-detail`).
+   - Menampilkan kategori, peran, status aktivitas dinamis, kutipan (*quote*) khas karakter, dan tombol aksi terhubung ke modul terkait.
+8. **Penggantian Objek Hitam Lobi Kantor:**
+   - Objek lempengan hitam tipis di Zona F lobi kantor dihilangkan total.
+   - Digantikan oleh **Meja Resepsionis & Pusat Informasi Lobi KDMP** bertema kayu krem dan marmer putih solid, dilengkapi komputer resepsionis, tanaman anggrek hias, dan standing signboard kayu. Bangku tunggu digeser ke posisi strategis untuk sirkulasi masuk yang lapang.
+9. **Keseimbangan Tata Letak UI (Breadcrumb vs Kartu Statistik):**
+   - Kartu statistik atas dan breadcrumb lokasi disatukan dalam wadah flex vertikal `.cw-top-left-group` dengan jarak aman 12px, menjamin tidak ada tumpang-tindih visual di semua ukuran layar.
 
-1. Periksa Git, dokumen ini, screenshot terbaru dan kode; pertahankan perubahan pemilik.
-2. Untuk gedung/perabot/karakter, ubah fungsi mesh world-objects.ts. Pertahankan ID klik, ukuran relatif dan skala dunia.
-3. Untuk UI, ubah world.css/CooperativeWorld.tsx. Pertahankan komposisi video, ketajaman teks, data asli dan kontrol sentuh.
-4. Aturan gerai/aktivitas di adapter dengan tes; simulasi tidak boleh menjadi data operasional.
-5. Layout permanen, editor lingkungan, suplier/pengiriman, kendaraan dan karakter pegawai memerlukan kontrak data tersendiri. Skema harus kompatibel; migrasi cloud mengikuti persetujuan pengguna.
-6. Verifikasi tes, tipe, lint, build, empat lebar, klik gedung, kamera, interior, bubble, cuaca, reduced-motion dan galat. Perbarui STATUS dari bukti nyata.
+---
 
-## Batas penerimaan
+## 12. Paket Revisi Pengguna Batch 3 (5 Oktober 2026 - Lanjutan)
 
-Kemiripan detail dengan video, kelengkapan interaksi, kontras semua label, target sentuh semua kontrol, fallback WebGL, semua viewport/state, perangkat fisik dan kinerja perangkat rendah belum boleh dinyatakan selesai dari tes DOM/build. Bukti aktual ada pada [STATUS](STATUS.md) dan [CHECKLIST](CHECKLIST.md).
+Menanggapi arahan pengguna mengenai ruang manajer, percakapan berbalas, topi NPC hijau, jenis kelamin karakter, landasan padat Lahan 06/07, posisi kursi, dan objek peta:
+1. **Ruang Kerja Pribadi Manajer Eksekutif (Executive Manager Suite):**
+   - Dibangun di sayap barat-utara interior kantor (`x: -11...-4.5, z: -7.6...-1.2`) berdinding partisi kaca tempered berbingkai putih dengan pintu masuk berplakat "RUANG MANAJER".
+   - Dilengkapi karpet wol eksekutif navy, meja manajer L-shaped kayu mahoni solid, kursi direktur manajer kulit ergonomis, 2 kursi tamu di depan meja, laptop, monitor widescreen, lampu arsitek kuningan, bendera mini Merah Putih, plakat nama emas, lemari buku piala penghargaan, sofa santai tamu, dan tanaman monstera.
+   - Manajer duduk di kursi ruang kerjanya saat sedang bekerja, dan sesekali berkeliling ke koridor tengah.
+2. **Sistem Percakapan Dinamis Dua Arah (Ada Balasannya dari NPC):**
+   - `DialogueManager` kini mendukung antrean balasan percakapan otomatis (*reply queue*).
+   - Ketika karakter A berbicara, 1.8 detik kemudian NPC lawan bicara membalas percakapan dengan balon komik di atas kepalanya secara tersinkronisasi.
+3. **Perbaikan Topi Karakter Hijau & Penetapan Gender NPC:**
+   - Topi mortarboard datar selebar 0.7 unit pada varian 2 dihilangkan, digantikan dengan **topi baret/pet bulat proporsional yang lembut** ber-visor depan dan kancing atas.
+   - Menambahkan field `gender: 'pria' | 'wanita'` pada seluruh profil NPC (`npcProfiles`) dan lencana gender di kartu detail profil (`.cw-npc-gender-pill`).
+   - Karakter wanita (Anisa, Bu Ratna, Siti Rahma) tampil dengan sanggul rapi atau hijab pastel tanpa salah gender.
+4. **Landasan Lahan 06 & 07 Padat, Tebal, dan Lembut:**
+   - Menghapus pasak pagar berjejer dan garis tipis yang memicu efek bergaris-garis / z-fighting.
+   - Menggantikannya dengan pad landasan padat tebal (`5.4 × 0.22 × 4.2 unit`) berlekuk rounded (radius 0.12), 4 pilar sudut batu bulat lembut, hamparan hijau taman, dan plakat marmer bulat plus timbul di tengah.
+5. **Koreksi Posisi Kursi yang Kurang Pas:**
+   - Bangku halte bus diputar menghadap ke jalan utara tempat armada bus berhenti.
+   - Bangku taman jalur hijau selatan diputar menghadap ke kawasan utara.
+   - Bangku tunggu lobi kantor dipindahkan bersandar di partisi barat dan menghadap ke timur menuju meja resepsionis.
+   - Kursi di workstation dan ruang rapat disesuaikan jaraknya proporsional terhadap meja kerja.
+6. **Penambahan Objek dan Fasilitas Baru di Peta:**
+   - **Pos Keamanan & Portal Satpam KDMP** di akses masuk barat lengkap dengan palang portal otomatis merah-putih.
+   - **Kios ATM Center Koperasi** di samping Halte Koperasi.
+   - **Stasiun Rak Sepeda & Sepeda Santai Pastel** di samping kantor koperasi.
+   - **Tempat Sampah Pilah 3 Tabung** ramah lingkungan (Organik, Anorganik, B3) di halte dan plaza air mancur.
+   - **Gazebo Pergola Taman Teduh** beratap kayu dan tanaman rambat di sisi timur-selatan.
+   - **Mobil Box Logistik Kedua & Drum Pasokan** di dermaga 1 gudang logistik.
 
-## Rencana revisi setelah penilaian pemilik — 5 Oktober 2026
-
-Status: **rencana, belum diimplementasikan**. Pemilik melihat map terlalu kecil/sepi, belum ada mobil, tampilan agak gelap, pengaturan waktu tidak terasa tersedia, dan gerakan karakter belum terlihat. Treadmill/gerak anggota tubuh di kode belum memenuhi permintaan gym aktif dan manajer berkeliling. Keberhasilan tes sebelumnya tidak menutup kekurangan ini.
-
-### Paket 1 — terang, kontrol waktu dan perluasan kawasan
-
-- Ubah kawasan dasar dari sekitar 29 × 17 menjadi target awal 56 × 36 unit; ukuran dapat disesuaikan setelah render. Perbesar ruang lingkungan, jangan hanya mengecilkan gedung/karakter atau menjauhkan kamera sehingga isi makin sulit dilihat.
-- Atur tujuh lahan di dua sisi jalan penghubung, kantor sebagai pusat, plaza kecil, trotoar, ruang parkir dan area bongkar muat. Sisakan lahan pengembangan. Ukuran gedung tetap terbaca dan karakter tidak hilang di map.
-- Sediakan kamera awal yang memperlihatkan kantor, beberapa gerai dan jalan; zoom/geser memungkinkan menjelajah kawasan lain. Tambahkan tombol kembali ke kantor dan batas geser sesuai map.
-- Gunakan siang cerah sebagai default pengguna baru. Preferensi manual yang sudah tersimpan tetap dihormati. Waktu otomatis WIB tetap pilihan eksplisit, sehingga malam nyata tidak memaksa kunjungan pertama menjadi gelap.
-- Tampilkan kontrol berlabel **Waktu** dan **Cuaca** langsung pada kartu yang terlihat di desktop maupun ponsel; pilihan Pagi/Siang/Senja/Malam/Otomatis WIB. Bedakan label pencahayaan simulasi dari jam WIB aktual.
-- Malam tetap terbaca lewat cahaya lingkungan/lampu gedung/jalan; kartu dan teks tetap terang, tidak ditutup lapisan gelap. Verifikasi semua pilihan segera mengubah scene dan tersimpan setelah reload.
-
-### Paket 2 — kendaraan dan interaksi kawasan
-
-- Buat mesh modular kendaraan mengikuti bentuk/warna kendaraan dalam frame video: mobil kecil manajer, van ekspedisi, dan truk boks. Jangan mengarang merek, pemasok atau transaksi.
-- Tempatkan satu kendaraan parkir dan satu kendaraan suasana yang bergerak di jalur jalan, berhenti di area bongkar muat lalu keluar/parkir. Siklus suasana jarang dan tidak menabrak pejalan kaki/gedung; kendaraan tidak terus berputar memenuhi map.
-- Klik kendaraan membuka kartu kendaraan dan keterangan **Simulasi lingkungan**. Pengiriman operasional baru ditampilkan bila domain/data pengiriman tersedia; jangan memberi nomor resi, muatan atau status pengiriman palsu.
-- Klik bangku, lahan, kantor, papan lokasi dan area logistik memberi respons yang berguna: duduk, detail lahan, masuk kantor, fokus kamera atau kartu rencana. Sediakan padanan tombol HTML/keyboard.
-- Detail pohon, lampu, marka, pot, kursi dan parkir mengisi kawasan; jangan mengisi tujuh lahan kosong dengan gerai dekoratif.
-
-### Paket 3 — manajer berjalan dan bubble sesekali
-
-- Satu maskot manajer utama melakukan alur **idle → berjalan → memeriksa lokasi → berhenti → kembali**. Animasi kaki/tangan dan arah badan mengikuti perpindahan posisi; gerak tangan saja bukan patroli.
-- Usulan awal yang dapat dituning: diam 90–180 detik, patroli 20–40 detik ke 2–3 titik kantor/gerai, lalu kembali. Setelah klik pengguna, tunda patroli agar detail tidak kabur. Tidak perlu navigasi AI/cloud; gunakan waypoint trotoar dan jalur bebas bangunan.
-- Bubble otomatis sesekali: “Ada tugas?” atau “Ada kegiatan?”. Tampilkan 5–8 detik, jeda minimal 120 detik, jangan menumpuk. Klik bubble membuka tugas/kegiatan yang terkait. Respons ringkas hanya memakai catatan yang benar-benar dimuat; data gagal dimuat tidak disebut kosong.
-- Pertanyaan adalah dialog maskot lokal, bukan pendapat pegawai atau layanan AI. Rapat/kegiatan aktif mengalahkan patroli; pilihan pratinjau boleh menguji seluruh gerak tanpa mengubah catatan.
-
-### Paket 4 — gym dalam kantor dan aktivitas di tempat yang tepat
-
-- Buat zona gym dalam cutaway yang jelas terpisah dari meja rapat/kerja: alas olahraga, treadmill, dumbbell/rak, bangku latihan dan penanda **Gym / kegiatan**. Sesuaikan skala agar tidak menutup workstation atau sirkulasi.
-- Saat ada kegiatan hari ini dari catatan jurnal/kegiatan yang valid, karakter berpindah ke zona gym dan beraksi pada alat: jalan/lari di treadmill atau latihan ringan. Tangan/kaki/badan bergerak selaras alat; tidak olahraga di tengah meja rapat.
-- Gym merupakan simbol visual kegiatan umum sesuai permintaan pemilik; kartu tetap menampilkan judul kegiatan asli, jangan mengubah kegiatan asli menjadi catatan olahraga. Jangan mengarang jadwal mulai/selesai jika catatan hanya punya tanggal.
-- Saat rapat sedang berlangsung, manajer menempati kursi rapat dengan pose duduk dan alat tidak bergerak sendiri. Tugas proses mengarah ke meja tugas. Tanpa catatan, manajer idle/patroli; pratinjau gym diberi label pratinjau.
-- Pertahankan prioritas rapat → kegiatan → tugas proses → idle/patroli. Bila kelak kegiatan memiliki jam/interval, adapter memakai interval asli tanpa mengarang kehadiran.
-
-### Kerangka teknis dan urutan penerimaan
-
-- world-model.ts: konfigurasi posisi zona/waypoint, adapter kegiatan dan prioritas; state simulasi dipisahkan dari catatan operasional.
-- world-objects.ts: mesh map/kendaraan/gym dan pose berjalan/duduk/latihan yang dapat diubah per fungsi.
-- WorldScene.tsx: loop berbasis delta waktu, rute kendaraan/manajer, posisi target, klik dan proyeksi bubble mengikuti kepala. Jangan membangun ulang scene setiap tick atau setiap langkah.
-- CooperativeWorld.tsx/world.css: kontrol waktu terlihat, kartu kendaraan/gym, bubble dan tautan sumber. Pertahankan komposisi UI/palet dalam kontrak ini.
-- Preferensi tetap lokal dan tervalidasi; bila kontrak berubah, migrasikan nilai lama. Jangan membuat tabel/migrasi cloud untuk animasi atau kendaraan suasana. Layout permanen dan pengiriman nyata dibahas terpisah.
-- Reduced-motion: kendaraan/manajer berhenti pada lokasi bermakna, bubble otomatis nonaktif; interaksi klik dan pratinjau statis tetap tersedia. Hentikan animasi saat tab tidak terlihat dan batasi jumlah mesh/partikel untuk ponsel.
-- Selesaikan paket 1 dulu, lalu 2, 3, 4 dengan screenshot exterior/interior dan interaksi nyata pada 360/768/1024/1440. Uji pergantian waktu/reload, kendaraan berhenti, patroli tidak menembus gedung, bubble tidak sering, rapat duduk dan kegiatan di gym. Rekam cuplikan gerak singkat sebagai bukti; screenshot/tes DOM saja tidak membuktikan perpindahan karakter.
-- Kemiripan video dan penerimaan visual tetap terbuka sampai pemilik menilai hasil. Update STATUS/CHECKLIST berdasarkan bukti baru, bukan checklist rencana ini.
