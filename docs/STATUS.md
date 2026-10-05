@@ -98,6 +98,12 @@ Versi sekarang belum diterima: kawasan kecil/sepi, mobil belum ada, tampilan aga
   - **Landasan Lahan 06 & 07 Padat Lembut**: Menghapus artefak garis-garis dan pasak tajam; diganti pad landasan padat tebal bertingkat (`5.4 × 0.22 × 4.2 unit`, radius bevel 0.12), 4 pilar sudut bulat, hamparan rumput hijau, dan plakat marmer bulat timbul.
   - **Koreksi Posisi Kursi**: Bangku halte bus diputar menghadap utara ke arah jalan (`rotation = Math.PI`), bangku taman selatan menghadap utara ke arah kawasan (`rotation = Math.PI`), bangku lobi kantor dipindahkan bersandar di partisi barat (`[-6.0, 5.2]`, `Math.PI / 2`) menghadap meja resepsionis, serta penataan ergonomis kursi kerja dan tamu di interior.
   - **Objek Baru di Peta Eksterior**: Pos Keamanan & Portal Otomatis Satpam KDMP di barat (`[-28, 1.2, 8.5]`), Kios ATM Center KDMP modern di samping halte (`[-3.2, 1.25, 16.6]`), Stasiun Rak Sepeda & Sepeda Santai di samping kantor (`[-10.5, 0.02, 2.4]`), Tempat Sampah Pilah 3 Tabung di halte dan plaza air mancur, Gazebo Pergola Taman Teduh di timur-selatan (`[35, 0.14, 16.6]`), serta armada Mobil Box Logistik tambahan dan drum pasokan di apron gudang.
+- **Paket Standalone di Luar Web Selesai (5 Oktober 2026):**
+  - Pembuatan paket mandiri (standalone) di luar web pada `D:\Koding\dunia-koperasi-standalone` menggunakan Vite + React + Three.js + TypeScript, terbebas penuh dari dependensi Next.js, database Supabase, maupun backend server.
+  - Berisi seluruh geometri 3D prosedural (Gedung WareTrack dengan AC chiller, elevated loading dock, charging station forklift, Nordline truck kontainer, kantor 6 zona, plang ruangan 3D solid tebal, rute patroli manajer anti-tembus objek, Anisa berambut panjang, sistem lighting 24 jam, traffic simulation jalan raya).
+  - Dilengkapi mock data terpadu di `App.tsx` (barang, gerai, tugas, rapat, kegiatan, mitra suplier, dan anggota).
+  - Shims ringan dan mandiri di `src/lib/` dan `src/workspace/` untuk utilitas tanggal, preferensi lokal, dan routing instan.
+  - Verifikasi build mandiri: `npm run build` (`tsc && vite build`) lulus 100% dan menghasilkan bundle statis siap saji di `dist/` (964 kB bundle Three.js, CSS 28 kB, index.html 0.95 kB).
 - Exterior luas (88 × 44 unit): kantor koperasi, jalan utama dua arah di selatan, jalan raya sisi kanan ke utara (X = 43.2), simpang lampu merah kanan, halte bus, monumen gerbang, plaza air mancur, carport manajer, gudang logistik diperbesar, dan tujuh lahan gerai yang terhubung catatan `units`.
 - Style dunia terisolasi di `world.css` dan palet Three.js di `world-objects.ts`.
 
@@ -107,6 +113,8 @@ Versi sekarang belum diterima: kawasan kecil/sepi, mobil belum ada, tampilan aga
 - `npm run typecheck`: **lulus** (0 error TypeScript).
 - `npm run lint`: **lulus** (0 error, 0 warning ESLint).
 - `npm run build`: **lulus** (Turbopack production build sukses untuk seluruh 12 rute).
+- Standalone build (`D:\Koding\dunia-koperasi-standalone`): **lulus** (`tsc && vite build` sukses dengan 0 error).
+
 
 ## Halaman operasional yang tersedia
 

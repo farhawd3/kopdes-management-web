@@ -1,6 +1,16 @@
 # Changelog
 
+## Paket Mandiri (Standalone) di Luar Web — 5 Oktober 2026
+
+- **Paket Mandiri Luar Web di `D:\Koding\dunia-koperasi-standalone`**:
+  - Mengekspor seluruh subsistem Dunia Koperasi 3D ke proyek terpisah mandiri berbasis Vite + React 19 + Three.js + TypeScript, terlepas 100% dari Next.js, database Supabase, maupun backend server.
+  - Memuat seluruh geometri 3D prosedural: Gedung Gudang Logistik WareTrack (AC chiller HVAC atap, elevated loading dock bergaris marka kuning, 3 rolling doors berlampu status, stasiun pengisian forklift paving mint, forklift & palet kardus berlakban), Truk Kontainer Nordline aerodinamis, Kantor 6 Zona (Ruang Manajer, Ruang Rapat, Meja Tugas Anisa berambut panjang, Lemari Arsip 3 Zona, Gym LED, dan Lobi Resepsionis), Plang Nama Ruangan 3D tebal solid (RoundedBox 0.09 unit), serta rute patroli manajer anti-tembus objek.
+  - Mock data operasional terpadu di `App.tsx` (barang logistik, gerai, tugas, rapat, kegiatan, mitra suplier, anggota aktif).
+  - Shims mandiri ringan untuk preferensi lokal (`usePreference` dengan localStorage), routing simulasi instan (`Link` & `recordHref`), dan utilitas tanggal (`today`, `formatDate`).
+  - Verifikasi build produksi mandiri: `npm run build` (`tsc && vite build`) lulus 100% tanpa error, menghasilkan bundle web statis siap deploy di `dist/` (HTML 0.95 kB, CSS 28 kB, JS bundle Three.js 964 kB).
+
 ## Paket Revisi Interaksi & Kawasan Dunia Koperasi (Batch 3): Ruang Kerja Manajer Eksekutif, Dialog 2 Arah Berbalas, Topi Baret & Gender NPC, Pad Lahan 06/07 Padat Lembut, Orientasi Kursi, dan Fasilitas Baru Kawasan — 5 Oktober 2026
+
 
 - **Ruang Kerja Manajer Eksekutif di Interior Kantor**:
   - Membangun ruang kerja pribadi Manajer di Sayap Barat-Utara kantor (`X = -11` hingga `-4.5`, `Z = -7.6` hingga `-1.2`) berdinding partisi kaca tempered berbingkai putih modern dan plakat resmi "RUANG MANAJER".
