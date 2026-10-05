@@ -62,12 +62,20 @@ Versi sekarang belum diterima: kawasan kecil/sepi, mobil belum ada, tampilan aga
     5. Balon dialog kontekstual berintegritas data dan identitas resmi Manajer KDMP Puntukrejo.
     6. Suasana malam dengan pencahayaan hangat lampu jalan, pendar tanah, jendela bercahaya, dan interior yang terang nyaman.
     7. Kemudahan interaksi klik dengan siku braket seleksi biru `#3866f6`, perpindahan kamera halus (lerp ~600ms), kartu detail gudang logistik bertab (Dermaga & Mitra Ekspedisi), dan pemulihan cepat via tombol `Escape`.
-- **Paket Revisi Pengguna Selesai (5 Oktober 2026):**
-  - Penghapusan pin bulat biru (`.cw-character-pin`) di atas kepala manajer; beralih ke klik langsung objek karakter 3D dan balon dialog mengambang elegan.
-  - Redesain jalan raya: cabang jalan aspal tengah diganti menjadi plaza promenade pedestrian taman, dan dibangun jalan raya baru di sisi kanan (timur, X = 24.5) membentang ke utara di samping deretan gerai dan gudang logistik.
-  - Simpang-T lampu merah dan tiang lampu modular 3 warna dipindahkan ke persimpangan kanan (X ≈ 20.5 & 28.5), sinkron dengan garis henti kendaraan dan zebra cross penyeberangan.
-  - Penambahan NPC pejalan kaki yang bergerak di trotoar depan gerai dan trotoar barat jalan raya samping kanan, melengkapi warga duduk di taman air mancur.
-  - Penambahan 3 karyawan di interior kantor dengan perilaku dinamis berdasarkan data operasional nyata (bekerja di meja tugas / meja rapat / gym bila ada kegiatan, dan berjalan-jalan santai roaming bila tidak ada beban tugas).
+- **Paket Penyempurnaan Solid 3D & WareTrack Selesai (5 Oktober 2026):**
+  - **Papan Plang Solid 3D:** Fungsi `sign()` di-upgrade dari bidang datar 2D (setipis kertas) menjadi objek 3D solid berbobot dengan `RoundedBoxGeometry` (ketebalan 0.09 unit), frame lis tepi pelindung, baut kuningan di sudut, serta kanvas teks resolusi tinggi di muka depan dan belakang.
+  - **Rute Manajer Interior Bebas Tabrakan:** Perjalanan patroli manajer dari meja eksekutif kini menggunakan sistem 5 waypoint terarah menyusuri lorong samping meja (`[-5.8, -5.0]` -> `[-5.8, -1.6]`) dan melangkah melalui bukaan pintu partisi kuningan di `[-4.2, -1.6]` menuju koridor tengah dan lobi, tanpa pernah menabrak meja, kursi tamu, sofa, ataupun dinding partisi.
+  - **Karakter Anisa & Topi NPC:** Rambut panjang natural multi-sphere Anisa yang anggun menjuntai di bahu dan samping telinga tanpa menutupi dahi/wajah; topi baret hijau pria proporsional dan rapi.
+  - **3 Zona Arsip & Buku Pencatatan:** Menjawab langsung pertanyaan operasional pengguna di panel dan diorama interior dengan 3 lemari berlabel: Zona Biru (Buku Induk Anggota `/pencatatan?tab=anggota`), Zona Hijau (Buku Kas Operasional `/pencatatan?tab=kas`), dan Zona Kuning (Buku Barang & Stok Opname `/pencatatan?tab=barang`), plus meja kerja staf arsip dan akses file dokumen SK.
+  - **Gudang Logistik & Parkir WareTrack-Style:** 
+    - Atap gudang dilengkapi 6 unit chiller HVAC AC berputar ganda dan logo heksagonal 3D di tengah atap.
+    - Elevated concrete loading dock platform bertingkat dengan marka kuning *dock safety stripe* di sepanjang bibir dermaga, bumper karet hitam, dan tangga akses ber-handrail.
+    - Stasiun pengisian daya forklift (*forklift charging station*) di atas paving hijau mint dengan 3 unit charger box putih modern berindikator LED bar hijau dan forklift cadangan terparkir mengisi daya.
+    - Forklift aktif beroperasi membawa palet kayu berongga dan tumpukan 4 box kardus cokelat berlakban pengemas (*packaging tape*).
+    - Truk kontainer box modern bergaya aero Nordline/WareTrack: kabin putih bersih, kaca depan miring gelap, spion samping ganda, grill depan bertingkat horizontal, bumper kokoh, dan bodi kargo dengan grafis strip gelombang toska/biru.
+  - **Panel Gudang 4-Tab:** Tab Dermaga (status 3 bay & forklift fleet 1/2 working), Tab Inventaris (daftar stok unit sesuai format referensi WareTrack: Cardboard Box M, Plastic Container, Safety Helmet [Low Stock], Packing Tape), Tab Lacak Kiriman (stepper horizontal 5 tahap interaktif: Confirmed -> Picked -> Loaded -> In Transit -> Unloading ETA 09:52 plus kartu armada `#SHP-78448`), dan Tab Mitra Ekspedisi.
+  - **Verifikasi Kualitas:** 275/275 unit test lulus 100% (44 test files), TypeScript typecheck 0 error, ESLint 0 error dan 0 warning.
+
   - Percakapan kontekstual kaya yang membedakan obrolan santai/biasa dan informasi faktual operasional (tugas, gerai, rapat, gudang).
   - Standarisasi tipografi terpadu: eliminasi total font mikro 7-9px, menyelaraskan ukuran font menjadi 11px (label/badge), 12-13px (isi/daftar), dan 16-18px (judul/metrik) yang seimbang dan mudah dibaca di semua viewport.
 - **Paket Revisi Pengguna Batch 2 Selesai (5 Oktober 2026):**

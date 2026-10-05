@@ -44,7 +44,7 @@ export function RecursiveScheduleModal({
   }
 
   return (
-    <Modal aria-labelledby="recursive-title" onDismiss={onClose}>
+    <Modal className="sprint-modal-dialog" aria-labelledby="recursive-title" onDismiss={onClose}>
       <div className="sprint-modal-card">
         <header className="sprint-modal-head">
           <div className="title-with-badge">
@@ -53,7 +53,7 @@ export function RecursiveScheduleModal({
             </span>
             <h2 id="recursive-title">Jadwal berulang</h2>
           </div>
-          <Button type="button" className="close-btn" onClick={onClose} aria-label="Tutup">
+          <Button type="button" variant="ghost" className="close-btn" onClick={onClose} aria-label="Tutup">
             <X size={18} />
           </Button>
         </header>

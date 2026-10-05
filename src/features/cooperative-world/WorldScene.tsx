@@ -687,66 +687,108 @@ export function WorldScene({
           characters[0].group.position.set(-7.8, 0.42, -5.5);
           characters[0].group.rotation.y = 0;
         } else {
-          // Manajer berjalan melalui pintu partisi (bukaan di Z = -1.6, X = -4.4)
-          // Rute: Meja -> Pintu Partisi -> Koridor Tengah -> Pintu Partisi -> Meja
-          const mLoop = 50;
+          // Manajer berjalan melalui jalur lorong bebas ruangan dan pintu partisi (bukaan di Z = -1.6, X = -4.2)
+          // Rute bebas tabrakan: Meja -> Lorong Samping Meja -> Pintu Partisi -> Koridor Tengah -> Lobi -> Kembali
+          const mLoop = 60;
           const mPhase = elapsed % mLoop;
-          const pManagerDesk = new THREE.Vector3(-7.8, 0.42, -5.5);       // Duduk di meja
-          const pDoor = new THREE.Vector3(-4.2, 0.1, -1.6);               // Tepat di pintu partisi
-          const pCorridorCenter = new THREE.Vector3(0, 0.1, 0.5);          // Pusat koridor
-          const pLounge = new THREE.Vector3(3.5, 0.1, 2.0);                // Area santai lobi
+          const pManagerDesk = new THREE.Vector3(-7.8, 0.42, -5.5);       // Duduk di belakang meja kerja
+          const pAisleNorth = new THREE.Vector3(-5.8, 0.1, -5.0);         // Melangkah ke lorong samping meja
+          const pAisleSouth = new THREE.Vector3(-5.8, 0.1, -1.6);         // Di depan pintu dalam ruangan
+          const pDoorway = new THREE.Vector3(-4.2, 0.1, -1.6);            // Melangkah melewati pintu partisi
+          const pCorridorCenter = new THREE.Vector3(0, 0.1, 0.5);         // Pusat koridor penghubung
+          const pLounge = new THREE.Vector3(3.5, 0.1, 2.0);               // Area santai / resepsionis lobi
 
-          if (mPhase < 18) {
+          if (mPhase < 20) {
             // Duduk bekerja di Ruang Kerja Manajer
             characters[0].group.position.copy(pManagerDesk);
             characters[0].group.rotation.y = 0;
-          } else if (mPhase < 22) {
-            // Berjalan menuju pintu partisi (arah selatan-timur melalui pintu di Z=-1.6)
+          } else if (mPhase < 23) {
+            // Bergeser dari belakang meja ke lorong samping meja (ke arah timur)
             isWalkingFlags[0] = true;
-            const r = (mPhase - 18) / 4;
-            characters[0].group.position.lerpVectors(pManagerDesk, pDoor, r);
-            const dx = pDoor.x - pManagerDesk.x;
-            const dz = pDoor.z - pManagerDesk.z;
+            const r = (mPhase - 20) / 3;
+            characters[0].group.position.lerpVectors(pManagerDesk, pAisleNorth, r);
+            const dx = pAisleNorth.x - pManagerDesk.x;
+            const dz = pAisleNorth.z - pManagerDesk.z;
             characters[0].group.rotation.y = Math.atan2(dx, dz);
-          } else if (mPhase < 26) {
-            // Berjalan dari pintu ke koridor tengah
+          } else if (mPhase < 27) {
+            // Berjalan di lorong bebas menuju arah pintu keluar
             isWalkingFlags[0] = true;
-            const r = (mPhase - 22) / 4;
-            characters[0].group.position.lerpVectors(pDoor, pCorridorCenter, r);
-            const dx = pCorridorCenter.x - pDoor.x;
-            const dz = pCorridorCenter.z - pDoor.z;
+            const r = (mPhase - 23) / 4;
+            characters[0].group.position.lerpVectors(pAisleNorth, pAisleSouth, r);
+            const dx = pAisleSouth.x - pAisleNorth.x;
+            const dz = pAisleSouth.z - pAisleNorth.z;
             characters[0].group.rotation.y = Math.atan2(dx, dz);
-          } else if (mPhase < 32) {
-            // Berdiri memantau suasana di koridor / lobi
+          } else if (mPhase < 30) {
+            // Melangkah keluar melewati pintu partisi
+            isWalkingFlags[0] = true;
+            const r = (mPhase - 27) / 3;
+            characters[0].group.position.lerpVectors(pAisleSouth, pDoorway, r);
+            const dx = pDoorway.x - pAisleSouth.x;
+            const dz = pDoorway.z - pAisleSouth.z;
+            characters[0].group.rotation.y = Math.atan2(dx, dz);
+          } else if (mPhase < 34) {
+            // Menuju pusat koridor kantor
+            isWalkingFlags[0] = true;
+            const r = (mPhase - 30) / 4;
+            characters[0].group.position.lerpVectors(pDoorway, pCorridorCenter, r);
+            const dx = pCorridorCenter.x - pDoorway.x;
+            const dz = pCorridorCenter.z - pDoorway.z;
+            characters[0].group.rotation.y = Math.atan2(dx, dz);
+          } else if (mPhase < 40) {
+            // Berdiri memantau suasana di koridor kantor
             characters[0].group.position.copy(pCorridorCenter);
             characters[0].group.rotation.y = Math.PI * 0.15;
-          } else if (mPhase < 36) {
-            // Berjalan ke area santai lobi
+          } else if (mPhase < 44) {
+            // Berjalan santai ke area lobi
             isWalkingFlags[0] = true;
-            const r = (mPhase - 32) / 4;
+            const r = (mPhase - 40) / 4;
             characters[0].group.position.lerpVectors(pCorridorCenter, pLounge, r);
             const dx = pLounge.x - pCorridorCenter.x;
             const dz = pLounge.z - pCorridorCenter.z;
             characters[0].group.rotation.y = Math.atan2(dx, dz);
-          } else if (mPhase < 40) {
-            // Berdiri di lobi sambil melihat-lihat
+          } else if (mPhase < 48) {
+            // Berdiri di lobi mengamati pelayanan
             characters[0].group.position.copy(pLounge);
             characters[0].group.rotation.y = -Math.PI * 0.3;
-          } else if (mPhase < 44) {
-            // Berjalan kembali ke pintu partisi
+          } else if (mPhase < 51) {
+            // Berjalan kembali dari lobi ke koridor
             isWalkingFlags[0] = true;
-            const r = (mPhase - 40) / 4;
-            characters[0].group.position.lerpVectors(pLounge, pDoor, r);
-            const dx = pDoor.x - pLounge.x;
-            const dz = pDoor.z - pLounge.z;
+            const r = (mPhase - 48) / 3;
+            characters[0].group.position.lerpVectors(pLounge, pCorridorCenter, r);
+            const dx = pCorridorCenter.x - pLounge.x;
+            const dz = pCorridorCenter.z - pLounge.z;
+            characters[0].group.rotation.y = Math.atan2(dx, dz);
+          } else if (mPhase < 54) {
+            // Berjalan dari koridor masuk ke pintu partisi
+            isWalkingFlags[0] = true;
+            const r = (mPhase - 51) / 3;
+            characters[0].group.position.lerpVectors(pCorridorCenter, pDoorway, r);
+            const dx = pDoorway.x - pCorridorCenter.x;
+            const dz = pDoorway.z - pCorridorCenter.z;
+            characters[0].group.rotation.y = Math.atan2(dx, dz);
+          } else if (mPhase < 56) {
+            // Melangkah masuk ke lorong dalam ruang manajer
+            isWalkingFlags[0] = true;
+            const r = (mPhase - 54) / 2;
+            characters[0].group.position.lerpVectors(pDoorway, pAisleSouth, r);
+            const dx = pAisleSouth.x - pDoorway.x;
+            const dz = pAisleSouth.z - pDoorway.z;
+            characters[0].group.rotation.y = Math.atan2(dx, dz);
+          } else if (mPhase < 58) {
+            // Menyusuri lorong menuju belakang meja
+            isWalkingFlags[0] = true;
+            const r = (mPhase - 56) / 2;
+            characters[0].group.position.lerpVectors(pAisleSouth, pAisleNorth, r);
+            const dx = pAisleNorth.x - pAisleSouth.x;
+            const dz = pAisleNorth.z - pAisleSouth.z;
             characters[0].group.rotation.y = Math.atan2(dx, dz);
           } else {
-            // Berjalan kembali dari pintu ke meja manajer
+            // Kembali duduk ke kursi kerja meja manajer
             isWalkingFlags[0] = true;
-            const r = (mPhase - 44) / 6;
-            characters[0].group.position.lerpVectors(pDoor, pManagerDesk, r);
-            const dx = pManagerDesk.x - pDoor.x;
-            const dz = pManagerDesk.z - pDoor.z;
+            const r = (mPhase - 58) / 2;
+            characters[0].group.position.lerpVectors(pAisleNorth, pManagerDesk, r);
+            const dx = pManagerDesk.x - pAisleNorth.x;
+            const dz = pManagerDesk.z - pAisleNorth.z;
             characters[0].group.rotation.y = Math.atan2(dx, dz);
           }
           characters[0].base.copy(characters[0].group.position);

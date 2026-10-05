@@ -88,6 +88,19 @@ export function DateInput({
           required={required}
           disabled={disabled}
           value={value}
+          style={{
+            position: 'absolute',
+            width: '1px',
+            height: '1px',
+            padding: 0,
+            margin: '-1px',
+            overflow: 'hidden',
+            clip: 'rect(0, 0, 0, 0)',
+            whiteSpace: 'nowrap',
+            border: 0,
+            opacity: 0,
+            pointerEvents: 'none',
+          }}
           onInvalid={(event) => {
             event.preventDefault();
             setMonth((value || today()).slice(0, 7));
@@ -121,7 +134,7 @@ export function DateInput({
           <span id={id + '-value'} className="date-trigger-value">
             {value ? value.split('-').reverse().join('/') : 'Pilih tanggal'}
           </span>
-          <CalendarDays size={18} />
+          <CalendarDays size={16} />
         </button>
       </div>
       {open && !disabled && (

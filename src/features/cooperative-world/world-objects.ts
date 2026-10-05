@@ -78,27 +78,64 @@ export function sign(
   position: [number, number, number],
   width = 3,
   color = '#2443a6',
+  rotationY = 0,
 ) {
+  const g = new THREE.Group();
+  g.position.set(...position);
+  g.rotation.y = rotationY;
+  parent.add(g);
+
+  const height = width / 5.2;
+  const depth = 0.09; // Ketebalan 3D padat (bukan tipis kertas)
+  const isLightText = color === '#ffffff' || color === '#f8fafc';
+  const boardBg = isLightText ? '#1e3a8a' : '#fafcff';
+  const textColor = isLightText ? '#ffffff' : color;
+  const frameColor = isLightText ? '#3b82f6' : '#cbd5e1';
+
+  // 1. Badan papan 3D solid berlekuk lembut
+  box(g, [width, height, depth], [0, 0, 0], boardBg, 0.02, true, true);
+
+  // 2. Bingkai/lis tepi solid pelindung papan
+  box(g, [width + 0.05, height + 0.05, depth * 0.7], [0, 0, 0], frameColor, 0.015, true, true);
+
+  // 3. Bracket / baut kuningan pengikat di sudut papan
+  for (const bx of [-width * 0.44, width * 0.44]) {
+    cylinder(g, 0.025, depth + 0.03, [bx, height * 0.35, 0], '#f59e0b');
+    cylinder(g, 0.025, depth + 0.03, [bx, -height * 0.35, 0], '#f59e0b');
+  }
+
+  // 4. Muka kanvas tajam beresolusi tinggi di sisi depan
   const canvas = document.createElement('canvas');
   canvas.width = 768;
-  canvas.height = 128;
+  canvas.height = 160;
   const ctx = canvas.getContext('2d');
-  if (!ctx) return;
-  ctx.fillStyle = '#fafcff';
-  ctx.fillRect(0, 0, 768, 128);
-  ctx.font = 'bold 48px Arial';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillStyle = color;
-  ctx.fillText(text.slice(0, 28), 384, 68, 730);
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.colorSpace = THREE.SRGBColorSpace;
-  const mesh = new THREE.Mesh(
-    new THREE.PlaneGeometry(width, width / 6),
-    new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide }),
-  );
-  mesh.position.set(...position);
-  parent.add(mesh);
+  if (ctx) {
+    ctx.fillStyle = boardBg;
+    ctx.fillRect(0, 0, 768, 160);
+    // Garis aksen halus di bawah teks
+    ctx.fillStyle = isLightText ? '#60a5fa' : '#3866f6';
+    ctx.fillRect(96, 138, 576, 6);
+    ctx.font = 'bold 52px "Segoe UI", Arial, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = textColor;
+    ctx.fillText(text.slice(0, 28), 384, 76, 700);
+
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    const faceMaterial = new THREE.MeshBasicMaterial({ map: texture });
+
+    // Muka depan
+    const frontFace = new THREE.Mesh(new THREE.PlaneGeometry(width * 0.96, height * 0.9), faceMaterial);
+    frontFace.position.set(0, 0, depth / 2 + 0.003);
+    g.add(frontFace);
+
+    // Muka belakang (jika papan dilihat dari belakang)
+    const backFace = new THREE.Mesh(new THREE.PlaneGeometry(width * 0.96, height * 0.9), faceMaterial);
+    backFace.position.set(0, 0, -depth / 2 - 0.003);
+    backFace.rotation.y = Math.PI;
+    g.add(backFace);
+  }
 }
 function tree(parent: THREE.Object3D, x: number, z: number, scale = 1) {
   const group = new THREE.Group();
@@ -203,33 +240,55 @@ export function createForklift(
   g.position.set(...position);
   g.rotation.y = rotation;
   parent.add(g);
-  // 4 Wheels
+
+  // 4 Roda forklift hitam dengan baut perak
   for (const [wx, wz] of [
-    [-0.45, -0.35],
-    [0.45, -0.35],
-    [-0.45, 0.35],
-    [0.45, 0.35],
+    [-0.45, -0.36],
+    [0.45, -0.36],
+    [-0.45, 0.36],
+    [0.45, 0.36],
   ]) {
-    const wheel = cylinder(g, 0.14, 0.12, [wx, 0.14, wz], '#1e2430');
+    const wheel = cylinder(g, 0.15, 0.14, [wx, 0.15, wz], '#1a202c');
     wheel.rotation.x = Math.PI / 2;
+    cylinder(wheel, 0.07, 0.15, [0, 0, 0], '#94a3b8');
   }
-  // Chassis
-  box(g, [1.2, 0.4, 0.7], [0, 0.32, 0], '#f59e0b', 0.04);
-  // Counterweight
-  box(g, [0.4, 0.5, 0.68], [-0.4, 0.45, 0], '#b45309', 0.04);
-  // Overhead guard cage
-  for (const cx of [-0.2, 0.25]) {
-    for (const cz of [-0.3, 0.3]) {
-      cylinder(g, 0.025, 0.85, [cx, 0.85, cz], '#334155');
+
+  // Sasis utama oranye/kuning industri
+  box(g, [1.25, 0.42, 0.72], [0, 0.33, 0], '#f59e0b', 0.05);
+  // Counterweight belakang hitam kokoh
+  box(g, [0.42, 0.52, 0.7], [-0.42, 0.46, 0], '#d97706', 0.05);
+
+  // Jok pengemudi & setir kemudi
+  box(g, [0.32, 0.28, 0.35], [-0.08, 0.62, 0], '#1e293b', 0.04);
+  cylinder(g, 0.02, 0.32, [0.18, 0.68, 0], '#475569');
+  cylinder(g, 0.11, 0.02, [0.18, 0.82, 0], '#0f172a').rotation.x = Math.PI * 0.2;
+
+  // Overhead guard cage (rangka pelindung atap)
+  for (const cx of [-0.22, 0.26]) {
+    for (const cz of [-0.31, 0.31]) {
+      cylinder(g, 0.025, 0.88, [cx, 0.9, cz], '#334155');
     }
   }
-  box(g, [0.65, 0.04, 0.68], [0.02, 1.28, 0], '#334155', 0.02);
-  // Front mast & forks
-  box(g, [0.08, 1.1, 0.45], [0.65, 0.65, 0], '#475569');
-  box(g, [0.55, 0.04, 0.1], [0.92, 0.12, -0.16], '#334155', 0);
-  box(g, [0.55, 0.04, 0.1], [0.92, 0.12, 0.16], '#334155', 0);
-  // Cargo box on fork
-  box(g, [0.45, 0.35, 0.45], [0.88, 0.32, 0], palette.wood, 0.03);
+  box(g, [0.68, 0.05, 0.7], [0.02, 1.34, 0], '#334155', 0.03);
+
+  // Front mast vertikal & hidrolik perak
+  box(g, [0.09, 1.25, 0.48], [0.68, 0.75, 0], '#334155');
+  cylinder(g, 0.03, 1.1, [0.68, 0.75, 0], '#cbd5e1');
+
+  // Garpu baja hitam (Forks)
+  box(g, [0.65, 0.04, 0.11], [0.98, 0.14, -0.16], '#1e293b', 0);
+  box(g, [0.65, 0.04, 0.11], [0.98, 0.14, 0.16], '#1e293b', 0);
+
+  // Palet kayu di atas garpu
+  box(g, [0.62, 0.07, 0.58], [1.02, 0.18, 0], palette.wood, 0.02);
+  // Tumpukan kardus box cokelat dengan packaging tape di atas palet (referensi Nordline)
+  box(g, [0.28, 0.26, 0.26], [0.9, 0.34, -0.13], '#d97706', 0.02);
+  box(g, [0.28, 0.03, 0.06], [0.9, 0.46, -0.13], '#fde68a', 0); // tape
+  box(g, [0.28, 0.26, 0.26], [0.9, 0.34, 0.13], '#b45309', 0.02);
+  box(g, [0.28, 0.03, 0.06], [0.9, 0.46, 0.13], '#fde68a', 0); // tape
+  box(g, [0.26, 0.24, 0.26], [1.14, 0.33, 0], '#c2410c', 0.02);
+  box(g, [0.26, 0.03, 0.06], [1.14, 0.44, 0], '#fde68a', 0); // tape
+
   return g;
 }
 
@@ -262,52 +321,115 @@ export function createWarehouse(parent: THREE.Object3D, x: number, z: number) {
   g.userData.selection = 'gudang';
   parent.add(g);
 
-  // Warehouse main building: 14.2 x 4.0 x 6.4 (berbobot dan solid)
-  box(g, [14.2, 4.0, 6.4], [0, 2.05, 0], palette.warehouse, 0.12);
-  // Lis navy & atap gable bergaris
-  box(g, [14.6, 0.38, 6.8], [0, 4.18, 0], palette.navy, 0.08);
-  for (let i = -6.4; i <= 6.4; i += 1.6) {
-    box(g, [0.1, 0.08, 6.7], [i, 4.4, 0], '#648cfb', 0);
-  }
-  // Skylight strip di atap
-  box(g, [9.6, 0.08, 1.4], [0, 4.44, 0], palette.glass, 0.02);
+  // 1. Warehouse Main Building (14.6 x 4.0 x 6.6) — putih-abu modern berbobot solid
+  box(g, [14.6, 4.0, 6.6], [0, 2.05, 0], '#f1f5f9', 0.12);
+  // Garis lis aksen biru elektrik di sekeliling fasad atas dan bawah (referensi WareTrack)
+  box(g, [14.8, 0.22, 6.8], [0, 3.95, 0], '#2563eb', 0.05);
+  box(g, [14.8, 0.16, 6.8], [0, 0.18, 0], '#2563eb', 0.04);
+  // Atap datar modern abu-abu dengan parapet
+  box(g, [15.0, 0.32, 7.0], [0, 4.22, 0], '#cbd5e1', 0.08);
 
-  // 3 Rolling door bays on front facade (z = 3.2)
+  // 2. Chiller HVAC Units & Hex Logo di Atap (referensi gambar WareTrack 3D)
+  // 6 Unit AC Chiller (2 baris x 3 unit) kotak abu dengan kipas bulat hitam
+  const chillerPositions: [number, number][] = [
+    [-4.5, -1.8], [-1.8, -1.8], [1.8, -1.8],
+    [-4.5, 1.8], [3.2, 1.8], [5.0, 1.8]
+  ];
+  for (const [cx, cz] of chillerPositions) {
+    box(g, [1.1, 0.45, 0.8], [cx, 4.58, cz], '#94a3b8', 0.04);
+    // 2 Kipas bulat hitam di atas tiap unit
+    for (const fx of [-0.26, 0.26]) {
+      cylinder(g, 0.22, 0.05, [cx + fx, 4.82, cz], '#1e293b');
+      cylinder(g, 0.08, 0.06, [cx + fx, 4.83, cz], '#475569');
+    }
+  }
+  // Logo heksagonal biru 3D di pusat atap
+  const hexEmblem = box(g, [0.8, 0.15, 0.8], [0, 4.45, 0], '#2563eb', 0.08);
+  hexEmblem.rotation.y = Math.PI / 4;
+  cylinder(g, 0.28, 0.18, [0, 4.46, 0], '#fafcff');
+
+  // 3. Elevated Concrete Loading Dock Platform (dermaga bertingkat dengan garis kuning)
+  box(g, [15.0, 0.65, 3.2], [0, 0.33, 4.4], '#e2e8f0', 0.06);
+  // Garis keselamatan kuning pembatas tepi dermaga (Dock yellow safety stripe)
+  box(g, [15.1, 0.04, 0.18], [0, 0.66, 5.95], palette.dockStripe, 0.02, false);
+  box(g, [0.18, 0.04, 3.2], [-7.45, 0.66, 4.4], palette.dockStripe, 0.02, false);
+  box(g, [0.18, 0.04, 3.2], [7.45, 0.66, 4.4], palette.dockStripe, 0.02, false);
+  // Tangga akses samping dermaga dengan handrail kuning
+  box(g, [1.4, 0.32, 1.0], [-7.9, 0.16, 5.0], '#cbd5e1', 0.03);
+  cylinder(g, 0.04, 1.2, [-8.5, 0.75, 4.6], '#f59e0b');
+  cylinder(g, 0.04, 1.2, [-8.5, 0.75, 5.4], '#f59e0b');
+
+  // 4. Tiga Loading Bay Rolling Doors di Fasad Depan (z = 3.3)
   const bayX = [-4.4, 0, 4.4];
-  // Bay 1: Closed rolling door with horizontal ridges & canopy
-  box(g, [3.2, 2.7, 0.14], [bayX[0], 1.45, 3.24], '#3b82f6', 0.04);
-  for (let y = 0.35; y <= 2.65; y += 0.32) {
-    box(g, [3.16, 0.05, 0.08], [bayX[0], y, 3.32], '#1d4ed8', 0);
+  // Lampu status bay (Dock lights di atas pintu: hijau = siap muat, merah = sibuk)
+  const bayStatusColors = ['#ef4444', '#10b981', '#10b981'];
+
+  for (let b = 0; b < 3; b++) {
+    const bx = bayX[b];
+    // Frame rolling door biru tebal
+    box(g, [3.4, 2.8, 0.22], [bx, 1.7, 3.35], '#1d4ed8', 0.05);
+    // Lampu indikator bulat di atas bay
+    cylinder(g, 0.09, 0.06, [bx, 3.2, 3.48], bayStatusColors[b]).rotation.x = Math.PI / 2;
+    // Bumper karet pelindung dock hitam di bawah pintu
+    box(g, [0.32, 0.65, 0.22], [bx - 1.35, 0.45, 6.02], '#0f172a');
+    box(g, [0.32, 0.65, 0.22], [bx + 1.35, 0.45, 6.02], '#0f172a');
   }
-  box(g, [3.6, 0.32, 0.35], [bayX[0], 2.92, 3.35], palette.navy, 0.04);
 
-  // Bay 2: Open bay showing stacked pallets inside
-  box(g, [3.2, 2.7, 0.16], [bayX[1], 1.45, 3.2], '#1e293b', 0.03);
-  cylinder(g, 0.25, 3.2, [bayX[1], 2.7, 3.2], palette.blue).rotation.z = Math.PI / 2;
-  // Inside pallets & cargo
-  box(g, [1.5, 0.16, 1.3], [bayX[1] - 0.5, 0.22, 2.0], palette.wood);
-  box(g, [1.3, 0.7, 1.1], [bayX[1] - 0.5, 0.65, 2.0], '#cbd5e1', 0.04);
-  box(g, [1.5, 0.16, 1.3], [bayX[1] + 0.5, 0.22, 1.8], palette.wood);
-  box(g, [1.2, 0.85, 1.0], [bayX[1] + 0.5, 0.75, 1.8], '#b45309', 0.04);
+  // Bay 1: Pintu rolling tertutup rapat dengan profil horizontal
+  box(g, [3.1, 2.5, 0.12], [bayX[0], 1.6, 3.38], '#3b82f6', 0.03);
+  for (let y = 0.55; y <= 2.65; y += 0.3) {
+    box(g, [3.05, 0.04, 0.06], [bayX[0], y, 3.45], '#1e40af', 0);
+  }
 
-  // Bay 3: Active Loading Dock with protective canopy
-  box(g, [3.2, 2.7, 0.14], [bayX[2], 1.45, 3.24], '#2563eb', 0.04);
-  box(g, [4.8, 0.2, 2.8], [bayX[2], 3.25, 4.5], palette.navy, 0.08);
-  cylinder(g, 0.08, 3.2, [bayX[2] - 2.1, 1.6, 5.7], palette.metal);
-  cylinder(g, 0.08, 3.2, [bayX[2] + 2.1, 1.6, 5.7], palette.metal);
-  // Dock bumper rubber blocks
-  box(g, [0.3, 0.7, 0.25], [bayX[2] - 1.3, 0.55, 3.38], '#0f172a');
-  box(g, [0.3, 0.7, 0.25], [bayX[2] + 1.3, 0.55, 3.38], '#0f172a');
+  // Bay 2: Pintu terbuka — menampilkan interior gudang dan kargo bertumpuk
+  box(g, [3.1, 2.5, 0.12], [bayX[1], 1.6, 3.35], '#0f172a', 0.02);
+  cylinder(g, 0.22, 3.1, [bayX[1], 2.75, 3.38], '#2563eb').rotation.z = Math.PI / 2;
+  // Palet dan kardus kargo di dalam Bay 2
+  box(g, [1.4, 0.15, 1.3], [bayX[1] - 0.45, 0.72, 2.3], palette.wood);
+  box(g, [1.2, 0.7, 1.1], [bayX[1] - 0.45, 1.15, 2.3], '#e2e8f0', 0.04);
+  box(g, [1.4, 0.15, 1.3], [bayX[1] + 0.45, 0.72, 2.0], palette.wood);
+  box(g, [1.1, 0.85, 1.0], [bayX[1] + 0.45, 1.25, 2.0], '#d97706', 0.04);
 
-  // Sign on warehouse
-  sign(g, 'GUDANG LOGISTIK KDMP', [0, 3.75, 3.28], 5.6, '#2443a6');
+  // Bay 3: Dermaga aktif dengan kanopi pelindung hujan baja & tiang penyangga
+  box(g, [3.1, 2.5, 0.12], [bayX[2], 1.6, 3.35], '#1e293b', 0.02);
+  box(g, [4.4, 0.18, 2.4], [bayX[2], 3.42, 4.6], '#1e3a8a', 0.06);
+  cylinder(g, 0.07, 3.4, [bayX[2] - 2.0, 1.7, 5.7], palette.metal);
+  cylinder(g, 0.07, 3.4, [bayX[2] + 2.0, 1.7, 5.7], palette.metal);
 
-  // Forklift on apron
-  createForklift(g, [-2.6, 0, 5.2], -Math.PI * 0.25);
+  // 5. Papan Nama 3D Solid Gudang (bukan setipis kertas)
+  sign(g, 'GUDANG LOGISTIK KDMP', [0, 3.65, 3.44], 5.8, '#ffffff');
 
-  // Pallet stack on apron
-  box(g, [1.5, 0.16, 1.3], [2.6, 0.14, 5.5], palette.wood);
-  box(g, [1.3, 0.75, 1.1], [2.6, 0.6, 5.5], '#3b82f6', 0.05);
+  // 6. Stasiun Pengisian Forklift (Charging Station) di Area Samping Kiri (X = -8.5, Z = 1.0)
+  // Sesuai referensi gambar WareTrack (paving hijau mint + 3 charger + kabel + LED bar hijau)
+  const chargeGroup = new THREE.Group();
+  chargeGroup.position.set(-9.5, 0, 1.2);
+  g.add(chargeGroup);
+  // Paving hijau mint
+  box(chargeGroup, [4.8, 0.06, 3.8], [0, 0.03, 0], '#d1fae5', 0.04, false);
+  // Garis pembatas parkir charger putih
+  for (let px = -1.6; px <= 1.6; px += 1.6) {
+    box(chargeGroup, [0.08, 0.015, 3.4], [px, 0.065, 0], '#ffffff', 0, false);
+  }
+  // 3 Unit Charger putih modern dengan LED bar hijau vertikal
+  for (let i = 0; i < 3; i++) {
+    const cx = -1.6 + i * 1.6;
+    // Box charger
+    box(chargeGroup, [0.55, 1.15, 0.35], [cx, 0.6, -1.5], '#ffffff', 0.04);
+    box(chargeGroup, [0.58, 0.08, 0.38], [cx, 1.2, -1.5], '#1e293b', 0.02);
+    // Garis LED status hijau menyala
+    box(chargeGroup, [0.06, 0.45, 0.02], [cx, 0.8, -1.32], '#10b981', 0);
+  }
+  // Forklift terparkir rapi di slot charger pertama
+  createForklift(chargeGroup, [-1.6, 0, 0.2], Math.PI * 0.5);
+
+  // 7. Forklift Aktif Beroperasi Membawa Palet Kardus di Depan Bay 2
+  createForklift(g, [-1.8, 0, 6.4], -Math.PI * 0.25);
+
+  // 8. Tumpukan Palet & Box Kardus di Area Staging Apron Kanan
+  box(g, [1.6, 0.16, 1.4], [2.8, 0.14, 6.2], palette.wood);
+  box(g, [1.4, 0.75, 1.2], [2.8, 0.6, 6.2], '#3b82f6', 0.05);
+  box(g, [1.6, 0.16, 1.4], [4.6, 0.14, 6.2], palette.wood);
+  box(g, [1.3, 0.68, 1.1], [4.6, 0.58, 6.2], '#d97706', 0.05);
 
   return g;
 }
@@ -519,35 +641,68 @@ export function createTruck(
   g.rotation.y = rotation;
   g.userData.selection = selection;
   parent.add(g);
-  // 6 Heavy Wheels
+
+  // 6 Heavy Wheels dengan pelek krom / abu-abu (2 depan, 4 tandem belakang)
   for (const [wx, wz] of [
-    [1.7, -0.82],
-    [1.7, 0.82],
-    [-0.9, -0.82],
-    [-0.9, 0.82],
-    [-1.8, -0.82],
-    [-1.8, 0.82],
+    [1.75, -0.84],
+    [1.75, 0.84],
+    [-0.95, -0.84],
+    [-0.95, 0.84],
+    [-1.85, -0.84],
+    [-1.85, 0.84],
   ]) {
-    const wheel = cylinder(g, 0.36, 0.24, [wx, 0.36, wz], '#1a202c');
+    const wheel = cylinder(g, 0.38, 0.26, [wx, 0.38, wz], '#1a202c');
     wheel.rotation.x = Math.PI / 2;
-    cylinder(wheel, 0.18, 0.25, [0, 0, 0], '#64748b');
+    cylinder(wheel, 0.19, 0.27, [0, 0, 0], '#94a3b8');
   }
-  // Cab
-  box(g, [1.5, 1.45, 1.7], [1.5, 1.1, 0], color, 0.1);
-  box(g, [0.1, 0.58, 1.5], [2.26, 1.35, 0], palette.glass);
-  for (const sz of [-0.84, 0.84]) {
-    box(g, [0.75, 0.48, 0.05], [1.48, 1.35, sz], palette.glass);
+
+  // 1. Sasis Baja Hitam Bawah (Chassis)
+  box(g, [4.8, 0.22, 1.3], [0.1, 0.44, 0], '#1e293b', 0.04);
+  // Tangki bahan bakar & aki samping
+  cylinder(g, 0.22, 0.9, [0.35, 0.42, -0.72], '#64748b').rotation.z = Math.PI / 2;
+  box(g, [0.8, 0.36, 0.45], [0.35, 0.42, 0.72], '#334155', 0.03);
+
+  // 2. Kabin Truk Modern Aero (Kabin Putih Bersih dengan Aksen Warna)
+  const cabBg = '#fafcff';
+  box(g, [1.55, 1.48, 1.74], [1.55, 1.15, 0], cabBg, 0.09);
+  // Aksen garis warna di bawah kaca kabin (referensi Nordline)
+  box(g, [1.58, 0.12, 1.76], [1.55, 0.86, 0], color, 0.02);
+
+  // Kaca depan miring gelap berframe modern
+  box(g, [0.12, 0.62, 1.54], [2.32, 1.42, 0], palette.glass, 0.02);
+  // Kaca samping pengemudi & penumpang
+  for (const sz of [-0.88, 0.88]) {
+    box(g, [0.82, 0.52, 0.05], [1.5, 1.42, sz], palette.glass);
+    // Kaca spion samping hitam modern bertangkai
+    cylinder(g, 0.02, 0.28, [2.15, 1.38, sz + (sz > 0 ? 0.15 : -0.15)], '#1e293b');
+    box(g, [0.14, 0.32, 0.06], [2.15, 1.48, sz + (sz > 0 ? 0.24 : -0.24)], '#0f172a', 0.02);
   }
-  // Headlights & bumper
-  box(g, [0.25, 0.28, 1.72], [2.22, 0.44, 0], '#1e293b', 0.05);
-  for (const sz of [-0.62, 0.62]) {
-    box(g, [0.06, 0.14, 0.28], [2.35, 0.46, sz], '#fffbeb', 0.03);
+
+  // Bumper depan kokoh dengan grill bertingkat (referensi Nordline)
+  box(g, [0.28, 0.36, 1.76], [2.32, 0.48, 0], '#1e293b', 0.06);
+  // Grill depan garis-garis horizontal hitam & perak
+  for (let gy = 0.42; gy <= 0.62; gy += 0.07) {
+    box(g, [0.04, 0.03, 1.0], [2.47, gy, 0], '#64748b', 0);
   }
-  // Large cargo box
-  box(g, [3.2, 1.9, 1.75], [-0.95, 1.4, 0], '#f8fafc', 0.08);
-  box(g, [3.24, 0.18, 1.77], [-0.95, 0.95, 0], palette.blue, 0.02);
-  sign(g, 'KOPDES', [-0.95, 1.55, 0.89], 2.2, '#2443a6');
-  sign(g, 'KOPDES', [-0.95, 1.55, -0.89], 2.2, '#2443a6');
+  // Lampu depan LED trapesium putih & lampu sein oranye
+  for (const sz of [-0.64, 0.64]) {
+    box(g, [0.06, 0.16, 0.32], [2.46, 0.48, sz], '#ffffff', 0.02);
+    box(g, [0.06, 0.12, 0.1], [2.46, 0.48, sz + (sz > 0 ? 0.18 : -0.18)], '#f59e0b', 0.02);
+  }
+
+  // 3. Box Kargo Kontainer Besar (Nordline / WareTrack style)
+  box(g, [3.35, 2.05, 1.82], [-0.98, 1.48, 0], '#f8fafc', 0.07);
+  // Gelombang aksen warna di body samping box
+  box(g, [3.38, 0.32, 1.84], [-0.98, 0.88, 0], color, 0.02);
+  // Papan merek armada "KOPDES FREIGHT" di kedua sisi box kargo
+  sign(g, 'KOPDES FREIGHT', [-0.98, 1.62, 0.93], 2.4, color);
+  sign(g, 'KOPDES FREIGHT', [-0.98, 1.62, -0.93], 2.4, color);
+
+  // Pintu belakang kargo dengan palang pengunci ganda perak
+  box(g, [0.05, 1.9, 1.76], [-2.67, 1.48, 0], '#e2e8f0');
+  cylinder(g, 0.025, 1.6, [-2.7, 1.48, -0.4], '#94a3b8');
+  cylinder(g, 0.025, 1.6, [-2.7, 1.48, 0.4], '#94a3b8');
+
   return g;
 }
 

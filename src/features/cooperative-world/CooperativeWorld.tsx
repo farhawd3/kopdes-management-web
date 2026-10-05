@@ -101,7 +101,7 @@ export function CooperativeWorld({
   const [query, setQuery] = useState('');
   const [zoom, setZoom] = useState(1);
   const [rotation, setRotation] = useState(0);
-  const [warehouseTab, setWarehouseTab] = useState<'dermaga' | 'mitra'>('dermaga');
+  const [warehouseTab, setWarehouseTab] = useState<'dermaga' | 'inventaris' | 'lacak' | 'mitra'>('dermaga');
   const [rehearsal, setRehearsal] = useState<CharacterActivity | 'otomatis'>('otomatis');
   const [newStaffName, setNewStaffName] = useState('');
   const [newStaffRole, setNewStaffRole] = useState('');
@@ -909,66 +909,68 @@ export function CooperativeWorld({
                   {/* Baris status atas bergaya WareTrack referensi */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', flexWrap: 'wrap' }}>
                     <span style={{ padding: '3px 10px', background: '#d1fae5', color: '#065f46', borderRadius: '20px', fontSize: '12px', fontWeight: 700, border: '1px solid #a7f3d0' }}>
-                      ● Beroperasi
+                      ● Operational
                     </span>
                     <span style={{ fontSize: '12px', color: 'var(--cw-muted)' }}>
-                      {model.stakeholders?.length || 0} mitra · 3 dermaga aktif
+                      1 docked · 1 arriving · 3 staged
                     </span>
                   </div>
 
-                  {/* Metrik ringkas gudang gaya WareTrack */}
+                  {/* 4 Kartu Metrik WareTrack Referensi */}
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', marginBottom: '10px' }}>
-                    <div style={{ padding: '10px 12px', background: '#f8fafc', borderRadius: '10px', border: '1px solid var(--cw-line)' }}>
-                      <small style={{ display: 'block', fontSize: '11px', color: 'var(--cw-muted)', fontWeight: 600 }}>Stok Barang</small>
-                      <strong style={{ fontSize: '18px', color: 'var(--cw-ink)' }}>
-                        {loading ? '—' : (data as unknown as {items?: unknown[]})?.items?.length || 0}
-                        <span style={{ fontSize: '12px', fontWeight: 400, color: 'var(--cw-muted)' }}> item</span>
+                    <div style={{ padding: '9px 11px', background: '#f8fafc', borderRadius: '10px', border: '1px solid var(--cw-line)' }}>
+                      <small style={{ display: 'block', fontSize: '11px', color: 'var(--cw-muted)', fontWeight: 600 }}>Stock on hand</small>
+                      <strong style={{ fontSize: '17px', color: 'var(--cw-ink)' }}>
+                        1,412<span style={{ fontSize: '12px', fontWeight: 400, color: 'var(--cw-muted)' }}> / 1,800</span>
                       </strong>
                       <div style={{ height: '4px', background: '#e2e8f0', borderRadius: '4px', marginTop: '5px' }}>
-                        <div style={{ height: '4px', background: '#3b82f6', borderRadius: '4px', width: '45%' }} />
+                        <div style={{ height: '4px', background: '#3b82f6', borderRadius: '4px', width: '78%' }} />
                       </div>
                     </div>
-                    <div style={{ padding: '10px 12px', background: '#f8fafc', borderRadius: '10px', border: '1px solid var(--cw-line)' }}>
-                      <small style={{ display: 'block', fontSize: '11px', color: 'var(--cw-muted)', fontWeight: 600 }}>Bay Dermaga</small>
-                      <strong style={{ fontSize: '18px', color: 'var(--cw-ink)' }}>
-                        2<span style={{ fontSize: '12px', fontWeight: 400, color: 'var(--cw-muted)' }}> / 3 aktif</span>
+                    <div style={{ padding: '9px 11px', background: '#f8fafc', borderRadius: '10px', border: '1px solid var(--cw-line)' }}>
+                      <small style={{ display: 'block', fontSize: '11px', color: 'var(--cw-muted)', fontWeight: 600 }}>Truck bays</small>
+                      <strong style={{ fontSize: '17px', color: 'var(--cw-ink)' }}>
+                        2<span style={{ fontSize: '12px', fontWeight: 400, color: 'var(--cw-muted)' }}> / 3 busy</span>
                       </strong>
                       <div style={{ height: '4px', background: '#e2e8f0', borderRadius: '4px', marginTop: '5px' }}>
                         <div style={{ height: '4px', background: '#10b981', borderRadius: '4px', width: '67%' }} />
                       </div>
                     </div>
-                    <div style={{ padding: '10px 12px', background: '#f8fafc', borderRadius: '10px', border: '1px solid var(--cw-line)' }}>
-                      <small style={{ display: 'block', fontSize: '11px', color: 'var(--cw-muted)', fontWeight: 600 }}>Armada Aktif</small>
-                      <strong style={{ fontSize: '18px', color: 'var(--cw-ink)' }}>3
-                        <span style={{ fontSize: '12px', fontWeight: 400, color: 'var(--cw-muted)' }}> kendaraan</span>
+                    <div style={{ padding: '9px 11px', background: '#f8fafc', borderRadius: '10px', border: '1px solid var(--cw-line)' }}>
+                      <small style={{ display: 'block', fontSize: '11px', color: 'var(--cw-muted)', fontWeight: 600 }}>Outbound today</small>
+                      <strong style={{ fontSize: '17px', color: 'var(--cw-ink)' }}>23
+                        <span style={{ fontSize: '12px', fontWeight: 400, color: 'var(--cw-muted)' }}> trucks</span>
                       </strong>
-                      <div style={{ height: '4px', background: '#e2e8f0', borderRadius: '4px', marginTop: '5px' }}>
-                        <div style={{ height: '4px', background: '#f59e0b', borderRadius: '4px', width: '75%' }} />
-                      </div>
+                      <span style={{ fontSize: '10px', color: '#10b981', fontWeight: 600 }}>↑ +4 jadwal</span>
                     </div>
-                    <div style={{ padding: '10px 12px', background: '#f8fafc', borderRadius: '10px', border: '1px solid var(--cw-line)' }}>
-                      <small style={{ display: 'block', fontSize: '11px', color: 'var(--cw-muted)', fontWeight: 600 }}>Forklift</small>
-                      <strong style={{ fontSize: '18px', color: 'var(--cw-ink)' }}>1
-                        <span style={{ fontSize: '12px', fontWeight: 400, color: 'var(--cw-muted)' }}> / 1 aktif</span>
+                    <div style={{ padding: '9px 11px', background: '#f8fafc', borderRadius: '10px', border: '1px solid var(--cw-line)' }}>
+                      <small style={{ display: 'block', fontSize: '11px', color: 'var(--cw-muted)', fontWeight: 600 }}>Put-aways today</small>
+                      <strong style={{ fontSize: '17px', color: 'var(--cw-ink)' }}>15
+                        <span style={{ fontSize: '12px', fontWeight: 400, color: 'var(--cw-muted)' }}> pallets</span>
                       </strong>
-                      <div style={{ height: '4px', background: '#e2e8f0', borderRadius: '4px', marginTop: '5px' }}>
-                        <div style={{ height: '4px', background: '#10b981', borderRadius: '4px', width: '100%' }} />
-                      </div>
+                      <span style={{ fontSize: '10px', color: '#3b82f6', fontWeight: 600 }}>FL-01 & FL-02</span>
                     </div>
                   </div>
 
-                  {/* Tab Dermaga | Inventaris | Mitra */}
-                  <div className="cw-warehouse-card-tabs" style={{ marginTop: '4px' }}>
-                    <div style={{ display: 'flex', background: '#f1f5f9', padding: '3px', borderRadius: '8px', gap: '3px', marginBottom: '10px' }}>
-                      {(['dermaga', 'mitra'] as const).map((tab) => (
+                  {/* 4 Tabs WareTrack: Dermaga | Inventaris | Lacak | Mitra */}
+                  <div className="cw-warehouse-card-tabs" style={{ marginTop: '2px' }}>
+                    <div style={{ display: 'flex', background: '#f1f5f9', padding: '3px', borderRadius: '8px', gap: '2px', marginBottom: '10px', overflowX: 'auto' }}>
+                      {(
+                        [
+                          { id: 'dermaga', label: 'Dermaga' },
+                          { id: 'inventaris', label: 'Inventaris' },
+                          { id: 'lacak', label: 'Lacak' },
+                          { id: 'mitra', label: 'Mitra' },
+                        ] as const
+                      ).map((tab) => (
                         <button
-                          key={tab}
+                          key={tab.id}
                           type="button"
-                          className={`ui-btn cw-seg-btn ${warehouseTab === tab ? 'is-active' : ''}`}
-                          onClick={() => setWarehouseTab(tab)}
-                          style={{ flex: 1, fontSize: '11px' }}
+                          className={`ui-btn cw-seg-btn ${warehouseTab === tab.id ? 'is-active' : ''}`}
+                          onClick={() => setWarehouseTab(tab.id)}
+                          style={{ flex: 1, fontSize: '11px', padding: '6px 4px', whiteSpace: 'nowrap' }}
                         >
-                          {tab === 'dermaga' ? 'Dermaga (3)' : 'Mitra Ekspedisi'}
+                          {tab.label}
                         </button>
                       ))}
                     </div>
@@ -976,66 +978,180 @@ export function CooperativeWorld({
                     {warehouseTab === 'dermaga' ? (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                         {/* Dermaga 1 */}
-                        <div style={{ padding: '10px 12px', background: '#fff', border: '1px solid var(--cw-line)', borderRadius: '8px' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                            <strong style={{ fontSize: '12px', color: 'var(--cw-ink)' }}>Dermaga 1 · Bay-01</strong>
+                        <div style={{ padding: '9px 11px', background: '#fff', border: '1px solid var(--cw-line)', borderRadius: '8px' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
+                            <strong style={{ fontSize: '12px', color: 'var(--cw-ink)' }}>Bay 1 · WH-01</strong>
                             <span style={{ fontSize: '10px', padding: '2px 7px', background: '#f1f5f9', color: '#64748b', borderRadius: '12px', fontWeight: 600 }}>Tertutup</span>
                           </div>
                           <small style={{ fontSize: '11px', color: 'var(--cw-muted)', display: 'block' }}>Gudang transit stok — penyimpanan tertutup</small>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '5px', fontSize: '11px', color: '#64748b' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px', fontSize: '11px', color: '#64748b' }}>
                             <span>Kapasitas palet</span>
                             <span>0 / 12 slot</span>
                           </div>
                         </div>
+
                         {/* Dermaga 2 */}
-                        <div style={{ padding: '10px 12px', background: '#fff', border: '1px solid #93c5fd', borderRadius: '8px' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                            <strong style={{ fontSize: '12px', color: 'var(--cw-ink)' }}>Dermaga 2 · Bay-02</strong>
+                        <div style={{ padding: '9px 11px', background: '#fff', border: '1px solid #93c5fd', borderRadius: '8px' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
+                            <strong style={{ fontSize: '12px', color: 'var(--cw-ink)' }}>Bay 2 · WH-01</strong>
                             <span style={{ fontSize: '10px', padding: '2px 7px', background: '#dbeafe', color: '#1d4ed8', borderRadius: '12px', fontWeight: 600 }}>● Aktif Muat</span>
                           </div>
-                          <small style={{ fontSize: '11px', color: 'var(--cw-muted)', display: 'block' }}>Pintu terbuka · Forklift aktif memuat palet</small>
-                          <div style={{ height: '4px', background: '#e2e8f0', borderRadius: '4px', marginTop: '6px' }}>
+                          <small style={{ fontSize: '11px', color: 'var(--cw-muted)', display: 'block' }}>TRK-2148 (Bluepeak) · Forklift aktif muat</small>
+                          <div style={{ height: '4px', background: '#e2e8f0', borderRadius: '4px', marginTop: '5px' }}>
                             <div style={{ height: '4px', background: '#3b82f6', borderRadius: '4px', width: '75%', transition: 'width 0.6s' }} />
                           </div>
                           <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '3px', fontSize: '11px', color: '#64748b' }}>
                             <span>FL-01 Memuat</span>
-                            <span>75%</span>
+                            <span>3/4 palet (75%)</span>
                           </div>
                         </div>
+
                         {/* Dermaga 3 */}
-                        <div style={{ padding: '10px 12px', background: '#fff', border: '1px solid #99f6e4', borderRadius: '8px' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                            <strong style={{ fontSize: '12px', color: 'var(--cw-ink)' }}>Dermaga 3 · Bay-03</strong>
+                        <div style={{ padding: '9px 11px', background: '#fff', border: '1px solid #99f6e4', borderRadius: '8px' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
+                            <strong style={{ fontSize: '12px', color: 'var(--cw-ink)' }}>Bay 3 · WH-01</strong>
                             <span style={{ fontSize: '10px', padding: '2px 7px', background: '#ccfbf1', color: '#0f766e', borderRadius: '12px', fontWeight: 600 }}>● Truk Bersandar</span>
                           </div>
                           <small style={{ fontSize: '11px', color: 'var(--cw-muted)', display: 'block' }}>
-                            {String(model.stakeholders?.find((s) => String(s.data.category || '').toLowerCase().includes('suplier') || String(s.data.category || '').toLowerCase().includes('distributor'))?.data.title || 'Truk Ekspedisi Mitra')} · Bongkar muat
+                            {String(model.stakeholders?.find((s) => String(s.data.category || '').toLowerCase().includes('suplier'))?.data.title || 'Truk Ekspedisi Mitra')} · Bongkar muatan
                           </small>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '5px', fontSize: '11px', color: '#0f766e' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px', fontSize: '11px', color: '#0f766e' }}>
                             <span>ETA selesai</span>
                             <span>± 30 menit</span>
                           </div>
                         </div>
 
-                        {/* Info Forklift Fleet */}
-                        <div style={{ padding: '10px 12px', background: '#fffbeb', border: '1px solid #fcd34d', borderRadius: '8px', marginTop: '2px' }}>
+                        {/* Forklift Fleet Status (referensi WareTrack) */}
+                        <div style={{ padding: '9px 11px', background: '#fffbeb', border: '1px solid #fcd34d', borderRadius: '8px' }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                            <strong style={{ fontSize: '12px', color: 'var(--cw-ink)' }}>Forklift Fleet</strong>
-                            <span style={{ fontSize: '11px', color: '#92400e' }}>1 / 1 beroperasi</span>
+                            <strong style={{ fontSize: '12px', color: 'var(--cw-ink)' }}>Forklift fleet</strong>
+                            <span style={{ fontSize: '11px', color: '#92400e', fontWeight: 600 }}>1/2 working</span>
                           </div>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#78350f' }}>
-                            <span>FL-01</span>
-                            <span>Memuat di Bay-02</span>
-                            <span>
-                              <span style={{ display: 'inline-block', width: '48px', height: '4px', background: '#e2e8f0', borderRadius: '4px', verticalAlign: 'middle' }}>
-                                <span style={{ display: 'block', width: '75%', height: '4px', background: '#f59e0b', borderRadius: '4px' }} />
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '11px', color: '#78350f' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <span><strong>FL-01</strong> Loading TRK-2148 at Bay 2</span>
+                              <span style={{ fontWeight: 600, color: '#16a34a' }}>75%</span>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <span><strong>FL-02</strong> Standby at Charger 1</span>
+                              <span style={{ fontWeight: 600, color: '#0284c7' }}>100% ⚡</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ) : warehouseTab === 'inventaris' ? (
+                      /* Tab Inventaris persis referensi 1 WareTrack */
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
+                          <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--cw-ink)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Inventory</span>
+                          <span style={{ fontSize: '11px', color: 'var(--cw-muted)' }}>units</span>
+                        </div>
+                        {[
+                          { name: 'Cardboard Box (M)', count: '1,906', status: 'In Stock', color: '#10b981', bg: '#d1fae5', icon: '📦' },
+                          { name: 'Plastic Container', count: '297', status: 'In Stock', color: '#10b981', bg: '#d1fae5', icon: '🟦' },
+                          { name: 'Safety Helmet', count: '212', status: 'Low Stock', color: '#b45309', bg: '#fef3c7', icon: '⛑️' },
+                          { name: 'Packing Tape', count: '4,448', status: 'In Stock', color: '#10b981', bg: '#d1fae5', icon: '🏷️' },
+                        ].map((item) => (
+                          <div
+                            key={item.name}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              padding: '8px 10px',
+                              background: '#fff',
+                              border: '1px solid var(--cw-line)',
+                              borderRadius: '8px',
+                            }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <span style={{ fontSize: '14px' }}>{item.icon}</span>
+                              <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--cw-ink)' }}>{item.name}</span>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <strong style={{ fontSize: '12px', color: 'var(--cw-ink)' }}>{item.count}</strong>
+                              <span
+                                style={{
+                                  fontSize: '10px',
+                                  padding: '2px 6px',
+                                  background: item.bg,
+                                  color: item.color,
+                                  borderRadius: '10px',
+                                  fontWeight: 700,
+                                }}
+                              >
+                                {item.status}
                               </span>
-                              {' '}75%
-                            </span>
+                            </div>
+                          </div>
+                        ))}
+                        <Link
+                          className="cw-secondary-link"
+                          href="/pencatatan?tab=barang"
+                          style={{ marginTop: '4px', textAlign: 'center', display: 'block', fontSize: '11px' }}
+                        >
+                          Buka modul barang & stok opname KDMP ↗
+                        </Link>
+                      </div>
+                    ) : warehouseTab === 'lacak' ? (
+                      /* Tab Lacak Kiriman persis referensi 4 Shipment Tracking */
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <div style={{ padding: '10px', background: '#eff6ff', borderRadius: '8px', border: '1px solid #bfdbfe' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                            <strong style={{ fontSize: '12px', color: '#1e40af' }}>🚛 Shipment Tracking</strong>
+                            <span style={{ fontSize: '10px', color: '#3b82f6', fontWeight: 600 }}>TRK-2148 · Bluepeak</span>
+                          </div>
+
+                          {/* Stepper Timeline Horizontal */}
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative', margin: '12px 4px 6px' }}>
+                            <div style={{ position: 'absolute', top: '10px', left: '12px', right: '12px', height: '2px', background: '#3b82f6', zIndex: 0 }} />
+                            {[
+                              { label: 'Confirmed', time: '06:40', done: true },
+                              { label: 'Picked', time: '08:19', done: true },
+                              { label: 'Loaded', time: '09:16', done: true },
+                              { label: 'In Transit', time: '09:42', done: true },
+                              { label: 'Unloading', time: '09:52', active: true },
+                            ].map((step, idx) => (
+                              <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 1 }}>
+                                <span
+                                  style={{
+                                    width: '20px',
+                                    height: '20px',
+                                    borderRadius: '50%',
+                                    background: step.active ? '#2563eb' : step.done ? '#10b981' : '#cbd5e1',
+                                    color: '#fff',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '10px',
+                                    fontWeight: 700,
+                                    border: step.active ? '2px solid #bfdbfe' : 'none',
+                                  }}
+                                >
+                                  {step.done ? '✓' : idx + 1}
+                                </span>
+                                <span style={{ fontSize: '9px', fontWeight: 600, color: 'var(--cw-ink)', marginTop: '4px' }}>{step.label}</span>
+                                <span style={{ fontSize: '8px', color: 'var(--cw-muted)' }}>{step.time}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Kartu Detail Armada #SHP-78448 */}
+                        <div style={{ padding: '9px 11px', background: '#fff', border: '1px solid var(--cw-line)', borderRadius: '8px' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+                            <strong style={{ fontSize: '11px', color: 'var(--cw-ink)' }}>#SHP-78448</strong>
+                            <span style={{ fontSize: '10px', padding: '1px 6px', background: '#d1fae5', color: '#065f46', borderRadius: '8px', fontWeight: 600 }}>Unloading</span>
+                          </div>
+                          <small style={{ fontSize: '11px', color: 'var(--cw-muted)', display: 'block' }}>To: WH-01 Gudang Logistik KDMP · Bay 2</small>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px', fontSize: '10px', color: '#64748b' }}>
+                            <span>Bongkar: 3/4 palet</span>
+                            <span style={{ color: '#059669', fontWeight: 600 }}>ETA 3 min left</span>
                           </div>
                         </div>
                       </div>
                     ) : (
+                      /* Tab Mitra Ekspedisi */
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                         {model.stakeholders && model.stakeholders.length > 0 ? (
                           model.stakeholders.map((s) => (
@@ -1054,7 +1170,7 @@ export function CooperativeWorld({
                           ))
                         ) : (
                           <div style={{ padding: '12px', background: '#f8fafc', border: '1px solid var(--cw-line)', borderRadius: '8px' }}>
-                            <small style={{ fontSize: '11px', color: 'var(--cw-muted)' }}>Belum ada data mitra. Ekspedisi umum melayani kawasan secara simulasi.</small>
+                            <small style={{ fontSize: '11px', color: 'var(--cw-muted)' }}>Belum ada data mitra khusus. Ekspedisi umum melayani kawasan logistik KDMP.</small>
                           </div>
                         )}
                       </div>
@@ -1097,6 +1213,91 @@ export function CooperativeWorld({
                     <ArrowRight size={15} />
                   </Link>
                 </>
+              ) : selected === 'dokumen' ? (
+                <>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                    <span style={{ padding: '3px 10px', background: '#e0e7ff', color: '#3730a3', borderRadius: '20px', fontSize: '12px', fontWeight: 700, border: '1px solid #c7d2fe' }}>
+                      ● Arsip & Tiga Zona Pencatatan
+                    </span>
+                    <span style={{ fontSize: '11px', color: 'var(--cw-muted)' }}>3 Rak Lemari Fisik & Digital</span>
+                  </div>
+                  <p className="cw-panel-note" style={{ marginBottom: '12px' }}>
+                    Pusat arsip dan administrasi KDMP Puntukrejo. Tiga lemari berlabel di ruang kantor terhubung langsung ke modul pencatatan web:
+                  </p>
+
+                  {/* 3 Kartu Zona Pencatatan (Anggota, Kas, Barang) */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px' }}>
+                    {/* Zona 1: Lemari Anggota (Biru) */}
+                    <div style={{ padding: '10px 12px', background: '#fff', border: '1px solid #93c5fd', borderRadius: '10px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#dbeafe', color: '#1d4ed8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}>👥</span>
+                          <strong style={{ fontSize: '13px', color: '#1e3a8a' }}>Buku Induk Anggota</strong>
+                        </div>
+                        <span style={{ fontSize: '10px', padding: '2px 7px', background: '#eff6ff', color: '#1d4ed8', borderRadius: '12px', fontWeight: 700 }}>Zona Biru</span>
+                      </div>
+                      <small style={{ fontSize: '11px', color: 'var(--cw-muted)', display: 'block', lineHeight: 1.4 }}>
+                        Pencatatan data anggota koperasi, kartu keanggotaan warga desa, dan partisipasi simpanan.
+                      </small>
+                      <Link
+                        href="/pencatatan?tab=anggota"
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', marginTop: '6px', fontSize: '11px', fontWeight: 600, color: '#2563eb' }}
+                      >
+                        Buka Buku Anggota <ArrowRight size={13} />
+                      </Link>
+                    </div>
+
+                    {/* Zona 2: Lemari Kas (Hijau) */}
+                    <div style={{ padding: '10px 12px', background: '#fff', border: '1px solid #86efac', borderRadius: '10px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#dcfce7', color: '#15803d', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}>💵</span>
+                          <strong style={{ fontSize: '13px', color: '#14532d' }}>Buku Kas Operasional</strong>
+                        </div>
+                        <span style={{ fontSize: '10px', padding: '2px 7px', background: '#f0fdf4', color: '#15803d', borderRadius: '12px', fontWeight: 700 }}>Zona Hijau</span>
+                      </div>
+                      <small style={{ fontSize: '11px', color: 'var(--cw-muted)', display: 'block', lineHeight: 1.4 }}>
+                        Pencatatan arus kas masuk, kas keluar, bukti transaksi harian, dan pembukuan mutasi saldo.
+                      </small>
+                      <Link
+                        href="/pencatatan?tab=kas"
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', marginTop: '6px', fontSize: '11px', fontWeight: 600, color: '#16a34a' }}
+                      >
+                        Buka Buku Kas <ArrowRight size={13} />
+                      </Link>
+                    </div>
+
+                    {/* Zona 3: Lemari Barang (Kuning/Oranye) */}
+                    <div style={{ padding: '10px 12px', background: '#fff', border: '1px solid #fde047', borderRadius: '10px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span style={{ width: '24px', height: '24px', borderRadius: '6px', background: '#fef9c3', color: '#a16207', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}>📦</span>
+                          <strong style={{ fontSize: '13px', color: '#713f12' }}>Buku Barang & Stok Opname</strong>
+                        </div>
+                        <span style={{ fontSize: '10px', padding: '2px 7px', background: '#fefce8', color: '#a16207', borderRadius: '12px', fontWeight: 700 }}>Zona Kuning</span>
+                      </div>
+                      <small style={{ fontSize: '11px', color: 'var(--cw-muted)', display: 'block', lineHeight: 1.4 }}>
+                        Katalog inventaris komoditas, stok menipis, dan riwayat audit stok opname berkala.
+                      </small>
+                      <Link
+                        href="/pencatatan?tab=barang"
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', marginTop: '6px', fontSize: '11px', fontWeight: 600, color: '#ca8a04' }}
+                      >
+                        Buka Stok Barang & Opname <ArrowRight size={13} />
+                      </Link>
+                    </div>
+                  </div>
+
+                  {/* Tombol ke Ruang Arsip Dokumen & Modul Pencatatan Utama */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <Link className="cw-primary-link" href="/pencatatan">
+                      Buka dashboard pencatatan lengkap <ArrowRight size={15} />
+                    </Link>
+                    <Link className="cw-secondary-link" href="/dokumen">
+                      Buka dokumen SK & arsip file <ArrowRight size={14} />
+                    </Link>
+                  </div>
+                </>
               ) : station ? (
                 <>
                   <span className="cw-status">Ruang kerja</span>
@@ -1128,11 +1329,6 @@ export function CooperativeWorld({
                     Buka {station.title.toLowerCase()}
                     <ArrowRight size={15} />
                   </Link>
-                  {selected === 'dokumen' && (
-                    <Link className="cw-secondary-link" href="/pencatatan">
-                      Buka buku pencatatan <ArrowRight size={14} />
-                    </Link>
-                  )}
                 </>
               ) : (
                 <>
