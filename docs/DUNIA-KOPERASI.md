@@ -145,3 +145,36 @@ Berdasarkan evaluasi langsung pemilik proyek KDMP Puntukrejo:
 6. **Standarisasi Tipografi Terpadu:**
    - Mengeliminasi seluruh font mikro berukuran 7px, 8px, dan 9px di seluruh halaman.
    - Menyelaraskan hierarki tipografi proporsional: 11px untuk badge/label mikro, 12-13px untuk isi teks dan list, 14-16px untuk subjudul/nama stasiun, dan 18px untuk nilai metrik kartu KPI.
+
+---
+
+## 11. Paket Revisi Pengguna Batch 2 (5 Oktober 2026 - Lanjutan)
+
+Menanggapi masukan pengguna mengenai tabrakan NPC, jalan mundur, penataan gudang, Lahan 07, objek hitam, dan keseimbangan UI:
+1. **Perbaikan Sirkulasi & Arah Gerak NPC (Anti Jalan Mundur & Tabrakan):**
+   - Mengganti interpolasi rotasi manual dengan orientasi dinamis `Math.atan2(dx, dz)` pada lerp waypoints. Arah hadap 3D karakter selalu 100% menghadap vektor arah pergerakan, meniadakan efek jalan mundur saat berbalik arah.
+   - Ruang gerak koridor interior dan trotoar pedestrian diperlebar (koridor lobi kantor kini berjarak sirkulasi lega 3.5m).
+2. **Eliminasi Belang Hitam Putus-Putus Lahan 06:**
+   - Teluk parkir mobil manajer beraspal gelap di dekat Lahan 06 yang mengalami pemotongan/clipping trotoar digantikan dengan **Carport Eksekutif Teduh**: kanopi lengkung biru pastel lembut, tiang penopang baja putih, lantai paving halus (`#dbe5f2`), dan wheel stops karet solid.
+3. **Ekspansi Peta & Redesain Gudang Logistik (Membebaskan Lahan 07):**
+   - Platform kawasan diekspansi ke arah timur (`X` diperlebar dari 62 unit menjadi 88 unit, rentang X: `-36` s/d `52`).
+   - Jalan raya samping kanan digeser ke `X = 43.2` dengan simpang-T lampu lalu lintas di `X = 43.2, Z = 12`.
+   - **Lahan 07 (`[18, 0]`) dibebaskan 100%**, berdiri sebagai plot terbuka hijau mandiri dengan buffer taman dan penanda yang jelas.
+   - **Gudang Logistik KDMP diperbesar** (`14.2 × 4.0 × 6.4 unit`), ditempatkan di `X = 30, Z = -1.5`, dilengkapi 3 pintu dock bay berpintu gulung biru navy, kanopi overhung, dock bumper karet tebal, signage nama resmi, apron luas (`16 × 8.5 unit`) di sisi selatan untuk manuver truk mitra, mobil box, forklift, dan palet logistik.
+4. **Fasilitas Tambahan Sisi Selatan:**
+   - Membangun **Halte Bus Koperasi** berkanopi modern dan bangku tunggu di `X = -8, Z = 16.6`.
+   - Membangun **Monumen Gerbang Kawasan "KDMP PUNTUKREJO"** berstruktur batu pualam halus dan panel kayu di `X = 12, Z = 16.6`.
+   - Penambahan jalur hijau pedestrian dan pepohonan peneduh di sepanjang sisi selatan jalan raya.
+5. **Kualitas Desain Objek Lembut & Solid:**
+   - Menghilangkan objek-objek tipis/pecah. Seluruh geometri menggunakan ketebalan solid, rounded bevel, dan elevasi berlapis anti z-fighting.
+6. **Balon Dialog Dinamis Mengikuti Pergerakan NPC:**
+   - Proyeksi koordinat 3D balon komik membaca posisi real-time pengirim (`senderId`) setiap frame sehingga balon dialog bergerak mulus mengikuti langkah karakter.
+7. **Kartu Profil & Data NPC di Samping Atas:**
+   - Seluruh 8 karakter/NPC (Pak Hartono, Anisa, Bambang, Dedi, Pak Subagyo, Bu Ratna, Siti Rahma, Fajar) dapat diklik langsung untuk membuka kartu profil di panel kanan atas (`.cw-detail`).
+   - Menampilkan kategori, peran, status aktivitas dinamis, kutipan (*quote*) khas karakter, dan tombol aksi terhubung ke modul terkait.
+8. **Penggantian Objek Hitam Lobi Kantor:**
+   - Objek lempengan hitam tipis di Zona F lobi kantor dihilangkan total.
+   - Digantikan oleh **Meja Resepsionis & Pusat Informasi Lobi KDMP** bertema kayu krem dan marmer putih solid, dilengkapi komputer resepsionis, tanaman anggrek hias, dan standing signboard kayu. Bangku tunggu digeser ke posisi strategis untuk sirkulasi masuk yang lapang.
+9. **Keseimbangan Tata Letak UI (Breadcrumb vs Kartu Statistik):**
+   - Kartu statistik atas dan breadcrumb lokasi disatukan dalam wadah flex vertikal `.cw-top-left-group` dengan jarak aman 12px, menjamin tidak ada tumpang-tindih visual di semua ukuran layar.
+

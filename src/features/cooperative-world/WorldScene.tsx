@@ -183,7 +183,7 @@ export function WorldScene({
             createCharacter(world, [4, 0.42, 2.6], '#e11d48', 1, 'npc'),
             createCharacter(world, [4, 0.42, -2.6], '#f59e0b', 0, 'npc'),
             createCharacter(world, [-14, 0.1, -4.8], '#10b981', 2, 'npc'),
-            createCharacter(world, [20.6, 0.1, 2.0], '#6366f1', 1, 'npc'),
+            createCharacter(world, [39.0, 0.1, 7.0], '#6366f1', 1, 'npc'),
           ]
         : [
             createCharacter(world, [-7.5, 0.42, -3.0], color, 0, 'manager'),
@@ -192,17 +192,19 @@ export function WorldScene({
             createCharacter(world, [9.2, 0.35, 4.8], '#10b981', 2, 'staff'),
           ];
 
-    characters[0].group.userData.selection = 'manajer';
-    for (let i = 1; i < characters.length; i++) {
-      characters[i].group.userData.selection = 'karakter';
-    }
-
     if (location === 'luar') {
-      // Karakter 1 duduk santai di bangku plaza selatan menghadap utara
+      characters[0].group.userData.selection = 'manajer';
+      characters[1].group.userData.selection = 'npc-warga-selatan';
+      characters[2].group.userData.selection = 'npc-warga-utara';
+      characters[3].group.userData.selection = 'npc-pejalan';
+      characters[4].group.userData.selection = 'npc-jalan-kanan';
       characters[1].group.rotation.y = Math.PI;
-      // Karakter 2 duduk santai di bangku plaza utara menghadap selatan
       characters[2].group.rotation.y = 0;
     } else {
+      characters[0].group.userData.selection = 'manajer';
+      characters[1].group.userData.selection = 'karyawan-tugas';
+      characters[2].group.userData.selection = 'karyawan-rapat';
+      characters[3].group.userData.selection = 'karyawan-gym';
       characters[0].group.rotation.y = Math.PI;
       characters[1].group.rotation.y = Math.PI;
       characters[2].group.rotation.y = Math.PI;
@@ -266,7 +268,7 @@ export function WorldScene({
       if (!width || !height) return;
       renderer.setSize(width, height);
       const aspect = width / height;
-      const span = location === 'luar' ? (aspect < 1 ? 26 : 18.5) : aspect < 1 ? 16 : 11.5;
+      const span = location === 'luar' ? (aspect < 1 ? 29 : 20.5) : aspect < 1 ? 16 : 11.5;
       camera.left = -span * aspect;
       camera.right = span * aspect;
       camera.top = span;
@@ -279,7 +281,7 @@ export function WorldScene({
     const positions = new Map<string, THREE.Vector3>();
     if (location === 'luar') {
       positions.set('koperasi', new THREE.Vector3(-5, 4.3, 0));
-      positions.set('gudang', new THREE.Vector3(18, 3.8, 3.8));
+      positions.set('gudang', new THREE.Vector3(30, 4.2, -1.5));
       model.plots.forEach((plot) =>
         positions.set(
           plot.id,
@@ -297,7 +299,7 @@ export function WorldScene({
     // Waypoints for manager exterior patrol
     const pOffice = new THREE.Vector3(-5, 0.1, 3.5);
     const pPlaza = new THREE.Vector3(3.5, 0.1, 3.5);
-    const pRightRoad = new THREE.Vector3(20.6, 0.1, 2.0);
+    const pRightRoad = new THREE.Vector3(39.0, 0.1, 2.0);
     const pPlots = new THREE.Vector3(-10, 0.1, -4.8);
 
     // Traffic Simulation State (Paket 3 PRD v2)
@@ -373,10 +375,17 @@ export function WorldScene({
     const getTargetCoords = (sel: string): [number, number, number] | null => {
       if (sel === 'manajer') return location === 'luar' ? [-5, 0.4, 3.5] : [-7.5, 0.4, -3.0];
       if (sel === 'karakter') return location === 'luar' ? [4, 0.4, 2.6] : [1.8, 0.4, -2.0];
-      if (sel === 'gudang' || sel === 'logistik') return [18, 1.2, 3.8];
-      if (sel === 'kendaraan-manajer') return [-18.2, 0.5, 6.5];
-      if (sel === 'kendaraan-van') return [15.2, 0.5, 7.0];
-      if (sel === 'kendaraan-truk-mitra') return [20.8, 0.6, 6.8];
+      if (sel === 'npc-warga-selatan') return [4, 0.5, 2.8];
+      if (sel === 'npc-warga-utara') return [4, 0.5, -2.8];
+      if (sel === 'npc-pejalan') return [-10, 0.5, -4.8];
+      if (sel === 'npc-jalan-kanan') return [39.0, 0.5, 2.0];
+      if (sel === 'karyawan-tugas') return [-1.8, 0.5, -4.4];
+      if (sel === 'karyawan-rapat') return [-6.0, 0.5, -3.0];
+      if (sel === 'karyawan-gym') return [9.2, 0.5, 4.8];
+      if (sel === 'gudang' || sel === 'logistik') return [30, 1.2, -1.5];
+      if (sel === 'kendaraan-manajer') return [-18.2, 0.5, 5.2];
+      if (sel === 'kendaraan-van') return [25.8, 0.5, 6.2];
+      if (sel === 'kendaraan-truk-mitra') return [34.2, 0.6, 6.2];
       if (sel === 'koperasi') return [-5, 1.2, 0];
       if (sel === 'rapat') return [-7.5, 0.8, -4.5];
       if (sel === 'tugas') return [0, 0.8, -4.5];
@@ -555,7 +564,9 @@ export function WorldScene({
             isWalkingFlags[0] = true;
             const r = (phase - 25) / 11;
             characters[0].group.position.lerpVectors(pOffice, pPlaza, r);
-            characters[0].group.rotation.y = Math.PI * 0.5;
+            const dx = pPlaza.x - pOffice.x;
+            const dz = pPlaza.z - pOffice.z;
+            characters[0].group.rotation.y = Math.atan2(dx, dz);
             characters[0].base.copy(characters[0].group.position);
           } else if (phase < 46) {
             // Berdiri di Plaza mengamati air mancur & menyapa warga
@@ -563,12 +574,14 @@ export function WorldScene({
             characters[0].group.rotation.y = -Math.PI * 0.2;
             characters[0].base.copy(pPlaza);
           } else if (phase < 58) {
-            // Berjalan dari Plaza ke trotoar Jalan Raya Samping Kanan (X = 20.6)
+            // Berjalan dari Plaza ke trotoar Jalan Raya Samping Kanan baru (X = 39.0)
             isManagerWalking = true;
             isWalkingFlags[0] = true;
             const r = (phase - 46) / 12;
             characters[0].group.position.lerpVectors(pPlaza, pRightRoad, r);
-            characters[0].group.rotation.y = Math.PI * 0.45;
+            const dx = pRightRoad.x - pPlaza.x;
+            const dz = pRightRoad.z - pPlaza.z;
+            characters[0].group.rotation.y = Math.atan2(dx, dz);
             characters[0].base.copy(characters[0].group.position);
           } else if (phase < 68) {
             // Berjalan dari Jalan Samping Kanan ke deretan gerai (X = -10, Z = -4.8)
@@ -576,7 +589,9 @@ export function WorldScene({
             isWalkingFlags[0] = true;
             const r = (phase - 58) / 10;
             characters[0].group.position.lerpVectors(pRightRoad, pPlots, r);
-            characters[0].group.rotation.y = -Math.PI * 0.6;
+            const dx = pPlots.x - pRightRoad.x;
+            const dz = pPlots.z - pRightRoad.z;
+            characters[0].group.rotation.y = Math.atan2(dx, dz);
             characters[0].base.copy(characters[0].group.position);
           } else if (phase < 78) {
             // Menginspeksi kesiapan unit usaha gerai
@@ -589,59 +604,60 @@ export function WorldScene({
             isWalkingFlags[0] = true;
             const r = (phase - 78) / 12;
             characters[0].group.position.lerpVectors(pPlots, pOffice, r);
-            characters[0].group.rotation.y = Math.PI * 0.35;
+            const dx = pOffice.x - pPlots.x;
+            const dz = pOffice.z - pPlots.z;
+            characters[0].group.rotation.y = Math.atan2(dx, dz);
             characters[0].base.copy(characters[0].group.position);
           }
 
-          // Karakter 3: NPC Pejalan Kaki di Trotoar Depan Gerai (bolak-balik X = -15 s/d 12 di Z = -4.8)
+          // Karakter 3: NPC Pejalan Kaki di Trotoar Depan Gerai (bolak-balik X = -15 s/d 14 di Z = -4.8)
           if (characters[3]) {
             const walkLoop = 40;
             const wPhase = elapsed % walkLoop;
             const pStart = new THREE.Vector3(-15, 0.1, -4.8);
-            const pEnd = new THREE.Vector3(12, 0.1, -4.8);
+            const pEnd = new THREE.Vector3(14, 0.1, -4.8);
             if (wPhase < 16) {
               isWalkingFlags[3] = true;
               const r = wPhase / 16;
               characters[3].group.position.lerpVectors(pStart, pEnd, r);
-              characters[3].group.rotation.y = Math.PI * 0.5;
+              characters[3].group.rotation.y = Math.PI * 0.5; // Menghadap timur
             } else if (wPhase < 22) {
-              // Berhenti melihat gerai
               characters[3].group.position.copy(pEnd);
-              characters[3].group.rotation.y = Math.PI;
+              characters[3].group.rotation.y = Math.PI; // Menghadap gerai
             } else if (wPhase < 36) {
               isWalkingFlags[3] = true;
               const r = (wPhase - 22) / 14;
               characters[3].group.position.lerpVectors(pEnd, pStart, r);
-              characters[3].group.rotation.y = -Math.PI * 0.5;
+              characters[3].group.rotation.y = -Math.PI * 0.5; // Menghadap barat
             } else {
               characters[3].group.position.copy(pStart);
-              characters[3].group.rotation.y = 0;
+              characters[3].group.rotation.y = 0; // Menghadap selatan
             }
             characters[3].base.copy(characters[3].group.position);
           }
 
-          // Karakter 4: NPC Pejalan Kaki di Trotoar Jalan Raya Samping Kanan (X = 20.6, Z = 7.0 s/d -13.0)
+          // Karakter 4: NPC Pejalan Kaki di Trotoar Jalan Raya Samping Kanan (X = 39.0, Z = 7.0 s/d -14.0)
           if (characters[4]) {
             const rightLoop = 36;
             const rPhase = (elapsed + 10) % rightLoop;
-            const pSouth = new THREE.Vector3(20.6, 0.1, 7.0);
-            const pNorth = new THREE.Vector3(20.6, 0.1, -13.0);
+            const pSouth = new THREE.Vector3(39.0, 0.1, 7.0);
+            const pNorth = new THREE.Vector3(39.0, 0.1, -14.0);
             if (rPhase < 15) {
               isWalkingFlags[4] = true;
               const r = rPhase / 15;
               characters[4].group.position.lerpVectors(pSouth, pNorth, r);
-              characters[4].group.rotation.y = Math.PI;
+              characters[4].group.rotation.y = Math.PI; // Menghadap utara
             } else if (rPhase < 20) {
               characters[4].group.position.copy(pNorth);
-              characters[4].group.rotation.y = Math.PI * 0.5;
+              characters[4].group.rotation.y = -Math.PI * 0.5; // Menghadap barat melihat gudang
             } else if (rPhase < 32) {
               isWalkingFlags[4] = true;
               const r = (rPhase - 20) / 12;
               characters[4].group.position.lerpVectors(pNorth, pSouth, r);
-              characters[4].group.rotation.y = 0;
+              characters[4].group.rotation.y = 0; // Menghadap selatan
             } else {
               characters[4].group.position.copy(pSouth);
-              characters[4].group.rotation.y = -Math.PI * 0.5;
+              characters[4].group.rotation.y = -Math.PI * 0.5; // Menghadap barat
             }
             characters[4].base.copy(characters[4].group.position);
           }
@@ -661,22 +677,22 @@ export function WorldScene({
           characters[0].base.set(-1.8, 0.42, -2.0);
           characters[0].group.rotation.y = Math.PI;
         } else {
-          // Jika tidak ada kegiatan wajib, manajer berkeliling santai mengecek lobi dan arsip
+          // Jika tidak ada kegiatan wajib, manajer berkeliling santai di koridor lapang
           const mLoop = 36;
           const mPhase = elapsed % mLoop;
-          const pLobby = new THREE.Vector3(0, 0.1, 3.5);
-          const pArchiveCheck = new THREE.Vector3(-7.6, 0.1, 3.0);
+          const pLobby = new THREE.Vector3(0, 0.1, 2.5);
+          const pArchiveCheck = new THREE.Vector3(-7.6, 0.1, 2.5);
           if (mPhase < 12) {
             isWalkingFlags[0] = true;
             characters[0].group.position.lerpVectors(pLobby, pArchiveCheck, mPhase / 12);
-            characters[0].group.rotation.y = -Math.PI * 0.5;
+            characters[0].group.rotation.y = -Math.PI * 0.5; // Menghadap barat
           } else if (mPhase < 22) {
             characters[0].group.position.copy(pArchiveCheck);
-            characters[0].group.rotation.y = Math.PI;
+            characters[0].group.rotation.y = Math.PI; // Menghadap arsip
           } else if (mPhase < 30) {
             isWalkingFlags[0] = true;
             characters[0].group.position.lerpVectors(pArchiveCheck, pLobby, (mPhase - 22) / 8);
-            characters[0].group.rotation.y = Math.PI * 0.5;
+            characters[0].group.rotation.y = Math.PI * 0.5; // Menghadap timur
           } else {
             characters[0].group.position.copy(pLobby);
             characters[0].group.rotation.y = 0;
@@ -692,22 +708,22 @@ export function WorldScene({
             characters[1].group.position.set(-1.8, 0.42, -4.4);
             characters[1].group.rotation.y = Math.PI;
           } else {
-            // Tidak ada tugas: berjalan-jalan santai ke Pojok Santai / Pantry
+            // Tidak ada tugas: berjalan-jalan santai ke Pojok Santai
             const tLoop = 32;
             const tPhase = elapsed % tLoop;
             const pDesk = new THREE.Vector3(-1.8, 0.1, -2.5);
-            const pLounge = new THREE.Vector3(7.8, 0.1, -4.5);
+            const pLounge = new THREE.Vector3(7.8, 0.1, -2.5);
             if (tPhase < 10) {
               isWalkingFlags[1] = true;
               characters[1].group.position.lerpVectors(pDesk, pLounge, tPhase / 10);
-              characters[1].group.rotation.y = Math.PI * 0.5;
+              characters[1].group.rotation.y = Math.PI * 0.5; // Menghadap timur
             } else if (tPhase < 24) {
               characters[1].group.position.copy(pLounge);
-              characters[1].group.rotation.y = Math.PI;
+              characters[1].group.rotation.y = -Math.PI * 0.5;
             } else {
               isWalkingFlags[1] = true;
               characters[1].group.position.lerpVectors(pLounge, pDesk, (tPhase - 24) / 8);
-              characters[1].group.rotation.y = -Math.PI * 0.5;
+              characters[1].group.rotation.y = -Math.PI * 0.5; // Menghadap barat
             }
             characters[1].base.copy(characters[1].group.position);
           }
@@ -721,22 +737,26 @@ export function WorldScene({
             characters[2].group.position.set(-6.0, 0.42, -3.0);
             characters[2].group.rotation.y = Math.PI;
           } else {
-            // Tidak ada rapat: berjalan-jalan ke Zona Arsip & Buku
+            // Tidak ada rapat: berjalan-jalan ke koridor tengah
             const rLoop = 36;
             const rPhase = (elapsed + 6) % rLoop;
             const pMeet = new THREE.Vector3(-6.0, 0.1, -2.0);
-            const pArchive = new THREE.Vector3(-7.6, 0.1, 4.0);
+            const pCorridor = new THREE.Vector3(-1.0, 0.1, 1.5);
             if (rPhase < 12) {
               isWalkingFlags[2] = true;
-              characters[2].group.position.lerpVectors(pMeet, pArchive, rPhase / 12);
-              characters[2].group.rotation.y = Math.PI;
+              characters[2].group.position.lerpVectors(pMeet, pCorridor, rPhase / 12);
+              const dx = pCorridor.x - pMeet.x;
+              const dz = pCorridor.z - pMeet.z;
+              characters[2].group.rotation.y = Math.atan2(dx, dz); // Menghadap arah jalan
             } else if (rPhase < 26) {
-              characters[2].group.position.copy(pArchive);
-              characters[2].group.rotation.y = Math.PI * 0.5;
+              characters[2].group.position.copy(pCorridor);
+              characters[2].group.rotation.y = 0;
             } else {
               isWalkingFlags[2] = true;
-              characters[2].group.position.lerpVectors(pArchive, pMeet, (rPhase - 26) / 10);
-              characters[2].group.rotation.y = 0;
+              characters[2].group.position.lerpVectors(pCorridor, pMeet, (rPhase - 26) / 10);
+              const dx = pMeet.x - pCorridor.x;
+              const dz = pMeet.z - pCorridor.z;
+              characters[2].group.rotation.y = Math.atan2(dx, dz); // Menghadap arah jalan kembali
             }
             characters[2].base.copy(characters[2].group.position);
           }
@@ -745,7 +765,7 @@ export function WorldScene({
         // Karakter 3 (Karyawan Staf Lapangan & Gym)
         if (characters[3]) {
           if (hasActivities) {
-            // Ada kegiatan olahraga/jurnal: berlatih di treadmill gym
+            // Ada kegiatan: berlatih di treadmill gym
             characters[3].base.set(9.2, 0.35, 4.8);
             characters[3].group.position.set(9.2, 0.35, 4.8);
             characters[3].group.rotation.y = 0;
@@ -753,19 +773,19 @@ export function WorldScene({
             // Tidak ada kegiatan: berjalan-jalan santai di koridor lobi
             const gLoop = 30;
             const gPhase = (elapsed + 14) % gLoop;
-            const pGym = new THREE.Vector3(7.8, 0.1, 2.5);
-            const pLobby = new THREE.Vector3(0, 0.1, 4.5);
+            const pGym = new THREE.Vector3(7.8, 0.1, 2.0);
+            const pLobbyCenter = new THREE.Vector3(1.5, 0.1, 2.0);
             if (gPhase < 11) {
               isWalkingFlags[3] = true;
-              characters[3].group.position.lerpVectors(pGym, pLobby, gPhase / 11);
-              characters[3].group.rotation.y = -Math.PI * 0.5;
+              characters[3].group.position.lerpVectors(pGym, pLobbyCenter, gPhase / 11);
+              characters[3].group.rotation.y = -Math.PI * 0.5; // Menghadap barat
             } else if (gPhase < 19) {
-              characters[3].group.position.copy(pLobby);
+              characters[3].group.position.copy(pLobbyCenter);
               characters[3].group.rotation.y = 0;
             } else {
               isWalkingFlags[3] = true;
-              characters[3].group.position.lerpVectors(pLobby, pGym, (gPhase - 19) / 11);
-              characters[3].group.rotation.y = Math.PI * 0.5;
+              characters[3].group.position.lerpVectors(pLobbyCenter, pGym, (gPhase - 19) / 11);
+              characters[3].group.rotation.y = Math.PI * 0.5; // Menghadap timur
             }
             characters[3].base.copy(characters[3].group.position);
           }
@@ -896,12 +916,38 @@ export function WorldScene({
         animateCharacter(character, elapsed + index * 2, mode, reduced.matches, isWalking);
       });
 
-      // Synchronize floating dialogue bubbles to 2D screen coordinates
-      if (elapsed - lastBubbleSync >= 0.08) {
+      // Synchronize floating dialogue bubbles to 2D screen coordinates (mengikuti karakter yang berjalan secara real-time)
+      if (elapsed - lastBubbleSync >= 0.03) {
         lastBubbleSync = elapsed;
         if (activeBubblesList.length > 0) {
           const projectedBubbles = activeBubblesList.map((b) => {
-            const v = new THREE.Vector3(...b.position);
+            let charPos: THREE.Vector3 | null = null;
+            if (b.senderId === 'manajer' && characters[0]) {
+              charPos = characters[0].group.position;
+            } else if (location === 'luar') {
+              if ((b.senderId === 'warga-plaza' || b.senderId === 'npc-warga-selatan') && characters[1]) {
+                charPos = characters[1].group.position;
+              } else if (b.senderId === 'npc-warga-utara' && characters[2]) {
+                charPos = characters[2].group.position;
+              } else if (b.senderId === 'npc-pejalan' && characters[3]) {
+                charPos = characters[3].group.position;
+              } else if (b.senderId === 'npc-jalan-kanan' && characters[4]) {
+                charPos = characters[4].group.position;
+              }
+            } else {
+              if (b.senderId === 'karyawan-tugas' && characters[1]) {
+                charPos = characters[1].group.position;
+              } else if (b.senderId === 'karyawan-rapat' && characters[2]) {
+                charPos = characters[2].group.position;
+              } else if ((b.senderId === 'karyawan-gym' || b.senderId === 'karyawan-kegiatan') && characters[3]) {
+                charPos = characters[3].group.position;
+              }
+            }
+            const worldX = charPos ? charPos.x : b.position[0];
+            const worldY = (charPos ? charPos.y : b.position[1]) + 2.3;
+            const worldZ = charPos ? charPos.z : b.position[2];
+
+            const v = new THREE.Vector3(worldX, worldY, worldZ);
             v.project(camera);
             return {
               ...b,

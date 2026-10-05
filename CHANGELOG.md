@@ -1,5 +1,35 @@
 # Changelog
 
+## Paket Revisi Interaksi & Kawasan Dunia Koperasi (Batch 2): Orientasi NPC Anti Mundur, Redesain Gudang & Pembebasan Lahan 07, Objek Halte/Monumen Selatan, Kartu Profil NPC, dan Harmonisasi UI — 5 Oktober 2026
+
+- **Perbaikan Arah Gerak & Navigasi NPC (Anti Jalan Mundur & Tabrakan Objek)**:
+  - Mengimplementasikan orientasi arah hadap dinamis berbasis `Math.atan2(dx, dz)` pada lerp waypoints pergerakan 3D karakter. Karakter selalu menghadap 100% ke depan mengikuti vektor gerak, melenyapkan bug jalan mundur saat berbalik arah.
+  - Memperlebar koridor sirkulasi lobi kantor menjadi 3.5 meter dan trotoar pedestrian untuk memastikan karakter tidak menabrak perabot atau dinding.
+- **Eliminasi Belang Hitam Parkir Lahan 06**:
+  - Mengganti teluk parkir aspal gelap di dekat Lahan 06 yang mengalami clipping/z-fighting dengan **Carport Eksekutif**: kanopi melengkung biru pastel, tiang baja putih, lantai paving halus (`#dbe5f2`), dan wheel stops karet solid.
+- **Ekspansi Map Kawasan & Redesain Gudang Logistik (Lahan 07 Bebas Total)**:
+  - Memperluas platform kawasan 3D dari 62 unit menjadi 88 unit (rentang sumbu X dari `-36` hingga `+52`).
+  - Menggeser jalan raya samping kanan ke `X = 43.2` lengkap dengan simpang-T lampu merah di `Z = 12`.
+  - **Membebaskan Lahan 07 (`[18, 0]`) secara utuh** dari tumpukan gedung gudang, kini berdiri independen sebagai plot gerai terbuka hijau dengan buffer taman penanda.
+  - **Memperbesar Gudang Logistik KDMP** menjadi `14.2 × 4.0 × 6.4 unit` di koordinat `X = 30, Z = -1.5` dengan 3 rolling door bay berkanopi, dock bumper karet tebal, signage resmi, dan apron manuver kendaraan luas (`16 × 8.5 unit`) untuk truk mitra, forklift, mobil box, dan palet logistik.
+- **Penambahan Fasilitas Kawasan Sisi Selatan**:
+  - Menghadirkan **Halte Bus Koperasi** ("HALTE KOPERASI") berkanopi modern dan bangku tunggu di tepi jalan selatan (`X = -8, Z = 16.6`).
+  - Menghadirkan **Monumen Gerbang Kawasan "KDMP PUNTUKREJO"** berstruktur batu pualam halus dan panel kayu di `X = 12, Z = 16.6`.
+  - Menanam deretan pepohonan peneduh dan jalur hijau pedestrian di sepanjang sisi selatan.
+- **Kualitas Desain Objek Solid & Lembut (Anti Tipis/Pecah)**:
+  - Seluruh geometri 3D kawasan dan interior memiliki ketebalan solid, rounded edge/bevel yang lembut, elevasi bertingkat terukur untuk mencegah z-fighting, dan pencahayaan lembut tanpa artefak pecah.
+- **Balon Percakapan Komik Dinamis Mengikuti Posisi Jalan NPC**:
+  - Sistem proyeksi balon dialog 3D-ke-2D membaca koordinat posisi real-time NPC (`senderId`) setiap frame, membuat teks percakapan ikut melayang halus bersama karakter saat berjalan.
+- **Kartu Profil & Data NPC di Samping Atas**:
+  - Klik pada setiap karakter/NPC (Manajer, Anisa, Bambang, Dedi, Pak Subagyo, Bu Ratna, Siti Rahma, Fajar) membuka kartu profil lengkap di panel samping atas (`.cw-detail`): menampilkan peran, lencana status aktivitas terkini, kutipan khas (*quote*), dan tombol aksi terhubung ke modul terkait.
+- **Penggantian Objek Hitam Lobi Kantor**:
+  - Mengeliminasi total lempengan hitam tipis di Zona F lobi kantor.
+  - Menggantikannya dengan **Meja Resepsionis & Pusat Informasi Lobi KDMP** bertema kayu krem dan marmer putih solid, dilengkapi komputer resepsionis dan tanaman anggrek hias.
+- **Harmonisasi Tata Letak UI (Anti Tumpang-Tindih)**:
+  - Menyatukan kartu statistik KPI atas (*Gerai*, *Tugas*, *Rapat*) dan breadcrumb lokasi *Kawasan* ke dalam flex container vertikal `.cw-top-left-group` dengan jarak aman 12px, menjamin tidak ada overlap visual di resolusi apa pun.
+- **Kualitas & Keandalan**:
+  - 275 pengujian unit/integrasi lulus 100%, typecheck TypeScript 0 error, linter ESLint 0 error dan 0 warning, build Next.js Turbopack sukses untuk 12 rute.
+
 ## Paket Revisi Interaksi & Kawasan Dunia Koperasi: Redesain Jalan Kanan, NPC Bergerak, Karyawan Kantor Dinamis, dan Tipografi Proporsional — 5 Oktober 2026
 
 - **Redesain Jalan & Simpang Lampu Merah Kanan**:

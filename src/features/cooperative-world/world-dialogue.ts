@@ -38,6 +38,109 @@ export interface DialoguePairCooldown {
   untilElapsed: number;
 }
 
+export interface NpcProfile {
+  id: string;
+  name: string;
+  role: string;
+  category: string;
+  activity: string;
+  quote: string;
+  avatarColor: string;
+  actionHref: string;
+  actionLabel: string;
+}
+
+export const npcProfiles: Record<string, NpcProfile> = {
+  manajer: {
+    id: 'manajer',
+    name: 'Pak Hartono',
+    role: 'Manajer KDMP Puntukrejo',
+    category: 'Manajer • Penanggung Jawab',
+    activity: 'Mengawasi operasional ruang kerja dan keteraturan kawasan',
+    quote: 'Mari jaga keteraturan kerja, transparansi pencatatan, dan pelayanan terbaik bagi seluruh warga desa.',
+    avatarColor: '#1e3a8a',
+    actionHref: '/profil',
+    actionLabel: 'Profil Manajer',
+  },
+  'karyawan-tugas': {
+    id: 'karyawan-tugas',
+    name: 'Anisa',
+    role: 'Staf Pengelola Tugas',
+    category: 'Staf Kantor • Operasional',
+    activity: 'Memeriksa progres pekerjaan dan menindaklanjuti tenggat tugas harian',
+    quote: 'Semua berkas tugas harian kami verifikasi agar target kerja koperasi tercapai tepat waktu.',
+    avatarColor: '#3b82f6',
+    actionHref: '/tugas',
+    actionLabel: 'Buka Daftar Tugas',
+  },
+  'karyawan-rapat': {
+    id: 'karyawan-rapat',
+    name: 'Bambang',
+    role: 'Sekretaris & Notulen Rapat',
+    category: 'Staf Kantor • Sekretariat',
+    activity: 'Menyiapkan agenda koordinasi pengurus, notulensi, dan tindak lanjut keputusan',
+    quote: 'Notulen tersimpan rapi dan dapat diunduh kapan saja oleh pengurus dan anggota.',
+    avatarColor: '#0284c7',
+    actionHref: '/rapat',
+    actionLabel: 'Lihat Jadwal Rapat',
+  },
+  'karyawan-gym': {
+    id: 'karyawan-gym',
+    name: 'Dedi',
+    role: 'Koordinator Lapangan & Fasilitas',
+    category: 'Staf Kantor • Fasilitas',
+    activity: 'Mengatur logistik fisik, pemeliharaan sarana, dan kebugaran tim',
+    quote: 'Kondisi fisik prima mendukung produktivitas kerja yang maksimal di lapangan.',
+    avatarColor: '#10b981',
+    actionHref: '/jurnal',
+    actionLabel: 'Buka Jurnal Kegiatan',
+  },
+  'npc-warga-selatan': {
+    id: 'npc-warga-selatan',
+    name: 'Pak Subagyo',
+    role: 'Warga & Anggota Koperasi',
+    category: 'Warga Desa • Anggota',
+    activity: 'Duduk santai di bangku taman plaza menikmati suasana pagi desa Puntukrejo',
+    quote: 'Alhamdulillah, keberadaan gerai dan layanan koperasi desa sangat mempermudah kebutuhan sehari-hari warga.',
+    avatarColor: '#f59e0b',
+    actionHref: '/gerai',
+    actionLabel: 'Jelajahi Gerai',
+  },
+  'npc-warga-utara': {
+    id: 'npc-warga-utara',
+    name: 'Bu Ratna',
+    role: 'Pengrajin UMKM Desa',
+    category: 'Warga Desa • Mitra Usaha',
+    activity: 'Beristirahat di plaza setelah mengantar produk olahan UMKM ke koperasi',
+    quote: 'Produk olahan warga desa kini punya etalase resmi di gerai koperasi, pembeli makin ramai.',
+    avatarColor: '#10b981',
+    actionHref: '/gerai',
+    actionLabel: 'Lihat Produk UMKM',
+  },
+  'npc-pejalan': {
+    id: 'npc-pejalan',
+    name: 'Siti Rahma',
+    role: 'Pengunjung Kawasan Gerai',
+    category: 'Pengunjung • Pelanggan',
+    activity: 'Berjalan menyusuri trotoar melihat etalase gerai usaha koperasi',
+    quote: 'Trotoar di depan gerai nyaman dan teduh, enak untuk jalan santai sambil berbelanja.',
+    avatarColor: '#8b5cf6',
+    actionHref: '/gerai',
+    actionLabel: 'Katalog Gerai',
+  },
+  'npc-jalan-kanan': {
+    id: 'npc-jalan-kanan',
+    name: 'Fajar',
+    role: 'Kurir & Pengemudi Logistik',
+    category: 'Logistik • Distribusi',
+    activity: 'Berjalan menyusuri trotoar jalan timur menuju dermaga bongkar muat gudang',
+    quote: 'Arus pengiriman pasokan barang dari distributor mitra via jalan samping berjalan lancar.',
+    avatarColor: '#06b6d4',
+    actionHref: '/barang',
+    actionLabel: 'Pusat Logistik',
+  },
+};
+
 /**
  * Dapatkan salam waktu berdasarkan jam WIB
  */

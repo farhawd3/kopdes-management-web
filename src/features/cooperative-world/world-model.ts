@@ -58,7 +58,7 @@ export const worldStations = [
     title: 'Gudang Logistik',
     href: '/barang',
     description: 'Pusat pasokan barang, area bongkar muat 3 dermaga, dan armada logistik.',
-    position: [18, 0, 4],
+    position: [28, 0, 0],
     scope: 'luar',
   },
 ] as const;

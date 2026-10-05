@@ -28,12 +28,15 @@ import {
   Sun,
   Truck,
   Users,
+  UserCheck,
+  Quote,
   X,
   BookOpen,
   Play,
   Pause,
 } from 'lucide-react';
 import { getMinuteFromPreset } from './world-lighting';
+import { npcProfiles } from './world-dialogue';
 import { Button } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
 import { Input } from '@/components/ui/Input';
@@ -167,6 +170,7 @@ export function CooperativeWorld({
   const plot = model.plots.find((item) => item.id === selected);
   const station = worldStations.find((item) => item.id === selected);
   const vehicle = worldVehicles.find((item) => item.id === selected);
+  const npc = npcProfiles[selected];
   const clock = new Intl.DateTimeFormat('id-ID', {
     timeZone: 'Asia/Jakarta',
     hour: '2-digit',
@@ -217,23 +221,25 @@ export function CooperativeWorld({
   }
   const count = (value: number) => (loading || error ? '—' : value);
   const title =
-    selected === 'manajer'
-      ? model.manager || 'Manajer Koperasi'
-      : vehicle
-        ? vehicle.name
-        : selected === 'lingkungan'
-          ? 'Suasana & karakter'
-          : selected === 'logistik' || selected === 'gudang'
-            ? 'Gudang Logistik'
-            : selected === 'karakter'
-              ? 'Tim & Staf Koperasi'
-              : plot
-                ? plot.unit
-                  ? String(plot.unit.data.title)
-                  : `Lahan ${selected.split('-')[1]}`
-                : station
-                  ? station.title
-                  : 'Kawasan koperasi';
+    npc
+      ? npc.name
+      : selected === 'manajer'
+        ? model.manager || 'Manajer Koperasi'
+        : vehicle
+          ? vehicle.name
+          : selected === 'lingkungan'
+            ? 'Suasana & karakter'
+            : selected === 'logistik' || selected === 'gudang'
+              ? 'Gudang Logistik'
+              : selected === 'karakter'
+                ? 'Tim & Staf Koperasi'
+                : plot
+                  ? plot.unit
+                    ? String(plot.unit.data.title)
+                    : `Lahan ${selected.split('-')[1]}`
+                  : station
+                    ? station.title
+                    : 'Kawasan koperasi';
   return (
     <main className={`cooperative-world ${hour >= 19 || hour < 6 ? 'cw-night' : ''}`}>
       <header className="cw-topbar">
@@ -499,57 +505,59 @@ export function CooperativeWorld({
             </div>
           </div>
         )}
-        <div className="cw-stat-row">
-          <Link href="/gerai" className="cw-glass cw-stat">
-            <span className="cw-stat-icon">
-              <Store size={20} />
-            </span>
-            <div>
-              <small>Gerai tercatat</small>
-              <strong>
-                {count(model.units.length)} <em>/ 7 lahan</em>
-              </strong>
-              <span>
-                {loading
-                  ? 'Memuat data…'
-                  : error
-                    ? 'Data belum tersedia'
-                    : 'Terhubung ke Unit Gerai'}
+        <div className="cw-top-left-group">
+          <div className="cw-stat-row">
+            <Link href="/gerai" className="cw-glass cw-stat">
+              <span className="cw-stat-icon">
+                <Store size={20} />
               </span>
-            </div>
-          </Link>
-          <Link href="/tugas" className="cw-glass cw-stat">
-            <span className="cw-stat-icon">
-              <CheckCheck size={20} />
-            </span>
-            <div>
-              <small>Tugas terbuka</small>
-              <strong>{count(model.tasks.length)}</strong>
-              <span>Pekerjaan yang dimuat</span>
-            </div>
-          </Link>
-          <Link href="/rapat" className="cw-glass cw-stat">
-            <span className="cw-stat-icon">
-              <Users size={20} />
-            </span>
-            <div>
-              <small>Rapat hari ini</small>
-              <strong>{count(model.meetings.length)}</strong>
-              <span>{model.currentMeeting ? 'Dalam waktu rapat' : 'Sesuai jadwal tersimpan'}</span>
-            </div>
-          </Link>
-        </div>
-        <div className="cw-location-breadcrumb">
-          <Button onClick={() => enter('luar')} aria-label="Lihat kawasan">
-            <House size={14} />
-            Kawasan
-          </Button>
-          {location === 'dalam' && (
-            <>
-              <ChevronRight size={13} />
-              <span>Kantor koperasi</span>
-            </>
-          )}
+              <div>
+                <small>Gerai tercatat</small>
+                <strong>
+                  {count(model.units.length)} <em>/ 7 lahan</em>
+                </strong>
+                <span>
+                  {loading
+                    ? 'Memuat data…'
+                    : error
+                      ? 'Data belum tersedia'
+                      : 'Terhubung ke Unit Gerai'}
+                </span>
+              </div>
+            </Link>
+            <Link href="/tugas" className="cw-glass cw-stat">
+              <span className="cw-stat-icon">
+                <CheckCheck size={20} />
+              </span>
+              <div>
+                <small>Tugas terbuka</small>
+                <strong>{count(model.tasks.length)}</strong>
+                <span>Pekerjaan yang dimuat</span>
+              </div>
+            </Link>
+            <Link href="/rapat" className="cw-glass cw-stat">
+              <span className="cw-stat-icon">
+                <Users size={20} />
+              </span>
+              <div>
+                <small>Rapat hari ini</small>
+                <strong>{count(model.meetings.length)}</strong>
+                <span>{model.currentMeeting ? 'Dalam waktu rapat' : 'Sesuai jadwal tersimpan'}</span>
+              </div>
+            </Link>
+          </div>
+          <div className="cw-location-breadcrumb">
+            <Button onClick={() => enter('luar')} aria-label="Lihat kawasan">
+              <House size={14} />
+              Kawasan
+            </Button>
+            {location === 'dalam' && (
+              <>
+                <ChevronRight size={13} />
+                <span>Kantor koperasi</span>
+              </>
+            )}
+          </div>
         </div>
         {(preview || partial || error || loading) && (
           <div className="cw-data-notice" role={error ? 'alert' : 'status'}>
@@ -605,7 +613,9 @@ export function CooperativeWorld({
           <aside className="cw-detail cw-glass" aria-label="Detail lokasi">
             <div className="cw-detail-heading">
               <span className="cw-detail-icon">
-                {selected === 'manajer' ? (
+                {npc ? (
+                  <UserCheck size={24} style={{ color: npc.avatarColor }} />
+                ) : selected === 'manajer' ? (
                   <Users size={24} />
                 ) : vehicle ? (
                   <Truck size={24} />
@@ -621,35 +631,39 @@ export function CooperativeWorld({
               </span>
               <div>
                 <span className="cw-eyebrow">
-                  {selected === 'manajer'
-                    ? 'PROFIL MANAJER'
-                    : vehicle
-                      ? 'ARMADA • SIMULASI'
-                      : selected === 'gudang' || selected === 'logistik'
-                        ? 'PUSAT DISTRIBUSI & LOGISTIK'
-                        : selected === 'karakter'
-                          ? 'SUMBER DAYA MANUSIA'
-                          : location === 'luar'
-                            ? 'DUNIA KOPERASI'
-                            : 'KANTOR • INTERIOR'}
+                  {npc
+                    ? npc.category.toUpperCase()
+                    : selected === 'manajer'
+                      ? 'PROFIL MANAJER'
+                      : vehicle
+                        ? 'ARMADA • SIMULASI'
+                        : selected === 'gudang' || selected === 'logistik'
+                          ? 'PUSAT DISTRIBUSI & LOGISTIK'
+                          : selected === 'karakter'
+                            ? 'SUMBER DAYA MANUSIA'
+                            : location === 'luar'
+                              ? 'DUNIA KOPERASI'
+                              : 'KANTOR • INTERIOR'}
                 </span>
                 <h1>{title}</h1>
                 <p>
-                  {selected === 'manajer'
-                    ? 'Penanggung jawab ruang kerja dan kawasan'
-                    : vehicle
-                      ? 'Kendaraan suasana kawasan'
-                      : selected === 'gudang' || selected === 'logistik'
-                        ? 'Pusat penerimaan pasokan dan bongkar muat mitra'
-                        : plot
-                          ? plot.unit
-                            ? 'Terhubung ke catatan gerai'
-                            : 'Bidang tersedia untuk gerai baru'
-                          : selected === 'karakter'
-                            ? 'Petugas dan anggota tim ruang kerja'
-                            : location === 'luar'
-                              ? 'Lingkungan dan ruang kerja'
-                              : 'Pilih area untuk membuka catatan'}
+                  {npc
+                    ? npc.role
+                    : selected === 'manajer'
+                      ? 'Penanggung jawab ruang kerja dan kawasan'
+                      : vehicle
+                        ? 'Kendaraan suasana kawasan'
+                        : selected === 'gudang' || selected === 'logistik'
+                          ? 'Pusat penerimaan pasokan dan bongkar muat mitra'
+                          : plot
+                            ? plot.unit
+                              ? 'Terhubung ke catatan gerai'
+                              : 'Bidang tersedia untuk gerai baru'
+                            : selected === 'karakter'
+                              ? 'Petugas dan anggota tim ruang kerja'
+                              : location === 'luar'
+                                ? 'Lingkungan dan ruang kerja'
+                                : 'Pilih area untuk membuka catatan'}
                 </p>
               </div>
               <Button
@@ -661,7 +675,32 @@ export function CooperativeWorld({
               </Button>
             </div>
             <div className="cw-detail-body">
-              {vehicle ? (
+              {npc ? (
+                <div className="cw-npc-card-body">
+                  <div className="cw-npc-status-box">
+                    <span
+                      className="cw-npc-badge"
+                      style={{
+                        backgroundColor: `${npc.avatarColor}15`,
+                        color: npc.avatarColor,
+                        borderColor: `${npc.avatarColor}30`,
+                      }}
+                    >
+                      Aktivitas Terkini
+                    </span>
+                    <p className="cw-npc-activity-text">{npc.activity}</p>
+                  </div>
+                  <div className="cw-npc-quote-box">
+                    <Quote size={16} className="cw-npc-quote-icon" />
+                    <p className="cw-npc-quote-text">&ldquo;{npc.quote}&rdquo;</p>
+                  </div>
+                  <div className="cw-npc-actions">
+                    <Link href={npc.actionHref} className="cw-btn cw-btn-primary cw-w-full">
+                      {npc.actionLabel}
+                    </Link>
+                  </div>
+                </div>
+              ) : vehicle ? (
                 <>
                   <div className="cw-planning-icon">
                     <Truck size={44} />

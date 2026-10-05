@@ -70,7 +70,19 @@ Versi sekarang belum diterima: kawasan kecil/sepi, mobil belum ada, tampilan aga
   - Penambahan 3 karyawan di interior kantor dengan perilaku dinamis berdasarkan data operasional nyata (bekerja di meja tugas / meja rapat / gym bila ada kegiatan, dan berjalan-jalan santai roaming bila tidak ada beban tugas).
   - Percakapan kontekstual kaya yang membedakan obrolan santai/biasa dan informasi faktual operasional (tugas, gerai, rapat, gudang).
   - Standarisasi tipografi terpadu: eliminasi total font mikro 7-9px, menyelaraskan ukuran font menjadi 11px (label/badge), 12-13px (isi/daftar), dan 16-18px (judul/metrik) yang seimbang dan mudah dibaca di semua viewport.
-- Exterior luas (58 × 38 unit): kantor koperasi, jalan utama dua arah di selatan, jalan raya sisi kanan ke utara, simpang lampu merah kanan, plaza air mancur dan 4 bangku taman ber-anchor, area parkir mobil manajer, gudang logistik, dan tujuh lahan gerai yang terhubung catatan `units`.
+- **Paket Revisi Pengguna Batch 2 Selesai (5 Oktober 2026):**
+  - Perbaikan orientasi rotasi gerak NPC (`Math.atan2(dx, dz)`) anti jalan mundur; pelebaran koridor lobi (3.5m) dan trotoar anti tabrakan objek.
+  - Penggantian total bayang hitam belang parkir Lahan 06 dengan Carport Eksekutif beratap melengkung pastel dan paving halus.
+  - Ekspansi platform map ke arah timur (88 × 44 unit) dan penggeseran jalan kanan ke X = 43.2.
+  - Pembebasan total Lahan 07 (`[18, 0]`) dari tindihan gudang, dengan penanda dan taman pemisah.
+  - Perbesaran Gudang Logistik KDMP (`14.2 × 4.0 × 6.4 unit`) di X = 30 dengan 3 dock bay, kanopi, bumper, dan apron manuver kendaraan luas.
+  - Penambahan fasilitas tepi selatan jalan raya: Halte Bus Koperasi, Monumen Gerbang Kawasan "KDMP PUNTUKREJO", dan pepohonan peneduh.
+  - Peningkatan kualitas objek 3D solid, berketebalan terukur, rounded/beveled, anti z-fighting dan tidak setipis kertas/pecah.
+  - Sinkronisasi dinamis balon dialog komik yang bergerak mulus mengikuti koordinat jalan NPC.
+  - Integrasi klik pada seluruh NPC dengan kartu profil detail di panel samping atas (peran, lencana status aktivitas, quote personal, dan tombol navigasi aksi).
+  - Penggantian lempengan hitam tipis di lobi kantor dengan Meja Resepsionis & Pusat Informasi Lobi KDMP kayu-marmer solid lengkap dengan PC dan tanaman hias.
+  - Harmonisasi layout UI kiri atas: pembungkus vertikal `.cw-top-left-group` melenyapkan tumpang tindih antara breadcrumb "Kawasan" dan kartu KPI.
+- Exterior luas (88 × 44 unit): kantor koperasi, jalan utama dua arah di selatan, jalan raya sisi kanan ke utara (X = 43.2), simpang lampu merah kanan, halte bus, monumen gerbang, plaza air mancur, carport manajer, gudang logistik diperbesar, dan tujuh lahan gerai yang terhubung catatan `units`.
 - Style dunia terisolasi di `world.css` dan palet Three.js di `world-objects.ts`.
 
 ## Pemeriksaan paket terbaru

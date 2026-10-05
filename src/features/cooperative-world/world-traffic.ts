@@ -44,7 +44,7 @@ export function calculateFade(
   x: number,
   direction: TrafficDirection,
   xMin = -31,
-  xMax = 31,
+  xMax = 48,
   fadeDist = 5,
 ): FadeResult {
   let opacity = 1;
@@ -183,8 +183,8 @@ export function stepTrafficSimulation(
   vehicles: TrafficVehicleState[],
   dt: number,
   isMainGreen: boolean,
-  stopLineEast = 20.5,
-  stopLineWest = 28.5,
+  stopLineEast = 39.0,
+  stopLineWest = 47.2,
 ): void {
   // Sort per jalur untuk mendeteksi kendaraan di depan
   const eastLane = vehicles
@@ -201,7 +201,7 @@ export function stepTrafficSimulation(
     const lead = i > 0 ? eastLane[i - 1] : null;
 
     let shouldStop = false;
-    let targetX = 35; // default terus melaju
+    let targetX = 50; // default terus melaju
 
     // Cek lampu merah bila belum melewati stop line
     if (!isMainGreen && v.x < stopLineEast && v.x > stopLineEast - 10) {
@@ -243,7 +243,7 @@ export function stepTrafficSimulation(
     v.scale = fade.scale;
     v.castShadow = fade.castShadow;
 
-    if (v.x >= 32) {
+    if (v.x >= 48) {
       v.state = 'despawned';
     }
   }
@@ -254,7 +254,7 @@ export function stepTrafficSimulation(
     const lead = i > 0 ? westLane[i - 1] : null;
 
     let shouldStop = false;
-    let targetX = -35;
+    let targetX = -40;
 
     // Cek lampu merah bila belum melewati stop line barat
     if (!isMainGreen && v.x > stopLineWest && v.x < stopLineWest + 10) {
@@ -293,7 +293,7 @@ export function stepTrafficSimulation(
     v.scale = fade.scale;
     v.castShadow = fade.castShadow;
 
-    if (v.x <= -32) {
+    if (v.x <= -35) {
       v.state = 'despawned';
     }
   }
