@@ -179,17 +179,17 @@ export function WorldScene({
     const characters =
       location === 'luar'
         ? [
-            createCharacter(world, [-5, 0.1, 3.5], color, 0, 'manager'),
-            createCharacter(world, [4, 0.42, 2.6], '#e11d48', 1, 'npc'),
-            createCharacter(world, [4, 0.42, -2.6], '#f59e0b', 0, 'npc'),
-            createCharacter(world, [-14, 0.1, -4.8], '#10b981', 2, 'npc'),
-            createCharacter(world, [39.0, 0.1, 7.0], '#6366f1', 1, 'npc'),
+            createCharacter(world, [-5, 0.1, 3.5], color, 0, 'manager', 'pria'),
+            createCharacter(world, [4, 0.42, 2.6], '#e11d48', 1, 'npc', 'pria'), // Pak Subagyo (warga)
+            createCharacter(world, [4, 0.42, -2.6], '#f59e0b', 0, 'npc', 'wanita'), // Bu Ratna (UMKM)
+            createCharacter(world, [-14, 0.1, -4.8], '#10b981', 0, 'npc', 'wanita'), // Siti Rahma (pejalan gerai - wanita)
+            createCharacter(world, [39.0, 0.1, 7.0], '#6366f1', 2, 'npc', 'pria'), // Fajar (kurir - topi baret baru)
           ]
         : [
-            createCharacter(world, [-7.5, 0.42, -3.0], color, 0, 'manager'),
-            createCharacter(world, [-1.8, 0.42, -4.4], '#3b82f6', 0, 'staff'),
-            createCharacter(world, [-6.0, 0.42, -3.0], '#0284c7', 1, 'staff'),
-            createCharacter(world, [9.2, 0.35, 4.8], '#10b981', 2, 'staff'),
+            createCharacter(world, [-7.8, 0.42, -5.5], color, 0, 'manager', 'pria'), // Pak Hartono (di Ruang Kerja Manajer)
+            createCharacter(world, [-1.8, 0.42, -4.4], '#3b82f6', 1, 'staff', 'wanita'), // Anisa (staf tugas - wanita)
+            createCharacter(world, [7.8, 0.42, -3.4], '#0284c7', 0, 'staff', 'pria'), // Bambang (staf notulen di Ruang Rapat)
+            createCharacter(world, [9.2, 0.35, 4.8], '#10b981', 2, 'staff', 'pria'), // Dedi (lapangan/gym - topi baret)
           ];
 
     if (location === 'luar') {
@@ -205,10 +205,10 @@ export function WorldScene({
       characters[1].group.userData.selection = 'karyawan-tugas';
       characters[2].group.userData.selection = 'karyawan-rapat';
       characters[3].group.userData.selection = 'karyawan-gym';
-      characters[0].group.rotation.y = Math.PI;
-      characters[1].group.rotation.y = Math.PI;
-      characters[2].group.rotation.y = Math.PI;
-      characters[3].group.rotation.y = 0;
+      characters[0].group.rotation.y = 0; // Manajer menghadap ke depan/selatan mejanya
+      characters[1].group.rotation.y = Math.PI; // Anisa menghadap ke utara/mejanya
+      characters[2].group.rotation.y = Math.PI; // Bambang menghadap ke utara/meja rapat
+      characters[3].group.rotation.y = 0; // Dedi di gym
     }
     const raycaster = new THREE.Raycaster();
     const pointer = new THREE.Vector2();
@@ -373,24 +373,30 @@ export function WorldScene({
 
     const targetLookAt = new THREE.Vector3(0, 0, 0);
     const getTargetCoords = (sel: string): [number, number, number] | null => {
-      if (sel === 'manajer') return location === 'luar' ? [-5, 0.4, 3.5] : [-7.5, 0.4, -3.0];
-      if (sel === 'karakter') return location === 'luar' ? [4, 0.4, 2.6] : [1.8, 0.4, -2.0];
+      if (sel === 'manajer') return location === 'luar' ? [-5, 0.4, 3.5] : [-7.8, 0.4, -5.2];
+      if (sel === 'karakter') return location === 'luar' ? [4, 0.4, 2.6] : [0, 0.4, -2.0];
       if (sel === 'npc-warga-selatan') return [4, 0.5, 2.8];
       if (sel === 'npc-warga-utara') return [4, 0.5, -2.8];
       if (sel === 'npc-pejalan') return [-10, 0.5, -4.8];
       if (sel === 'npc-jalan-kanan') return [39.0, 0.5, 2.0];
       if (sel === 'karyawan-tugas') return [-1.8, 0.5, -4.4];
-      if (sel === 'karyawan-rapat') return [-6.0, 0.5, -3.0];
+      if (sel === 'karyawan-rapat') return [7.8, 0.5, -3.4];
       if (sel === 'karyawan-gym') return [9.2, 0.5, 4.8];
       if (sel === 'gudang' || sel === 'logistik') return [30, 1.2, -1.5];
       if (sel === 'kendaraan-manajer') return [-18.2, 0.5, 5.2];
       if (sel === 'kendaraan-van') return [25.8, 0.5, 6.2];
       if (sel === 'kendaraan-truk-mitra') return [34.2, 0.6, 6.2];
+      if (sel === 'kendaraan-box-logistik') return [24.8, 0.5, 5.2];
       if (sel === 'koperasi') return [-5, 1.2, 0];
-      if (sel === 'rapat') return [-7.5, 0.8, -4.5];
+      if (sel === 'ruang-manajer') return [-7.8, 0.8, -4.5];
+      if (sel === 'rapat') return [7.8, 0.8, -4.5];
       if (sel === 'tugas') return [0, 0.8, -4.5];
       if (sel === 'kegiatan') return [7.8, 0.8, 4.6];
-      if (sel === 'dokumen') return [-7.6, 0.8, 5.6];
+      if (sel === 'dokumen' || sel === 'arsip') return [-7.6, 0.8, 5.6];
+      if (sel === 'lobi') return [0, 0.8, 6.2];
+      if (sel === 'halte-bus') return [-8, 0.8, 16.6];
+      if (sel === 'atm-koperasi') return [-3.2, 0.8, 16.6];
+      if (sel === 'pos-satpam') return [-28, 0.8, 8.5];
       const p = model.plots.find((item) => item.id === sel);
       if (p) return [p.position[0], 0.8, p.position[1]];
       return null;
@@ -668,39 +674,47 @@ export function WorldScene({
         // Interior 22x15: Penempatan & Perilaku Dinamis Karyawan Kantor
         // Karakter 0 (Manajer KDMP)
         if (state.activity === 'meeting') {
-          characters[0].base.set(-7.5, 0.42, -3.0);
-          characters[0].group.rotation.y = Math.PI;
+          // Duduk di Ruang Rapat Sayap Timur-Utara
+          characters[0].base.set(7.8, 0.42, -5.6);
+          characters[0].group.position.set(7.8, 0.42, -5.6);
+          characters[0].group.rotation.y = 0;
         } else if (state.activity === 'gym') {
           characters[0].base.set(6.4, 0.35, 4.8);
           characters[0].group.rotation.y = 0;
         } else if (state.activity === 'work') {
-          characters[0].base.set(-1.8, 0.42, -2.0);
-          characters[0].group.rotation.y = Math.PI;
+          // Duduk bekerja di Ruang Kerja Manajer
+          characters[0].base.set(-7.8, 0.42, -5.5);
+          characters[0].group.position.set(-7.8, 0.42, -5.5);
+          characters[0].group.rotation.y = 0;
         } else {
-          // Jika tidak ada kegiatan wajib, manajer berkeliling santai di koridor lapang
-          const mLoop = 36;
+          // Manajer berada di Ruang Kerja Manajer, dan sesekali berkeliling ke koridor tengah
+          const mLoop = 40;
           const mPhase = elapsed % mLoop;
-          const pLobby = new THREE.Vector3(0, 0.1, 2.5);
-          const pArchiveCheck = new THREE.Vector3(-7.6, 0.1, 2.5);
-          if (mPhase < 12) {
-            isWalkingFlags[0] = true;
-            characters[0].group.position.lerpVectors(pLobby, pArchiveCheck, mPhase / 12);
-            characters[0].group.rotation.y = -Math.PI * 0.5; // Menghadap barat
-          } else if (mPhase < 22) {
-            characters[0].group.position.copy(pArchiveCheck);
-            characters[0].group.rotation.y = Math.PI; // Menghadap arsip
-          } else if (mPhase < 30) {
-            isWalkingFlags[0] = true;
-            characters[0].group.position.lerpVectors(pArchiveCheck, pLobby, (mPhase - 22) / 8);
-            characters[0].group.rotation.y = Math.PI * 0.5; // Menghadap timur
-          } else {
-            characters[0].group.position.copy(pLobby);
+          const pManagerDesk = new THREE.Vector3(-7.8, 0.42, -5.5);
+          const pCorridorCenter = new THREE.Vector3(0, 0.1, 1.0);
+          if (mPhase < 20) {
+            // Duduk bekerja di Ruang Kerja Manajer
+            characters[0].group.position.copy(pManagerDesk);
             characters[0].group.rotation.y = 0;
+          } else if (mPhase < 26) {
+            // Berjalan keluar dari ruang manajer menuju koridor tengah
+            isWalkingFlags[0] = true;
+            characters[0].group.position.lerpVectors(pManagerDesk, pCorridorCenter, (mPhase - 20) / 6);
+            characters[0].group.rotation.y = Math.PI * 0.4;
+          } else if (mPhase < 32) {
+            // Berdiri memantau suasana di koridor tengah
+            characters[0].group.position.copy(pCorridorCenter);
+            characters[0].group.rotation.y = 0;
+          } else {
+            // Berjalan kembali ke Ruang Kerja Manajer
+            isWalkingFlags[0] = true;
+            characters[0].group.position.lerpVectors(pCorridorCenter, pManagerDesk, (mPhase - 32) / 8);
+            characters[0].group.rotation.y = -Math.PI * 0.6;
           }
           characters[0].base.copy(characters[0].group.position);
         }
 
-        // Karakter 1 (Karyawan Staf Meja Tugas)
+        // Karakter 1 (Karyawan Staf Meja Tugas - Anisa)
         if (characters[1]) {
           if (hasTaskProcess) {
             // Ada tugas: duduk bekerja di meja komputer workstation
@@ -708,11 +722,11 @@ export function WorldScene({
             characters[1].group.position.set(-1.8, 0.42, -4.4);
             characters[1].group.rotation.y = Math.PI;
           } else {
-            // Tidak ada tugas: berjalan-jalan santai ke Pojok Santai
+            // Tidak ada tugas: berjalan-jalan santai ke koridor
             const tLoop = 32;
             const tPhase = elapsed % tLoop;
             const pDesk = new THREE.Vector3(-1.8, 0.1, -2.5);
-            const pLounge = new THREE.Vector3(7.8, 0.1, -2.5);
+            const pLounge = new THREE.Vector3(3.5, 0.1, -2.5);
             if (tPhase < 10) {
               isWalkingFlags[1] = true;
               characters[1].group.position.lerpVectors(pDesk, pLounge, tPhase / 10);
@@ -729,25 +743,25 @@ export function WorldScene({
           }
         }
 
-        // Karakter 2 (Karyawan Staf Rapat & Notulen)
+        // Karakter 2 (Karyawan Staf Rapat & Notulen - Bambang)
         if (characters[2]) {
           if (hasMeeting) {
-            // Ada rapat: duduk di kursi meja rapat eksekutif
-            characters[2].base.set(-6.0, 0.42, -3.0);
-            characters[2].group.position.set(-6.0, 0.42, -3.0);
+            // Ada rapat: duduk di kursi meja rapat eksekutif di Ruang Rapat
+            characters[2].base.set(7.8, 0.42, -3.4);
+            characters[2].group.position.set(7.8, 0.42, -3.4);
             characters[2].group.rotation.y = Math.PI;
           } else {
-            // Tidak ada rapat: berjalan-jalan ke koridor tengah
+            // Tidak ada rapat: berjalan santai di Ruang Rapat dan koridor
             const rLoop = 36;
             const rPhase = (elapsed + 6) % rLoop;
-            const pMeet = new THREE.Vector3(-6.0, 0.1, -2.0);
-            const pCorridor = new THREE.Vector3(-1.0, 0.1, 1.5);
+            const pMeet = new THREE.Vector3(7.8, 0.42, -3.4);
+            const pCorridor = new THREE.Vector3(4.4, 0.1, 1.5);
             if (rPhase < 12) {
               isWalkingFlags[2] = true;
               characters[2].group.position.lerpVectors(pMeet, pCorridor, rPhase / 12);
               const dx = pCorridor.x - pMeet.x;
               const dz = pCorridor.z - pMeet.z;
-              characters[2].group.rotation.y = Math.atan2(dx, dz); // Menghadap arah jalan
+              characters[2].group.rotation.y = Math.atan2(dx, dz);
             } else if (rPhase < 26) {
               characters[2].group.position.copy(pCorridor);
               characters[2].group.rotation.y = 0;
@@ -756,13 +770,13 @@ export function WorldScene({
               characters[2].group.position.lerpVectors(pCorridor, pMeet, (rPhase - 26) / 10);
               const dx = pMeet.x - pCorridor.x;
               const dz = pMeet.z - pCorridor.z;
-              characters[2].group.rotation.y = Math.atan2(dx, dz); // Menghadap arah jalan kembali
+              characters[2].group.rotation.y = Math.atan2(dx, dz);
             }
             characters[2].base.copy(characters[2].group.position);
           }
         }
 
-        // Karakter 3 (Karyawan Staf Lapangan & Gym)
+        // Karakter 3 (Karyawan Staf Lapangan & Gym - Dedi)
         if (characters[3]) {
           if (hasActivities) {
             // Ada kegiatan: berlatih di treadmill gym
@@ -792,7 +806,13 @@ export function WorldScene({
         }
       }
 
-      dialogueManager.update(dt);
+      dialogueManager.update(dt, elapsed, (id) => {
+        const char = characters.find((c) => c.group.userData.selection === id);
+        if (char) {
+          return [char.group.position.x, char.group.position.y, char.group.position.z];
+        }
+        return [0, 0, 0];
+      });
 
       const dialogueCtx: DialogueContext = {
         managerName: model.manager || 'Manajer',

@@ -678,16 +678,21 @@ export function CooperativeWorld({
               {npc ? (
                 <div className="cw-npc-card-body">
                   <div className="cw-npc-status-box">
-                    <span
-                      className="cw-npc-badge"
-                      style={{
-                        backgroundColor: `${npc.avatarColor}15`,
-                        color: npc.avatarColor,
-                        borderColor: `${npc.avatarColor}30`,
-                      }}
-                    >
-                      Aktivitas Terkini
-                    </span>
+                    <div className="cw-npc-header-tags">
+                      <span
+                        className="cw-npc-badge"
+                        style={{
+                          backgroundColor: `${npc.avatarColor}15`,
+                          color: npc.avatarColor,
+                          borderColor: `${npc.avatarColor}30`,
+                        }}
+                      >
+                        Aktivitas Terkini
+                      </span>
+                      <span className="cw-npc-gender-pill">
+                        {npc.gender === 'pria' ? 'Pria' : 'Wanita'}
+                      </span>
+                    </div>
                     <p className="cw-npc-activity-text">{npc.activity}</p>
                   </div>
                   <div className="cw-npc-quote-box">

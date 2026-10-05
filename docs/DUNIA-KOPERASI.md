@@ -178,3 +178,35 @@ Menanggapi masukan pengguna mengenai tabrakan NPC, jalan mundur, penataan gudang
 9. **Keseimbangan Tata Letak UI (Breadcrumb vs Kartu Statistik):**
    - Kartu statistik atas dan breadcrumb lokasi disatukan dalam wadah flex vertikal `.cw-top-left-group` dengan jarak aman 12px, menjamin tidak ada tumpang-tindih visual di semua ukuran layar.
 
+---
+
+## 12. Paket Revisi Pengguna Batch 3 (5 Oktober 2026 - Lanjutan)
+
+Menanggapi arahan pengguna mengenai ruang manajer, percakapan berbalas, topi NPC hijau, jenis kelamin karakter, landasan padat Lahan 06/07, posisi kursi, dan objek peta:
+1. **Ruang Kerja Pribadi Manajer Eksekutif (Executive Manager Suite):**
+   - Dibangun di sayap barat-utara interior kantor (`x: -11...-4.5, z: -7.6...-1.2`) berdinding partisi kaca tempered berbingkai putih dengan pintu masuk berplakat "RUANG MANAJER".
+   - Dilengkapi karpet wol eksekutif navy, meja manajer L-shaped kayu mahoni solid, kursi direktur manajer kulit ergonomis, 2 kursi tamu di depan meja, laptop, monitor widescreen, lampu arsitek kuningan, bendera mini Merah Putih, plakat nama emas, lemari buku piala penghargaan, sofa santai tamu, dan tanaman monstera.
+   - Manajer duduk di kursi ruang kerjanya saat sedang bekerja, dan sesekali berkeliling ke koridor tengah.
+2. **Sistem Percakapan Dinamis Dua Arah (Ada Balasannya dari NPC):**
+   - `DialogueManager` kini mendukung antrean balasan percakapan otomatis (*reply queue*).
+   - Ketika karakter A berbicara, 1.8 detik kemudian NPC lawan bicara membalas percakapan dengan balon komik di atas kepalanya secara tersinkronisasi.
+3. **Perbaikan Topi Karakter Hijau & Penetapan Gender NPC:**
+   - Topi mortarboard datar selebar 0.7 unit pada varian 2 dihilangkan, digantikan dengan **topi baret/pet bulat proporsional yang lembut** ber-visor depan dan kancing atas.
+   - Menambahkan field `gender: 'pria' | 'wanita'` pada seluruh profil NPC (`npcProfiles`) dan lencana gender di kartu detail profil (`.cw-npc-gender-pill`).
+   - Karakter wanita (Anisa, Bu Ratna, Siti Rahma) tampil dengan sanggul rapi atau hijab pastel tanpa salah gender.
+4. **Landasan Lahan 06 & 07 Padat, Tebal, dan Lembut:**
+   - Menghapus pasak pagar berjejer dan garis tipis yang memicu efek bergaris-garis / z-fighting.
+   - Menggantikannya dengan pad landasan padat tebal (`5.4 × 0.22 × 4.2 unit`) berlekuk rounded (radius 0.12), 4 pilar sudut batu bulat lembut, hamparan hijau taman, dan plakat marmer bulat plus timbul di tengah.
+5. **Koreksi Posisi Kursi yang Kurang Pas:**
+   - Bangku halte bus diputar menghadap ke jalan utara tempat armada bus berhenti.
+   - Bangku taman jalur hijau selatan diputar menghadap ke kawasan utara.
+   - Bangku tunggu lobi kantor dipindahkan bersandar di partisi barat dan menghadap ke timur menuju meja resepsionis.
+   - Kursi di workstation dan ruang rapat disesuaikan jaraknya proporsional terhadap meja kerja.
+6. **Penambahan Objek dan Fasilitas Baru di Peta:**
+   - **Pos Keamanan & Portal Satpam KDMP** di akses masuk barat lengkap dengan palang portal otomatis merah-putih.
+   - **Kios ATM Center Koperasi** di samping Halte Koperasi.
+   - **Stasiun Rak Sepeda & Sepeda Santai Pastel** di samping kantor koperasi.
+   - **Tempat Sampah Pilah 3 Tabung** ramah lingkungan (Organik, Anorganik, B3) di halte dan plaza air mancur.
+   - **Gazebo Pergola Taman Teduh** beratap kayu dan tanaman rambat di sisi timur-selatan.
+   - **Mobil Box Logistik Kedua & Drum Pasokan** di dermaga 1 gudang logistik.
+

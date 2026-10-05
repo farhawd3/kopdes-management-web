@@ -41,6 +41,7 @@ export interface DialoguePairCooldown {
 export interface NpcProfile {
   id: string;
   name: string;
+  gender: 'pria' | 'wanita';
   role: string;
   category: string;
   activity: string;
@@ -54,6 +55,7 @@ export const npcProfiles: Record<string, NpcProfile> = {
   manajer: {
     id: 'manajer',
     name: 'Pak Hartono',
+    gender: 'pria',
     role: 'Manajer KDMP Puntukrejo',
     category: 'Manajer • Penanggung Jawab',
     activity: 'Mengawasi operasional ruang kerja dan keteraturan kawasan',
@@ -65,6 +67,7 @@ export const npcProfiles: Record<string, NpcProfile> = {
   'karyawan-tugas': {
     id: 'karyawan-tugas',
     name: 'Anisa',
+    gender: 'wanita',
     role: 'Staf Pengelola Tugas',
     category: 'Staf Kantor • Operasional',
     activity: 'Memeriksa progres pekerjaan dan menindaklanjuti tenggat tugas harian',
@@ -76,6 +79,7 @@ export const npcProfiles: Record<string, NpcProfile> = {
   'karyawan-rapat': {
     id: 'karyawan-rapat',
     name: 'Bambang',
+    gender: 'pria',
     role: 'Sekretaris & Notulen Rapat',
     category: 'Staf Kantor • Sekretariat',
     activity: 'Menyiapkan agenda koordinasi pengurus, notulensi, dan tindak lanjut keputusan',
@@ -87,6 +91,7 @@ export const npcProfiles: Record<string, NpcProfile> = {
   'karyawan-gym': {
     id: 'karyawan-gym',
     name: 'Dedi',
+    gender: 'pria',
     role: 'Koordinator Lapangan & Fasilitas',
     category: 'Staf Kantor • Fasilitas',
     activity: 'Mengatur logistik fisik, pemeliharaan sarana, dan kebugaran tim',
@@ -98,6 +103,7 @@ export const npcProfiles: Record<string, NpcProfile> = {
   'npc-warga-selatan': {
     id: 'npc-warga-selatan',
     name: 'Pak Subagyo',
+    gender: 'pria',
     role: 'Warga & Anggota Koperasi',
     category: 'Warga Desa • Anggota',
     activity: 'Duduk santai di bangku taman plaza menikmati suasana pagi desa Puntukrejo',
@@ -109,6 +115,7 @@ export const npcProfiles: Record<string, NpcProfile> = {
   'npc-warga-utara': {
     id: 'npc-warga-utara',
     name: 'Bu Ratna',
+    gender: 'wanita',
     role: 'Pengrajin UMKM Desa',
     category: 'Warga Desa • Mitra Usaha',
     activity: 'Beristirahat di plaza setelah mengantar produk olahan UMKM ke koperasi',
@@ -120,6 +127,7 @@ export const npcProfiles: Record<string, NpcProfile> = {
   'npc-pejalan': {
     id: 'npc-pejalan',
     name: 'Siti Rahma',
+    gender: 'wanita',
     role: 'Pengunjung Kawasan Gerai',
     category: 'Pengunjung • Pelanggan',
     activity: 'Berjalan menyusuri trotoar melihat etalase gerai usaha koperasi',
@@ -131,6 +139,7 @@ export const npcProfiles: Record<string, NpcProfile> = {
   'npc-jalan-kanan': {
     id: 'npc-jalan-kanan',
     name: 'Fajar',
+    gender: 'pria',
     role: 'Kurir & Pengemudi Logistik',
     category: 'Logistik • Distribusi',
     activity: 'Berjalan menyusuri trotoar jalan timur menuju dermaga bongkar muat gudang',
@@ -309,11 +318,22 @@ export function getContextualDialogue(
   return pickNpc;
 }
 
+interface PendingReply {
+  senderId: string;
+  receiverId: string;
+  speakerName: string;
+  text: string;
+  role: 'manager' | 'staff' | 'npc';
+  triggerAtElapsed: number;
+  initialPosition: [number, number, number];
+}
+
 /**
- * Manajer sistem antrean dan cooldown dialog
+ * Manajer sistem antrean dan cooldown dialog dua arah (percakapan & balasan)
  */
 export class DialogueManager {
   private activeBubbles: DialogueBubble[] = [];
+  private pendingReplies: PendingReply[] = [];
   private pairCooldowns = new Map<string, number>();
   private globalCooldownUntil = 0;
 
@@ -348,7 +368,7 @@ export class DialogueManager {
       this.activeBubbles.shift();
     }
 
-    const { text } = getContextualDialogue(senderRole, context, interactionType);
+    const { text, reply } = getContextualDialogue(senderRole, context, interactionType);
 
     const bubbleId = `bubble-${senderId}-${Math.floor(currentElapsed * 10)}`;
     const bubble: DialogueBubble = {
@@ -357,7 +377,7 @@ export class DialogueManager {
       receiverId,
       speakerName,
       text,
-      duration: 4.5,
+      duration: 4.8,
       elapsed: 0,
       position: [position[0], position[1] + 2.1, position[2]],
       role: senderRole,
@@ -365,15 +385,62 @@ export class DialogueManager {
 
     this.activeBubbles.push(bubble);
 
+    // Jadwalkan balasan dari lawan bicara bila ada balasan kontekstual
+    if (reply && receiverId && receiverId !== 'all') {
+      const receiverProfile = npcProfiles[receiverId];
+      const replyRole: 'manager' | 'staff' | 'npc' =
+        receiverId === 'manajer' ? 'manager' : receiverId.startsWith('karyawan') ? 'staff' : 'npc';
+      this.pendingReplies.push({
+        senderId: receiverId,
+        receiverId: senderId,
+        speakerName: receiverProfile?.name || 'Rekan Tim',
+        text: reply,
+        role: replyRole,
+        triggerAtElapsed: currentElapsed + 1.8,
+        initialPosition: [position[0], position[1], position[2]],
+      });
+    }
+
     // Set cooldown
     const pairKey = [senderId, receiverId].sort().join(':');
-    this.pairCooldowns.set(pairKey, currentElapsed + 45.0); // 45 detik cooldown per pasangan
-    this.globalCooldownUntil = currentElapsed + 8.0; // 8 detik cooldown global
+    this.pairCooldowns.set(pairKey, currentElapsed + 35.0); // 35 detik cooldown per pasangan
+    this.globalCooldownUntil = currentElapsed + 7.0; // 7 detik cooldown global
 
     return true;
   }
 
-  update(dt: number): void {
+  update(
+    dt: number,
+    currentElapsed?: number,
+    getPosition?: (id: string) => [number, number, number],
+  ): void {
+    // Periksa antrean balasan yang siap muncul
+    if (typeof currentElapsed === 'number') {
+      for (let i = this.pendingReplies.length - 1; i >= 0; i--) {
+        const item = this.pendingReplies[i];
+        if (currentElapsed >= item.triggerAtElapsed) {
+          const pos = getPosition ? getPosition(item.senderId) : item.initialPosition;
+          const replyBubbleId = `bubble-${item.senderId}-${Math.floor(currentElapsed * 10)}`;
+          // Batasi kapasitas balon aktif serentak
+          if (this.activeBubbles.length >= 2) {
+            this.activeBubbles.shift();
+          }
+          this.activeBubbles.push({
+            id: replyBubbleId,
+            senderId: item.senderId,
+            receiverId: item.receiverId,
+            speakerName: item.speakerName,
+            text: item.text,
+            duration: 4.5,
+            elapsed: 0,
+            position: [pos[0], pos[1] + 2.1, pos[2]],
+            role: item.role,
+          });
+          this.pendingReplies.splice(i, 1);
+        }
+      }
+    }
+
     for (let i = this.activeBubbles.length - 1; i >= 0; i--) {
       this.activeBubbles[i].elapsed += dt;
       if (this.activeBubbles[i].elapsed >= this.activeBubbles[i].duration) {
@@ -384,6 +451,7 @@ export class DialogueManager {
 
   clear(): void {
     this.activeBubbles = [];
+    this.pendingReplies = [];
     this.pairCooldowns.clear();
     this.globalCooldownUntil = 0;
   }

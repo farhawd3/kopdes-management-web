@@ -26,7 +26,7 @@ export const worldStations = [
     title: 'Meja rapat',
     href: '/rapat',
     description: 'Agenda, notulen, dan keputusan.',
-    position: [-7.5, 0, -4.5],
+    position: [7.8, 0, -4.5],
     scope: 'kantor',
   },
   {
@@ -58,7 +58,7 @@ export const worldStations = [
     title: 'Gudang Logistik',
     href: '/barang',
     description: 'Pusat pasokan barang, area bongkar muat 3 dermaga, dan armada logistik.',
-    position: [28, 0, 0],
+    position: [30, 0, -1.5],
     scope: 'luar',
   },
 ] as const;

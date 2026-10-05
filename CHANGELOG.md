@@ -1,5 +1,39 @@
 # Changelog
 
+## Paket Revisi Interaksi & Kawasan Dunia Koperasi (Batch 3): Ruang Kerja Manajer Eksekutif, Dialog 2 Arah Berbalas, Topi Baret & Gender NPC, Pad Lahan 06/07 Padat Lembut, Orientasi Kursi, dan Fasilitas Baru Kawasan — 5 Oktober 2026
+
+- **Ruang Kerja Manajer Eksekutif di Interior Kantor**:
+  - Membangun ruang kerja pribadi Manajer di Sayap Barat-Utara kantor (`X = -11` hingga `-4.5`, `Z = -7.6` hingga `-1.2`) berdinding partisi kaca tempered berbingkai putih modern dan plakat resmi "RUANG MANAJER".
+  - Dilengkapi karpet wol navy eksklusif, meja eksekutif L-shaped kayu mahoni, kursi direktur kulit ergonomis beroda, 2 kursi hadap tamu, laptop kerja, monitor widescreen, lampu arsitek kuningan, miniatur bendera Merah Putih, plakat nama meja emas, lemari arsip display piala penghargaan, sofa santai tamu, dan pot tanaman monstera.
+  - Memindahkan Ruang Rapat Eksekutif ke Sayap Timur-Utara (`X = 5` hingga `10.5`, `Z = -7` hingga `-2`) dengan meja rapat oval kayu madu 4.8×2.0m, 6 kursi eksekutif tertata rapi, proyektor, dan layar presentasi dinding.
+  - Penempatan default Manajer di mode interior duduk di kursi kerja eksekutifnya dengan pose bekerja, dan dapat berpatroli menyusuri koridor kantor.
+- **Sistem Percakapan Dua Arah Berbalas dari NPC (Turn-Taking Dialogue)**:
+  - Mengembangkan sistem antrean balasan otomatis (`PendingReply` & `pendingReplies`) pada `DialogueManager` di `world-dialogue.ts`.
+  - Ketika seorang karakter berbicara, sistem otomatis menjadwalkan tanggapan/balasan dari NPC lawan bicara yang muncul 1.8 detik kemudian di atas kepala NPC penerima.
+  - Balasan mencakup dialog kontekstual dua arah: koordinasi laporan gerai, progres tugas operasional, sapaan pagi/sore hari, hingga ajakan ngopi santai di sela istirahat.
+- **Perbaikan Topi Karakter Hijau & Penetapan Jenis Kelamin NPC (Gender Identity)**:
+  - Mengganti kubah topi kotak datar lebar kaku pada karakter hijau (varian 2 `createCharacter`) dengan topi baret/pet proporsional melengkung lembut (`sphere` r=0.32, visor depan rounded `box` [0.36, 0.04, 0.2], dan kancing atas).
+  - Menetapkan atribut `gender: 'pria' | 'wanita'` untuk seluruh 8 profil karakter di `world-dialogue.ts` dan logika model 3D (Pak Hartono: pria, Anisa: wanita, Bambang: pria, Dedi: pria bertopi baret, Pak Subagyo: pria, Bu Ratna: wanita, Siti Rahma: wanita, Fajar: pria).
+  - Memastikan karakter wanita memakai gaya rambut sanggul rapi atau hijab pastel tanpa memakai topi baret pria.
+  - Menambahkan lencana jenis kelamin (*gender chip*) di panel kartu profil NPC samping atas (`.cw-npc-gender-pill`) bertuliskan "Pria" atau "Wanita".
+- **Perbaikan Landasan Lahan 06 & 07 (Pad Landasan Padat, Tebal, dan Lembut)**:
+  - Mengeliminasi total artefak garis-garis dan pasak-pasak tajam berjejer pada plot Lahan 06 dan Lahan 07.
+  - Menggantinya dengan landasan padat tebal bertingkat (`5.4 × 0.22 × 4.2 unit` ber-bevel halus radius 0.12, elevasi Y = 0.11), 4 pilar sudut batu bulat halus, hamparan rumput hijau lembut, dan plakat marmer bulat plus timbul di tengah.
+- **Koreksi Posisi dan Orientasi Kursi**:
+  - Memperbaiki orientasi bangku Halte Bus Koperasi di `[-8, 17.2]`: diputar `Math.PI` menghadap lurus ke utara ke arah jalan raya tempat bus berhenti.
+  - Memperbaiki bangku taman jalur hijau selatan di `[2, 17.2]`: diputar `Math.PI` menghadap utara ke arah taman kawasan.
+  - Memperbaiki bangku lobi kantor: dipindahkan bersandar di partisi barat lobi `[-6.0, 5.2]` dan diputar `Math.PI / 2` menghadap ke timur menuju meja resepsionis.
+  - Mengatur ulang jarak dan sudut hadap kursi kerja serta kursi tamu di ruang manajer dan ruang rapat agar ergonomis dan menghadap meja secara presisi.
+- **Penambahan Objek Baru di Peta Kawasan Eksterior**:
+  - **Pos Keamanan & Portal Satpam KDMP** di akses barat (`[-28, 1.2, 8.5]`) lengkap dengan pos satpam kaca modern berkanopi dan palang portal otomatis merah-putih.
+  - **Kios ATM Center KDMP** kaca modern berkanopi di samping Halte Koperasi (`[-3.2, 1.25, 16.6]`).
+  - **Stasiun Rak Sepeda & Sepeda Santai** berdesain pastel di samping barat kantor (`[-10.5, 0.02, 2.4]`).
+  - **Tempat Sampah Pilah 3 Tabung** (Organik Hijau, Anorganik Kuning, B3 Biru) di halte dan plaza air mancur.
+  - **Gazebo Pergola Taman Teduh** dengan tiang kayu, pergola atap kisi-kisi, dan tanaman rambat di area timur-selatan (`[35, 0.14, 16.6]`).
+  - **Mobil Box Logistik Tambahan & Drum Pasokan** di apron gudang timur (`[27.5, 0.65, 3.8]`).
+- **Kualitas & Keandalan**:
+  - 275 pengujian unit/integrasi lulus 100%, typecheck TypeScript 0 error, linter ESLint 0 error dan 0 warning, build Next.js Turbopack sukses untuk 12 rute.
+
 ## Paket Revisi Interaksi & Kawasan Dunia Koperasi (Batch 2): Orientasi NPC Anti Mundur, Redesain Gudang & Pembebasan Lahan 07, Objek Halte/Monumen Selatan, Kartu Profil NPC, dan Harmonisasi UI — 5 Oktober 2026
 
 - **Perbaikan Arah Gerak & Navigasi NPC (Anti Jalan Mundur & Tabrakan Objek)**:
